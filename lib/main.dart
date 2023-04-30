@@ -1,57 +1,74 @@
-import 'package:fitend_member/screens/home_screen.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // App flavor 값 조회
-  // flavor = 'dev' | 'product'
-  String? flavor =
-      await const MethodChannel('flavor').invokeMethod<String>('getFlavor');
-  Config(flavor);
-
-  runApp(const ProviderScope(child: _App()));
+void main() {
+  runApp(const MyApp());
 }
 
-class _App extends ConsumerWidget {
-  const _App();
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // final route = ref.watch(routerProvider);
-
+  Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        fontFamily: 'Pretendard',
-      ),
-      home: const HomeScreen(),
+      title: 'Flavors Demo',
+      theme: ThemeData.dark(),
+      home: const MyHomePage(title: 'Flavors Demo'),
     );
   }
 }
 
-class Config {
-  final String baseUrl;
-  final String token;
-  static late final Config instance;
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  Config._dev()
-      : baseUrl = '', // dev url
-        token = ''; // dev token
+  final String title;
 
-  Config._product()
-      : baseUrl = '', // product url
-        token = ''; // product token
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
 
-  factory Config(String? _flavor) {
-    if (_flavor == 'development') {
-      instance = Config._dev();
-    } else if (_flavor == 'production') {
-      instance = Config._product();
-    } else {
-      throw Exception("Unknown flavor : $_flavor}");
-    }
+class _MyHomePageState extends State<MyHomePage> {
+  PackageInfo _packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+  );
 
-    return instance;
+  @override
+  void initState() {
+    super.initState();
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
+  }
+
+  Widget _infoTile(String title, String subtitle) {
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(subtitle.isEmpty ? 'Not set' : subtitle),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: ListView(
+        children: <Widget>[
+          _infoTile('App name', _packageInfo.appName),
+          _infoTile('Package name', _packageInfo.packageName),
+        ],
+      ),
+    );
   }
 }

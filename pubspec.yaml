@@ -58,6 +58,8 @@ dependencies:
   device_info_plus: ^8.2.2
   flutter_local_notifications: ^14.0.0+1
   dots_indicator: ^2.1.0
+  package_rename: ^1.2.0
+  flutter_flavorizr: ^2.1.6
 
 
 dev_dependencies:
@@ -107,3 +109,38 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+#flavor 
+
+flavorizr:
+  ide: "vscode"
+  flavors:
+    
+    local:
+      app:
+        name: "fitend_local"
+
+      android:
+        applicationId: "com.example.fitend.local"
+
+      ios:
+        bundleId: "com.example.fitend.local"
+
+    development:
+      app:
+        name: "fitend_dev"
+
+      android:
+        applicationId: "com.example.fitend.dev"
+
+      ios:
+        bundleId: "com.example.fitend.dev"
+
+    production:
+      app:
+        name: "fitend"
+
+      android:
+        applicationId: "com.example.fitend"
+      ios:
+        bundleId: "com.example.fitend"

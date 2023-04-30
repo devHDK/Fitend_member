@@ -62,7 +62,7 @@ class CustomInterceptor extends Interceptor {
       final dio = Dio();
       try {
         final resp = await dio.post(
-          'http://$ip/auth/token',
+          'http://',
           options: Options(
             headers: {
               'authorization': 'Bearer $refreshToken',
@@ -89,7 +89,7 @@ class CustomInterceptor extends Interceptor {
       } on DioError catch (e) {
         //circular dependency error
         // A, B
-        ref.read(authProvider.notifier).logout();
+        // ref.read(authProvider.notifier).logout();
 
         return handler.reject(e);
       }

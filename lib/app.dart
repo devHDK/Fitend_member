@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'flavors.dart';
@@ -11,12 +10,16 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: F.title,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: "Pretendard",
       ),
       home: _flavorBanner(
         child: MyHomePage(),
-        show: kDebugMode,
+        show: F.appFlavor == Flavor.development || F.appFlavor == Flavor.local
+            ? true
+            : false,
       ),
     );
   }

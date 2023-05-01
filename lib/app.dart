@@ -1,7 +1,7 @@
+import 'package:fitend_member/common/view/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'flavors.dart';
-import 'pages/my_home_page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -12,11 +12,10 @@ class App extends StatelessWidget {
       title: F.title,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
         fontFamily: "Pretendard",
       ),
       home: _flavorBanner(
-        child: MyHomePage(),
+        child: const OnBoardingScreen(),
         show: F.appFlavor == Flavor.development || F.appFlavor == Flavor.local
             ? true
             : false,

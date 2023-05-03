@@ -1,4 +1,5 @@
 import 'package:fitend_member/common/view/splash_screen.dart';
+import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,6 +25,11 @@ class Router extends ChangeNotifier {
           path: '/login',
           name: LoginScreen.routeName,
           builder: (context, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/schedule',
+          name: ScheduleScreen.routeName,
+          builder: (context, state) => const ScheduleScreen(),
         ),
       ];
 }

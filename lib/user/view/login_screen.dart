@@ -1,7 +1,9 @@
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   static String get routeName => 'login';
@@ -114,7 +116,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                context.goNamed(ScheduleScreen.routeName);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: POINT_COLOR,
               ),

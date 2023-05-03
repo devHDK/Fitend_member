@@ -1,7 +1,7 @@
+import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -16,22 +16,10 @@ class SplashScreen extends StatelessWidget {
             fit: BoxFit.cover,
             opacity: 0.4),
       ),
-      child: Scaffold(
+      child: const Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          centerTitle: false,
-          title: Text(
-            'F I T E N D',
-            style: GoogleFonts.audiowide(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-        ),
-        body: const _BottomView(),
+        appBar: LogoAppbar(),
+        body: _BottomView(),
       ),
     );
   }

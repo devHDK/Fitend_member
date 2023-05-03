@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/view/onboarding_screen.dart';
+import 'package:fitend_member/common/view/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'flavors.dart';
@@ -15,7 +15,7 @@ class App extends StatelessWidget {
         fontFamily: "Pretendard",
       ),
       home: _flavorBanner(
-        child: const OnBoardingScreen(),
+        child: const SplashScreen(),
         show: F.appFlavor == Flavor.development || F.appFlavor == Flavor.local
             ? true
             : false,

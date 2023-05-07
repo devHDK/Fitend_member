@@ -1,7 +1,34 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart';
+
+final dioProvider = Provider(
+  (ref) {
+    final dio = Dio();
+    final storage = ref.watch(seccureStorageProvider);
+
+    dio.interceptors.add(CustomInterceptor(storage: storage, ref: ref));
+    dio.interceptors.add(
+      RetryInterceptor(
+        dio: dio,
+        logPrint: print,
+        retries: 3,
+        retryDelays: const [
+          Duration(seconds: 1),
+          Duration(seconds: 2),
+          Duration(seconds: 3),
+        ],
+      ),
+    );
+    dio.options.baseUrl = ip;
+    dio.options.receiveTimeout = const Duration(seconds: 3);
+
+    return dio;
+  },
+);
 
 class CustomInterceptor extends Interceptor {
   final FlutterSecureStorage storage;
@@ -11,7 +38,7 @@ class CustomInterceptor extends Interceptor {
     required this.ref,
     required this.storage,
   });
-// 1)요청 보낼때
+// //요청 보낼때
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {

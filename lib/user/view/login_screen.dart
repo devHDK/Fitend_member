@@ -134,54 +134,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                         if (!mounted) return;
                         //async 함수 내에서 context사용전 위젯이 마운트되지 않으면
-                        NAlertDialog(
-                          title: Padding(
-                            padding: const EdgeInsets.only(
-                              top: 20,
-                            ),
-                            child: Center(
-                                child: Text(
-                              '${ret.error}😂',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            )),
-                          ),
-                          dialogStyle: DialogStyle(
-                            backgroundColor: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          actions: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 20),
-                              child: Container(
-                                width: 279,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: POINT_COLOR,
-                                  ),
-                                  child: const Text(
-                                    '확인',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ).show(context);
+                        errorDialog(ret).show(context);
                       }
                     },
               style: ElevatedButton.styleFrom(
@@ -193,6 +146,56 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
           ),
         ),
+      ],
+    );
+  }
+
+  NAlertDialog errorDialog(UserModelError ret) {
+    return NAlertDialog(
+      title: Padding(
+        padding: const EdgeInsets.only(
+          top: 20,
+        ),
+        child: Center(
+            child: Text(
+          '${ret.error}😂',
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+        )),
+      ),
+      dialogStyle: DialogStyle(
+        backgroundColor: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          child: Container(
+            width: 279,
+            height: 44,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: POINT_COLOR,
+              ),
+              child: const Text(
+                '확인',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+        )
       ],
     );
   }

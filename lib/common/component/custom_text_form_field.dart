@@ -34,7 +34,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   void initState() {
     super.initState();
     focusNode.addListener(() {
-      print('${widget.labelText} ,${focusNode.hasFocus}');
+      // print('${widget.labelText} ,${focusNode.hasFocus}');
       if (focusNode.hasFocus) {
         setState(() {
           focusNode.requestFocus();

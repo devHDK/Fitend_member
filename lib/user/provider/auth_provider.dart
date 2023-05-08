@@ -36,11 +36,13 @@ class AuthProvider extends ChangeNotifier {
           path: '/splash',
           name: SplashScreen.routeName,
           builder: (context, state) => const SplashScreen(),
-        ),
-        GoRoute(
-          path: '/login',
-          name: LoginScreen.routeName,
-          builder: (context, state) => const LoginScreen(),
+          routes: [
+            GoRoute(
+              path: 'login',
+              name: LoginScreen.routeName,
+              builder: (context, state) => const LoginScreen(),
+            ),
+          ],
         ),
         GoRoute(
           path: '/schedule',
@@ -52,10 +54,10 @@ class AuthProvider extends ChangeNotifier {
   String? redirectLogic(BuildContext context, GoRouterState state) {
     final UserModelBase? user = ref.read(userMeProvider);
 
-    final loginIn = state.location == '/login';
+    final loginIn = state.location == '/splash/login';
 
     if (user == null) {
-      return loginIn ? null : '/login';
+      return loginIn ? null : '/splash/login';
     }
 
     //user != null
@@ -63,11 +65,11 @@ class AuthProvider extends ChangeNotifier {
     //UserModel
     //로그인 중이거나 현재 위치가 splashScreen이면 홈으로 이동
     if (user is UserModel) {
-      return loginIn || state.location == '/schedule' ? '/' : null;
+      return loginIn || state.location == '/onboard' ? '/schedule' : null;
     }
 
     if (user is UserModelError) {
-      return loginIn ? '/login' : null;
+      return loginIn ? '/splash/login' : null;
     }
 
     return null;

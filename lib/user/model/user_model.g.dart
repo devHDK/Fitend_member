@@ -18,8 +18,8 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       id: json['id'] as int,
       email: json['email'] as String,
       nickname: json['nickname'] as String,
-      phone: json['phone'] as String,
-      deletedAt: json['deletedAt'] as String,
+      phone: json['phone'] as String?,
+      deletedAt: json['deletedAt'] as String?,
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{

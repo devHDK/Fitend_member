@@ -15,7 +15,7 @@ class UserModelLoading extends UserModelBase {}
 
 @JsonSerializable()
 class UserModel extends UserModelBase {
-  User user;
+  final User user;
 
   UserModel({
     required this.user,
@@ -34,18 +34,18 @@ class UserModel extends UserModelBase {
 
 @JsonSerializable()
 class User {
-  int id;
-  String email;
-  String nickname;
-  String phone;
-  String deletedAt;
+  final int id;
+  final String email;
+  final String nickname;
+  final String? phone;
+  final String? deletedAt;
 
   User({
     required this.id,
     required this.email,
     required this.nickname,
-    required this.phone,
-    required this.deletedAt,
+    this.phone,
+    this.deletedAt,
   });
 
   User copyWith({

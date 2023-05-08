@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -46,15 +47,19 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
   }
 
   Future<UserModelBase> login({
-    required String username,
+    required String email,
     required String password,
+    required String platform,
+    required String token,
   }) async {
     try {
       state = UserModelLoading();
 
       final resp = await authRepository.login(
-        username: username,
+        email: email,
         password: password,
+        platform: platform,
+        token: token,
       );
 
       await storage.write(key: REFRESH_TOKEN_KEY, value: resp.refreshToken);
@@ -65,7 +70,12 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
       state = userResp;
 
       return userResp;
-    } catch (e) {
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print(e.response!.data);
+        print(e.response!.statusCode);
+      }
+
       state = UserModelError(error: '로그인에 실패했습니다');
       return Future.value(state);
     }

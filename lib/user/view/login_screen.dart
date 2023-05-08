@@ -1,30 +1,30 @@
+import 'dart:io';
+
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/schedule/view/schedule_screen.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   static String get routeName => 'login';
 
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  String email = '';
+  String password = '';
 
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-    String email = '';
-    String password = '';
+    final state = ref.watch(userMeProvider);
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -64,10 +64,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 36,
                 ),
-                _renderMidView(email, password),
+                _renderMidView(email, password, ref, state),
                 KeyboardVisibilityBuilder(
                   builder: (p0, isKeyboardVisible) {
-                    print('keyboard $isKeyboardVisible');
                     return SizedBox(
                       height: isKeyboardVisible ? 100 : 345,
                     );
@@ -82,7 +81,8 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Column _renderMidView(String email, String password) {
+  Column _renderMidView(
+      String email, String password, WidgetRef ref, UserModelBase? state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -116,9 +116,17 @@ class _LoginScreenState extends State<LoginScreen> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: ElevatedButton(
-              onPressed: () {
-                context.goNamed(ScheduleScreen.routeName);
-              },
+              onPressed: state is UserModelBase
+                  ? null
+                  : () {
+                      // context.goNamed(ScheduleScreen.routeName);
+                      ref.read(userMeProvider.notifier).login(
+                            email: email,
+                            password: password,
+                            platform: Platform.isIOS ? 'ios' : 'android',
+                            token: 'string',
+                          );
+                    },
               style: ElevatedButton.styleFrom(
                 backgroundColor: POINT_COLOR,
               ),

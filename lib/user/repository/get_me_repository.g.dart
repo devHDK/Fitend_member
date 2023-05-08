@@ -24,7 +24,7 @@ class _UserMeRepository implements UserMeRepository {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<UserModel>(Options(
       method: 'GET',
@@ -33,7 +33,7 @@ class _UserMeRepository implements UserMeRepository {
     )
             .compose(
               _dio.options,
-              '/',
+              '/users/getMe',
               queryParameters: queryParameters,
               data: _data,
             )

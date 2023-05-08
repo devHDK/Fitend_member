@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
+import 'package:fitend_member/flavors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
@@ -23,7 +24,11 @@ final dioProvider = Provider(
         ],
       ),
     );
-    dio.options.baseUrl = ip;
+    dio.options.baseUrl = F.appFlavor == Flavor.local
+        ? localIp
+        : F.appFlavor == Flavor.development
+            ? devIp
+            : deployIp;
     dio.options.receiveTimeout = const Duration(seconds: 3);
 
     return dio;
@@ -42,7 +47,8 @@ class CustomInterceptor extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    print('[REQ][${options.method}] ${options.uri}');
+    // print('[REQ][${options.method}] ${options.uri}');
+    print(options);
 
     if (options.headers['accessToken'] == 'true') {
       options.headers.remove('accessToken');
@@ -74,6 +80,7 @@ class CustomInterceptor extends Interceptor {
     // 다시 새로운 토큰을 요청한다.
     print('[ERROR][${err.requestOptions.method}] ${err.requestOptions.uri}');
 
+    final oldAccessToken = await storage.read(key: ACCESS_TOKEN_KEY);
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
 
     //refreshToken이 없으면
@@ -83,18 +90,17 @@ class CustomInterceptor extends Interceptor {
     }
 
     final isStatus401 = err.response?.statusCode == 401;
-    final isPathRefresh = err.requestOptions.path == '/auth/token';
+    final isPathRefresh = err.requestOptions.path == '/auth/refresh';
 
     if (isStatus401 && !isPathRefresh) {
       final dio = Dio();
       try {
         final resp = await dio.post(
-          'http://',
-          options: Options(
-            headers: {
-              'authorization': 'Bearer $refreshToken',
-            },
-          ),
+          'auth/refresh',
+          data: {
+            'accessToken': oldAccessToken,
+            'refreshToken': refreshToken,
+          },
         );
 
         final accessToken = resp.data['accessToken'];

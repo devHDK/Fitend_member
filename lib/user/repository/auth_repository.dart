@@ -1,45 +1,49 @@
 import 'package:dio/dio.dart';
-import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio.dart';
 import 'package:fitend_member/common/model/login_response.dart';
 import 'package:fitend_member/common/model/token_response.dart';
-import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final dio = ref.watch(dioProvider);
 
-  return AuthRepository(baseUrl: 'http://$ip/auth', dio: dio);
+  return AuthRepository(dio: dio);
 });
 
 class AuthRepository {
-  final String baseUrl;
   final Dio dio;
 
   AuthRepository({
-    required this.baseUrl,
     required this.dio,
   });
 
   Future<LoginResponse> login({
-    required String username,
+    required String email,
     required String password,
+    required String platform,
+    required String token,
   }) async {
-    final serialized = DataUtils.plainToBase64('$username:$password');
-
-    final response = await dio.post('$baseUrl/login',
-        options: Options(
-          headers: {'authorization': 'Basic $serialized'},
-        ));
+    final response = await dio.post(
+      '/auth/login',
+      data: {
+        'email': email,
+        'password': password,
+        'platform': platform,
+        'token': token,
+      },
+    );
 
     return LoginResponse.fromJson(response.data);
   }
 
   Future<TokenResponse> token() async {
     final response = await dio.post(
-      '$baseUrl/token',
+      'auth/refresh',
       options: Options(
-        headers: {'refreshToken': 'true'},
+        headers: {
+          'accessToken': 'true',
+          'refreshToken': 'true',
+        },
       ),
     );
 

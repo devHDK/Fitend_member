@@ -11,7 +11,10 @@ final buildEnv = F.appFlavor == Flavor.local
         ? "development"
         : "production";
 
-const emulatorIp = '10.0.2.2';
-const simulatorIp = '127.0.0.1:3000';
+const emulatorIp = 'http://10.0.2.2:4000/api/mobile';
+const simulatorIp = 'http://127.0.0.1:4000/api/mobile';
 
-final ip = Platform.isIOS ? simulatorIp : emulatorIp;
+final localIp =
+    F.appFlavor == Flavor.local && Platform.isIOS ? simulatorIp : emulatorIp;
+const devIp = '';
+const deployIp = '';

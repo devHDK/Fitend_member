@@ -4,7 +4,7 @@ import 'package:fitend_member/common/const/data.dart';
 
 class DataUtils {
   static String pathToUrl(String value) {
-    return 'http://$ip$value';
+    return 'http://$localIp$value';
   }
 
   static List<String> listPathsToUrls(List paths) {

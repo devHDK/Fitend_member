@@ -1,18 +1,20 @@
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/component/schedule_card.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ScheduleScreen extends StatefulWidget {
+class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
 
   const ScheduleScreen({super.key});
 
   @override
-  State<ScheduleScreen> createState() => _ScheduleScreenState();
+  ConsumerState<ScheduleScreen> createState() => _ScheduleScreenState();
 }
 
-class _ScheduleScreenState extends State<ScheduleScreen> {
+class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +22,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       appBar: LogoAppbar(
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              ref.read(userMeProvider.notifier).logout();
+            },
             icon: const Padding(
               padding: EdgeInsets.only(right: 28),
               child: Icon(

@@ -63,14 +63,14 @@ class AuthProvider extends ChangeNotifier {
     //user != null
 
     //UserModel
-    //로그인 중이거나 현재 위치가 splashScreen이면 홈으로 이동
+    //로그인 중이거나 현재 위치가 onboardScreen이면 홈으로 이동
     if (user is UserModel) {
       return loginIn || state.location == '/onboard' ? '/schedule' : null;
     }
 
-    if (user is UserModelError) {
-      return loginIn ? '/splash/login' : null;
-    }
+    // if (user is UserModelError) {
+    //   return loginIn ? '/splash/login' : null;
+    // }
 
     return null;
   }

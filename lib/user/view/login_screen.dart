@@ -7,6 +7,7 @@ import 'package:fitend_member/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ndialog/ndialog.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   static String get routeName => 'login';
@@ -116,16 +117,72 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: ElevatedButton(
-              onPressed: state is UserModelBase
+              onPressed: state is UserModelLoading
                   ? null
-                  : () {
+                  : () async {
                       // context.goNamed(ScheduleScreen.routeName);
-                      ref.read(userMeProvider.notifier).login(
+                      final ret = await ref.read(userMeProvider.notifier).login(
                             email: email,
                             password: password,
                             platform: Platform.isIOS ? 'ios' : 'android',
                             token: 'string',
                           );
+
+                      if (ret is UserModelError) {
+                        print('state.error : ${ret.error}');
+                        print('state.statusCode : ${ret.statusCode}');
+
+                        if (!mounted) return;
+                        //async 함수 내에서 context사용전 위젯이 마운트되지 않으면
+                        NAlertDialog(
+                          title: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 20,
+                            ),
+                            child: Center(
+                                child: Text(
+                              '${ret.error}😂',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            )),
+                          ),
+                          dialogStyle: DialogStyle(
+                            backgroundColor: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          actions: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 20),
+                              child: Container(
+                                width: 279,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: POINT_COLOR,
+                                  ),
+                                  child: const Text(
+                                    '확인',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ).show(context);
+                      }
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: POINT_COLOR,

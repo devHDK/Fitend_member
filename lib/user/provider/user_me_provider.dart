@@ -71,12 +71,34 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
 
       return userResp;
     } on DioError catch (e) {
+      int statusCode = 0;
+      String message = '';
       if (e.response != null) {
-        print(e.response!.data);
-        print(e.response!.statusCode);
+        // print(e.response!.statusMessage);
+        // print(e.response!.data);
+        // print(e.response!.statusCode);
+
+        if (e.response!.statusCode != null) {
+          statusCode = e.response!.statusCode!;
+        }
       }
 
-      state = UserModelError(error: '로그인에 실패했습니다');
+      if (statusCode == 400) {
+        message = '이메일을 정확히 입력해주세요';
+      } else if (statusCode == 404) {
+        message = '이메일 또는 비밀번호가 맞지않아요';
+      } else {
+        message = '알수없는 에러';
+      }
+
+      print('statusCode : $statusCode');
+      print('message : $message');
+
+      state = UserModelError(
+        error: message,
+        statusCode: statusCode,
+      );
+
       return Future.value(state);
     }
   }

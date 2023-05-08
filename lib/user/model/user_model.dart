@@ -5,9 +5,11 @@ abstract class UserModelBase {}
 
 class UserModelError extends UserModelBase {
   final String error;
+  final int statusCode;
 
   UserModelError({
     required this.error,
+    required this.statusCode,
   });
 }
 

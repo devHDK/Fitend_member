@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OnBoardingScreen extends StatelessWidget {
+  static String get routeName => 'onboard';
   const OnBoardingScreen({super.key});
 
   @override

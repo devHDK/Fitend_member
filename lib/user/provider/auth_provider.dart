@@ -51,13 +51,13 @@ class AuthProvider extends ChangeNotifier {
         ),
       ];
 
-  String? redirectLogic(BuildContext context, GoRouterState state) {
+  Future<String?> redirectLogic(
+      BuildContext context, GoRouterState state) async {
     final UserModelBase? user = ref.read(userMeProvider);
-
-    final loginIn = state.location == '/splash/login';
+    final loginIn = state.location == '/splash';
 
     if (user == null) {
-      return loginIn ? null : '/splash/login';
+      return loginIn ? null : '/splash';
     }
 
     //user != null
@@ -68,9 +68,10 @@ class AuthProvider extends ChangeNotifier {
       return loginIn || state.location == '/onboard' ? '/schedule' : null;
     }
 
-    // if (user is UserModelError) {
-    //   return loginIn ? '/splash/login' : null;
-    // }
+    //getMe Error...
+    if (user is UserModelError) {
+      return loginIn ? '/splash/login' : null;
+    }
 
     return null;
   }

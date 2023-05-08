@@ -5,6 +5,7 @@ import 'flavors.dart';
 
 void main() {
   F.appFlavor = Flavor.local;
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     const ProviderScope(
       child: App(),

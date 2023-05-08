@@ -140,9 +140,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: POINT_COLOR,
               ),
-              child: const Text(
-                '로그인',
-              ),
+              child: state is UserModelLoading
+                  ? const CircularProgressIndicator(
+                      color: Colors.white,
+                    )
+                  : const Text(
+                      '로그인',
+                    ),
             ),
           ),
         ),

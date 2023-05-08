@@ -4,9 +4,19 @@ import 'package:fitend_member/common/layout/default_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class OnBoardingScreen extends StatelessWidget {
+class OnBoardingScreen extends StatefulWidget {
   static String get routeName => 'onboard';
   const OnBoardingScreen({super.key});
+
+  @override
+  State<OnBoardingScreen> createState() => _OnBoardingScreenState();
+}
+
+class _OnBoardingScreenState extends State<OnBoardingScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,5 +41,11 @@ class OnBoardingScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void delay() async {
+    await Future.delayed(const Duration(seconds: 2), () {
+      print('onboarding...');
+    });
   }
 }

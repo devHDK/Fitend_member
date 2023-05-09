@@ -1,39 +1,68 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/flavors.dart';
+import 'package:fitend_member/user/provider/user_me_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 final dioProvider = Provider(
   (ref) {
-    final dio = Dio();
-    final storage = ref.watch(seccureStorageProvider);
-
-    dio.interceptors.add(CustomInterceptor(storage: storage, ref: ref));
-    dio.interceptors.add(
-      RetryInterceptor(
-        dio: dio,
-        logPrint: print,
-        retries: 3,
-        retryDelays: const [
-          Duration(seconds: 1),
-          Duration(seconds: 2),
-          Duration(seconds: 3),
-        ],
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: F.appFlavor == Flavor.local
+            ? localIp
+            : F.appFlavor == Flavor.development
+                ? devIp
+                : deployIp,
+        sendTimeout: const Duration(seconds: 5),
+        receiveTimeout: const Duration(seconds: 6),
+        connectTimeout: const Duration(seconds: 6),
       ),
     );
-    dio.options.baseUrl = F.appFlavor == Flavor.local
-        ? localIp
-        : F.appFlavor == Flavor.development
-            ? devIp
-            : deployIp;
-    dio.options.receiveTimeout = const Duration(seconds: 3);
+    final storage = ref.watch(seccureStorageProvider);
+
+    dio.interceptors.addAll(
+      [
+        CustomInterceptor(
+          storage: storage,
+          ref: ref,
+        ),
+        RetryInterceptor(
+          dio: Dio(),
+          logPrint: print,
+          retries: 5,
+          retryDelays: const [
+            Duration(seconds: 3),
+            Duration(seconds: 3),
+            Duration(seconds: 3),
+          ],
+          retryableExtraStatuses: {status400BadRequest},
+        ),
+        PrettyDioLogger(
+            requestHeader: true,
+            requestBody: true,
+            responseBody: true,
+            responseHeader: false,
+            error: true,
+            compact: true,
+            maxWidth: 90)
+      ],
+    );
 
     return dio;
   },
 );
+
+bool _shouldRetry(DioError err) {
+  return err.type == DioErrorType.unknown &&
+      err.error != null &&
+      err.error is SocketException;
+}
 
 class CustomInterceptor extends Interceptor {
   final FlutterSecureStorage storage;
@@ -78,7 +107,8 @@ class CustomInterceptor extends Interceptor {
     //401에러 (status code)
     //토큰을 재발급 받는 시도를 하고 토큰이 재발급 되면
     // 다시 새로운 토큰을 요청한다.
-    print('[ERROR][${err.requestOptions.method}] ${err.requestOptions.uri}');
+    print(
+        '[ERROR][${err.requestOptions.method}] ${err.requestOptions.uri} : ${err.response?.statusCode}');
 
     final oldAccessToken = await storage.read(key: ACCESS_TOKEN_KEY);
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
@@ -93,8 +123,8 @@ class CustomInterceptor extends Interceptor {
     final isPathRefresh = err.requestOptions.path == '/auth/refresh';
 
     if (isStatus401 && !isPathRefresh) {
-      final dio = Dio();
       try {
+        final dio = Dio();
         final resp = await dio.post(
           'auth/refresh',
           data: {
@@ -105,7 +135,6 @@ class CustomInterceptor extends Interceptor {
 
         final accessToken = resp.data['accessToken'];
         final options = err.requestOptions;
-
         options.headers.addAll(
           {
             'authorization': 'Bearer $accessToken',
@@ -122,11 +151,12 @@ class CustomInterceptor extends Interceptor {
       } on DioError catch (e) {
         //circular dependency error
         // A, B
-        // ref.read(authProvider.notifier).logout();
+        ref.read(userMeProvider.notifier).logout();
 
         return handler.reject(e);
       }
     }
+
     return handler.reject(err);
   }
 }

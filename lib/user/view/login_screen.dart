@@ -143,8 +143,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   : () async {
                       // context.goNamed(ScheduleScreen.routeName);
                       final ret = await ref.read(userMeProvider.notifier).login(
-                            email: email,
-                            password: password,
+                            email: idTextcontroller.text,
+                            password: passwordTextcontroller.text,
                             platform: Platform.isIOS ? 'ios' : 'android',
                             token: 'string',
                           );
@@ -162,8 +162,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 backgroundColor: POINT_COLOR,
               ),
               child: state is UserModelLoading
-                  ? const CircularProgressIndicator(
-                      color: Colors.white,
+                  ? const SizedBox(
+                      width: 15,
+                      height: 15,
+                      child: CircularProgressIndicator(
+                        color: POINT_COLOR,
+                      ),
                     )
                   : const Text(
                       '로그인',

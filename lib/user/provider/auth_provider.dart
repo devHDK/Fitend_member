@@ -57,7 +57,7 @@ class AuthProvider extends ChangeNotifier {
     final loginIn = state.location == '/splash/login';
 
     if (user == null) {
-      return loginIn ? null : '/splash';
+      return loginIn ? null : '/splash/login';
     }
 
     //user != null
@@ -65,12 +65,12 @@ class AuthProvider extends ChangeNotifier {
     //UserModel
     //로그인 중이거나 현재 위치가 onboardScreen이면 홈으로 이동
     if (user is UserModel) {
+      print('user : userModel');
       return loginIn || state.location == '/onboard' ? '/schedule' : null;
     }
 
     // getMe Error...
     if (user is UserModelError) {
-      print('login fail...');
       return loginIn ? '/splash/login' : null;
     }
 

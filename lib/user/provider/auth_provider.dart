@@ -54,7 +54,7 @@ class AuthProvider extends ChangeNotifier {
   Future<String?> redirectLogic(
       BuildContext context, GoRouterState state) async {
     final UserModelBase? user = ref.read(userMeProvider);
-    final loginIn = state.location == '/splash';
+    final loginIn = state.location == '/splash/login';
 
     if (user == null) {
       return loginIn ? null : '/splash';
@@ -68,8 +68,9 @@ class AuthProvider extends ChangeNotifier {
       return loginIn || state.location == '/onboard' ? '/schedule' : null;
     }
 
-    //getMe Error...
+    // getMe Error...
     if (user is UserModelError) {
+      print('login fail...');
       return loginIn ? '/splash/login' : null;
     }
 

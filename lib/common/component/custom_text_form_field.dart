@@ -8,8 +8,8 @@ class CustomTextFormField extends StatefulWidget {
   final String? fullLabelText;
   final bool obscureText;
   final bool autoFocus;
-  final bool hasContent;
   final ValueChanged<String>? onChanged;
+  final TextEditingController controller;
 
   const CustomTextFormField({
     super.key,
@@ -19,8 +19,8 @@ class CustomTextFormField extends StatefulWidget {
     this.fullLabelText,
     this.obscureText = false,
     this.autoFocus = false,
-    required this.hasContent,
     required this.onChanged,
+    required this.controller,
   });
 
   @override
@@ -66,6 +66,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     );
 
     return TextFormField(
+        controller: widget.controller,
         style: const TextStyle(color: Colors.white),
         cursorColor: POINT_COLOR,
         //비밀번호 입력할때
@@ -95,7 +96,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               color: POINT_COLOR,
             ),
           ),
-          labelText: focusNode.hasFocus || !widget.hasContent
+          labelText: focusNode.hasFocus || widget.controller.text.isEmpty
               ? widget.fullLabelText
               : widget.labelText,
           labelStyle: TextStyle(

@@ -19,8 +19,17 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _idTextController = TextEditingController();
+  final _passwordTextController = TextEditingController();
   String email = '';
   String password = '';
+
+  @override
+  void dispose() {
+    _idTextController.dispose();
+    _passwordTextController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +74,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(
                   height: 36,
                 ),
-                _renderMidView(email, password, ref, state),
+                _renderMidView(
+                  email,
+                  password,
+                  ref,
+                  state,
+                  _idTextController,
+                  _passwordTextController,
+                ),
                 KeyboardVisibilityBuilder(
                   builder: (p0, isKeyboardVisible) {
                     return SizedBox(
@@ -83,15 +99,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Column _renderMidView(
-      String email, String password, WidgetRef ref, UserModelBase? state) {
+      String email,
+      String password,
+      WidgetRef ref,
+      UserModelBase? state,
+      TextEditingController idTextcontroller,
+      TextEditingController passwordTextcontroller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         CustomTextFormField(
+          controller: idTextcontroller,
           fullLabelText: '이메일을 입력해주세요',
           labelText: '이메일',
           autoFocus: false,
-          hasContent: email.isNotEmpty,
           onChanged: (value) {
             email = value;
           },
@@ -100,11 +121,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           height: 12,
         ),
         CustomTextFormField(
+          controller: passwordTextcontroller,
           fullLabelText: '비밀번호를 입력해주세요',
           labelText: '비밀번호',
           autoFocus: false,
           obscureText: true,
-          hasContent: password.isNotEmpty,
           onChanged: (value) {
             password = value;
           },

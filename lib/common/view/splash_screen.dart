@@ -13,7 +13,7 @@ class SplashScreen extends StatelessWidget {
       decoration: const BoxDecoration(
         image: DecorationImage(
             image: AssetImage("asset/img/couple-training-together-gym2.png"),
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
             opacity: 0.4),
       ),
       child: const Scaffold(

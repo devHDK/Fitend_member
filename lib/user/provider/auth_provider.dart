@@ -54,10 +54,12 @@ class AuthProvider extends ChangeNotifier {
   Future<String?> redirectLogic(
       BuildContext context, GoRouterState state) async {
     final UserModelBase? user = ref.read(userMeProvider);
-    final loginIn = state.location == '/splash/login';
+
+    print(state.location);
+    final loginIn = state.location == '/splash';
 
     if (user == null) {
-      return loginIn ? null : '/splash/login';
+      return loginIn ? null : '/splash';
     }
 
     //user != null
@@ -66,6 +68,7 @@ class AuthProvider extends ChangeNotifier {
     //로그인 중이거나 현재 위치가 onboardScreen이면 홈으로 이동
     if (user is UserModel) {
       print('user : userModel');
+      print('loginIn : $loginIn');
       return loginIn || state.location == '/onboard' ? '/schedule' : null;
     }
 

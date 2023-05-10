@@ -33,17 +33,17 @@ android {
     productFlavors {
         local {
             dimension "flavor-type"
-            applicationId "com.example.fitend.local"
+            applicationId "com.raid.fitend.local"
             resValue "string", "app_name", "fitend_local"
         }
         development {
             dimension "flavor-type"
-            applicationId "com.example.fitend.dev"
+            applicationId "com.raid.fitend.dev"
             resValue "string", "app_name", "fitend_dev"
         }
         production {
             dimension "flavor-type"
-            applicationId "com.example.fitend"
+            applicationId "com.raid.fitend"
             resValue "string", "app_name", "fitend"
         }
     }
@@ -67,7 +67,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.fitend_member"
+        applicationId "com.raid.fitend_member"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 18

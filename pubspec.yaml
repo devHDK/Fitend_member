@@ -125,29 +125,29 @@ flavorizr:
         name: "fitend_local"
 
       android:
-        applicationId: "com.example.fitend.local"
+        applicationId: "com.raid.fitend.local"
 
       ios:
-        bundleId: "com.example.fitend.local"
+        bundleId: "com.raid.fitend.local"
 
     development:
       app:
         name: "fitend_dev"
 
       android:
-        applicationId: "com.example.fitend.dev"
+        applicationId: "com.raid.fitend.dev"
 
       ios:
-        bundleId: "com.example.fitend.dev"
+        bundleId: "com.raid.fitend.dev"
 
     production:
       app:
         name: "fitend"
 
       android:
-        applicationId: "com.example.fitend"
+        applicationId: "com.raid.fitend"
       ios:
-        bundleId: "com.example.fitend"
+        bundleId: "com.raid.fitend"
 
 
 flutter_native_splash:

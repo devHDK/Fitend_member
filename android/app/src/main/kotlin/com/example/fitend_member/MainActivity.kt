@@ -1,4 +1,4 @@
-package com.example.fitend_member
+package com.raid.fitend_member
 
 import io.flutter.embedding.android.FlutterActivity
 

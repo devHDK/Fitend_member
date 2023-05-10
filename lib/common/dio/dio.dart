@@ -32,17 +32,6 @@ final dioProvider = Provider(
           storage: storage,
           ref: ref,
         ),
-        RetryInterceptor(
-          dio: Dio(),
-          logPrint: print,
-          retries: 5,
-          retryDelays: const [
-            Duration(seconds: 3),
-            Duration(seconds: 3),
-            Duration(seconds: 3),
-          ],
-          retryableExtraStatuses: {status400BadRequest},
-        ),
         PrettyDioLogger(
             requestHeader: true,
             requestBody: true,
@@ -104,6 +93,40 @@ class CustomInterceptor extends Interceptor {
 // 3)에러가 났을때
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
+    if (_shouldRetry(err)) {
+      try {
+        final dio = Dio();
+        dio.interceptors.addAll(
+          [
+            RetryInterceptor(
+              dio: dio,
+              logPrint: print,
+              retries: 3,
+              retryDelays: const [
+                Duration(seconds: 5),
+                Duration(seconds: 7),
+                Duration(seconds: 10),
+              ],
+            ),
+            PrettyDioLogger(
+                requestHeader: true,
+                requestBody: true,
+                responseBody: true,
+                responseHeader: false,
+                error: true,
+                compact: true,
+                maxWidth: 90)
+          ],
+        );
+
+        final response = await dio.fetch(err.requestOptions);
+
+        return handler.resolve(response);
+      } on DioError catch (e) {
+        return handler.reject(e);
+      }
+    }
+
     //401에러 (status code)
     //토큰을 재발급 받는 시도를 하고 토큰이 재발급 되면
     // 다시 새로운 토큰을 요청한다.
@@ -156,7 +179,6 @@ class CustomInterceptor extends Interceptor {
         return handler.reject(e);
       }
     }
-
     return handler.reject(err);
   }
 }

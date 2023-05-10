@@ -71,13 +71,11 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
 
       return userResp;
     } on DioError catch (e) {
-      print(e.error);
-
       if (e.response != null) {
         if (e.response!.statusCode != null) {
           if (e.response!.statusCode! == 400) {
             state = UserModelError(
-              error: '이메일을 정확히 입력해주세요',
+              error: '이메일을 입력해주세요',
               statusCode: e.response!.statusCode!,
             );
           } else if (e.response!.statusCode! == 404) {

@@ -150,8 +150,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           );
 
                       if (ret is UserModelError) {
-                        print('state.error : ${ret.error}');
-                        print('state.statusCode : ${ret.statusCode}');
+                        // print('state.error : ${ret.error}');
+                        // print('state.statusCode : ${ret.statusCode}');
 
                         if (!mounted) return;
                         //async 함수 내에서 context사용전 위젯이 마운트되지 않으면

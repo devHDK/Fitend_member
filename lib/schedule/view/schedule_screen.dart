@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
-
   const ScheduleScreen({super.key});
 
   @override
@@ -15,6 +14,28 @@ class ScheduleScreen extends ConsumerStatefulWidget {
 }
 
 class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
+  DateTime today = DateTime.now();
+  List<DateTime> dates = List.generate(
+    14,
+    (index) => DateTime.now()
+        .subtract(const Duration(days: 1))
+        .add(Duration(days: index)),
+  );
+  List<bool> listSelected = [];
+
+  @override
+  void initState() {
+    super.initState();
+    listSelected = List.generate(
+      14,
+      (index) {
+        return dates[index].year == today.year &&
+            dates[index].month == today.month &&
+            dates[index].day == today.day;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,12 +58,25 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       ),
       body: ListView.separated(
         itemBuilder: (context, index) {
-          return ScheduleCard(
-            date: DateTime.now(),
-            title: '이것',
-            result: '저것',
-            type: '이것',
-            selected: true,
+          return InkWell(
+            onTap: () {
+              setState(() {
+                final newListSelected = listSelected.map((e) => false).toList();
+
+                listSelected = newListSelected;
+
+                if (listSelected[index]) return;
+                listSelected[index] = !listSelected[index];
+              });
+            },
+            child: ScheduleCard(
+              date: dates[index],
+              title: '자신감이 넘치는 둔근 만들기🔥',
+              subTitle: '스트렝스 훈련',
+              result: '예스',
+              type: '이것',
+              selected: listSelected[index],
+            ),
           );
         },
         separatorBuilder: (context, index) {
@@ -54,7 +88,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             ),
           );
         },
-        itemCount: 10,
+        itemCount: dates.length,
       ),
     );
   }

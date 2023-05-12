@@ -1,6 +1,15 @@
 import 'dart:io';
-
 import 'package:fitend_member/flavors.dart';
+
+const List<String> weekday = [
+  '월',
+  '화',
+  '수',
+  '목',
+  '금',
+  '토',
+  '일',
+];
 
 const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';
 const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN';

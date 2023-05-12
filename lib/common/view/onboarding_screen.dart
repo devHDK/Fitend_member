@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/layout/default_layout.dart';
+import 'package:fitend_member/flavors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -22,23 +23,28 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   Widget build(BuildContext context) {
     return DefaultLayout(
       backgroundColor: BACKGROUND_COLOR,
-      child: Center(
-        child: AnimatedTextKit(
-          animatedTexts: [
-            ColorizeAnimatedText('F I T E N D',
-                textStyle: GoogleFonts.audiowide(
-                    fontSize: 45,
-                    // color: POINT_COLOR,
-                    fontWeight: FontWeight.w500),
-                colors: [
-                  POINT_COLOR,
-                  POINT_COLOR,
-                  Colors.white,
-                ],
-                speed: const Duration(milliseconds: 300),
-                textDirection: TextDirection.rtl),
-          ],
+      child: _flavorBanner(
+        child: Center(
+          child: AnimatedTextKit(
+            animatedTexts: [
+              ColorizeAnimatedText('F I T E N D',
+                  textStyle: GoogleFonts.audiowide(
+                      fontSize: 45,
+                      // color: POINT_COLOR,
+                      fontWeight: FontWeight.w500),
+                  colors: [
+                    POINT_COLOR,
+                    POINT_COLOR,
+                    Colors.white,
+                  ],
+                  speed: const Duration(milliseconds: 300),
+                  textDirection: TextDirection.rtl),
+            ],
+          ),
         ),
+        show: F.appFlavor == Flavor.development || F.appFlavor == Flavor.local
+            ? true
+            : false,
       ),
     );
   }
@@ -49,3 +55,23 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     });
   }
 }
+
+Widget _flavorBanner({
+  required Widget child,
+  bool show = true,
+}) =>
+    show
+        ? Banner(
+            location: BannerLocation.topStart,
+            message: F.name,
+            color: Colors.green.withOpacity(0.6),
+            textStyle: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 12.0,
+                letterSpacing: 1.0),
+            textDirection: TextDirection.ltr,
+            child: child,
+          )
+        : Container(
+            child: child,
+          );

@@ -46,6 +46,7 @@ dependencies:
   video_player: ^2.6.1
   flutter_secure_storage: ^8.0.0
   pretty_dio_logger: ^1.3.1
+  rive: ^0.10.4
   
   change_app_package_name: ^1.1.0
   path_provider: ^2.0.14
@@ -93,6 +94,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - asset/img/
+    - asset/rive/
 
   
   fonts:

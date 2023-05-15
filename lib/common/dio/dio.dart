@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/dio/dio_retry.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/flavors.dart';
 import 'package:fitend_member/user/provider/user_me_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 final dioProvider = Provider(
@@ -95,31 +95,9 @@ class CustomInterceptor extends Interceptor {
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     if (_shouldRetry(err)) {
       try {
-        final dio = Dio();
-        dio.interceptors.addAll(
-          [
-            RetryInterceptor(
-              dio: dio,
-              logPrint: print,
-              retries: 3,
-              retryDelays: const [
-                Duration(seconds: 5),
-                Duration(seconds: 7),
-                Duration(seconds: 10),
-              ],
-            ),
-            PrettyDioLogger(
-                requestHeader: true,
-                requestBody: true,
-                responseBody: true,
-                responseHeader: false,
-                error: true,
-                compact: true,
-                maxWidth: 90)
-          ],
-        );
+        final dioRtry = ref.read(dioRetryProvider);
 
-        final response = await dio.fetch(err.requestOptions);
+        final response = await dioRtry.fetch(err.requestOptions);
 
         return handler.resolve(response);
       } on DioError catch (e) {
@@ -147,9 +125,10 @@ class CustomInterceptor extends Interceptor {
 
     if (isStatus401 && !isPathRefresh) {
       try {
-        final dio = Dio();
-        final resp = await dio.post(
-          'auth/refresh',
+        final dioRetry = ref.read(dioRetryProvider);
+
+        final resp = await dioRetry.post(
+          '/auth/refresh',
           data: {
             'accessToken': oldAccessToken,
             'refreshToken': refreshToken,
@@ -167,7 +146,7 @@ class CustomInterceptor extends Interceptor {
         await storage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
 
         //요청 재전송
-        final response = await dio.fetch(options);
+        final response = await dioRetry.fetch(options);
 
         //성공
         return handler.resolve(response);

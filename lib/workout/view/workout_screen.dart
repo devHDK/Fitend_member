@@ -21,6 +21,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
             onPressed: () => Navigator.pop(context),
             icon: const Icon(Icons.arrow_back)),

@@ -1,4 +1,5 @@
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:flutter/material.dart';
 
 class WorkoutScreen extends StatefulWidget {
@@ -105,6 +106,17 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     )
                   ],
                 ),
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 28),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => WorkoutCard(
+                  count: index + 1,
+                ),
+                childCount: 10,
               ),
             ),
           )

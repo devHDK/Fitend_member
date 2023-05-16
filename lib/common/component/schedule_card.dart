@@ -1,6 +1,8 @@
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/workout/view/workout_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ScheduleCard extends StatelessWidget {
   final DateTime date;
@@ -134,7 +136,9 @@ class ScheduleCard extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: POINT_COLOR,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          context.goNamed(WorkoutScreen.routeName);
+                        },
                         child: const Text(
                           '운동확인 하기🔍',
                           style: TextStyle(

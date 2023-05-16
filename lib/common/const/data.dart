@@ -15,10 +15,10 @@ const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';
 const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN';
 
 final buildEnv = F.appFlavor == Flavor.local
-    ? "local"
+    ? Flavor.local.name
     : F.appFlavor == Flavor.development
-        ? "development"
-        : "production";
+        ? Flavor.development.name
+        : Flavor.production.name;
 
 const emulatorIp = 'http://10.0.2.2:4000/api/mobile';
 const simulatorIp = 'http://127.0.0.1:4000/api/mobile';

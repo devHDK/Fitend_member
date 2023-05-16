@@ -2,6 +2,7 @@ import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -68,11 +69,7 @@ class _BottomView extends StatelessWidget {
                   backgroundColor: POINT_COLOR,
                 ),
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  );
+                  context.goNamed(LoginScreen.routeName);
                 },
                 child: const Text(
                   '시작하기',

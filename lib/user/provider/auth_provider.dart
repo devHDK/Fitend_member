@@ -4,6 +4,7 @@ import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/user_me_provider.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
+import 'package:fitend_member/workout/view/workout_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -48,6 +49,13 @@ class AuthProvider extends ChangeNotifier {
           path: '/schedule',
           name: ScheduleScreen.routeName,
           builder: (context, state) => const ScheduleScreen(),
+          routes: [
+            GoRoute(
+              path: 'workout',
+              name: WorkoutScreen.routeName,
+              builder: (context, state) => const WorkoutScreen(),
+            ),
+          ],
         ),
       ];
 
@@ -56,10 +64,10 @@ class AuthProvider extends ChangeNotifier {
     final UserModelBase? user = ref.read(userMeProvider);
 
     print(state.location);
-    final loginIn = state.location == '/splash';
+    final loginIn = state.location == '/splash/login';
 
     if (user == null) {
-      return loginIn ? null : '/splash';
+      return loginIn ? null : '/splash/login';
     }
 
     //user != null

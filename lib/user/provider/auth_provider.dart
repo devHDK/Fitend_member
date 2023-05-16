@@ -1,5 +1,6 @@
 import 'package:fitend_member/common/view/onboarding_screen.dart';
 import 'package:fitend_member/common/view/splash_screen.dart';
+import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/user_me_provider.dart';
@@ -54,6 +55,13 @@ class AuthProvider extends ChangeNotifier {
               path: 'workout',
               name: WorkoutScreen.routeName,
               builder: (context, state) => const WorkoutScreen(),
+              routes: [
+                GoRoute(
+                  path: 'exercise',
+                  name: ExerciseScreen.routeName,
+                  builder: (context, state) => const ExerciseScreen(),
+                ),
+              ],
             ),
           ],
         ),

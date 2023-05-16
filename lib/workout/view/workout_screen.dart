@@ -1,6 +1,9 @@
+import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class WorkoutScreen extends StatefulWidget {
   static String get routeName => 'workout';
@@ -32,95 +35,49 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       ),
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('asset/img/schedule_image_pt.png'),
-                  fit: BoxFit.fill,
-                  opacity: 0.4,
-                ),
-              ),
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '자신감이 넘치는 둔근 만들기🔥',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    const Text(
-                      '기초 코어 기르기',
-                      style: TextStyle(
-                        color: BODY_TEXT_COLOR,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const Divider(
-                      thickness: 1,
-                      color: BODY_TEXT_COLOR,
-                    ),
-                    const SizedBox(
-                      height: 19,
-                    ),
-                    Row(
-                      children: [
-                        const Text(
-                          '총 4개의 운동',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const Expanded(
-                          child: SizedBox(),
-                        ),
-                        Image.asset(
-                          'asset/img/timer.png',
-                          width: 14,
-                        ),
-                        const Text(
-                          '1시간 10분',
-                          style: TextStyle(
-                            color: BODY_TEXT_COLOR,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
+          const SliverToBoxAdapter(
+            child: WorkoutBanner(),
           ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 28),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, index) => WorkoutCard(
-                  count: index + 1,
-                ),
+                (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      context.goNamed(ExerciseScreen.routeName);
+                    },
+                    child: WorkoutCard(
+                      count: index + 1,
+                    ),
+                  );
+                },
                 childCount: 10,
               ),
             ),
+          ),
+          const SliverToBoxAdapter(
+            child: SizedBox(
+              height: 100,
+            ),
           )
         ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 28),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: 45,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: POINT_COLOR),
+            onPressed: () {},
+            child: const Text('운동 시작하기💪'),
+          ),
+        ),
       ),
     );
   }

@@ -1,12 +1,15 @@
+import 'package:fitend_member/common/const/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class CustomVideoPlayer extends StatefulWidget {
-  final String url;
+  final String firstUrl;
+  final String secondUrl;
 
   const CustomVideoPlayer({
     super.key,
-    required this.url,
+    required this.firstUrl,
+    required this.secondUrl,
   });
 
   @override
@@ -14,21 +17,25 @@ class CustomVideoPlayer extends StatefulWidget {
 }
 
 class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
-  VideoPlayerController? videoController;
+  VideoPlayerController? firstVideoController;
+  VideoPlayerController? secondVideoController;
   Duration currentPosition = const Duration();
   bool showControlls = false;
+  bool isPlayingFirstUrl = true;
+  double doubleSpeed = 1.0;
 
   @override
   void initState() {
     super.initState();
 
     initializeController();
-    videoController!.play();
+    firstVideoController!.play();
   }
 
   @override
   void dispose() {
-    videoController!.dispose();
+    firstVideoController!.dispose();
+    secondVideoController!.dispose();
     super.dispose();
   }
 
@@ -36,24 +43,35 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   void didUpdateWidget(covariant CustomVideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.url != widget.url) {
+    if (oldWidget.firstUrl != widget.firstUrl) {
       initializeController();
     }
   }
 
   void initializeController() async {
     currentPosition = const Duration();
-    videoController = VideoPlayerController.network(
-      widget.url,
+    firstVideoController = VideoPlayerController.network(
+      widget.firstUrl,
     );
-    await videoController!.initialize();
-    videoController!.setLooping(true);
-    videoController!.setVolume(0.0);
+    secondVideoController = VideoPlayerController.network(
+      widget.secondUrl,
+    );
+
+    await Future.wait([
+      firstVideoController!.initialize(),
+      secondVideoController!.initialize(),
+    ]);
+
+    firstVideoController!.setLooping(true);
+    secondVideoController!.setLooping(true);
+
+    firstVideoController!.setVolume(0.0);
+    secondVideoController!.setVolume(0.0);
 
     // slider 변경
-    videoController!.addListener(
+    firstVideoController!.addListener(
       () {
-        final currentPosition = videoController!.value.position;
+        final currentPosition = firstVideoController!.value.position;
         setState(() {
           this.currentPosition = currentPosition;
         });
@@ -65,12 +83,12 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    if (videoController == null) {
+    if (firstVideoController == null) {
       return const CircularProgressIndicator();
     }
 
     return AspectRatio(
-      aspectRatio: videoController!.value.aspectRatio,
+      aspectRatio: firstVideoController!.value.aspectRatio,
       child: GestureDetector(
         onTap: () {
           setState(() {
@@ -79,21 +97,127 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
         },
         child: Stack(
           children: [
-            VideoPlayer(
-              videoController!,
+            AnimatedOpacity(
+              opacity: isPlayingFirstUrl ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 500),
+              child: VideoPlayer(
+                firstVideoController!,
+              ),
+            ),
+            AnimatedOpacity(
+              opacity: !isPlayingFirstUrl ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 500),
+              child: VideoPlayer(
+                secondVideoController!,
+              ),
             ),
             if (showControlls)
-              _Controls(
-                onForwarPressed: onForwarPressed,
-                onPlayPressed: onPlayPressed,
-                onReversePressed: onReversePressed,
-                isPlaying: videoController!.value.isPlaying,
+              Positioned(
+                left: 28,
+                bottom: 10,
+                child: SizedBox(
+                  height: 190,
+                  width: 48,
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isPlayingFirstUrl = true;
+                            secondVideoController!.pause();
+                            firstVideoController!.play();
+                            print(
+                                'first video: ${firstVideoController!.value.isPlaying}');
+                          });
+                        },
+                        child: Container(
+                            height: 85,
+                            width: 48,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              color: isPlayingFirstUrl ? POINT_COLOR : null,
+                            ),
+                            child: const Placeholder(
+                              color: POINT_COLOR,
+                            )),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isPlayingFirstUrl = false;
+                            firstVideoController!.pause();
+                            secondVideoController!.play();
+                          });
+                          print(
+                              'second video: ${secondVideoController!.value.isPlaying}');
+                        },
+                        child: Container(
+                            height: 85,
+                            width: 48,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              color: !isPlayingFirstUrl ? POINT_COLOR : null,
+                            ),
+                            child: const Placeholder(
+                              color: POINT_COLOR,
+                            )),
+                      ),
+                    ],
+                  ),
+                ),
               ),
+
             if (showControlls)
-              _Slider(
-                  currentPosition: currentPosition,
-                  maxPpsition: videoController!.value.duration,
-                  onSlideChanged: onSlideChanged)
+              Positioned(
+                right: 28,
+                bottom: 10,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(7),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: DARK_GRAY_COLOR,
+                    ),
+                    onPressed: () {
+                      setState(
+                        () {
+                          if (doubleSpeed == 1.0) {
+                            doubleSpeed = 0.5;
+                          } else if (doubleSpeed == 0.5) {
+                            doubleSpeed = 2.0;
+                          } else if (doubleSpeed == 2.0) {
+                            doubleSpeed = 1.0;
+                          }
+                          firstVideoController!.setPlaybackSpeed(doubleSpeed);
+                          secondVideoController!.setPlaybackSpeed(doubleSpeed);
+                        },
+                      );
+                    },
+                    child: Text(
+                      'X $doubleSpeed',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+
+            // if (showControlls)
+            //   _Controls(
+            //     onForwarPressed: onForwarPressed,
+            //     onPlayPressed: onPlayPressed,
+            //     onReversePressed: onReversePressed,
+            //     isPlaying: videoController!.value.isPlaying,
+            //   ),
+            // if (showControlls)
+            //   _Slider(
+            //       currentPosition: currentPosition,
+            //       maxPpsition: videoController!.value.duration,
+            //       onSlideChanged: onSlideChanged)
           ],
         ),
       ),
@@ -104,38 +228,38 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
     //실행중이면 정지
     //실행중이 아니면 실행
     setState(() {
-      if (videoController!.value.isPlaying) {
-        videoController!.pause();
+      if (firstVideoController!.value.isPlaying) {
+        firstVideoController!.pause();
       } else {
-        videoController!.play();
+        firstVideoController!.play();
       }
     });
   }
 
   void onForwarPressed() {
-    final maxPosition = videoController!.value.duration;
-    final currentPosition = videoController!.value.position;
+    final maxPosition = firstVideoController!.value.duration;
+    final currentPosition = firstVideoController!.value.position;
     Duration position = const Duration();
     if ((maxPosition.inSeconds - const Duration(seconds: 3).inSeconds) >
         currentPosition.inSeconds) {
       position = currentPosition + const Duration(seconds: 3);
     }
 
-    videoController!.seekTo(position);
+    firstVideoController!.seekTo(position);
   }
 
   void onReversePressed() {
-    final currentPosition = videoController!.value.position;
+    final currentPosition = firstVideoController!.value.position;
     Duration position = const Duration();
     if (currentPosition.inSeconds > 3) {
       position = currentPosition - const Duration(seconds: 3);
     }
 
-    videoController!.seekTo(position);
+    firstVideoController!.seekTo(position);
   }
 
   void onSlideChanged(double value) {
-    videoController!.seekTo(Duration(seconds: value.toInt()));
+    firstVideoController!.seekTo(Duration(seconds: value.toInt()));
   }
 }
 

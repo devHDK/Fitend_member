@@ -12,9 +12,25 @@ class ExerciseScreen extends StatefulWidget {
 }
 
 class _ExerciseScreenState extends State<ExerciseScreen> {
+  final ScrollController _scrollController = ScrollController();
+  double _scrollOffset = 0.0;
+
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    setState(() {
+      _scrollOffset = _scrollController.offset;
+    });
   }
 
   @override
@@ -22,14 +38,18 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor:
+            _scrollOffset <= 5.0 ? Colors.transparent : BACKGROUND_COLOR,
+        elevation: _scrollOffset <= 5.0 ? 0.0 : 1.0,
         leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back)),
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back),
+          color: _scrollOffset <= 5.0 ? Colors.black : Colors.white,
+        ),
       ),
       extendBodyBehindAppBar: true,
       body: CustomScrollView(
+        controller: _scrollController,
         slivers: [
           SliverToBoxAdapter(
             child: FittedBox(
@@ -38,8 +58,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 width: MediaQuery.of(context).size.width,
                 height: 660,
                 child: const CustomVideoPlayer(
-                  url:
+                  firstUrl:
                       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                  secondUrl:
+                      'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
                 ),
               ),
             ),

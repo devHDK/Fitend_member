@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/view/error_screen.dart';
 import 'package:fitend_member/common/view/onboarding_screen.dart';
 import 'package:fitend_member/common/view/splash_screen.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
@@ -65,13 +66,17 @@ class AuthProvider extends ChangeNotifier {
             ),
           ],
         ),
+        GoRoute(
+          path: '/error',
+          name: ErrorScreen.routeName,
+          builder: (context, state) => const ErrorScreen(),
+        ),
       ];
 
   Future<String?> redirectLogic(
       BuildContext context, GoRouterState state) async {
     final UserModelBase? user = ref.read(userMeProvider);
 
-    print(state.location);
     final loginIn = state.location == '/splash/login';
 
     if (user == null) {
@@ -83,14 +88,14 @@ class AuthProvider extends ChangeNotifier {
     //UserModel
     //로그인 중이거나 현재 위치가 onboardScreen이면 홈으로 이동
     if (user is UserModel) {
-      print('user : userModel');
-      print('loginIn : $loginIn');
       return loginIn || state.location == '/onboard' ? '/schedule' : null;
     }
 
     // getMe Error...
     if (user is UserModelError) {
-      return loginIn ? '/splash/login' : null;
+      print(loginIn);
+
+      return loginIn && user.statusCode != 504 ? '/splash/login' : '/error';
     }
 
     return null;

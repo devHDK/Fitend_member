@@ -38,7 +38,7 @@ class AuthRepository {
 
   Future<TokenResponse> token() async {
     final response = await dio.post(
-      'auth/refresh',
+      '/auth/refresh',
       options: Options(
         headers: {
           'accessToken': 'true',

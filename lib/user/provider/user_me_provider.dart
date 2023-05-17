@@ -41,9 +41,15 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
       return;
     }
 
-    final response = await repository.getMe();
-
-    state = response;
+    try {
+      final response = await repository.getMe();
+      state = response;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.unknown) {
+        print('!!!server connection error!!!');
+        state = UserModelError(error: 'connection error', statusCode: 504);
+      }
+    }
   }
 
   Future<UserModelBase> login({

@@ -43,10 +43,12 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
 
   void initializeController() async {
     currentPosition = const Duration();
-    print(widget.url);
     videoController = VideoPlayerController.network(
-        'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4');
+      widget.url,
+    );
     await videoController!.initialize();
+    videoController!.setLooping(true);
+    videoController!.setVolume(0.0);
 
     // slider 변경
     videoController!.addListener(

@@ -1,28 +1,42 @@
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/workout/view/workout_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ScheduleCard extends StatelessWidget {
-  final DateTime date;
+  final DateTime? date;
   final String title;
   final String? subTitle;
   final String? time;
-  final String result;
+  final bool isComplete;
   final String type;
   final bool selected;
 
   const ScheduleCard({
     super.key,
-    required this.date,
+    this.date,
     required this.title,
     this.subTitle,
     this.time,
-    required this.result,
+    required this.isComplete,
     required this.type,
     required this.selected,
   });
+
+  factory ScheduleCard.fromModel({
+    DateTime? date,
+    required bool selected,
+    required Workout model,
+  }) {
+    return ScheduleCard(
+        date: date,
+        title: model.title,
+        isComplete: model.isComplete,
+        type: '',
+        selected: selected);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,25 +77,27 @@ class ScheduleCard extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        Text(
-                          weekday[date.weekday - 1],
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
+                        if (date != null)
+                          Text(
+                            weekday[date!.weekday - 1],
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
                         const SizedBox(
                           height: 5,
                         ),
-                        Text(
-                          date.day.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
+                        if (date != null)
+                          Text(
+                            date!.day.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -133,19 +149,20 @@ class ScheduleCard extends StatelessWidget {
                     width: 319,
                     height: 44,
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: POINT_COLOR,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: POINT_COLOR,
+                      ),
+                      onPressed: () {
+                        context.goNamed(WorkoutScreen.routeName);
+                      },
+                      child: const Text(
+                        '운동확인 하기🔍',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
                         ),
-                        onPressed: () {
-                          context.goNamed(WorkoutScreen.routeName);
-                        },
-                        child: const Text(
-                          '운동확인 하기🔍',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )),
+                      ),
+                    ),
                   )
                 ],
               )

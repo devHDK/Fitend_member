@@ -17,9 +17,10 @@ class ScheduleScreen extends ConsumerStatefulWidget {
 
 class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   DateTime today = DateTime.now();
+  DateTime yesterDay = DateTime.now().subtract(const Duration(days: 1));
 
   List<DateTime> dates = List.generate(
-    14,
+    31,
     (index) => DateTime.now()
         .subtract(const Duration(days: 1))
         .add(Duration(days: index)),
@@ -33,15 +34,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     final state =
         ref.read(workoutScheduleRepositoryProvider).getWorkoutSchedule(
               startDate: WorkoutSchedulePagenateParams(
-                startDate: today.subtract(
-                  const Duration(days: 5),
-                ),
+                startDate: yesterDay,
               ),
             );
     print(state);
 
     listSelected = List.generate(
-      14,
+      31,
       (index) {
         return dates[index].year == today.year &&
             dates[index].month == today.month &&
@@ -87,7 +86,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
               date: dates[index],
               title: '자신감이 넘치는 둔근 만들기🔥',
               subTitle: '스트렝스 훈련',
-              result: '예스',
+              isComplete: true,
               type: '이것',
               selected: listSelected[index],
             ),

@@ -1,11 +1,12 @@
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/component/schedule_card.dart';
 import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/schedule/model/workout_schedule_pagenate_params.dart';
-import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
+import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
 import 'package:fitend_member/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:collection/collection.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
@@ -19,38 +20,24 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   DateTime today = DateTime.now();
   DateTime yesterDay = DateTime.now().subtract(const Duration(days: 1));
 
-  List<DateTime> dates = List.generate(
-    31,
-    (index) => DateTime.now()
-        .subtract(const Duration(days: 1))
-        .add(Duration(days: index)),
-  );
-  List<bool> listSelected = [];
-
   @override
   void initState() {
     super.initState();
-
-    final state =
-        ref.read(workoutScheduleRepositoryProvider).getWorkoutSchedule(
-              startDate: WorkoutSchedulePagenateParams(
-                startDate: yesterDay,
-              ),
-            );
-    print(state);
-
-    listSelected = List.generate(
-      31,
-      (index) {
-        return dates[index].year == today.year &&
-            dates[index].month == today.month &&
-            dates[index].day == today.day;
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(workoutScheduleProvider(yesterDay));
+
+    if (state is WorkoutScheduleModelLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    final scheduleList = state as WorkoutScheduleModel;
+    final workoutData = scheduleList.data as List<WorkoutData>;
+
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: LogoAppbar(
@@ -69,39 +56,52 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           )
         ],
       ),
-      body: ListView.separated(
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              setState(() {
-                final newListSelected = listSelected.map((e) => false).toList();
+      body: ListView.builder(
+        itemBuilder: <WorkoutScheduleModel>(context, index) {
+          final model = workoutData[index].workouts;
 
-                listSelected = newListSelected;
+          if (model!.isEmpty) {
+            return ScheduleCard(
+              date: workoutData[index].startDate,
+              selected: false,
+              isComplete: null,
+            );
+          }
 
-                if (listSelected[index]) return;
-                listSelected[index] = !listSelected[index];
-              });
-            },
-            child: ScheduleCard(
-              date: dates[index],
-              title: '자신감이 넘치는 둔근 만들기🔥',
-              subTitle: '스트렝스 훈련',
-              isComplete: true,
-              type: '이것',
-              selected: listSelected[index],
-            ),
-          );
+          if (model.isNotEmpty) {
+            return Column(
+              children: model.mapIndexed(
+                (seq, e) {
+                  return InkWell(
+                    onTap: () {
+                      if (model[seq].selected!) {
+                        return;
+                      }
+
+                      setState(
+                        () {
+                          for (var e in workoutData) {
+                            for (var element in e.workouts!) {
+                              element.selected = false;
+                            }
+                          }
+
+                          model![seq].selected = true;
+                        },
+                      );
+                    },
+                    child: ScheduleCard.fromModel(
+                      model: e,
+                      date: workoutData[index].startDate,
+                      isDateVisibel: seq == 0 ? true : false,
+                    ),
+                  );
+                },
+              ).toList(),
+            );
+          }
         },
-        separatorBuilder: (context, index) {
-          return const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 28),
-            child: Divider(
-              color: DARK_GRAY_COLOR,
-              height: 1,
-            ),
-          );
-        },
-        itemCount: dates.length,
+        itemCount: workoutData.length,
       ),
     );
   }

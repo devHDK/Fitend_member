@@ -23,6 +23,6 @@ abstract class WorkoutScheduleRepository {
     'accessToken': 'true',
   })
   Future<WorkoutScheduleModel> getWorkoutSchedule({
-    @Queries() required WorkoutSchedulePagenateParams startDate,
+    @Queries() required WorkoutSchedulePagenateParams params,
   });
 }

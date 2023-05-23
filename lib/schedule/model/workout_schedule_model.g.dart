@@ -10,7 +10,7 @@ WorkoutScheduleModel _$WorkoutScheduleModelFromJson(
         Map<String, dynamic> json) =>
     WorkoutScheduleModel(
       data: (json['data'] as List<dynamic>?)
-          ?.map((e) => Datum.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => WorkoutData.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -20,14 +20,15 @@ Map<String, dynamic> _$WorkoutScheduleModelToJson(
       'data': instance.data,
     };
 
-Datum _$DatumFromJson(Map<String, dynamic> json) => Datum(
+WorkoutData _$WorkoutDataFromJson(Map<String, dynamic> json) => WorkoutData(
       startDate: DateTime.parse(json['startDate'] as String),
-      workouts: (json['workouts'] as List<dynamic>)
-          .map((e) => Workout.fromJson(e as Map<String, dynamic>))
+      workouts: (json['workouts'] as List<dynamic>?)
+          ?.map((e) => Workout.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$DatumToJson(Datum instance) => <String, dynamic>{
+Map<String, dynamic> _$WorkoutDataToJson(WorkoutData instance) =>
+    <String, dynamic>{
       'startDate': instance.startDate.toIso8601String(),
       'workouts': instance.workouts,
     };
@@ -38,6 +39,7 @@ Workout _$WorkoutFromJson(Map<String, dynamic> json) => Workout(
       subTitle: json['subTitle'] as String,
       isComplete: json['isComplete'] as bool,
       workoutScheduleId: json['workoutScheduleId'] as int,
+      selected: json['selected'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$WorkoutToJson(Workout instance) => <String, dynamic>{
@@ -46,4 +48,5 @@ Map<String, dynamic> _$WorkoutToJson(Workout instance) => <String, dynamic>{
       'subTitle': instance.subTitle,
       'isComplete': instance.isComplete,
       'workoutScheduleId': instance.workoutScheduleId,
+      'selected': instance.selected,
     };

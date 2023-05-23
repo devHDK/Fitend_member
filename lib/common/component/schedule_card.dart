@@ -7,41 +7,46 @@ import 'package:go_router/go_router.dart';
 
 class ScheduleCard extends StatelessWidget {
   final DateTime? date;
-  final String title;
+  final String? title;
   final String? subTitle;
   final String? time;
-  final bool isComplete;
-  final String type;
+  final bool? isComplete;
+  final String? type;
   final bool selected;
+  final bool? isDateVisible;
 
   const ScheduleCard({
     super.key,
     this.date,
-    required this.title,
+    this.title,
     this.subTitle,
     this.time,
-    required this.isComplete,
-    required this.type,
+    this.isComplete,
+    this.type,
     required this.selected,
+    this.isDateVisible = true,
   });
 
   factory ScheduleCard.fromModel({
     DateTime? date,
-    required bool selected,
     required Workout model,
+    bool? isDateVisibel,
   }) {
     return ScheduleCard(
-        date: date,
-        title: model.title,
-        isComplete: model.isComplete,
-        type: '',
-        selected: selected);
+      date: date,
+      title: model.title,
+      subTitle: model.subTitle,
+      isComplete: model.isComplete,
+      type: '',
+      selected: model.selected!,
+      isDateVisible: isDateVisibel,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: selected ? 174 : 123,
+      height: selected ? 174 : 130,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         color: Colors.transparent,
@@ -55,15 +60,20 @@ class ScheduleCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            const SizedBox(
+              height: 35,
+            ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: selected ? Colors.white : Colors.transparent,
+                      color: selected && isDateVisible! && date != null
+                          ? Colors.white
+                          : Colors.transparent,
                     ),
                     borderRadius: BorderRadius.circular(10),
                     // image: ,
@@ -80,8 +90,10 @@ class ScheduleCard extends StatelessWidget {
                         if (date != null)
                           Text(
                             weekday[date!.weekday - 1],
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: isDateVisible!
+                                  ? Colors.white
+                                  : Colors.transparent,
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                             ),
@@ -92,8 +104,10 @@ class ScheduleCard extends StatelessWidget {
                         if (date != null)
                           Text(
                             date!.day.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: isDateVisible!
+                                  ? Colors.white
+                                  : Colors.transparent,
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                             ),
@@ -111,7 +125,7 @@ class ScheduleCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        title != null ? title! : '',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -119,7 +133,7 @@ class ScheduleCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(
-                        height: 4,
+                        height: 10,
                       ),
                       Text(
                         subTitle != null ? subTitle! : '',
@@ -132,11 +146,26 @@ class ScheduleCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Icon(
-                  Icons.check_circle_outline,
-                  size: 24,
-                  color: Colors.white,
-                ),
+                if (isComplete == null)
+                  const SizedBox(
+                    width: 24,
+                  )
+                else if (!isComplete! &&
+                    !selected &&
+                    date!.isAfter(DateTime(
+                        DateTime.now().year,
+                        DateTime.now().month,
+                        DateTime.now().day))) //오늘, 오늘 이후 스케줄이 미완료
+                  Image.asset('asset/img/round_checked.png')
+                else if (!isComplete! &&
+                    !selected &&
+                    date!.isBefore(DateTime(
+                        DateTime.now().year,
+                        DateTime.now().month,
+                        DateTime.now().day))) // 어제 스케줄이 미완료
+                  Image.asset('asset/img/round_fail.png')
+                else if (isComplete! && !selected)
+                  Image.asset('asset/img/round_success.png') // 스케줄이 완료 일때
               ],
             ),
             if (selected)
@@ -165,7 +194,15 @@ class ScheduleCard extends StatelessWidget {
                     ),
                   )
                 ],
-              )
+              ),
+            if (!selected)
+              const SizedBox(
+                height: 35,
+              ),
+            const Divider(
+              color: DARK_GRAY_COLOR,
+              height: 1,
+            ),
           ],
         ),
       ),

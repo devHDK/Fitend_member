@@ -1,16 +1,28 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'workout_schedule_model.g.dart';
 
+abstract class WorkoutScheduleModelBase {}
+
+class WorkoutScheduleModelError extends WorkoutScheduleModelBase {
+  final String message;
+
+  WorkoutScheduleModelError({
+    required this.message,
+  });
+}
+
+class WorkoutScheduleModelLoading extends WorkoutScheduleModelBase {}
+
 @JsonSerializable()
-class WorkoutScheduleModel {
-  final List<Datum>? data;
+class WorkoutScheduleModel extends WorkoutScheduleModelBase {
+  final List<WorkoutData>? data;
 
   WorkoutScheduleModel({
     this.data,
   });
 
   WorkoutScheduleModel copyWith({
-    List<Datum>? data,
+    List<WorkoutData>? data,
   }) =>
       WorkoutScheduleModel(
         data: data ?? this.data,
@@ -21,25 +33,27 @@ class WorkoutScheduleModel {
 }
 
 @JsonSerializable()
-class Datum {
+class WorkoutData {
   final DateTime startDate;
-  final List<Workout> workouts;
+  List<Workout>? workouts;
 
-  Datum({
+  WorkoutData({
     required this.startDate,
-    required this.workouts,
+    this.workouts,
   });
 
-  Datum copyWith({
+  WorkoutData copyWith({
     DateTime? startDate,
     List<Workout>? workouts,
+    bool? selected,
   }) =>
-      Datum(
+      WorkoutData(
         startDate: startDate ?? this.startDate,
         workouts: workouts ?? this.workouts,
       );
 
-  factory Datum.fromJson(Map<String, dynamic> json) => _$DatumFromJson(json);
+  factory WorkoutData.fromJson(Map<String, dynamic> json) =>
+      _$WorkoutDataFromJson(json);
 }
 
 @JsonSerializable()
@@ -49,14 +63,15 @@ class Workout {
   final String subTitle;
   final bool isComplete;
   final int workoutScheduleId;
+  bool? selected;
 
-  Workout({
-    required this.seq,
-    required this.title,
-    required this.subTitle,
-    required this.isComplete,
-    required this.workoutScheduleId,
-  });
+  Workout(
+      {required this.seq,
+      required this.title,
+      required this.subTitle,
+      required this.isComplete,
+      required this.workoutScheduleId,
+      this.selected = false});
 
   Workout copyWith({
     int? seq,
@@ -64,6 +79,7 @@ class Workout {
     String? subTitle,
     bool? isComplete,
     int? workoutScheduleId,
+    bool? selected,
   }) =>
       Workout(
         seq: seq ?? this.seq,
@@ -71,6 +87,7 @@ class Workout {
         subTitle: subTitle ?? this.subTitle,
         isComplete: isComplete ?? this.isComplete,
         workoutScheduleId: workoutScheduleId ?? this.workoutScheduleId,
+        selected: selected ?? this.selected,
       );
 
   factory Workout.fromJson(Map<String, dynamic> json) =>

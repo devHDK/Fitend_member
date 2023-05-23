@@ -9,8 +9,8 @@ part of 'workout_schedule_model.dart';
 WorkoutScheduleModel _$WorkoutScheduleModelFromJson(
         Map<String, dynamic> json) =>
     WorkoutScheduleModel(
-      data: (json['data'] as List<dynamic>)
-          .map((e) => Datum.fromJson(e as Map<String, dynamic>))
+      data: (json['data'] as List<dynamic>?)
+          ?.map((e) => Datum.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

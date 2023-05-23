@@ -1,6 +1,8 @@
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/component/schedule_card.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/schedule/model/workout_schedule_pagenate_params.dart';
+import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:fitend_member/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +17,7 @@ class ScheduleScreen extends ConsumerStatefulWidget {
 
 class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   DateTime today = DateTime.now();
+
   List<DateTime> dates = List.generate(
     14,
     (index) => DateTime.now()
@@ -26,6 +29,17 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   @override
   void initState() {
     super.initState();
+
+    final state =
+        ref.read(workoutScheduleRepositoryProvider).getWorkoutSchedule(
+              startDate: WorkoutSchedulePagenateParams(
+                startDate: today.subtract(
+                  const Duration(days: 5),
+                ),
+              ),
+            );
+    print(state);
+
     listSelected = List.generate(
       14,
       (index) {

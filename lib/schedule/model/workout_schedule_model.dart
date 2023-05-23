@@ -3,10 +3,10 @@ part 'workout_schedule_model.g.dart';
 
 @JsonSerializable()
 class WorkoutScheduleModel {
-  final List<Datum> data;
+  final List<Datum>? data;
 
   WorkoutScheduleModel({
-    required this.data,
+    this.data,
   });
 
   WorkoutScheduleModel copyWith({

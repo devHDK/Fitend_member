@@ -30,7 +30,7 @@ class ScheduleCard extends StatelessWidget {
   factory ScheduleCard.fromModel({
     DateTime? date,
     required Workout model,
-    bool? isDateVisibel,
+    bool? isDateVisible,
   }) {
     return ScheduleCard(
       date: date,
@@ -39,14 +39,14 @@ class ScheduleCard extends StatelessWidget {
       isComplete: model.isComplete,
       type: '',
       selected: model.selected!,
-      isDateVisible: isDateVisibel,
+      isDateVisible: isDateVisible,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: selected ? 174 : 130,
+      height: selected ? 175 : 130,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         color: Colors.transparent,
@@ -152,17 +152,23 @@ class ScheduleCard extends StatelessWidget {
                   )
                 else if (!isComplete! &&
                     !selected &&
-                    date!.isAfter(DateTime(
+                    date!.isAfter(
+                      DateTime(
                         DateTime.now().year,
                         DateTime.now().month,
-                        DateTime.now().day))) //오늘, 오늘 이후 스케줄이 미완료
+                        DateTime.now().day,
+                      ),
+                    )) //오늘, 오늘 이후 스케줄이 미완료
                   Image.asset('asset/img/round_checked.png')
                 else if (!isComplete! &&
                     !selected &&
-                    date!.isBefore(DateTime(
+                    date!.isBefore(
+                      DateTime(
                         DateTime.now().year,
                         DateTime.now().month,
-                        DateTime.now().day))) // 어제 스케줄이 미완료
+                        DateTime.now().day,
+                      ),
+                    )) // 어제 스케줄이 미완료
                   Image.asset('asset/img/round_fail.png')
                 else if (isComplete! && !selected)
                   Image.asset('asset/img/round_success.png') // 스케줄이 완료 일때

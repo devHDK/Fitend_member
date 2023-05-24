@@ -17,4 +17,7 @@ class DataUtils {
 
     return encoded;
   }
+
+  static DateTime getDate(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
 }

@@ -32,6 +32,18 @@ class WorkoutScheduleModel extends WorkoutScheduleModelBase {
       _$WorkoutScheduleModelFromJson(json);
 }
 
+class WorkoutScheduleFetchingMore extends WorkoutScheduleModel {
+  WorkoutScheduleFetchingMore({
+    required super.data,
+  });
+}
+
+class WorkoutScheduleRefetching extends WorkoutScheduleModel {
+  WorkoutScheduleRefetching({
+    required super.data,
+  });
+}
+
 @JsonSerializable()
 class WorkoutData {
   final DateTime startDate;

@@ -26,5 +26,6 @@ const simulatorIp = 'http://127.0.0.1:4000/api/mobile';
 final localIp = F.appFlavor == Flavor.local && Platform.isAndroid
     ? emulatorIp
     : simulatorIp;
-const devIp = '';
+
+const devIp = 'https://api-dev.fit-end.com/api/mobile';
 const deployIp = '';

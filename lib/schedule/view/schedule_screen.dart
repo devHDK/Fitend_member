@@ -22,14 +22,28 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   final ScrollController controller = ScrollController();
 
   DateTime today = DateTime.now();
-  DateTime yesterDay = DateTime.now().subtract(const Duration(days: 1));
+  DateTime fifteenDaysAgo = DateTime.now().subtract(const Duration(days: 15));
   DateTime minDate = DateTime(DateTime.now().year);
   DateTime maxDate = DateTime(DateTime.now().year);
+  int initListItemCount = 0;
+  int refetchItemCount = 0;
 
   @override
   void initState() {
     super.initState();
     controller.addListener(listener);
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      controller.jumpTo(
+        130 * 14 + 130.0 * initListItemCount,
+      );
+      refetchItemCount = 0;
+    });
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   controller.animateTo(130 * 14 + 130.0 * listItemCount,
+    //       duration: const Duration(milliseconds: 100), curve: Curves.linear);
+    // });
   }
 
   @override
@@ -40,16 +54,18 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   }
 
   void listener() {
-    final provider = ref
-        .read(workoutScheduleProvider(DataUtils.getDate(yesterDay)).notifier);
+    final provider = ref.read(
+        workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier);
 
-    if (controller.offset < controller.position.minScrollExtent) {
+    if (controller.offset < controller.position.minScrollExtent + 30) {
       //스크롤을 맨위로 올렸을때
       provider.paginate(
           startDate: minDate, fetchMore: true, isUpScrolling: true);
 
       double previousOffset = controller.offset;
-      controller.jumpTo(previousOffset + (130 * 31)); //기존 위치로 이동
+      controller.jumpTo(
+          previousOffset + (130 * 31 + 130 * refetchItemCount)); //기존 위치로 이동
+      refetchItemCount = 0;
     }
 
     if (controller.offset > controller.position.maxScrollExtent - 300) {
@@ -62,11 +78,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     final state =
-        ref.watch(workoutScheduleProvider(DataUtils.getDate(yesterDay)));
+        ref.watch(workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)));
 
     if (state is WorkoutScheduleModelLoading) {
       return const Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: POINT_COLOR,
+        ),
       );
     }
 
@@ -79,6 +97,22 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     minDate = schedules.data![0].startDate.subtract(const Duration(days: 31));
     maxDate = schedules.data![schedules.data!.length - 1].startDate
         .add(const Duration(days: 1));
+
+    for (int i = 0; i < schedules.data!.length; i++) {
+      if (i > 13) {
+        break;
+      }
+
+      if (schedules.data![i].workouts!.length >= 2) {
+        initListItemCount += schedules.data![i].workouts!.length - 1;
+      }
+    }
+
+    for (int i = 0; i < 31; i++) {
+      if (schedules.data![i].workouts!.length >= 2) {
+        refetchItemCount += schedules.data![i].workouts!.length - 1;
+      }
+    }
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -138,7 +172,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                               element.selected = false;
                             }
                           }
-
                           model![seq].selected = true;
                         },
                       );

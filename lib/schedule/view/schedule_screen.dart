@@ -43,7 +43,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     final provider = ref
         .read(workoutScheduleProvider(DataUtils.getDate(yesterDay)).notifier);
 
-    if (controller.offset < controller.position.minScrollExtent + 50) {
+    if (controller.offset < controller.position.minScrollExtent) {
       //스크롤을 맨위로 올렸을때
       provider.paginate(
           startDate: minDate, fetchMore: true, isUpScrolling: true);
@@ -76,7 +76,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
 
     final schedules = state as WorkoutScheduleModel;
 
-    minDate = schedules.data![0].startDate.subtract(const Duration(days: 32));
+    minDate = schedules.data![0].startDate.subtract(const Duration(days: 31));
     maxDate = schedules.data![schedules.data!.length - 1].startDate
         .add(const Duration(days: 1));
 
@@ -110,8 +110,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
               ),
             );
           }
-
-          print('index : $index');
 
           final model = schedules.data![index].workouts;
 

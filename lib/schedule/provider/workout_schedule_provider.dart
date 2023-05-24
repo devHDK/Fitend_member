@@ -106,13 +106,11 @@ class WorkoutScheduleStateNotifier
             ...tempWorkoutList,
             ...pState.data!,
           ]);
-          final x = state as WorkoutScheduleModel;
         } else if (isDownScrolling) {
           state = WorkoutScheduleModel(data: <WorkoutData>[
             ...pState.data!,
             ...tempWorkoutList,
           ]);
-          final x = state as WorkoutScheduleModel;
         }
       } else {
         state = WorkoutScheduleModel(data: tempWorkoutList);

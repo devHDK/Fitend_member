@@ -33,14 +33,15 @@ class WorkoutScheduleStateNotifier
   }) async {
     try {
       final isLoading = state is WorkoutScheduleModelLoading;
+      final isRefetching = state is WorkoutScheduleRefetching;
       final isFetchMore = state is WorkoutScheduleFetchingMore;
 
       print('fetchMore : $fetchMore');
       print('isLoading : $isLoading');
       print('isFetchMore : $isFetchMore');
+      print('isRefetching : $isRefetching');
 
-      if (fetchMore && (isLoading || isFetchMore)) {
-        print('========================= retun!!=========================');
+      if (fetchMore && (isLoading || isFetchMore || isRefetching)) {
         return;
       }
 
@@ -78,48 +79,40 @@ class WorkoutScheduleStateNotifier
       int index = 0;
 
       if (response.data!.isNotEmpty) {
-        tempWorkoutList.map(
-          (e) {
-            if (index == response.data!.length) {
-              return false;
-            }
+        for (var e in tempWorkoutList) {
+          if (index >= response.data!.length) {
+            break;
+          }
 
-            if (e.startDate.year == response.data![index].startDate.year &&
-                e.startDate.month == response.data![index].startDate.month &&
-                e.startDate.day == response.data![index].startDate.day) {
-              e.workouts!.addAll(response.data![index].workouts!);
+          if (e.startDate.year == response.data![index].startDate.year &&
+              e.startDate.month == response.data![index].startDate.month &&
+              e.startDate.day == response.data![index].startDate.day) {
+            e.workouts!.addAll(response.data![index].workouts!);
 
-              if (e.startDate.year == DateTime.now().year &&
-                  e.startDate.month == DateTime.now().month &&
-                  e.startDate.day == DateTime.now().day) {
-                e.workouts![0].selected = true;
-              }
-              index++;
+            if (e.startDate.year == DateTime.now().year &&
+                e.startDate.month == DateTime.now().month &&
+                e.startDate.day == DateTime.now().day) {
+              e.workouts![0].selected = true;
             }
-          },
-        ).toList();
+            index++;
+          }
+        }
       }
 
       if (state is WorkoutScheduleFetchingMore) {
         final pState = state as WorkoutScheduleFetchingMore;
         if (isUpScrolling) {
-          print(
-              '======================upscroll fetching=======================');
-          state = WorkoutScheduleModel(data: [
+          state = WorkoutScheduleModel(data: <WorkoutData>[
             ...tempWorkoutList,
             ...pState.data!,
           ]);
-          print(state);
+          final x = state as WorkoutScheduleModel;
         } else if (isDownScrolling) {
-          print(
-              '======================downscroll fetching=======================');
-          state = response.copyWith(
-            data: [
-              ...pState.data!,
-              ...tempWorkoutList,
-            ],
-          );
-          print(state);
+          state = WorkoutScheduleModel(data: <WorkoutData>[
+            ...pState.data!,
+            ...tempWorkoutList,
+          ]);
+          final x = state as WorkoutScheduleModel;
         }
       } else {
         state = WorkoutScheduleModel(data: tempWorkoutList);

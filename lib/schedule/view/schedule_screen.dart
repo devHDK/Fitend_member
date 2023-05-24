@@ -20,8 +20,6 @@ class ScheduleScreen extends ConsumerStatefulWidget {
 
 class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   final ScrollController controller = ScrollController();
-  StateNotifierProviderFamily<WorkoutScheduleStateNotifier,
-      WorkoutScheduleModelBase, DateTime> provider = workoutScheduleProvider;
 
   DateTime today = DateTime.now();
   DateTime yesterDay = DateTime.now().subtract(const Duration(days: 1));
@@ -42,26 +40,29 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   }
 
   void listener() {
-    print(controller.offset);
+    final provider = ref
+        .read(workoutScheduleProvider(DataUtils.getDate(yesterDay)).notifier);
 
-    if (controller.offset < controller.position.minScrollExtent - 90) {
+    if (controller.offset < controller.position.minScrollExtent + 50) {
       //스크롤을 맨위로 올렸을때
-      ref
-          .read(provider(minDate).notifier)
-          .paginate(startDate: minDate, fetchMore: true, isUpScrolling: true);
+      provider.paginate(
+          startDate: minDate, fetchMore: true, isUpScrolling: true);
+
+      double previousOffset = controller.offset;
+      controller.jumpTo(previousOffset + (130 * 31)); //기존 위치로 이동
     }
 
-    if (controller.offset > controller.position.maxScrollExtent + 90) {
+    if (controller.offset > controller.position.maxScrollExtent - 300) {
       //스크롤을 아래로 내렸을때
-      ref
-          .read(provider(maxDate).notifier)
-          .paginate(startDate: maxDate, fetchMore: true, isDownScrolling: true);
+      provider.paginate(
+          startDate: maxDate, fetchMore: true, isDownScrolling: true);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(provider(DataUtils.getDate(yesterDay)));
+    final state =
+        ref.watch(workoutScheduleProvider(DataUtils.getDate(yesterDay)));
 
     if (state is WorkoutScheduleModelLoading) {
       return const Center(
@@ -73,11 +74,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       return ErrorDialog(error: state.message);
     }
 
-    final scheduleList = state as WorkoutScheduleModel;
-    final workoutData = scheduleList.data as List<WorkoutData>;
+    final schedules = state as WorkoutScheduleModel;
 
-    minDate = workoutData[0].startDate.subtract(const Duration(days: 32));
-    maxDate = workoutData[workoutData.length - 1].startDate;
+    minDate = schedules.data![0].startDate.subtract(const Duration(days: 32));
+    maxDate = schedules.data![schedules.data!.length - 1].startDate
+        .add(const Duration(days: 1));
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -99,12 +100,24 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       ),
       body: ListView.builder(
         controller: controller,
+        itemCount: schedules.data!.length + 1,
         itemBuilder: <WorkoutScheduleModel>(context, index) {
-          final model = workoutData[index].workouts;
+          if (index == schedules.data!.length) {
+            return const SizedBox(
+              height: 100,
+              child: Center(
+                child: CircularProgressIndicator(color: POINT_COLOR),
+              ),
+            );
+          }
+
+          print('index : $index');
+
+          final model = schedules.data![index].workouts;
 
           if (model!.isEmpty) {
             return ScheduleCard(
-              date: workoutData[index].startDate,
+              date: schedules.data![index].startDate,
               selected: false,
               isComplete: null,
             );
@@ -122,7 +135,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
 
                       setState(
                         () {
-                          for (var e in workoutData) {
+                          for (var e in schedules.data!) {
                             for (var element in e.workouts!) {
                               element.selected = false;
                             }
@@ -134,7 +147,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                     },
                     child: ScheduleCard.fromModel(
                       model: e,
-                      date: workoutData[index].startDate,
+                      date: schedules.data![index].startDate,
                       isDateVisible: seq == 0 ? true : false,
                     ),
                   );
@@ -143,7 +156,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             );
           }
         },
-        itemCount: workoutData.length,
       ),
     );
   }

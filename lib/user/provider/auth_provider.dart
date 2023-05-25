@@ -53,9 +53,11 @@ class AuthProvider extends ChangeNotifier {
           builder: (context, state) => const ScheduleScreen(),
           routes: [
             GoRoute(
-              path: 'workout',
+              path: 'workout/:workoutScheduleId',
               name: WorkoutScreen.routeName,
-              builder: (context, state) => const WorkoutScreen(),
+              builder: (context, state) => WorkoutScreen(
+                id: int.parse(state.pathParameters['workoutScheduleId']!),
+              ),
               routes: [
                 GoRoute(
                   path: 'exercise',

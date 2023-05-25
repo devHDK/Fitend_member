@@ -14,6 +14,7 @@ class ScheduleCard extends StatelessWidget {
   final String? type;
   final bool selected;
   final bool? isDateVisible;
+  final int? workoutScheduleId;
 
   const ScheduleCard({
     super.key,
@@ -25,6 +26,7 @@ class ScheduleCard extends StatelessWidget {
     this.type,
     required this.selected,
     this.isDateVisible = true,
+    this.workoutScheduleId,
   });
 
   factory ScheduleCard.fromModel({
@@ -40,6 +42,7 @@ class ScheduleCard extends StatelessWidget {
       type: '',
       selected: model.selected!,
       isDateVisible: isDateVisible,
+      workoutScheduleId: model.workoutScheduleId,
     );
   }
 
@@ -187,9 +190,15 @@ class ScheduleCard extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: POINT_COLOR,
                       ),
-                      onPressed: () {
-                        context.goNamed(WorkoutScreen.routeName);
-                      },
+                      onPressed: workoutScheduleId == null
+                          ? null
+                          : () {
+                              context.goNamed(WorkoutScreen.routeName,
+                                  pathParameters: {
+                                    'workoutScheduleId':
+                                        workoutScheduleId!.toString(),
+                                  });
+                            },
                       child: const Text(
                         '운동확인 하기🔍',
                         style: TextStyle(

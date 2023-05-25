@@ -7,8 +7,12 @@ import 'package:go_router/go_router.dart';
 
 class WorkoutScreen extends StatefulWidget {
   static String get routeName => 'workout';
+  final int id;
 
-  const WorkoutScreen({super.key});
+  const WorkoutScreen({
+    super.key,
+    required this.id,
+  });
 
   @override
   State<WorkoutScreen> createState() => _WorkoutScreenState();

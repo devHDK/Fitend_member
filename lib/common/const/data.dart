@@ -29,3 +29,8 @@ final localIp = F.appFlavor == Flavor.local && Platform.isAndroid
 
 const devIp = 'https://api-dev.fit-end.com/api/mobile';
 const deployIp = '';
+
+//s3URL
+final s3Url = F.appFlavor != Flavor.production
+    ? 'https://d20e02zksul93k.cloudfront.net/'
+    : '';

@@ -1,12 +1,15 @@
+import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:flutter/material.dart';
 
 class WorkoutCard extends StatelessWidget {
-  final int count;
+  final Exercise exercise;
 
   const WorkoutCard({
     super.key,
-    required this.count,
+    required this.exercise,
   });
 
   @override
@@ -16,7 +19,7 @@ class WorkoutCard extends StatelessWidget {
     List<Widget> secondList = [];
 
     List.generate(
-      count,
+      exercise.setInfo.length,
       (index) => countList.add(
         Row(
           children: [
@@ -36,9 +39,9 @@ class WorkoutCard extends StatelessWidget {
       ),
     );
 
-    if (count > 5) {
+    if (exercise.setInfo.length > 5) {
       firstList = countList.sublist(0, 5);
-      secondList = countList.sublist(5, count);
+      secondList = countList.sublist(5, exercise.setInfo.length);
     }
 
     return Container(
@@ -49,66 +52,24 @@ class WorkoutCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _renderImage(),
+          _renderImage(
+            exercise.videos[0].thumbnail,
+            exercise.targetMuscles[0].image,
+          ),
           const SizedBox(
             width: 23,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 52,
-              ),
-              const Text(
-                '로우 머신',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              Text(
-                '$count SET',
-                style: const TextStyle(
-                  color: BODY_TEXT_COLOR,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (count <= 5)
-                    Row(
-                      children: countList.toList(),
-                    ),
-                  if (count > 5)
-                    Row(
-                      children: firstList.toList(),
-                    ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  if (count > 5)
-                    Row(
-                      children: secondList.toList(),
-                    )
-                ],
-              )
-            ],
-          )
+          _RenderBody(
+              exercise: exercise,
+              countList: countList,
+              firstList: firstList,
+              secondList: secondList)
         ],
       ),
     );
   }
 
-  Stack _renderImage() {
+  Stack _renderImage(String thumnail, String muscle) {
     return Stack(
       children: [
         SizedBox(
@@ -116,7 +77,9 @@ class WorkoutCard extends StatelessWidget {
           height: 128,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.asset('asset/img/low_machine.png'),
+            child: CustomNetworkImageWidget(
+              imageUrl: '$s3Url$thumnail',
+            ),
           ),
         ),
         Positioned(
@@ -126,10 +89,101 @@ class WorkoutCard extends StatelessWidget {
             width: 35,
             height: 35,
             child: ClipRRect(
-              child: Image.asset('asset/img/muscle.png'),
+              child: CustomNetworkImageWidget(imageUrl: '$s3Url$muscle'),
             ),
           ),
         )
+      ],
+    );
+  }
+}
+
+class _RenderBody extends StatelessWidget {
+  const _RenderBody({
+    required this.exercise,
+    required this.countList,
+    required this.firstList,
+    required this.secondList,
+  });
+
+  final Exercise exercise;
+  final List<Widget> countList;
+  final List<Widget> firstList;
+  final List<Widget> secondList;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(
+          height: 52,
+        ),
+        Text(
+          exercise.name,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        Text(
+          '${exercise.setInfo.length} SET',
+          style: const TextStyle(
+            color: BODY_TEXT_COLOR,
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        _RenderSetInfo(
+            exercise: exercise,
+            countList: countList,
+            firstList: firstList,
+            secondList: secondList)
+      ],
+    );
+  }
+}
+
+class _RenderSetInfo extends StatelessWidget {
+  const _RenderSetInfo({
+    required this.exercise,
+    required this.countList,
+    required this.firstList,
+    required this.secondList,
+  });
+
+  final Exercise exercise;
+  final List<Widget> countList;
+  final List<Widget> firstList;
+  final List<Widget> secondList;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (exercise.setInfo.length <= 5)
+          Row(
+            children: countList.toList(),
+          ),
+        if (exercise.setInfo.length > 5)
+          Row(
+            children: firstList.toList(),
+          ),
+        const SizedBox(
+          height: 8,
+        ),
+        if (exercise.setInfo.length > 5)
+          Row(
+            children: secondList.toList(),
+          )
       ],
     );
   }

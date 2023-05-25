@@ -2,12 +2,23 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:flutter/material.dart';
 
 class WorkoutBanner extends StatelessWidget {
+  final String title;
+  final String subTitle;
+  final int exerciseCount;
+  final String time;
+
   const WorkoutBanner({
     super.key,
+    required this.title,
+    required this.subTitle,
+    required this.exerciseCount,
+    required this.time,
   });
 
   @override
   Widget build(BuildContext context) {
+    List<String> timeString = time.split(':');
+
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -22,9 +33,9 @@ class WorkoutBanner extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '자신감이 넘치는 둔근 만들기🔥',
-              style: TextStyle(
+            Text(
+              title,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -33,9 +44,9 @@ class WorkoutBanner extends StatelessWidget {
             const SizedBox(
               height: 4,
             ),
-            const Text(
-              '기초 코어 기르기',
-              style: TextStyle(
+            Text(
+              subTitle,
+              style: const TextStyle(
                 color: BODY_TEXT_COLOR,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
@@ -53,9 +64,9 @@ class WorkoutBanner extends StatelessWidget {
             ),
             Row(
               children: [
-                const Text(
-                  '총 4개의 운동',
-                  style: TextStyle(
+                Text(
+                  '총 $exerciseCount개의 운동',
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -68,9 +79,11 @@ class WorkoutBanner extends StatelessWidget {
                   'asset/img/timer.png',
                   width: 14,
                 ),
-                const Text(
-                  '1시간 10분',
-                  style: TextStyle(
+                Text(
+                  timeString[0] == '00'
+                      ? ' ${timeString[1]}분'
+                      : ' ${timeString[0]}시간 ${timeString[1]}분',
+                  style: const TextStyle(
                     color: BODY_TEXT_COLOR,
                     fontSize: 14,
                     fontWeight: FontWeight.w400,

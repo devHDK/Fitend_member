@@ -5,15 +5,15 @@ part 'setInfo_model.g.dart';
 @JsonSerializable()
 class SetInfo {
   final int index;
-  final int reps;
-  final int weight;
-  final int seconds;
+  int? reps;
+  int? weight;
+  int? seconds;
 
   SetInfo({
     required this.index,
-    required this.reps,
-    required this.weight,
-    required this.seconds,
+    this.reps,
+    this.weight,
+    this.seconds,
   });
 
   SetInfo copyWith({

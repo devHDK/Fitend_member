@@ -2,8 +2,18 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'workout_model.g.dart';
 
+abstract class WorkoutModelBase {}
+
+class WorkoutModelLoading extends WorkoutModelBase {}
+
+class WorkoutModelError extends WorkoutModelBase {
+  final String message;
+
+  WorkoutModelError({required this.message});
+}
+
 @JsonSerializable()
-class WorkoutModel {
+class WorkoutModel extends WorkoutModelBase {
   final int workoutScheduleId;
   final String startDate;
   final String workoutTitle;

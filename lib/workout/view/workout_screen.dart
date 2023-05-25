@@ -28,7 +28,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
-    print(state);
 
     if (state is WorkoutModelLoading) {
       return const Center(
@@ -80,7 +79,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
 
                   return GestureDetector(
                     onTap: () {
-                      context.goNamed(ExerciseScreen.routeName);
+                      GoRouter.of(context).goNamed(
+                        ExerciseScreen.routeName,
+                        pathParameters: {
+                          'workoutScheduleId':
+                              model.workoutScheduleId.toString()
+                        },
+                        extra: exerciseModel,
+                      );
                     },
                     child: WorkoutCard(
                       exercise: exerciseModel,

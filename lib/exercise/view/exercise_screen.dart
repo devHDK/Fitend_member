@@ -1,11 +1,22 @@
+import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/custom_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/exercise/component/muscle_card.dart';
+import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ExerciseScreen extends StatefulWidget {
+  final int id;
+  final Exercise exercise;
+
   static String get routeName => 'exercise';
-  const ExerciseScreen({super.key});
+  const ExerciseScreen({
+    super.key,
+    required this.id,
+    required this.exercise,
+  });
 
   @override
   State<ExerciseScreen> createState() => _ExerciseScreenState();
@@ -42,7 +53,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             _scrollOffset <= 5.0 ? Colors.transparent : BACKGROUND_COLOR,
         elevation: _scrollOffset <= 5.0 ? 0.0 : 1.0,
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back),
           color: _scrollOffset <= 5.0 ? Colors.black : Colors.white,
         ),
@@ -57,11 +68,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 660,
-                child: const CustomVideoPlayer(
-                  firstUrl:
-                      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-                  secondUrl:
-                      'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                child: CustomVideoPlayer(
+                  firstUrl: '$s3Url${widget.exercise.videos[0].url}',
+                  secondUrl: '$s3Url${widget.exercise.videos[0].url}',
                 ),
               ),
             ),
@@ -75,22 +84,22 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      SizedBox(
+                    children: [
+                      const SizedBox(
                         height: 32,
                       ),
                       Text(
-                        '로우 머신',
-                        style: TextStyle(
+                        widget.exercise.name,
+                        style: const TextStyle(
                           fontSize: 26,
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 32,
                       ),
-                      Divider(
+                      const Divider(
                         height: 1,
                         color: BODY_TEXT_COLOR,
                       ),
@@ -99,6 +108,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
                   //코칭포인트
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(
                         height: 24,
@@ -107,10 +117,12 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'asset/img/trainer_profile.png',
-                            width: 40,
-                            height: 40,
+                          CircleAvatar(
+                            backgroundColor: POINT_COLOR,
+                            child: CustomNetworkImageWidget(
+                              imageUrl:
+                                  '$s3Url${widget.exercise.trainerProfileImage}',
+                            ),
                           ),
                           const SizedBox(
                             width: 12,
@@ -118,8 +130,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
+                            children: [
+                              const Text(
                                 '코칭 포인트',
                                 style: TextStyle(
                                   fontSize: 16,
@@ -127,12 +139,12 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                   color: Colors.white,
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 4,
                               ),
                               Text(
-                                'by Kelly 트레이너',
-                                style: TextStyle(
+                                'by ${widget.exercise.trainerNickname} 트레이너',
+                                style: const TextStyle(
                                   color: BODY_TEXT_COLOR,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
@@ -145,9 +157,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       const SizedBox(
                         height: 12,
                       ),
-                      const Text(
-                        '수축과 이완을 반복하실 때 수축시 팔꿈치가 뒤로 빠지시는 것을 주의해 주시고, 이완시 허리가 뽑히지 않게 복압을 유지해주세요.',
-                        style: TextStyle(
+                      Text(
+                        widget.exercise.description,
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: Colors.white,
@@ -192,9 +204,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  return const MuscleCard();
+                  final muscleModel = widget.exercise.targetMuscles[index];
+
+                  return MuscleCard(
+                    muscle: muscleModel,
+                  );
                 },
-                childCount: 3,
+                childCount: widget.exercise.targetMuscles.length,
               ),
             ),
           ),

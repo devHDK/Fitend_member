@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -20,7 +21,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   VideoPlayerController? firstVideoController;
   VideoPlayerController? secondVideoController;
   Duration currentPosition = const Duration();
-  bool showControlls = false;
+  bool isShowControlls = false;
   bool isPlayingFirstUrl = true;
   double doubleSpeed = 1.0;
 
@@ -92,31 +93,39 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            showControlls = !showControlls;
+            isShowControlls = !isShowControlls;
           });
         },
         child: Stack(
           children: [
-            AnimatedOpacity(
-              opacity: isPlayingFirstUrl ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 500),
-              child: VideoPlayer(
-                firstVideoController!,
-              ),
-            ),
-            AnimatedOpacity(
-              opacity: !isPlayingFirstUrl ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 500),
-              child: VideoPlayer(
-                secondVideoController!,
-              ),
-            ),
-            if (showControlls)
+            firstVideoController!.value.isInitialized
+                ? AnimatedOpacity(
+                    opacity: isPlayingFirstUrl ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 500),
+                    child: VideoPlayer(
+                      firstVideoController!,
+                    ))
+                : const Center(
+                    child: CircularProgressIndicator(
+                      color: POINT_COLOR,
+                    ),
+                  ),
+            secondVideoController!.value.isInitialized
+                ? AnimatedOpacity(
+                    opacity: !isPlayingFirstUrl ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 500),
+                    child: VideoPlayer(secondVideoController!))
+                : const Center(
+                    child: CircularProgressIndicator(
+                      color: POINT_COLOR,
+                    ),
+                  ),
+            if (isShowControlls)
               Positioned(
                 left: 28,
                 bottom: 10,
                 child: SizedBox(
-                  height: 190,
+                  height: 200,
                   width: 48,
                   child: Column(
                     children: [
@@ -131,15 +140,18 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
                           });
                         },
                         child: Container(
-                            height: 85,
-                            width: 48,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              color: isPlayingFirstUrl ? POINT_COLOR : null,
-                            ),
-                            child: const Placeholder(
-                              color: POINT_COLOR,
-                            )),
+                          height: 87,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            color: isPlayingFirstUrl ? POINT_COLOR : null,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2),
+                            child: CustomNetworkImageWidget(
+                                imageUrl: widget.firstUrl),
+                          ),
+                        ),
                       ),
                       const SizedBox(
                         height: 20,
@@ -155,22 +167,25 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
                               'second video: ${secondVideoController!.value.isPlaying}');
                         },
                         child: Container(
-                            height: 85,
-                            width: 48,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              color: !isPlayingFirstUrl ? POINT_COLOR : null,
-                            ),
-                            child: const Placeholder(
-                              color: POINT_COLOR,
-                            )),
+                          height: 87,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            color: !isPlayingFirstUrl ? POINT_COLOR : null,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2),
+                            child: CustomNetworkImageWidget(
+                                imageUrl: widget.secondUrl),
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
 
-            if (showControlls)
+            if (isShowControlls)
               Positioned(
                 right: 28,
                 bottom: 10,

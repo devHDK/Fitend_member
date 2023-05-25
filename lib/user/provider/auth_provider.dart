@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/view/error_screen.dart';
 import 'package:fitend_member/common/view/onboarding_screen.dart';
 import 'package:fitend_member/common/view/splash_screen.dart';
+import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -62,7 +63,10 @@ class AuthProvider extends ChangeNotifier {
                 GoRoute(
                   path: 'exercise',
                   name: ExerciseScreen.routeName,
-                  builder: (context, state) => const ExerciseScreen(),
+                  builder: (context, state) => ExerciseScreen(
+                    id: int.parse(state.pathParameters['workoutScheduleId']!),
+                    exercise: state.extra as Exercise,
+                  ),
                 ),
               ],
             ),

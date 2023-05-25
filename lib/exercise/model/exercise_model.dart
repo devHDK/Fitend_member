@@ -11,6 +11,8 @@ class Exercise {
   final String name;
   final String description;
   final int trackingFieldId;
+  final String trainerNickname;
+  final String trainerProfileImage;
   final List<TargetMuscle> targetMuscles;
   final List<ExerciseVideo> videos;
   final List<SetInfo> setInfo;
@@ -20,6 +22,8 @@ class Exercise {
     required this.name,
     required this.description,
     required this.trackingFieldId,
+    required this.trainerNickname,
+    required this.trainerProfileImage,
     required this.targetMuscles,
     required this.videos,
     required this.setInfo,
@@ -30,6 +34,8 @@ class Exercise {
     String? name,
     String? description,
     int? trackingFieldId,
+    String? trainerNickname,
+    String? trainerProfileImage,
     List<TargetMuscle>? targetMuscles,
     List<ExerciseVideo>? videos,
     List<SetInfo>? setInfo,
@@ -39,6 +45,8 @@ class Exercise {
         name: name ?? this.name,
         description: description ?? this.description,
         trackingFieldId: trackingFieldId ?? this.trackingFieldId,
+        trainerNickname: trainerNickname ?? this.trainerNickname,
+        trainerProfileImage: trainerProfileImage ?? this.trainerProfileImage,
         targetMuscles: targetMuscles ?? this.targetMuscles,
         videos: videos ?? this.videos,
         setInfo: setInfo ?? this.setInfo,

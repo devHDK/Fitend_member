@@ -4,7 +4,15 @@ import 'package:flutter/material.dart';
 
 class CustomNetworkImageWidget extends StatelessWidget {
   final String imageUrl;
-  const CustomNetworkImageWidget({super.key, required this.imageUrl});
+  final double? width;
+  final double? height;
+
+  const CustomNetworkImageWidget({
+    super.key,
+    required this.imageUrl,
+    this.width,
+    this.height,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +27,8 @@ class CustomNetworkImageWidget extends StatelessWidget {
         Icons.error,
         color: Colors.white,
       ),
+      width: width ?? width,
+      height: height ?? height,
     );
   }
 }

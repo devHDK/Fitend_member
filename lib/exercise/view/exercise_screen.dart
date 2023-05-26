@@ -4,6 +4,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/exercise/component/muscle_card.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
+import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -69,8 +70,26 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 width: MediaQuery.of(context).size.width,
                 height: 660,
                 child: CustomVideoPlayer(
-                  firstUrl: '$s3Url${widget.exercise.videos[0].url}',
-                  secondUrl: '$s3Url${widget.exercise.videos[0].url}',
+                  videos: [
+                    ExerciseVideo(
+                        url:
+                            'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+                        index: 1,
+                        thumbnail:
+                            'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg'),
+                    ExerciseVideo(
+                        url:
+                            'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                        index: 2,
+                        thumbnail:
+                            'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg'),
+                    ExerciseVideo(
+                        url:
+                            'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                        index: 3,
+                        thumbnail:
+                            'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg'),
+                  ],
                 ),
               ),
             ),
@@ -119,7 +138,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                         children: [
                           CircleAvatar(
                             backgroundColor: POINT_COLOR,
-                            child: CustomNetworkImageWidget(
+                            child: CustomNetworkImage(
                               imageUrl:
                                   '$s3Url${widget.exercise.trainerProfileImage}',
                             ),
@@ -175,9 +194,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ),
                     ],
                   ),
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       SizedBox(
                         height: 24,
                       ),

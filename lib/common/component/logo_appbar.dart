@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LogoAppbar extends StatelessWidget with PreferredSizeWidget {
+class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
   final List<IconButton>? actions;
 
   const LogoAppbar({

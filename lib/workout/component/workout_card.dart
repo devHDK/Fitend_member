@@ -77,7 +77,7 @@ class WorkoutCard extends StatelessWidget {
           height: 128,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: CustomNetworkImageWidget(
+            child: CustomNetworkImage(
               imageUrl: '$s3Url$thumnail',
             ),
           ),
@@ -89,7 +89,7 @@ class WorkoutCard extends StatelessWidget {
             width: 35,
             height: 35,
             child: ClipRRect(
-              child: CustomNetworkImageWidget(imageUrl: '$s3Url$muscle'),
+              child: CustomNetworkImage(imageUrl: '$s3Url$muscle'),
             ),
           ),
         )

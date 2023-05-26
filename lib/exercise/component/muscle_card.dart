@@ -25,7 +25,7 @@ class _MuscleCardState extends State<MuscleCard> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(9),
-              child: CustomNetworkImageWidget(
+              child: CustomNetworkImage(
                 imageUrl: '$s3Url${widget.muscle.image}',
                 width: 52,
                 height: 52,

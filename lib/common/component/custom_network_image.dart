@@ -2,12 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:flutter/material.dart';
 
-class CustomNetworkImageWidget extends StatelessWidget {
+class CustomNetworkImage extends StatelessWidget {
   final String imageUrl;
   final double? width;
   final double? height;
 
-  const CustomNetworkImageWidget({
+  const CustomNetworkImage({
     super.key,
     required this.imageUrl,
     this.width,
@@ -29,6 +29,7 @@ class CustomNetworkImageWidget extends StatelessWidget {
       ),
       width: width ?? width,
       height: height ?? height,
+      fit: BoxFit.cover,
     );
   }
 }

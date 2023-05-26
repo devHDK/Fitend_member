@@ -1,16 +1,15 @@
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class CustomVideoPlayer extends StatefulWidget {
-  final String firstUrl;
-  final String secondUrl;
+  final List<ExerciseVideo> videos;
 
   const CustomVideoPlayer({
     super.key,
-    required this.firstUrl,
-    required this.secondUrl,
+    required this.videos,
   });
 
   @override
@@ -20,23 +19,37 @@ class CustomVideoPlayer extends StatefulWidget {
 class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   VideoPlayerController? firstVideoController;
   VideoPlayerController? secondVideoController;
+  VideoPlayerController? thirdVideoController;
+
   Duration currentPosition = const Duration();
-  bool isShowControlls = false;
-  bool isPlayingFirstUrl = true;
+  bool isShowControlls = true;
+  List<bool> isPlaying = [true, false, false];
   double doubleSpeed = 1.0;
 
   @override
   void initState() {
     super.initState();
 
-    initializeController();
+    firstVideoInit();
+
+    if (widget.videos.length > 1) {
+      print('secondVideo');
+      secondVideoInit();
+    }
+    if (widget.videos.length > 2) {
+      print('thirdVideo');
+      thirdVideoInit();
+    }
+
     firstVideoController!.play();
+    print('Play!!!');
   }
 
   @override
   void dispose() {
     firstVideoController!.dispose();
-    secondVideoController!.dispose();
+    if (widget.videos.length > 1) secondVideoController!.dispose();
+    if (widget.videos.length > 2) thirdVideoController!.dispose();
     super.dispose();
   }
 
@@ -44,30 +57,22 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   void didUpdateWidget(covariant CustomVideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.firstUrl != widget.firstUrl) {
-      initializeController();
+    if (oldWidget.videos[0].url != widget.videos[0].url) {
+      firstVideoInit();
     }
   }
 
-  void initializeController() async {
+  void firstVideoInit() async {
     currentPosition = const Duration();
     firstVideoController = VideoPlayerController.network(
-      widget.firstUrl,
+      widget.videos[0].url,
     );
-    secondVideoController = VideoPlayerController.network(
-      widget.secondUrl,
-    );
-
     await Future.wait([
       firstVideoController!.initialize(),
-      secondVideoController!.initialize(),
     ]);
 
     firstVideoController!.setLooping(true);
-    secondVideoController!.setLooping(true);
-
     firstVideoController!.setVolume(0.0);
-    secondVideoController!.setVolume(0.0);
 
     // slider 변경
     firstVideoController!.addListener(
@@ -80,6 +85,34 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
     );
 
     setState(() {});
+  }
+
+  Future<void> secondVideoInit() async {
+    //2번째 영상
+    secondVideoController = VideoPlayerController.network(
+      widget.videos[1].url,
+    );
+
+    await Future.wait([
+      secondVideoController!.initialize(),
+    ]);
+
+    secondVideoController!.setLooping(true);
+    secondVideoController!.setVolume(0.0);
+  }
+
+  Future<void> thirdVideoInit() async {
+    //3번째 영상
+    thirdVideoController = VideoPlayerController.network(
+      widget.videos[2].url,
+    );
+
+    await Future.wait([
+      thirdVideoController!.initialize(),
+    ]);
+
+    thirdVideoController!.setLooping(true);
+    thirdVideoController!.setVolume(0.0);
   }
 
   @override
@@ -98,128 +131,138 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
         },
         child: Stack(
           children: [
-            firstVideoController!.value.isInitialized
-                ? AnimatedOpacity(
-                    opacity: isPlayingFirstUrl ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    child: VideoPlayer(
-                      firstVideoController!,
-                    ))
-                : const Center(
-                    child: CircularProgressIndicator(
-                      color: POINT_COLOR,
-                    ),
-                  ),
-            secondVideoController!.value.isInitialized
-                ? AnimatedOpacity(
-                    opacity: !isPlayingFirstUrl ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    child: VideoPlayer(secondVideoController!))
-                : const Center(
-                    child: CircularProgressIndicator(
-                      color: POINT_COLOR,
-                    ),
-                  ),
+            AnimatedOpacity(
+              opacity: isPlaying[0] ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 500),
+              child: VideoPlayer(firstVideoController!),
+            ),
+            AnimatedOpacity(
+              opacity: isPlaying[1] ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 500),
+              child: widget.videos.length > 1
+                  ? VideoPlayer(secondVideoController!)
+                  : const SizedBox(),
+            ),
+            AnimatedOpacity(
+              opacity: isPlaying[2] ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 500),
+              child: widget.videos.length > 2
+                  ? VideoPlayer(thirdVideoController!)
+                  : const SizedBox(),
+            ),
+
             if (isShowControlls)
               Positioned(
                 left: 28,
                 bottom: 10,
                 child: SizedBox(
-                  height: 200,
+                  height: 300,
                   width: 48,
                   child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isPlayingFirstUrl = true;
-                            secondVideoController!.pause();
-                            firstVideoController!.play();
-                            print(
-                                'first video: ${firstVideoController!.value.isPlaying}');
-                          });
-                        },
-                        child: Container(
-                          height: 87,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: isPlayingFirstUrl ? POINT_COLOR : null,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (widget.videos.length > 2)
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                for (int i = 0; i < isPlaying.length; i++) {
+                                  isPlaying[i] = false;
+                                }
+                                isPlaying[2] = true;
+                                firstVideoController!.pause();
+                                secondVideoController!.pause();
+                                thirdVideoController!.play();
+                              });
+                            },
+                            child: Container(
+                              height: 87,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                color: isPlaying[2] ? POINT_COLOR : null,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: CustomNetworkImage(
+                                  imageUrl: widget.videos[2].thumbnail,
+                                ),
+                              ),
+                            ),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: CustomNetworkImageWidget(
-                                imageUrl: widget.firstUrl),
-                          ),
+                        const SizedBox(
+                          height: 10,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isPlayingFirstUrl = false;
-                            firstVideoController!.pause();
-                            secondVideoController!.play();
-                          });
-                          print(
-                              'second video: ${secondVideoController!.value.isPlaying}');
-                        },
-                        child: Container(
-                          height: 87,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: !isPlayingFirstUrl ? POINT_COLOR : null,
+                        if (widget.videos.length > 1)
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                for (int i = 0; i < isPlaying.length; i++) {
+                                  isPlaying[i] = false;
+                                }
+                                isPlaying[1] = true;
+                                firstVideoController!.pause();
+                                if (widget.videos.length > 2) {
+                                  thirdVideoController!.pause();
+                                }
+                                secondVideoController!.play();
+                              });
+                            },
+                            child: Container(
+                              height: 87,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                color: isPlaying[1] ? POINT_COLOR : null,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: CustomNetworkImage(
+                                  imageUrl: widget.videos[1].thumbnail,
+                                ),
+                              ),
+                            ),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: CustomNetworkImageWidget(
-                                imageUrl: widget.secondUrl),
-                          ),
+                        const SizedBox(
+                          height: 10,
                         ),
-                      ),
-                    ],
-                  ),
+                        if (widget.videos.length > 1)
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                for (int i = 0; i < isPlaying.length; i++) {
+                                  isPlaying[i] = false;
+                                }
+                                isPlaying[0] = true;
+
+                                if (widget.videos.length > 1) {
+                                  secondVideoController!.play();
+                                }
+                                if (widget.videos.length > 2) {
+                                  thirdVideoController!.pause();
+                                }
+                                firstVideoController!.play();
+                              });
+                            },
+                            child: Container(
+                              height: 87,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                color: isPlaying[0] ? POINT_COLOR : null,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: CustomNetworkImage(
+                                  imageUrl: widget.videos[0].thumbnail,
+                                ),
+                              ),
+                            ),
+                          )
+                      ]),
                 ),
               ),
 
-            if (isShowControlls)
-              Positioned(
-                right: 28,
-                bottom: 10,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(7),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: DARK_GRAY_COLOR,
-                    ),
-                    onPressed: () {
-                      setState(
-                        () {
-                          if (doubleSpeed == 1.0) {
-                            doubleSpeed = 0.5;
-                          } else if (doubleSpeed == 0.5) {
-                            doubleSpeed = 2.0;
-                          } else if (doubleSpeed == 2.0) {
-                            doubleSpeed = 1.0;
-                          }
-                          firstVideoController!.setPlaybackSpeed(doubleSpeed);
-                          secondVideoController!.setPlaybackSpeed(doubleSpeed);
-                        },
-                      );
-                    },
-                    child: Text(
-                      'X $doubleSpeed',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-              )
+            if (isShowControlls) _videoSpeedControlButton()
 
             // if (showControlls)
             //   _Controls(
@@ -234,6 +277,50 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
             //       maxPpsition: videoController!.value.duration,
             //       onSlideChanged: onSlideChanged)
           ],
+        ),
+      ),
+    );
+  }
+
+  Positioned _videoSpeedControlButton() {
+    return Positioned(
+      right: 28,
+      bottom: 10,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(7),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: DARK_GRAY_COLOR,
+          ),
+          onPressed: () {
+            setState(
+              () {
+                if (doubleSpeed == 1.0) {
+                  doubleSpeed = 0.5;
+                } else if (doubleSpeed == 0.5) {
+                  doubleSpeed = 2.0;
+                } else if (doubleSpeed == 2.0) {
+                  doubleSpeed = 1.0;
+                }
+
+                firstVideoController!.setPlaybackSpeed(doubleSpeed);
+
+                if (widget.videos.length > 1) {
+                  secondVideoController!.setPlaybackSpeed(doubleSpeed);
+                }
+                if (widget.videos.length > 2) {
+                  thirdVideoController!.setPlaybackSpeed(doubleSpeed);
+                }
+              },
+            );
+          },
+          child: Text(
+            'X $doubleSpeed',
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
         ),
       ),
     );

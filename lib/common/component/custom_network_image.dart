@@ -6,12 +6,14 @@ class CustomNetworkImage extends StatelessWidget {
   final String imageUrl;
   final double? width;
   final double? height;
+  final BoxFit? boxFit;
 
   const CustomNetworkImage({
     super.key,
     required this.imageUrl,
     this.width,
     this.height,
+    this.boxFit,
   });
 
   @override
@@ -29,7 +31,7 @@ class CustomNetworkImage extends StatelessWidget {
       ),
       width: width ?? width,
       height: height ?? height,
-      fit: BoxFit.cover,
+      fit: boxFit ?? boxFit,
     );
   }
 }

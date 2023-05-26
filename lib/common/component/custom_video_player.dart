@@ -185,6 +185,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
                                 padding: const EdgeInsets.all(2),
                                 child: CustomNetworkImage(
                                   imageUrl: widget.videos[2].thumbnail,
+                                  boxFit: BoxFit.fill,
                                 ),
                               ),
                             ),
@@ -218,6 +219,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
                                 padding: const EdgeInsets.all(2),
                                 child: CustomNetworkImage(
                                   imageUrl: widget.videos[1].thumbnail,
+                                  boxFit: BoxFit.fill,
                                 ),
                               ),
                             ),
@@ -254,6 +256,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
                                 padding: const EdgeInsets.all(2),
                                 child: CustomNetworkImage(
                                   imageUrl: widget.videos[0].thumbnail,
+                                  boxFit: BoxFit.fill,
                                 ),
                               ),
                             ),

@@ -1,124 +1,71 @@
-import 'package:fitend_member/common/component/error_dialog.dart';
-import 'package:fitend_member/common/component/workout_banner.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
-import 'package:fitend_member/exercise/view/exercise_screen.dart';
-import 'package:fitend_member/workout/component/workout_card.dart';
-import 'package:fitend_member/workout/model/workout_model.dart';
-import 'package:fitend_member/workout/provider/workout_provider.dart';
+import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
+import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
-class WorkoutScreen extends ConsumerStatefulWidget {
-  static String get routeName => 'workout';
-  final int id;
+class WorkoutScreen extends StatefulWidget {
+  final List<Exercise> exercises;
+  final DateTime date;
 
   const WorkoutScreen({
     super.key,
-    required this.id,
+    required this.exercises,
+    required this.date,
   });
 
   @override
-  ConsumerState<WorkoutScreen> createState() => _WorkoutScreenState();
+  State<WorkoutScreen> createState() => _WorkoutScreenState();
 }
 
-class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
+class _WorkoutScreenState extends State<WorkoutScreen>
+    with SingleTickerProviderStateMixin {
+  bool isSwipeUp = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(workoutProvider(widget.id));
-
-    if (state is WorkoutModelLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: POINT_COLOR,
-        ),
-      );
-    }
-
-    if (state is WorkoutModelError) {
-      return ErrorDialog(error: state.message);
-    }
-
-    final model = state as WorkoutModel;
-
+    final size = MediaQuery.of(context).size;
+    print(size.height);
+    print(size.height - 190);
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        elevation: 0,
+        elevation: 0.0,
         leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back)),
-        centerTitle: true,
-        title: Text(
-          '${DateFormat('MM월 dd일').format(DateTime.parse(model.startDate))} ${weekday[DateTime.parse(model.startDate).weekday]}요일',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          onPressed: () => context.pop(),
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.black,
         ),
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: WorkoutBanner(
-              title: model.workoutTitle,
-              subTitle: model.workoutSubTitle,
-              exerciseCount: model.exercises.length,
-              time: model.workoutTotalTime,
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 28),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final exerciseModel = model.exercises[index];
-
-                  return GestureDetector(
-                    onTap: () {
-                      GoRouter.of(context).goNamed(
-                        ExerciseScreen.routeName,
-                        pathParameters: {
-                          'workoutScheduleId':
-                              model.workoutScheduleId.toString()
-                        },
-                        extra: exerciseModel,
-                      );
-                    },
-                    child: WorkoutCard(
-                      exercise: exerciseModel,
-                    ),
-                  );
-                },
-                childCount: model.exercises.length,
+      body: Stack(
+        children: [
+          AnimatedPositioned(
+            bottom: 0.0,
+            curve: Curves.linear,
+            duration: const Duration(milliseconds: 300),
+            top: isSwipeUp ? size.height - 430 : size.height - 310,
+            child: GestureDetector(
+              onVerticalDragEnd: (details) {
+                if (details.velocity.pixelsPerSecond.direction < 0) {
+                  setState(() {
+                    isSwipeUp = true;
+                  });
+                } else {
+                  setState(() {
+                    isSwipeUp = false;
+                  });
+                }
+              },
+              child: CustomDraggableBottomSheet(
+                isSwipeUp: isSwipeUp,
               ),
             ),
           ),
-          const SliverToBoxAdapter(
-            child: SizedBox(
-              height: 100,
-            ),
-          )
         ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 45,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: POINT_COLOR),
-            onPressed: () {},
-            child: const Text('운동 시작하기💪'),
-          ),
-        ),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
-import 'package:fitend_member/workout/view/workout_screen.dart';
+import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -193,7 +193,7 @@ class ScheduleCard extends StatelessWidget {
                       onPressed: workoutScheduleId == null
                           ? null
                           : () {
-                              context.goNamed(WorkoutScreen.routeName,
+                              context.goNamed(WorkoutListScreen.routeName,
                                   pathParameters: {
                                     'workoutScheduleId':
                                         workoutScheduleId!.toString(),

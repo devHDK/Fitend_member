@@ -7,7 +7,7 @@ import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/user_me_provider.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
-import 'package:fitend_member/workout/view/workout_screen.dart';
+import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -55,8 +55,8 @@ class AuthProvider extends ChangeNotifier {
           routes: [
             GoRoute(
               path: 'workout/:workoutScheduleId',
-              name: WorkoutScreen.routeName,
-              builder: (context, state) => WorkoutScreen(
+              name: WorkoutListScreen.routeName,
+              builder: (context, state) => WorkoutListScreen(
                 id: int.parse(state.pathParameters['workoutScheduleId']!),
               ),
               routes: [

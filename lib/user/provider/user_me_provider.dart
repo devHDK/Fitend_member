@@ -46,7 +46,6 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
       state = response;
     } on DioError catch (e) {
       if (e.type == DioErrorType.unknown) {
-        print('!!!server connection error!!!');
         state = UserModelError(error: 'connection error', statusCode: 504);
       }
     }

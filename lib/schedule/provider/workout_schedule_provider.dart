@@ -36,11 +36,6 @@ class WorkoutScheduleStateNotifier
       final isRefetching = state is WorkoutScheduleRefetching;
       final isFetchMore = state is WorkoutScheduleFetchingMore;
 
-      print('fetchMore : $fetchMore');
-      print('isLoading : $isLoading');
-      print('isFetchMore : $isFetchMore');
-      print('isRefetching : $isRefetching');
-
       if (fetchMore && (isLoading || isFetchMore || isRefetching)) {
         return;
       }

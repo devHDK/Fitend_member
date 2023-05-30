@@ -48,12 +48,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       ),
     );
   }
-
-  void delay() async {
-    await Future.delayed(const Duration(seconds: 2), () {
-      print('onboarding...');
-    });
-  }
 }
 
 Widget _flavorBanner({

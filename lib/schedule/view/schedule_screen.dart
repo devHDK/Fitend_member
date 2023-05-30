@@ -114,79 +114,82 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       }
     }
 
-    return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      appBar: LogoAppbar(
-        actions: [
-          IconButton(
-            onPressed: () {
-              ref.read(userMeProvider.notifier).logout();
-            },
-            icon: const Padding(
-              padding: EdgeInsets.only(right: 28),
-              child: Icon(
-                Icons.person_outline_sharp,
-                size: 30,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        appBar: LogoAppbar(
+          actions: [
+            IconButton(
+              onPressed: () {
+                ref.read(userMeProvider.notifier).logout();
+              },
+              icon: const Padding(
+                padding: EdgeInsets.only(right: 28),
+                child: Icon(
+                  Icons.person_outline_sharp,
+                  size: 30,
+                ),
               ),
-            ),
-          )
-        ],
-      ),
-      body: ListView.builder(
-        controller: controller,
-        itemCount: schedules.data!.length + 1,
-        itemBuilder: <WorkoutScheduleModel>(context, index) {
-          if (index == schedules.data!.length) {
-            return const SizedBox(
-              height: 100,
-              child: Center(
-                child: CircularProgressIndicator(color: POINT_COLOR),
-              ),
-            );
-          }
+            )
+          ],
+        ),
+        body: ListView.builder(
+          controller: controller,
+          itemCount: schedules.data!.length + 1,
+          itemBuilder: <WorkoutScheduleModel>(context, index) {
+            if (index == schedules.data!.length) {
+              return const SizedBox(
+                height: 100,
+                child: Center(
+                  child: CircularProgressIndicator(color: POINT_COLOR),
+                ),
+              );
+            }
 
-          final model = schedules.data![index].workouts;
+            final model = schedules.data![index].workouts;
 
-          if (model!.isEmpty) {
-            return ScheduleCard(
-              date: schedules.data![index].startDate,
-              selected: false,
-              isComplete: null,
-            );
-          }
+            if (model!.isEmpty) {
+              return ScheduleCard(
+                date: schedules.data![index].startDate,
+                selected: false,
+                isComplete: null,
+              );
+            }
 
-          if (model.isNotEmpty) {
-            return Column(
-              children: model.mapIndexed(
-                (seq, e) {
-                  return InkWell(
-                    onTap: () {
-                      if (model[seq].selected!) {
-                        return;
-                      }
+            if (model.isNotEmpty) {
+              return Column(
+                children: model.mapIndexed(
+                  (seq, e) {
+                    return InkWell(
+                      onTap: () {
+                        if (model[seq].selected!) {
+                          return;
+                        }
 
-                      setState(
-                        () {
-                          for (var e in schedules.data!) {
-                            for (var element in e.workouts!) {
-                              element.selected = false;
+                        setState(
+                          () {
+                            for (var e in schedules.data!) {
+                              for (var element in e.workouts!) {
+                                element.selected = false;
+                              }
                             }
-                          }
-                          model![seq].selected = true;
-                        },
-                      );
-                    },
-                    child: ScheduleCard.fromModel(
-                      model: e,
-                      date: schedules.data![index].startDate,
-                      isDateVisible: seq == 0 ? true : false,
-                    ),
-                  );
-                },
-              ).toList(),
-            );
-          }
-        },
+                            model![seq].selected = true;
+                          },
+                        );
+                      },
+                      child: ScheduleCard.fromModel(
+                        model: e,
+                        date: schedules.data![index].startDate,
+                        isDateVisible: seq == 0 ? true : false,
+                      ),
+                    );
+                  },
+                ).toList(),
+              );
+            }
+          },
+        ),
       ),
     );
   }

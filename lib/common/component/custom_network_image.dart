@@ -20,10 +20,14 @@ class CustomNetworkImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: imageUrl,
-      progressIndicatorBuilder: (context, url, downloadProgress) =>
-          CircularProgressIndicator(
-        value: downloadProgress.progress,
-        color: POINT_COLOR,
+      progressIndicatorBuilder: (context, url, downloadProgress) => Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Center(
+          child: CircularProgressIndicator(
+            value: downloadProgress.progress,
+            color: POINT_COLOR,
+          ),
+        ),
       ),
       errorWidget: (context, url, error) => const Icon(
         Icons.error,

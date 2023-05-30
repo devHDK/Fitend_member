@@ -1,5 +1,5 @@
 import 'package:fitend_member/common/component/custom_network_image.dart';
-import 'package:fitend_member/common/component/custom_video_player.dart';
+import 'package:fitend_member/common/component/guide_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/exercise/component/muscle_card.dart';
@@ -69,7 +69,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 660,
-                child: CustomVideoPlayer(
+                child: GuideVideoPlayer(
                   videos: [
                     ExerciseVideo(
                         url:

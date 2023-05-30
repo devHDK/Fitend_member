@@ -4,19 +4,19 @@ import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class CustomVideoPlayer extends StatefulWidget {
+class GuideVideoPlayer extends StatefulWidget {
   final List<ExerciseVideo> videos;
 
-  const CustomVideoPlayer({
+  const GuideVideoPlayer({
     super.key,
     required this.videos,
   });
 
   @override
-  State<CustomVideoPlayer> createState() => _CustomVideoPlayerState();
+  State<GuideVideoPlayer> createState() => _GuideVideoPlayerState();
 }
 
-class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
+class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
   VideoPlayerController? firstVideoController;
   VideoPlayerController? secondVideoController;
   VideoPlayerController? thirdVideoController;
@@ -54,7 +54,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   }
 
   @override
-  void didUpdateWidget(covariant CustomVideoPlayer oldWidget) {
+  void didUpdateWidget(covariant GuideVideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.videos[0].url != widget.videos[0].url) {

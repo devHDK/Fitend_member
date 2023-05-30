@@ -24,7 +24,7 @@ final dioProvider = Provider(
         connectTimeout: const Duration(seconds: 6),
       ),
     );
-    final storage = ref.watch(seccureStorageProvider);
+    final storage = ref.watch(secureStorageProvider);
 
     dio.interceptors.addAll(
       [

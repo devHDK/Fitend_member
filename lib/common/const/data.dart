@@ -22,6 +22,7 @@ final buildEnv = F.appFlavor == Flavor.local
 
 const emulatorIp = 'http://10.0.2.2:4000/api/mobile';
 const simulatorIp = 'http://127.0.0.1:4000/api/mobile';
+// const simulatorIp = 'http://192.168.0.31:4000/api/mobile';
 
 final localIp = F.appFlavor == Flavor.local && Platform.isAndroid
     ? emulatorIp

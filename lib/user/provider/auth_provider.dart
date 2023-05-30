@@ -86,7 +86,7 @@ class AuthProvider extends ChangeNotifier {
     final loginIn = state.location == '/splash/login';
 
     if (user == null) {
-      return loginIn ? null : '/splash/login';
+      return loginIn ? null : '/splash';
     }
 
     //user != null

@@ -9,6 +9,8 @@ class CustomTextFormField extends StatefulWidget {
   final bool obscureText;
   final bool autoFocus;
   final ValueChanged<String>? onChanged;
+  final TextInputType? textInputType;
+  final Iterable<String>? autoFillHint;
   final TextEditingController controller;
 
   const CustomTextFormField({
@@ -21,6 +23,8 @@ class CustomTextFormField extends StatefulWidget {
     this.autoFocus = false,
     required this.onChanged,
     required this.controller,
+    this.textInputType,
+    this.autoFillHint,
   });
 
   @override
@@ -74,6 +78,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         autofocus: widget.autoFocus,
         focusNode: focusNode,
         onChanged: widget.onChanged,
+        keyboardType: widget.textInputType,
+        autofillHints: widget.autoFillHint,
         onTapOutside: (event) {
           focusNode.unfocus();
         },

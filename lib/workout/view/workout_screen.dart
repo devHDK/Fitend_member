@@ -39,6 +39,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,

@@ -27,18 +27,20 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
         child: Center(
           child: AnimatedTextKit(
             animatedTexts: [
-              ColorizeAnimatedText('F I T E N D',
-                  textStyle: GoogleFonts.audiowide(
-                      fontSize: 45,
-                      // color: POINT_COLOR,
-                      fontWeight: FontWeight.w500),
-                  colors: [
-                    POINT_COLOR,
-                    POINT_COLOR,
-                    Colors.white,
-                  ],
-                  speed: const Duration(milliseconds: 300),
-                  textDirection: TextDirection.rtl),
+              ColorizeAnimatedText(
+                'F I T E N D',
+                textStyle: GoogleFonts.audiowide(
+                    fontSize: 45,
+                    // color: POINT_COLOR,
+                    fontWeight: FontWeight.w500),
+                colors: [
+                  POINT_COLOR,
+                  POINT_COLOR,
+                  Colors.white,
+                ],
+                speed: const Duration(milliseconds: 300),
+                textDirection: TextDirection.rtl,
+              ),
             ],
           ),
         ),

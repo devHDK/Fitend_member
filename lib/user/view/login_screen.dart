@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/user_me_provider.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +22,15 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _idTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
+
   String email = '';
   String password = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEmailAndPassword();
+  }
 
   @override
   void dispose() {
@@ -108,30 +116,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        CustomTextFormField(
-          controller: idTextcontroller,
-          fullLabelText: '이메일을 입력해주세요',
-          labelText: '이메일',
-          autoFocus: false,
-          onChanged: (value) {
-            email = value;
-          },
-        ),
-        const SizedBox(
-          height: 12,
-        ),
-        CustomTextFormField(
-          controller: passwordTextcontroller,
-          fullLabelText: '비밀번호를 입력해주세요',
-          labelText: '비밀번호',
-          autoFocus: false,
-          obscureText: true,
-          onChanged: (value) {
-            password = value;
-          },
-        ),
-        const SizedBox(
-          height: 12,
+        AutofillGroup(
+          child: Column(
+            children: [
+              CustomTextFormField(
+                controller: idTextcontroller,
+                fullLabelText: '이메일을 입력해주세요',
+                labelText: '이메일',
+                autoFocus: false,
+                textInputType: TextInputType.emailAddress,
+                autoFillHint: const [AutofillHints.email],
+                onChanged: (value) {
+                  email = value;
+                },
+              ),
+              const SizedBox(
+                height: 12,
+              ),
+              CustomTextFormField(
+                controller: passwordTextcontroller,
+                fullLabelText: '비밀번호를 입력해주세요',
+                labelText: '비밀번호',
+                autoFocus: false,
+                obscureText: true,
+                textInputType: TextInputType.visiblePassword,
+                autoFillHint: const [AutofillHints.password],
+                onChanged: (value) {
+                  password = value;
+                },
+              ),
+              const SizedBox(
+                height: 12,
+              ),
+            ],
+          ),
         ),
         SizedBox(
           height: 44,
@@ -142,6 +160,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ? null
                   : () async {
                       // context.goNamed(ScheduleScreen.routeName);
+
+                      if (_idTextController.text.isNotEmpty &&
+                          _passwordTextController.text.isNotEmpty) {
+                        _saveEmailAndPassword();
+                      }
+
                       final ret = await ref.read(userMeProvider.notifier).login(
                             email: idTextcontroller.text,
                             password: passwordTextcontroller.text,
@@ -273,5 +297,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         )
       ],
     );
+  }
+
+  Future<void> _saveEmailAndPassword() async {
+    final storage = ref.read(secureStorageProvider);
+    await storage.write(key: 'email', value: _idTextController.text);
+    await storage.write(key: 'password', value: _passwordTextController.text);
+  }
+
+  Future<void> _loadEmailAndPassword() async {
+    final storage = ref.read(secureStorageProvider);
+    String? savedEmail = await storage.read(key: 'email');
+    String? savedPassword = await storage.read(key: 'password');
+
+    if (savedEmail != null && savedPassword != null) {
+      _idTextController.text = savedEmail;
+      _passwordTextController.text = savedPassword;
+    }
   }
 }

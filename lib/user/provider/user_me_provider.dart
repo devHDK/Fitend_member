@@ -11,7 +11,7 @@ final userMeProvider =
     StateNotifierProvider<UserMeStateNotifier, UserModelBase?>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
   final userMeRepository = ref.watch(getMeRepositoryProvider);
-  final storage = ref.watch(seccureStorageProvider);
+  final storage = ref.watch(secureStorageProvider);
 
   return UserMeStateNotifier(
       authRepository: authRepository,

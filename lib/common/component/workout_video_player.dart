@@ -26,6 +26,7 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
     super.initState();
     videoInit();
 
+    videoController!.setVolume(0);
     videoController!.play();
   }
 
@@ -40,6 +41,7 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
 
     if (oldWidget.video.url != widget.video.url) {
       videoInit();
+      videoController!.setVolume(0);
       videoController!.play();
     }
   }

@@ -3,6 +3,8 @@ import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
+import 'package:fitend_member/exercise/view/exercise_screen.dart';
+import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -23,6 +25,9 @@ class WorkoutScreen extends StatefulWidget {
 class _WorkoutScreenState extends State<WorkoutScreen>
     with SingleTickerProviderStateMixin {
   bool isSwipeUp = false;
+
+  int exerciseIndex = 0;
+  int setInfoIndex = 0;
 
   @override
   void initState() {
@@ -85,76 +90,9 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   child: Column(
                     children: [
-                      Text(
-                        '${widget.exercises[0].setInfo[0].weight}kg ∙ ${widget.exercises[0].setInfo[0].reps}회',
-                        style: const TextStyle(
-                          color: GRAY_COLOR,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      Text(
-                        widget.exercises[0].name,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: POINT_COLOR),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            '1세트 진행중',
-                            style: TextStyle(
-                              color: POINT_COLOR,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          InkWell(
-                            onTap: () {},
-                            child: Image.asset(
-                              'asset/img/icon_edit.png',
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 12,
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: 4,
-                              decoration: const BoxDecoration(
-                                color: POINT_COLOR,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 12,
-                          ),
-                          InkWell(
-                            onTap: () {},
-                            child: Image.asset(
-                              'asset/img/icon_foward.png',
-                            ),
-                          ),
-                        ],
+                      WeightWrepsProgressCard(
+                        exercise: widget.exercises[exerciseIndex],
+                        setInfoIndex: setInfoIndex,
                       ),
                       const SizedBox(
                         height: 18,
@@ -175,19 +113,29 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                                 _IconButton(
                                   img: 'asset/img/icon_change.png',
                                   name: '운동 변경',
+                                  onTap: () {},
                                 ),
                                 _IconButton(
                                   img: 'asset/img/icon_guide.png',
                                   name: '운동 가이드',
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => ExerciseScreen(
+                                          exercise: widget.exercises[0]),
+                                    ));
+                                  },
                                 ),
                                 _IconButton(
                                   img: 'asset/img/icon_record.png',
                                   name: '영상 녹화',
                                   textColor: LIGHT_GRAY_COLOR,
+                                  onTap: () {},
                                 ),
                                 _IconButton(
                                   img: 'asset/img/icon_stop.png',
                                   name: '운동 종료',
+                                  onTap: () {},
                                 ),
                               ],
                             )
@@ -207,10 +155,11 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   InkWell _IconButton({
     required String img,
     required String name,
+    required GestureTapCallback onTap,
     Color textColor = GRAY_COLOR,
   }) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       child: Column(
         children: [
           SizedBox(

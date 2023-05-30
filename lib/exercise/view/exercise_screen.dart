@@ -9,13 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ExerciseScreen extends StatefulWidget {
-  final int id;
+  final int? id;
   final Exercise exercise;
 
   static String get routeName => 'exercise';
   const ExerciseScreen({
     super.key,
-    required this.id,
+    this.id,
     required this.exercise,
   });
 

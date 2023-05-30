@@ -155,13 +155,80 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                             ),
                           ),
                         ],
-                      )
+                      ),
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      if (isSwipeUp)
+                        Column(
+                          children: [
+                            const Divider(
+                              height: 1,
+                              color: GRAY_COLOR,
+                            ),
+                            const SizedBox(
+                              height: 27,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _IconButton(
+                                  img: 'asset/img/icon_change.png',
+                                  name: '운동 변경',
+                                ),
+                                _IconButton(
+                                  img: 'asset/img/icon_guide.png',
+                                  name: '운동 가이드',
+                                ),
+                                _IconButton(
+                                  img: 'asset/img/icon_record.png',
+                                  name: '영상 녹화',
+                                  textColor: LIGHT_GRAY_COLOR,
+                                ),
+                                _IconButton(
+                                  img: 'asset/img/icon_stop.png',
+                                  name: '운동 종료',
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                     ],
                   ),
                 ),
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  InkWell _IconButton({
+    required String img,
+    required String name,
+    Color textColor = GRAY_COLOR,
+  }) {
+    return InkWell(
+      onTap: () {},
+      child: Column(
+        children: [
+          SizedBox(
+            height: 44,
+            width: 44,
+            child: Image.asset(img),
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+          Text(
+            name,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+          )
         ],
       ),
     );

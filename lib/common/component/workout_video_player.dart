@@ -164,15 +164,20 @@ class _Controls extends StatelessWidget {
       height: MediaQuery.of(context).size.height,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // renderIconButton(
           //   onPressed: onReversePressed,
           //   iconData: Icons.rotate_left,
           // ),
-          renderIconButton(
-            onPressed: onPlayPressed,
-            iconData: isPlaying ? Icons.pause : Icons.play_circle_fill_sharp,
-          ),
+          // renderIconButton(
+          //   onPressed: onPlayPressed,
+          //   iconData: isPlaying ? Icons.pause : Icons.play_circle_fill_sharp,
+          // ),
+          GestureDetector(
+            onTap: onPlayPressed,
+            child: Image.asset('asset/img/icon_play.png'),
+          )
           // renderIconButton(
           //   onPressed: onForwarPressed,
           //   iconData: Icons.rotate_right,

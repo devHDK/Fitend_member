@@ -79,7 +79,7 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
           videoController!.value.isPlaying
               ? VideoPlayer(videoController!)
               : SizedBox(
-                  height: 680,
+                  height: 685,
                   child: CustomNetworkImage(
                     imageUrl: widget.video.thumbnail,
                     boxFit: BoxFit.fill,

@@ -1,12 +1,15 @@
 import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
+import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class WorkoutScreen extends StatefulWidget {
   final List<Exercise> exercises;
@@ -29,14 +32,26 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   int exerciseIndex = 0;
   int setInfoIndex = 0;
 
+  Box box = Hive.box<WorkoutRecordModel>(workoutRecordBox);
+
   @override
   void initState() {
     super.initState();
   }
 
   @override
+  void dispose() {
+    box.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
+    // final box = Hive.box<WorkoutRecordModel>(workoutRecordBox);
+
+    // box.close();
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -94,6 +109,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                       WeightWrepsProgressCard(
                         exercise: widget.exercises[exerciseIndex],
                         setInfoIndex: setInfoIndex,
+                        box: box,
                       ),
                       const SizedBox(
                         height: 18,

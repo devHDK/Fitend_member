@@ -2,17 +2,22 @@ import 'dart:async';
 
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
+import 'package:fitend_member/exercise/model/setInfo_model.dart';
+import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class WeightWrepsProgressCard extends StatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
+  final Box box;
 
   const WeightWrepsProgressCard({
     super.key,
     required this.exercise,
     required this.setInfoIndex,
+    required this.box,
   });
 
   @override
@@ -23,6 +28,7 @@ class WeightWrepsProgressCard extends StatefulWidget {
 class _WeightWrepsProgressCardState extends State<WeightWrepsProgressCard> {
   int index = 0;
   bool colorChanged = false;
+  List<SetInfo> tempSetInfos = [];
 
   @override
   void initState() {
@@ -158,7 +164,17 @@ class _WeightWrepsProgressCardState extends State<WeightWrepsProgressCard> {
               width: 12,
             ),
             InkWell(
-              onTap: () {},
+              // 운동 진행
+              onTap: () {
+                tempSetInfos.add(widget.exercise.setInfo[widget.setInfoIndex]);
+
+                widget.box.put(
+                  widget.exercise.workoutPlanId,
+                  WorkoutRecordModel(
+                      workoutPlanId: widget.exercise.workoutPlanId,
+                      setInfo: tempSetInfos),
+                );
+              },
               child: Image.asset(
                 'asset/img/icon_foward.png',
               ),

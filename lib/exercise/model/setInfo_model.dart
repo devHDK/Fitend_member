@@ -1,12 +1,18 @@
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'setInfo_model.g.dart';
 
 @JsonSerializable()
+@HiveType(typeId: 2)
 class SetInfo {
+  @HiveField(1)
   final int index;
+  @HiveField(2)
   int? reps;
+  @HiveField(3)
   int? weight;
+  @HiveField(4)
   int? seconds;
 
   SetInfo({

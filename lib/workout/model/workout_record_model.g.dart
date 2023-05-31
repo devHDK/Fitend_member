@@ -42,3 +42,21 @@ class WorkoutRecordModelAdapter extends TypeAdapter<WorkoutRecordModel> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+WorkoutRecordModel _$WorkoutRecordModelFromJson(Map<String, dynamic> json) =>
+    WorkoutRecordModel(
+      workoutPlanId: json['workoutPlanId'] as int,
+      setInfo: (json['setInfo'] as List<dynamic>)
+          .map((e) => SetInfo.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$WorkoutRecordModelToJson(WorkoutRecordModel instance) =>
+    <String, dynamic>{
+      'workoutPlanId': instance.workoutPlanId,
+      'setInfo': instance.setInfo,
+    };

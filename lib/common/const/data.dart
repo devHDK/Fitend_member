@@ -35,3 +35,5 @@ const deployIp = '';
 final s3Url = F.appFlavor != Flavor.production
     ? 'https://d20e02zksul93k.cloudfront.net/'
     : '';
+
+String workoutRecordBox = 'WorkoutRecords';

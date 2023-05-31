@@ -28,7 +28,7 @@ class _WeightWrepsProgressCardState extends State<WeightWrepsProgressCard> {
   void initState() {
     super.initState();
     Timer.periodic(
-      const Duration(milliseconds: 1500),
+      const Duration(milliseconds: 1000),
       (timer) {
         setState(() {
           colorChanged = !colorChanged;

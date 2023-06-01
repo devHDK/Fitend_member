@@ -1,31 +1,33 @@
 import 'dart:async';
 
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
-import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-class WeightWrepsProgressCard extends StatefulWidget {
+class WeightWrepsProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
-  final Box box;
+  final GestureTapCallback processOnTap;
 
   const WeightWrepsProgressCard({
     super.key,
     required this.exercise,
     required this.setInfoIndex,
-    required this.box,
+    required this.processOnTap,
   });
 
   @override
-  State<WeightWrepsProgressCard> createState() =>
+  ConsumerState<WeightWrepsProgressCard> createState() =>
       _WeightWrepsProgressCardState();
 }
 
-class _WeightWrepsProgressCardState extends State<WeightWrepsProgressCard> {
+class _WeightWrepsProgressCardState
+    extends ConsumerState<WeightWrepsProgressCard> {
   int index = 0;
   bool colorChanged = false;
   List<SetInfo> tempSetInfos = [];
@@ -46,6 +48,8 @@ class _WeightWrepsProgressCardState extends State<WeightWrepsProgressCard> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final AsyncValue<Box> box = ref.read(hiveWorkoutRecordProvider);
+
     List<Widget> progressList = widget.exercise.setInfo.mapIndexed(
       (index, element) {
         if (index == widget.setInfoIndex) {
@@ -165,16 +169,7 @@ class _WeightWrepsProgressCardState extends State<WeightWrepsProgressCard> {
             ),
             InkWell(
               // 운동 진행
-              onTap: () {
-                tempSetInfos.add(widget.exercise.setInfo[widget.setInfoIndex]);
-
-                widget.box.put(
-                  widget.exercise.workoutPlanId,
-                  WorkoutRecordModel(
-                      workoutPlanId: widget.exercise.workoutPlanId,
-                      setInfo: tempSetInfos),
-                );
-              },
+              onTap: widget.processOnTap,
               child: Image.asset(
                 'asset/img/icon_foward.png',
               ),

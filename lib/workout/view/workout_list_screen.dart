@@ -2,6 +2,7 @@ import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -10,6 +11,7 @@ import 'package:fitend_member/workout/view/workout_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
 class WorkoutListScreen extends ConsumerStatefulWidget {
@@ -29,6 +31,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
+    final AsyncValue<Box> box = ref.read(hiveWorkoutRecordProvider);
 
     if (state is WorkoutModelLoading) {
       return const Center(
@@ -77,6 +80,15 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final exerciseModel = model.exercises[index];
+                  int completeSetCount = 0;
+                  box.when(
+                    data: (data) {
+                      completeSetCount =
+                          data.get(exerciseModel.workoutPlanId).setInfo.length;
+                    },
+                    error: (error, stackTrace) => completeSetCount = 0,
+                    loading: () => print('loading...'),
+                  );
 
                   return GestureDetector(
                     onTap: () {
@@ -91,6 +103,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                     },
                     child: WorkoutCard(
                       exercise: exerciseModel,
+                      completeSetCount: completeSetCount,
                     ),
                   );
                 },

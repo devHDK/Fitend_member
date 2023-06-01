@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 
 class WorkoutCard extends StatelessWidget {
   final Exercise exercise;
+  final int completeSetCount;
 
   const WorkoutCard({
     super.key,
     required this.exercise,
+    required this.completeSetCount,
   });
 
   @override
@@ -20,23 +22,42 @@ class WorkoutCard extends StatelessWidget {
 
     List.generate(
       exercise.setInfo.length,
-      (index) => countList.add(
-        Row(
-          children: [
-            Container(
-              width: 30,
-              height: 8,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: BODY_TEXT_COLOR,
+      (index) => exercise.setInfo.length != 1
+          ? countList.add(
+              Row(
+                children: [
+                  Container(
+                    width: 30,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: index <= completeSetCount - 1
+                          ? POINT_COLOR
+                          : BODY_TEXT_COLOR,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  )
+                ],
+              ),
+            )
+          : countList.add(
+              Row(
+                children: [
+                  Container(
+                    width: 182,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: index <= completeSetCount - 1
+                          ? POINT_COLOR
+                          : BODY_TEXT_COLOR,
+                    ),
+                  )
+                ],
               ),
             ),
-            const SizedBox(
-              width: 8,
-            )
-          ],
-        ),
-      ),
     );
 
     if (exercise.setInfo.length > 5) {

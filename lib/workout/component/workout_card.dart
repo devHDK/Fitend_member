@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 class WorkoutCard extends StatelessWidget {
   final Exercise exercise;
   final int completeSetCount;
+  final int? exerciseIndex;
 
   const WorkoutCard({
     super.key,
     required this.exercise,
     required this.completeSetCount,
+    this.exerciseIndex,
   });
 
   @override
@@ -80,11 +82,14 @@ class WorkoutCard extends StatelessWidget {
           const SizedBox(
             width: 23,
           ),
-          _RenderBody(
-              exercise: exercise,
-              countList: countList,
-              firstList: firstList,
-              secondList: secondList)
+          Expanded(
+            child: _RenderBody(
+                exerciseIndex: exerciseIndex,
+                exercise: exercise,
+                countList: countList,
+                firstList: firstList,
+                secondList: secondList),
+          ),
         ],
       ),
     );
@@ -120,17 +125,19 @@ class WorkoutCard extends StatelessWidget {
 }
 
 class _RenderBody extends StatelessWidget {
+  final Exercise exercise;
+  final List<Widget> countList;
+  final List<Widget> firstList;
+  final List<Widget> secondList;
+  final int? exerciseIndex;
+
   const _RenderBody({
     required this.exercise,
     required this.countList,
     required this.firstList,
     required this.secondList,
+    this.exerciseIndex,
   });
-
-  final Exercise exercise;
-  final List<Widget> countList;
-  final List<Widget> firstList;
-  final List<Widget> secondList;
 
   @override
   Widget build(BuildContext context) {
@@ -140,13 +147,36 @@ class _RenderBody extends StatelessWidget {
         const SizedBox(
           height: 52,
         ),
-        Text(
-          exercise.name,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              exercise.name,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            if (exerciseIndex != null)
+              Container(
+                width: 64,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: POINT_COLOR,
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: const Text(
+                  '진행중🏃',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              )
+          ],
         ),
         const SizedBox(
           height: 4,

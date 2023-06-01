@@ -133,13 +133,18 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           ),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: POINT_COLOR),
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
+            onPressed: () async {
+              final ret = await Navigator.of(context)
+                  .push(MaterialPageRoute(
                 builder: (context) => WorkoutScreen(
                   exercises: model.exercises,
                   date: DateTime.parse(model.startDate),
+                  workout: model,
                 ),
-              ));
+              ))
+                  .then((value) {
+                setState(() {});
+              });
             },
             child: const Text('운동 시작하기💪'),
           ),

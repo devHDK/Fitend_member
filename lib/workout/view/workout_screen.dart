@@ -6,7 +6,9 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
+import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
+import 'package:fitend_member/workout/view/workout_change_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,11 +17,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 class WorkoutScreen extends ConsumerStatefulWidget {
   final List<Exercise> exercises;
   final DateTime date;
+  final WorkoutModel workout;
 
   const WorkoutScreen({
     super.key,
     required this.exercises,
     required this.date,
+    required this.workout,
   });
 
   @override
@@ -49,7 +53,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
     box.whenData(
       (value) {
-        print('DB에서 데이터 수집');
         for (int i = 0; i < widget.exercises.length; i++) {
           final tempRecord = value.get(widget.exercises[i].workoutPlanId);
 
@@ -74,7 +77,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () => GoRouter.of(context).pop('result'),
           icon: const Icon(Icons.arrow_back),
           color: Colors.black,
         ),
@@ -130,8 +133,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               final record = value.get(widget
                                   .exercises[exerciseIndex].workoutPlanId);
 
-                              print('record : $record');
-
                               if (record != null && record.setInfo.length > 0) {
                                 //local DB에 데이터가 있을때
                                 value.put(
@@ -146,12 +147,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     ],
                                   ),
                                 );
-
-                                print(value.get(widget
-                                    .exercises[exerciseIndex].workoutPlanId));
                               } else {
                                 //local DB에 데이터가 없을때
-                                print('DB에 데이터 없음');
                                 value.put(
                                   widget.exercises[exerciseIndex].workoutPlanId,
                                   WorkoutRecordModel(
@@ -181,7 +178,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                         .length &&
                                 exerciseIndex < widget.exercises.length - 1) {
                               exerciseIndex += 1;
-                              print('xxxxxxxxxxxx');
                             }
                           });
                         },
@@ -205,10 +201,25 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 _IconButton(
                                   img: 'asset/img/icon_change.png',
                                   name: '운동 변경',
-                                  onTap: () {
-                                    box.whenData((value) {
-                                      value.deleteAll([21, 23, 24]);
-                                    });
+                                  onTap: () async {
+                                    final ret = Navigator.of(context)
+                                        .push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            WorkoutChangeScreen(
+                                          exerciseIndex: exerciseIndex,
+                                          workout: widget.workout,
+                                        ),
+                                      ),
+                                    )
+                                        .then(
+                                      (value) {
+                                        print('value : $value');
+                                        setState(() {
+                                          exerciseIndex = value;
+                                        });
+                                      },
+                                    );
                                   },
                                 ),
                                 _IconButton(
@@ -233,9 +244,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   name: '운동 종료',
                                   onTap: () {
                                     box.whenData((value) {
-                                      print(value.get(21).setInfo.length);
-                                      print(value.get(23).setInfo.length);
-                                      print(value.get(24).setInfo.length);
+                                      print(
+                                          '21 ${value.get(21).setInfo.length}');
+                                      print(
+                                          '23 ${value.get(23).setInfo.length}');
+                                      print(
+                                          '24 ${value.get(24).setInfo.length}');
                                     });
                                   },
                                 ),

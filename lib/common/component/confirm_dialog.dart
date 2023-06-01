@@ -44,10 +44,10 @@ DialogBackground confirmDialog({
                     borderRadius: BorderRadius.circular(10),
                     color: POINT_COLOR,
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      '네, 저장할게요',
-                      style: TextStyle(
+                      confirmText,
+                      style: const TextStyle(
                         fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
@@ -60,7 +60,7 @@ DialogBackground confirmDialog({
                 height: 8,
               ),
               GestureDetector(
-                onTap: confirmOnTap,
+                onTap: cancelOnTap,
                 child: Container(
                   width: 279,
                   height: 44,
@@ -68,9 +68,9 @@ DialogBackground confirmDialog({
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: POINT_COLOR),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      '아니요, 리셋할게요',
+                      cancelText,
                       style: TextStyle(
                         fontSize: 14,
                         color: POINT_COLOR,

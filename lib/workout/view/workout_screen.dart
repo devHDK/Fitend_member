@@ -13,7 +13,6 @@ import 'package:fitend_member/workout/view/workout_change_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:ndialog/ndialog.dart';
 
 class WorkoutScreen extends ConsumerStatefulWidget {
   final List<Exercise> exercises;
@@ -84,8 +83,22 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               message: '아직 운동이 끝나지 않았어요 😮\n저장 후 뒤로 갈까요?',
               confirmText: '네, 저장할게요',
               cancelText: '아니요, 리셋할래요',
-              confirmOnTap: () {},
-              cancelOnTap: () {},
+              confirmOnTap: () {
+                int count = 0;
+                Navigator.of(context).popUntil((_) => count++ >= 2);
+              },
+              cancelOnTap: () {
+                box.whenData(
+                  (value) {
+                    for (var element in widget.exercises) {
+                      value.delete(element.workoutPlanId);
+                    }
+                  },
+                );
+
+                int count = 0;
+                Navigator.of(context).popUntil((_) => count++ >= 2);
+              },
             ).show(context);
           },
           icon: const Icon(Icons.arrow_back),

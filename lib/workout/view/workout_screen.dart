@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/component/confirm_dialog.dart';
 import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -11,8 +12,8 @@ import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ndialog/ndialog.dart';
 
 class WorkoutScreen extends ConsumerStatefulWidget {
   final List<Exercise> exercises;
@@ -77,7 +78,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: IconButton(
-          onPressed: () => GoRouter.of(context).pop('result'),
+          // onPressed: () => GoRouter.of(context).pop('result'),
+          onPressed: () {
+            confirmDialog(
+              message: '아직 운동이 끝나지 않았어요 😮\n저장 후 뒤로 갈까요?',
+              confirmText: '네, 저장할게요',
+              cancelText: '아니요, 리셋할래요',
+              confirmOnTap: () {},
+              cancelOnTap: () {},
+            ).show(context);
+          },
           icon: const Icon(Icons.arrow_back),
           color: Colors.black,
         ),

@@ -4,7 +4,6 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
-import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
@@ -33,38 +32,37 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
   int exerciseIndex = 0;
 
-  List<int> setInfoCompleteCounts = [];
+  List<int> setInfoCompleteIndex = [];
   bool isProcessing = false;
-  List<SetInfo> tempSetInfos = [];
 
   @override
   void initState() {
     super.initState();
 
-    setInfoCompleteCounts =
-        List.generate(widget.exercises.length, (index) => 0);
+    setInfoCompleteIndex = List.generate(widget.exercises.length, (index) => 0);
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final AsyncValue<Box> box = ref.read(hiveWorkoutRecordProvider);
+    final AsyncValue<Box> box = ref.watch(hiveWorkoutRecordProvider);
 
     box.whenData(
       (value) {
+        print('DB에서 데이터 수집');
         for (int i = 0; i < widget.exercises.length; i++) {
-          if (value.get(widget.exercises[i].workoutPlanId) != null &&
-              value.get(widget.exercises[i].workoutPlanId).setInfo.length > 0) {
-            setInfoCompleteCounts[i] =
+          final tempRecord = value.get(widget.exercises[i].workoutPlanId);
+
+          if (tempRecord != null && tempRecord.setInfo.length > 0) {
+            setInfoCompleteIndex[i] =
                 value.get(widget.exercises[i].workoutPlanId).setInfo.length;
 
-            if (setInfoCompleteCounts[i] >=
-                    widget.exercises[i].setInfo.length &&
-                widget.exercises.length - 1 > exerciseIndex) {
-              exerciseIndex++;
+            if (setInfoCompleteIndex[i] < widget.exercises[i].setInfo.length &&
+                exerciseIndex == 0) {
+              exerciseIndex = i;
             }
           } else {
-            setInfoCompleteCounts[i] = 0;
+            setInfoCompleteIndex[i] = 0;
           }
         }
       },
@@ -125,21 +123,67 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     children: [
                       WeightWrepsProgressCard(
                         exercise: widget.exercises[exerciseIndex],
-                        setInfoIndex: setInfoCompleteCounts[exerciseIndex] - 1,
-                        processOnTap: () {
-                          tempSetInfos.add(
-                              widget.exercises[exerciseIndex].setInfo[
-                                  setInfoCompleteCounts[exerciseIndex] - 1]);
-
+                        setInfoIndex: setInfoCompleteIndex[exerciseIndex],
+                        proccessOnTap: () {
                           box.whenData(
-                            (value) => value.put(
-                              widget.exercises[exerciseIndex].workoutPlanId,
-                              WorkoutRecordModel(
-                                  workoutPlanId: widget
-                                      .exercises[exerciseIndex].workoutPlanId,
-                                  setInfo: tempSetInfos),
-                            ),
+                            (value) {
+                              final record = value.get(widget
+                                  .exercises[exerciseIndex].workoutPlanId);
+
+                              print('record : $record');
+
+                              if (record != null && record.setInfo.length > 0) {
+                                //local DB에 데이터가 있을때
+                                value.put(
+                                  widget.exercises[exerciseIndex].workoutPlanId,
+                                  WorkoutRecordModel(
+                                    workoutPlanId: widget
+                                        .exercises[exerciseIndex].workoutPlanId,
+                                    setInfo: [
+                                      ...record.setInfo,
+                                      widget.exercises[exerciseIndex].setInfo[
+                                          setInfoCompleteIndex[exerciseIndex]],
+                                    ],
+                                  ),
+                                );
+
+                                print(value.get(widget
+                                    .exercises[exerciseIndex].workoutPlanId));
+                              } else {
+                                //local DB에 데이터가 없을때
+                                print('DB에 데이터 없음');
+                                value.put(
+                                  widget.exercises[exerciseIndex].workoutPlanId,
+                                  WorkoutRecordModel(
+                                    workoutPlanId: widget
+                                        .exercises[exerciseIndex].workoutPlanId,
+                                    setInfo: [
+                                      widget.exercises[exerciseIndex].setInfo[
+                                          setInfoCompleteIndex[exerciseIndex]],
+                                    ],
+                                  ),
+                                );
+                              }
+                            },
                           );
+
+                          setState(() {
+                            // 세트수 증가
+                            if (setInfoCompleteIndex[exerciseIndex] <
+                                widget
+                                    .exercises[exerciseIndex].setInfo.length) {
+                              setInfoCompleteIndex[exerciseIndex] += 1;
+                            }
+
+                            //운동 변경
+                            if (setInfoCompleteIndex[exerciseIndex] ==
+                                    widget.exercises[exerciseIndex].setInfo
+                                        .length &&
+                                exerciseIndex < widget.exercises.length - 1) {
+                              exerciseIndex += 1;
+                              print('xxxxxxxxxxxx');
+                            }
+                          });
                         },
                       ),
                       const SizedBox(
@@ -161,7 +205,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 _IconButton(
                                   img: 'asset/img/icon_change.png',
                                   name: '운동 변경',
-                                  onTap: () {},
+                                  onTap: () {
+                                    box.whenData((value) {
+                                      value.deleteAll([21, 23, 24]);
+                                    });
+                                  },
                                 ),
                                 _IconButton(
                                   img: 'asset/img/icon_guide.png',
@@ -183,7 +231,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 _IconButton(
                                   img: 'asset/img/icon_stop.png',
                                   name: '운동 종료',
-                                  onTap: () {},
+                                  onTap: () {
+                                    box.whenData((value) {
+                                      print(value.get(21).setInfo.length);
+                                      print(value.get(23).setInfo.length);
+                                      print(value.get(24).setInfo.length);
+                                    });
+                                  },
                                 ),
                               ],
                             )

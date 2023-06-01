@@ -12,13 +12,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 class WeightWrepsProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
-  final GestureTapCallback processOnTap;
+  final GestureTapCallback proccessOnTap;
 
   const WeightWrepsProgressCard({
     super.key,
     required this.exercise,
     required this.setInfoIndex,
-    required this.processOnTap,
+    required this.proccessOnTap,
   });
 
   @override
@@ -53,7 +53,6 @@ class _WeightWrepsProgressCardState
     List<Widget> progressList = widget.exercise.setInfo.mapIndexed(
       (index, element) {
         if (index == widget.setInfoIndex) {
-          print('progress...');
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -106,7 +105,11 @@ class _WeightWrepsProgressCardState
     return Column(
       children: [
         Text(
-          '${widget.exercise.setInfo[index].weight}kg ∙ ${widget.exercise.setInfo[index].reps}회',
+          widget.exercise.trackingFieldId == 1
+              ? '${widget.exercise.setInfo[index].weight}kg ∙ ${widget.exercise.setInfo[index].reps}회'
+              : widget.exercise.trackingFieldId == 2
+                  ? '${widget.exercise.setInfo[index].reps}회'
+                  : '${(widget.exercise.setInfo[index].seconds! / 60).floor()}분 ${widget.exercise.setInfo[index].seconds! % 30}초',
           style: const TextStyle(
             color: GRAY_COLOR,
             fontSize: 16,
@@ -169,7 +172,7 @@ class _WeightWrepsProgressCardState
             ),
             InkWell(
               // 운동 진행
-              onTap: widget.processOnTap,
+              onTap: widget.proccessOnTap,
               child: Image.asset(
                 'asset/img/icon_foward.png',
               ),

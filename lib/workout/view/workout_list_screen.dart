@@ -31,7 +31,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
-    final AsyncValue<Box> box = ref.read(hiveWorkoutRecordProvider);
+    final AsyncValue<Box> box = ref.watch(hiveWorkoutRecordProvider);
 
     if (state is WorkoutModelLoading) {
       return const Center(
@@ -83,8 +83,12 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                   int completeSetCount = 0;
                   box.when(
                     data: (data) {
-                      completeSetCount =
-                          data.get(exerciseModel.workoutPlanId).setInfo.length;
+                      final record = data.get(exerciseModel.workoutPlanId);
+                      if (record != null) {
+                        completeSetCount = record.setInfo.length;
+                      } else {
+                        completeSetCount = 0;
+                      }
                     },
                     error: (error, stackTrace) => completeSetCount = 0,
                     loading: () => print('loading...'),

@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/component/confirm_dialog.dart';
+import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -12,6 +12,7 @@ import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class WorkoutScreen extends ConsumerStatefulWidget {
@@ -79,7 +80,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         leading: IconButton(
           // onPressed: () => GoRouter.of(context).pop('result'),
           onPressed: () {
-            confirmDialog(
+            DialogTools.confirmDialog(
               message: '아직 운동이 끝나지 않았어요 😮\n저장 후 뒤로 갈까요?',
               confirmText: '네, 저장할게요',
               cancelText: '아니요, 리셋할래요',
@@ -208,78 +209,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       const SizedBox(
                         height: 18,
                       ),
-                      if (isSwipeUp)
-                        Column(
-                          children: [
-                            const Divider(
-                              height: 1,
-                              color: GRAY_COLOR,
-                            ),
-                            const SizedBox(
-                              height: 27,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                _IconButton(
-                                  img: 'asset/img/icon_change.png',
-                                  name: '운동 변경',
-                                  onTap: () async {
-                                    final ret = Navigator.of(context)
-                                        .push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            WorkoutChangeScreen(
-                                          exerciseIndex: exerciseIndex,
-                                          workout: widget.workout,
-                                        ),
-                                      ),
-                                    )
-                                        .then(
-                                      (value) {
-                                        print('value : $value');
-                                        setState(() {
-                                          exerciseIndex = value;
-                                        });
-                                      },
-                                    );
-                                  },
-                                ),
-                                _IconButton(
-                                  img: 'asset/img/icon_guide.png',
-                                  name: '운동 가이드',
-                                  onTap: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) => ExerciseScreen(
-                                          exercise: widget.exercises[0]),
-                                    ));
-                                  },
-                                ),
-                                _IconButton(
-                                  img: 'asset/img/icon_record.png',
-                                  name: '영상 녹화',
-                                  textColor: LIGHT_GRAY_COLOR,
-                                  onTap: () {},
-                                ),
-                                _IconButton(
-                                  img: 'asset/img/icon_stop.png',
-                                  name: '운동 종료',
-                                  onTap: () {
-                                    box.whenData((value) {
-                                      print(
-                                          '21 ${value.get(21).setInfo.length}');
-                                      print(
-                                          '23 ${value.get(23).setInfo.length}');
-                                      print(
-                                          '24 ${value.get(24).setInfo.length}');
-                                    });
-                                  },
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
+                      if (isSwipeUp) _bottomButtons(context, box),
                     ],
                   ),
                 ),
@@ -288,6 +218,81 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Column _bottomButtons(BuildContext context, AsyncValue<Box<dynamic>> box) {
+    return Column(
+      children: [
+        const Divider(
+          height: 1,
+          color: GRAY_COLOR,
+        ),
+        const SizedBox(
+          height: 27,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _IconButton(
+              img: 'asset/img/icon_change.png',
+              name: '운동 변경',
+              onTap: () async {
+                final ret = Navigator.of(context)
+                    .push(
+                  MaterialPageRoute(
+                    builder: (context) => WorkoutChangeScreen(
+                      exerciseIndex: exerciseIndex,
+                      workout: widget.workout,
+                    ),
+                  ),
+                )
+                    .then(
+                  (value) {
+                    print('value : $value');
+                    setState(() {
+                      exerciseIndex = value;
+                    });
+                  },
+                );
+              },
+            ),
+            _IconButton(
+              img: 'asset/img/icon_guide.png',
+              name: '운동 가이드',
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      ExerciseScreen(exercise: widget.exercises[0]),
+                ));
+              },
+            ),
+            _IconButton(
+              img: 'asset/img/icon_record.png',
+              name: '영상 녹화',
+              textColor: LIGHT_GRAY_COLOR,
+              onTap: () {
+                DialogTools.errorDialog(
+                  message: '곧 업데이트 예정이에요 🙏',
+                  confirmText: '확인',
+                  confirmOnTap: () => context.pop(),
+                ).show(context);
+              },
+            ),
+            _IconButton(
+              img: 'asset/img/icon_stop.png',
+              name: '운동 종료',
+              onTap: () {
+                box.whenData((value) {
+                  print('21 ${value.get(21).setInfo.length}');
+                  print('23 ${value.get(23).setInfo.length}');
+                  print('24 ${value.get(24).setInfo.length}');
+                });
+              },
+            ),
+          ],
+        )
+      ],
     );
   }
 

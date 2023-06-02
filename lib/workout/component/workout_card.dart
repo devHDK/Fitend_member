@@ -68,20 +68,20 @@ class WorkoutCard extends ConsumerWidget {
           : countList.add(
               Row(
                 children: [
-                  Container(
+                  SizedBox(
                     width: 182,
                     height: 8,
-                    decoration: BoxDecoration(
+                    child: ClipRRect(
                       borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: LinearProgressIndicator(
-                      value: workoutRecord.setInfo.isNotEmpty
-                          ? (workoutRecord.setInfo[0].seconds! /
-                              exercise.setInfo[0].seconds!)
-                          : 0,
-                      backgroundColor: LIGHT_GRAY_COLOR,
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(POINT_COLOR),
+                      child: LinearProgressIndicator(
+                        value: workoutRecord.setInfo.isNotEmpty
+                            ? (workoutRecord.setInfo[0].seconds! /
+                                exercise.setInfo[0].seconds!)
+                            : 0,
+                        backgroundColor: LIGHT_GRAY_COLOR,
+                        valueColor:
+                            const AlwaysStoppedAnimation<Color>(POINT_COLOR),
+                      ),
                     ),
                   )
                 ],

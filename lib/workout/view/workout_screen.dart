@@ -173,58 +173,74 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   child: Column(
                     children: [
-                      WeightWrepsProgressCard(
-                        exercise: widget.exercises[exerciseIndex],
-                        setInfoIndex: setInfoCompleteList[exerciseIndex],
-                        proccessOnTap: () {
-                          if (exerciseIndex <= maxExcerciseIndex &&
-                              setInfoCompleteList[exerciseIndex] <
-                                  maxSetInfoList[exerciseIndex]) {
-                            _hiveDataControl(box);
-                          }
+                      if (widget.exercises[exerciseIndex].trackingFieldId ==
+                              1 ||
+                          widget.exercises[exerciseIndex].trackingFieldId == 2)
+                        WeightWrepsProgressCard(
+                          exercise: widget.exercises[exerciseIndex],
+                          setInfoIndex: setInfoCompleteList[exerciseIndex],
+                          proccessOnTap: () {
+                            if (exerciseIndex <= maxExcerciseIndex &&
+                                setInfoCompleteList[exerciseIndex] <
+                                    maxSetInfoList[exerciseIndex]) {
+                              _hiveDataControl(box);
+                            }
 
-                          if (!workoutFinish) {
-                            _checkLastExercise(); //끝났는지 체크!
-                          }
+                            if (!workoutFinish) {
+                              _checkLastExercise(); //끝났는지 체크!
+                            }
 
-                          if (setInfoCompleteList[exerciseIndex] <
-                              maxSetInfoList[exerciseIndex]) {
-                            setState(() {
-                              setInfoCompleteList[exerciseIndex] += 1;
-                              print(
-                                  'setInfoCompleteIndex[$exerciseIndex] : ${setInfoCompleteList[exerciseIndex]}');
-                            });
-                          }
+                            if (setInfoCompleteList[exerciseIndex] <
+                                maxSetInfoList[exerciseIndex]) {
+                              setState(() {
+                                setInfoCompleteList[exerciseIndex] += 1;
+                                print(
+                                    'setInfoCompleteIndex[$exerciseIndex] : ${setInfoCompleteList[exerciseIndex]}');
+                              });
+                            }
 
-                          //운동 변경
-                          if (setInfoCompleteList[exerciseIndex] ==
-                                  maxSetInfoList[exerciseIndex] &&
-                              exerciseIndex < maxExcerciseIndex) {
-                            //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
-                            setState(() {
-                              exerciseIndex += 1; // 운동 변경
-                            });
-
-                            while (setInfoCompleteList[exerciseIndex] ==
+                            //운동 변경
+                            if (setInfoCompleteList[exerciseIndex] ==
                                     maxSetInfoList[exerciseIndex] &&
                                 exerciseIndex < maxExcerciseIndex) {
+                              //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                               setState(() {
-                                exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                exerciseIndex += 1; // 운동 변경
                               });
-                              if (exerciseIndex == maxExcerciseIndex) {
-                                break;
+
+                              while (setInfoCompleteList[exerciseIndex] ==
+                                      maxSetInfoList[exerciseIndex] &&
+                                  exerciseIndex < maxExcerciseIndex) {
+                                setState(() {
+                                  exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                });
+                                if (exerciseIndex == maxExcerciseIndex) {
+                                  break;
+                                }
                               }
                             }
-                          }
 
-                          if (!workoutFinish) {
-                            _checkLastExercise(); //끝났는지 체크!
-                          }
-                        },
-                      ),
-                      const SizedBox(
-                        height: 18,
-                      ),
+                            if (!workoutFinish) {
+                              _checkLastExercise(); //끝났는지 체크!
+                            }
+                          },
+                        ),
+                      if ((widget.exercises[exerciseIndex].trackingFieldId ==
+                                  3 ||
+                              widget.exercises[exerciseIndex].trackingFieldId ==
+                                  4) &&
+                          widget.exercises[exerciseIndex].setInfo.length ==
+                              1) // Timer X 1set
+                        if ((widget.exercises[exerciseIndex].trackingFieldId ==
+                                    3 ||
+                                widget.exercises[exerciseIndex]
+                                        .trackingFieldId ==
+                                    4) &&
+                            widget.exercises[exerciseIndex].setInfo.length >
+                                1) // Timer X more than 1 set
+                          const SizedBox(
+                            height: 18,
+                          ),
                       if (isSwipeUp) _bottomButtons(context, box),
                     ],
                   ),

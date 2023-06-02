@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
@@ -115,7 +116,27 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
             onPressed: selectedIndex == widget.exerciseIndex
                 ? () {}
                 : () {
-                    context.pop(selectedIndex);
+                    box.whenData(
+                      (data) {
+                        final record = data.get(widget
+                            .workout.exercises[selectedIndex].workoutPlanId);
+
+                        if (record != null &&
+                            widget.workout.exercises[selectedIndex].setInfo
+                                    .length <=
+                                record.setInfo.length) {
+                          DialogTools.errorDialog(
+                            message: '이미 완료한 운동이에요 😗',
+                            confirmText: '확인',
+                            confirmOnTap: () {
+                              context.pop();
+                            },
+                          ).show(context);
+                        } else {
+                          context.pop(selectedIndex);
+                        }
+                      },
+                    );
                   },
             child: const Text('선택한 운동으로 변경'),
           ),

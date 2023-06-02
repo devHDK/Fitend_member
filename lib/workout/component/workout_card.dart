@@ -8,12 +8,14 @@ class WorkoutCard extends StatelessWidget {
   final Exercise exercise;
   final int completeSetCount;
   final int? exerciseIndex;
+  final bool? isSelected;
 
   const WorkoutCard({
     super.key,
     required this.exercise,
     required this.completeSetCount,
     this.exerciseIndex,
+    this.isSelected,
   });
 
   @override
@@ -68,10 +70,19 @@ class WorkoutCard extends StatelessWidget {
     }
 
     return Container(
+      padding: isSelected != null
+          ? const EdgeInsets.symmetric(horizontal: 28)
+          : null,
       width: MediaQuery.of(context).size.width,
       height: 157,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: BACKGROUND_COLOR,
+        border: isSelected != null && isSelected!
+            ? Border.all(
+                color: POINT_COLOR,
+                width: 1.0,
+              )
+            : null,
       ),
       child: Row(
         children: [

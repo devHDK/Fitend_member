@@ -96,6 +96,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
               childCount: model.exercises.length,
             ),
           ),
+          const SliverToBoxAdapter(
+            child: SizedBox(
+              height: 100,
+            ),
+          ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

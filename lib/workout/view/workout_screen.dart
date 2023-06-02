@@ -33,18 +33,61 @@ class WorkoutScreen extends ConsumerStatefulWidget {
 
 class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     with SingleTickerProviderStateMixin {
+  late AsyncValue<Box> workoutRecordBox;
   bool isSwipeUp = false;
-
+  bool initial = true;
   int exerciseIndex = 0;
+  List<int> setInfoCompleteList = [];
+  List<int> maxSetInfoList = [];
+  bool workoutFinish = false;
+  bool isPoped = false;
+  bool lastChecked = false;
 
-  List<int> setInfoCompleteIndex = [];
-  bool isProcessing = false;
+  late int maxExcerciseIndex;
 
   @override
   void initState() {
     super.initState();
 
-    setInfoCompleteIndex = List.generate(widget.exercises.length, (index) => 0);
+    setInfoCompleteList = List.generate(widget.exercises.length, (index) => 0);
+    maxSetInfoList = List.generate(widget.exercises.length, (index) {
+      return widget.exercises[index].setInfo.length;
+    });
+    maxExcerciseIndex = widget.exercises.length - 1;
+
+    WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
+      if (initial) {
+        workoutRecordBox.whenData(
+          (value) {
+            for (int i = 0; i < maxExcerciseIndex; i++) {
+              final tempRecord = value.get(widget.exercises[i].workoutPlanId);
+
+              if (tempRecord != null && tempRecord.setInfo.length > 0) {
+                setInfoCompleteList[i] = value
+                        .get(widget.exercises[i].workoutPlanId)
+                        .setInfo
+                        .length -
+                    1;
+              } else {
+                setInfoCompleteList[i] = 0;
+              }
+            }
+
+            if (!isPoped) {
+              for (int i = 0; i < widget.exercises.length; i++) {
+                if (setInfoCompleteList[i] < maxSetInfoList[i]) {
+                  exerciseIndex = i;
+
+                  break;
+                }
+              }
+            }
+          },
+        );
+        initial = false;
+        print(setInfoCompleteList);
+      }
+    });
   }
 
   @override
@@ -52,25 +95,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     final size = MediaQuery.of(context).size;
     final AsyncValue<Box> box = ref.watch(hiveWorkoutRecordProvider);
 
-    box.whenData(
-      (value) {
-        for (int i = 0; i < widget.exercises.length; i++) {
-          final tempRecord = value.get(widget.exercises[i].workoutPlanId);
-
-          if (tempRecord != null && tempRecord.setInfo.length > 0) {
-            setInfoCompleteIndex[i] =
-                value.get(widget.exercises[i].workoutPlanId).setInfo.length;
-
-            if (setInfoCompleteIndex[i] < widget.exercises[i].setInfo.length &&
-                exerciseIndex == 0) {
-              exerciseIndex = i;
-            }
-          } else {
-            setInfoCompleteIndex[i] = 0;
-          }
-        }
-      },
-    );
+    workoutRecordBox = box;
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -150,60 +175,51 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     children: [
                       WeightWrepsProgressCard(
                         exercise: widget.exercises[exerciseIndex],
-                        setInfoIndex: setInfoCompleteIndex[exerciseIndex],
+                        setInfoIndex: setInfoCompleteList[exerciseIndex],
                         proccessOnTap: () {
-                          box.whenData(
-                            (value) {
-                              final record = value.get(widget
-                                  .exercises[exerciseIndex].workoutPlanId);
+                          if (exerciseIndex <= maxExcerciseIndex &&
+                              setInfoCompleteList[exerciseIndex] <
+                                  maxSetInfoList[exerciseIndex]) {
+                            _hiveDataControl(box);
+                          }
 
-                              if (record != null && record.setInfo.length > 0) {
-                                //local DB에 데이터가 있을때
-                                value.put(
-                                  widget.exercises[exerciseIndex].workoutPlanId,
-                                  WorkoutRecordModel(
-                                    workoutPlanId: widget
-                                        .exercises[exerciseIndex].workoutPlanId,
-                                    setInfo: [
-                                      ...record.setInfo,
-                                      widget.exercises[exerciseIndex].setInfo[
-                                          setInfoCompleteIndex[exerciseIndex]],
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                //local DB에 데이터가 없을때
-                                value.put(
-                                  widget.exercises[exerciseIndex].workoutPlanId,
-                                  WorkoutRecordModel(
-                                    workoutPlanId: widget
-                                        .exercises[exerciseIndex].workoutPlanId,
-                                    setInfo: [
-                                      widget.exercises[exerciseIndex].setInfo[
-                                          setInfoCompleteIndex[exerciseIndex]],
-                                    ],
-                                  ),
-                                );
+                          if (!workoutFinish) {
+                            _checkLastExercise(); //끝났는지 체크!
+                          }
+
+                          if (setInfoCompleteList[exerciseIndex] <
+                              maxSetInfoList[exerciseIndex]) {
+                            setState(() {
+                              setInfoCompleteList[exerciseIndex] += 1;
+                              print(
+                                  'setInfoCompleteIndex[$exerciseIndex] : ${setInfoCompleteList[exerciseIndex]}');
+                            });
+                          }
+
+                          //운동 변경
+                          if (setInfoCompleteList[exerciseIndex] ==
+                                  maxSetInfoList[exerciseIndex] &&
+                              exerciseIndex < maxExcerciseIndex) {
+                            //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
+                            setState(() {
+                              exerciseIndex += 1; // 운동 변경
+                            });
+
+                            while (setInfoCompleteList[exerciseIndex] ==
+                                    maxSetInfoList[exerciseIndex] &&
+                                exerciseIndex < maxExcerciseIndex) {
+                              setState(() {
+                                exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                              });
+                              if (exerciseIndex == maxExcerciseIndex) {
+                                break;
                               }
-                            },
-                          );
-
-                          setState(() {
-                            // 세트수 증가
-                            if (setInfoCompleteIndex[exerciseIndex] <
-                                widget
-                                    .exercises[exerciseIndex].setInfo.length) {
-                              setInfoCompleteIndex[exerciseIndex] += 1;
                             }
+                          }
 
-                            //운동 변경
-                            if (setInfoCompleteIndex[exerciseIndex] ==
-                                    widget.exercises[exerciseIndex].setInfo
-                                        .length &&
-                                exerciseIndex < widget.exercises.length - 1) {
-                              exerciseIndex += 1;
-                            }
-                          });
+                          if (!workoutFinish) {
+                            _checkLastExercise(); //끝났는지 체크!
+                          }
                         },
                       ),
                       const SizedBox(
@@ -218,6 +234,88 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           ),
         ],
       ),
+    );
+  }
+
+  void _checkLastExercise() {
+    if (exerciseIndex == maxExcerciseIndex &&
+        setInfoCompleteList[exerciseIndex] == maxSetInfoList[exerciseIndex]) {
+      // 리스트 끝의 운동을 다 했는지 확인!
+      bool finish = true;
+      for (int i = 0; i <= maxExcerciseIndex; i++) {
+        if (setInfoCompleteList[i] != maxSetInfoList[i]) {
+          print('setInfoCompleteIndex[$i] : ${setInfoCompleteList[i]}');
+          print('maxSetInfoIndex[$i] : ${maxSetInfoList[i]}');
+          showDialog(
+            context: context,
+            builder: (context) {
+              return DialogTools.confirmDialog(
+                message: '완료하지 않은 운동이 있어요 \n 🤓마저 진행할까요?',
+                confirmText: '네, 마저할게요',
+                cancelText: '아니요, 그만할래요',
+                confirmOnTap: () {
+                  setState(() {
+                    exerciseIndex = i;
+                  });
+                  context.pop();
+                },
+                cancelOnTap: () {
+                  print('완료쓰!!');
+                  context.pop();
+                  //완료
+                },
+              );
+            },
+          );
+          finish = false;
+          lastChecked = true;
+          print('finish : $finish');
+          break;
+        }
+      }
+
+      if (finish) {
+        print('완료쓰!!');
+        setState(() {
+          workoutFinish = true;
+        });
+        //완료
+      }
+    }
+  }
+
+  void _hiveDataControl(AsyncValue<Box<dynamic>> box) {
+    box.whenData(
+      (value) {
+        final record = value.get(widget.exercises[exerciseIndex].workoutPlanId);
+
+        if (record != null && record.setInfo.length > 0) {
+          //local DB에 데이터가 있을때
+          value.put(
+            widget.exercises[exerciseIndex].workoutPlanId,
+            WorkoutRecordModel(
+              workoutPlanId: widget.exercises[exerciseIndex].workoutPlanId,
+              setInfo: [
+                ...record.setInfo,
+                widget.exercises[exerciseIndex]
+                    .setInfo[setInfoCompleteList[exerciseIndex]],
+              ],
+            ),
+          );
+        } else {
+          //local DB에 데이터가 없을때
+          value.put(
+            widget.exercises[exerciseIndex].workoutPlanId,
+            WorkoutRecordModel(
+              workoutPlanId: widget.exercises[exerciseIndex].workoutPlanId,
+              setInfo: [
+                widget.exercises[exerciseIndex]
+                    .setInfo[setInfoCompleteList[exerciseIndex]],
+              ],
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -249,9 +347,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 )
                     .then(
                   (value) {
-                    print('value : $value');
                     setState(() {
                       exerciseIndex = value;
+                      isPoped = true;
                     });
                   },
                 );
@@ -287,7 +385,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   print('21 ${value.get(21).setInfo.length}');
                   print('23 ${value.get(23).setInfo.length}');
                   print('24 ${value.get(24).setInfo.length}');
+                  print('25 ${value.get(25).setInfo.length}');
                 });
+
+                print(setInfoCompleteList);
+                print(maxSetInfoList);
               },
             ),
           ],

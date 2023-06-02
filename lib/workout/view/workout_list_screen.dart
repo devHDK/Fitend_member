@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -28,6 +29,81 @@ class WorkoutListScreen extends ConsumerStatefulWidget {
 }
 
 class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
+  late WorkoutModel workoutModel;
+  late AsyncValue<Box> workoutBox;
+  bool isProcessing = false;
+  bool isPoped = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPersistentFrameCallback(
+      (timeStamp) {
+        if (isProcessing && !isPoped) {
+          _showConfirmDialog();
+          isProcessing = false;
+        }
+      },
+    );
+  }
+
+  Future<dynamic> _showConfirmDialog() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return DialogTools.confirmDialog(
+          message: '진행 중이던 운동이 있어요 🏃‍♂️\n이어서 진행할까요?',
+          confirmText: '네, 이어서 할게요',
+          cancelText: '아니요, 처음부터 할래요',
+          confirmOnTap: () async {
+            Navigator.of(context).pop();
+
+            await Navigator.of(context)
+                .push(
+              MaterialPageRoute(
+                builder: (context) => WorkoutScreen(
+                  exercises: workoutModel.exercises,
+                  date: DateTime.parse(workoutModel.startDate),
+                  workout: workoutModel,
+                ),
+              ),
+            )
+                .then((value) {
+              setState(() {
+                isPoped = true;
+              });
+            });
+          },
+          cancelOnTap: () async {
+            workoutBox.whenData(
+              (value) {
+                for (var element in workoutModel.exercises) {
+                  value.delete(element.workoutPlanId);
+                }
+              },
+            );
+
+            Navigator.of(context).pop();
+
+            await Navigator.of(context)
+                .push(MaterialPageRoute(
+              builder: (context) => WorkoutScreen(
+                exercises: workoutModel.exercises,
+                date: DateTime.parse(workoutModel.startDate),
+                workout: workoutModel,
+              ),
+            ))
+                .then((value) {
+              setState(() {
+                isPoped = true;
+              });
+            });
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
@@ -46,6 +122,21 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     }
 
     final model = state as WorkoutModel;
+
+    workoutModel = model;
+    workoutBox = box;
+
+    box.whenData(
+      (value) {
+        for (var element in model.exercises) {
+          final comfleteSet = value.get(element.workoutPlanId);
+          if (comfleteSet != null && comfleteSet.setInfo.length > 0) {
+            isProcessing = true;
+            break;
+          }
+        }
+      },
+    );
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -119,7 +210,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             child: SizedBox(
               height: 100,
             ),
-          )
+          ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -143,7 +234,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 ),
               ))
                   .then((value) {
-                setState(() {});
+                setState(() {
+                  isPoped = true;
+                });
               });
             },
             child: const Text('운동 시작하기💪'),

@@ -11,7 +11,7 @@ class DialogTools {
     required GestureTapCallback cancelOnTap,
   }) {
     return DialogBackground(
-      blur: 0.3,
+      blur: 0.2,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
         child: Container(

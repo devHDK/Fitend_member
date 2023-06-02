@@ -143,7 +143,13 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
                       },
                     );
                   },
-            child: const Text('선택한 운동으로 변경'),
+            child: const Text(
+              '선택한 운동으로 변경',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ),
       ),

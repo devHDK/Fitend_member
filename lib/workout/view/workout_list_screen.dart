@@ -239,7 +239,13 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 });
               });
             },
-            child: const Text('운동 시작하기💪'),
+            child: const Text(
+              '운동 시작하기💪',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
         ),
       ),

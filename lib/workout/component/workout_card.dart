@@ -1,10 +1,14 @@
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
+import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-class WorkoutCard extends StatelessWidget {
+class WorkoutCard extends ConsumerWidget {
   final Exercise exercise;
   final int completeSetCount;
   final int? exerciseIndex;
@@ -19,14 +23,29 @@ class WorkoutCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<Box> box = ref.watch(hiveWorkoutRecordProvider);
+
     List<Widget> countList = [];
     List<Widget> firstList = [];
     List<Widget> secondList = [];
 
+    late WorkoutRecordModel workoutRecord;
+
+    box.whenData((value) {
+      final record = value.get(exercise.workoutPlanId);
+
+      if (record != null && record.setInfo.length > 0) {
+        workoutRecord = record;
+      } else {
+        workoutRecord = WorkoutRecordModel(workoutPlanId: 0, setInfo: []);
+      }
+    });
+
     List.generate(
       exercise.setInfo.length,
-      (index) => exercise.setInfo.length != 1
+      (index) => exercise.setInfo.length != 1 ||
+              (exercise.trackingFieldId != 3 && exercise.trackingFieldId != 4)
           ? countList.add(
               Row(
                 children: [
@@ -54,9 +73,15 @@ class WorkoutCard extends StatelessWidget {
                     height: 8,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: index <= completeSetCount - 1
-                          ? POINT_COLOR
-                          : BODY_TEXT_COLOR,
+                    ),
+                    child: LinearProgressIndicator(
+                      value: workoutRecord.setInfo.isNotEmpty
+                          ? (workoutRecord.setInfo[0].seconds! /
+                              exercise.setInfo[0].seconds!)
+                          : 0,
+                      backgroundColor: LIGHT_GRAY_COLOR,
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(POINT_COLOR),
                     ),
                   )
                 ],
@@ -193,7 +218,9 @@ class _RenderBody extends StatelessWidget {
           height: 4,
         ),
         Text(
-          '${exercise.setInfo.length} SET',
+          exercise.setInfo.length > 1
+              ? '${exercise.setInfo.length} SET'
+              : '${(exercise.setInfo[0].seconds! / 60).floor()} 분',
           style: const TextStyle(
             color: BODY_TEXT_COLOR,
             fontSize: 14,

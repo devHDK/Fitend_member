@@ -6,6 +6,7 @@ import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
+import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
@@ -123,6 +124,17 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   },
                 );
 
+                timerWorkoutBox.whenData(
+                  (value) {
+                    for (var element in widget.exercises) {
+                      if (element.trackingFieldId == 3 ||
+                          element.trackingFieldId == 4) {
+                        value.delete(element.workoutPlanId);
+                      }
+                    }
+                  },
+                );
+
                 int count = 0;
                 Navigator.of(context).popUntil((_) => count++ >= 2);
               },
@@ -234,7 +246,66 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               1) // Timer X 1set
                         TimerXOneProgressCard(
                           exercise: widget.exercises[exerciseIndex],
-                          proccessOnTap: () {},
+                          proccessOnTap: () {
+                            timerWorkoutBox.whenData(
+                              (value) {
+                                final record = value.get(widget
+                                    .exercises[exerciseIndex].workoutPlanId);
+                                if (record is SetInfo) {
+                                  workoutBox.whenData((_) {
+                                    _.put(
+                                      widget.exercises[exerciseIndex]
+                                          .workoutPlanId,
+                                      WorkoutRecordModel(
+                                        workoutPlanId: widget
+                                            .exercises[exerciseIndex]
+                                            .workoutPlanId,
+                                        setInfo: [record],
+                                      ),
+                                    );
+                                  });
+
+                                  setState(() {
+                                    setInfoCompleteList[exerciseIndex] = 1;
+                                  });
+
+                                  if (setInfoCompleteList[exerciseIndex] ==
+                                          maxSetInfoList[exerciseIndex] &&
+                                      exerciseIndex < maxExcerciseIndex) {
+                                    //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
+                                    setState(() {
+                                      exerciseIndex += 1; // 운동 변경
+                                    });
+
+                                    while (setInfoCompleteList[exerciseIndex] ==
+                                            maxSetInfoList[exerciseIndex] &&
+                                        exerciseIndex < maxExcerciseIndex) {
+                                      setState(() {
+                                        exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                      });
+                                      if (exerciseIndex == maxExcerciseIndex) {
+                                        break;
+                                      }
+                                    }
+                                  }
+
+                                  if (!workoutFinish) {
+                                    _checkLastExercise(); //끝났는지 체크!
+                                  }
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        DialogTools.errorDialog(
+                                      message: '먼저 운동을 진행해 주세요 🏋🏻',
+                                      confirmText: '확인',
+                                      confirmOnTap: () => context.pop(),
+                                    ),
+                                  );
+                                }
+                              },
+                            );
+                          },
                         ),
                       // if ((widget.exercises[exerciseIndex].trackingFieldId ==
                       //             3 ||

@@ -33,18 +33,7 @@ class WorkoutCard extends ConsumerWidget {
     List<Widget> firstList = [];
     List<Widget> secondList = [];
 
-    // late WorkoutRecordModel workoutRecord;
     late SetInfo timerSetInfo;
-
-    // workoutRecordBox.whenData((value) {
-    //   final record = value.get(exercise.workoutPlanId);
-
-    //   if (record != null && record.setInfo.length > 0) {
-    //     workoutRecord = record;
-    //   } else {
-    //     workoutRecord = WorkoutRecordModel(workoutPlanId: 0, setInfo: []);
-    //   }
-    // });
 
     if ((exercise.trackingFieldId == 3 || exercise.trackingFieldId == 4) &&
         exercise.setInfo.length == 1) {
@@ -53,8 +42,7 @@ class WorkoutCard extends ConsumerWidget {
         if (record != null) {
           timerSetInfo = record;
         } else {
-          timerSetInfo =
-              SetInfo(index: 1, seconds: exercise.setInfo[0].seconds!);
+          timerSetInfo = SetInfo(index: 1, seconds: 0);
         }
       });
     }

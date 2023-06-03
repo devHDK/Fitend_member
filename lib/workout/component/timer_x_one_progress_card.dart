@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
+import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -25,16 +27,43 @@ class TimerXOneProgressCard extends ConsumerStatefulWidget {
 
 class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
   late Timer timer;
-  late int totalSeconds;
+  late int totalSeconds = -1;
+  bool initial = true;
   bool isRunning = false;
 
-  late AsyncValue<Box> box;
+  late AsyncValue<Box> timerBox;
+  late AsyncValue<Box> workoutBox;
 
   @override
   void initState() {
     super.initState();
 
-    totalSeconds = widget.exercise.setInfo[0].seconds!;
+    WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
+      if (initial) {
+        timerBox.whenData((value) {
+          final record = value.get(widget.exercise.workoutPlanId);
+
+          if (record is SetInfo) {
+            totalSeconds =
+                widget.exercise.setInfo[0].seconds! - record.seconds!;
+          } else if (record == null) {
+            totalSeconds = widget.exercise.setInfo[0].seconds!;
+          }
+
+          print('record : $record');
+          print('totalSeconds : $totalSeconds');
+        });
+
+        setState(() {});
+        initial = false;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   void onStartPressed() {
@@ -55,24 +84,47 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
   }
 
   void onStopPressed() {
-    timer.cancel();
+    // timer.cancel();
+
+    timerBox.whenData(
+      (value) {
+        value.delete(widget.exercise.workoutPlanId);
+      },
+    );
+
+    workoutBox.whenData((value) {
+      value.delete(widget.exercise.workoutPlanId);
+    });
+
     setState(() {
+      print(widget.exercise.setInfo[0].seconds!);
       totalSeconds = widget.exercise.setInfo[0].seconds!;
-      isRunning = false;
     });
   }
 
   void onTick(Timer timer) {
     if (totalSeconds == 0) {
+      //0초가 됬을때 저장
       setState(() {
         isRunning = false;
       });
       timer.cancel();
+
+      workoutBox.whenData((value) {
+        value.put(
+          widget.exercise.workoutPlanId,
+          WorkoutRecordModel(
+            workoutPlanId: widget.exercise.workoutPlanId,
+            setInfo: widget.exercise.setInfo,
+          ),
+        );
+        print(value.get(widget.exercise.workoutPlanId).setInfo.length);
+      });
     } else {
       setState(() {
         totalSeconds -= 1;
       });
-      box.whenData((value) {
+      timerBox.whenData((value) {
         value.put(
           widget.exercise.workoutPlanId,
           SetInfo(
@@ -87,8 +139,12 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
 
   @override
   Widget build(BuildContext context) {
+    final AsyncValue<Box> workoutRecordBox =
+        ref.watch(hiveWorkoutRecordProvider);
     final AsyncValue<Box> timerWorkoutBox = ref.watch(hiveTimerRecordProvider);
-    box = timerWorkoutBox;
+
+    timerBox = timerWorkoutBox;
+    workoutBox = workoutRecordBox;
 
     return Column(
       children: [
@@ -142,7 +198,8 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                   width: 8,
                 ),
                 Text(
-                  totalSeconds == widget.exercise.setInfo[0].seconds!
+                  totalSeconds == widget.exercise.setInfo[0].seconds! ||
+                          totalSeconds < 0
                       ? '운동 시작'
                       : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
                   style: TextStyle(

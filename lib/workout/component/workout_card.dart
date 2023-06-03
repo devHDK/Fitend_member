@@ -1,9 +1,10 @@
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
-import 'package:fitend_member/workout/model/workout_record_model.dart';
+import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -24,23 +25,39 @@ class WorkoutCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<Box> box = ref.watch(hiveWorkoutRecordProvider);
+    final AsyncValue<Box> workoutRecordBox =
+        ref.watch(hiveWorkoutRecordProvider);
+    final AsyncValue<Box> timerRecordBox = ref.watch(hiveTimerRecordProvider);
 
     List<Widget> countList = [];
     List<Widget> firstList = [];
     List<Widget> secondList = [];
 
-    late WorkoutRecordModel workoutRecord;
+    // late WorkoutRecordModel workoutRecord;
+    late SetInfo timerSetInfo;
 
-    box.whenData((value) {
-      final record = value.get(exercise.workoutPlanId);
+    // workoutRecordBox.whenData((value) {
+    //   final record = value.get(exercise.workoutPlanId);
 
-      if (record != null && record.setInfo.length > 0) {
-        workoutRecord = record;
-      } else {
-        workoutRecord = WorkoutRecordModel(workoutPlanId: 0, setInfo: []);
-      }
-    });
+    //   if (record != null && record.setInfo.length > 0) {
+    //     workoutRecord = record;
+    //   } else {
+    //     workoutRecord = WorkoutRecordModel(workoutPlanId: 0, setInfo: []);
+    //   }
+    // });
+
+    if ((exercise.trackingFieldId == 3 || exercise.trackingFieldId == 4) &&
+        exercise.setInfo.length == 1) {
+      timerRecordBox.whenData((value) {
+        final record = value.get(exercise.workoutPlanId);
+        if (record != null) {
+          timerSetInfo = record;
+        } else {
+          timerSetInfo =
+              SetInfo(index: 1, seconds: exercise.setInfo[0].seconds!);
+        }
+      });
+    }
 
     List.generate(
       exercise.setInfo.length,
@@ -74,10 +91,8 @@ class WorkoutCard extends ConsumerWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(5),
                       child: LinearProgressIndicator(
-                        value: workoutRecord.setInfo.isNotEmpty
-                            ? (workoutRecord.setInfo[0].seconds! /
-                                exercise.setInfo[0].seconds!)
-                            : 0,
+                        value: (timerSetInfo.seconds! /
+                            exercise.setInfo[0].seconds!),
                         backgroundColor: LIGHT_GRAY_COLOR,
                         valueColor:
                             const AlwaysStoppedAnimation<Color>(POINT_COLOR),

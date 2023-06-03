@@ -37,4 +37,5 @@ final s3Url = F.appFlavor != Flavor.production
     : '';
 
 String workoutRecordBox = 'WorkoutRecords';
-String timerRecordBox = 'timerRecords';
+String timerXOneRecordBox = 'timerXoneRecords';
+String timerXMoreRecordBox = 'timerXMoreRecords';

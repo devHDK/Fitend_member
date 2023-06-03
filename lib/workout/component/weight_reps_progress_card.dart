@@ -1,13 +1,10 @@
 import 'dart:async';
 
 import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
-import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 class WeightWrepsProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
@@ -30,7 +27,6 @@ class _WeightWrepsProgressCardState
     extends ConsumerState<WeightWrepsProgressCard> {
   int index = 0;
   bool colorChanged = false;
-  List<SetInfo> tempSetInfos = [];
 
   @override
   void initState() {
@@ -48,7 +44,6 @@ class _WeightWrepsProgressCardState
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final AsyncValue<Box> box = ref.read(hiveWorkoutRecordProvider);
 
     List<Widget> progressList = widget.exercise.setInfo.mapIndexed(
       (index, element) {

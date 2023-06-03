@@ -3,11 +3,13 @@ import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
+import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
+import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -96,6 +98,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     final size = MediaQuery.of(context).size;
     final AsyncValue<Box> workoutBox = ref.watch(hiveWorkoutRecordProvider);
     final AsyncValue<Box> timerWorkoutBox = ref.watch(hiveTimerRecordProvider);
+    final AsyncValue<Box> timerXMoreBox =
+        ref.watch(hiveTimerXMoreRecordProvider);
 
     workoutRecordBox = workoutBox;
 
@@ -127,8 +131,21 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 timerWorkoutBox.whenData(
                   (value) {
                     for (var element in widget.exercises) {
-                      if (element.trackingFieldId == 3 ||
-                          element.trackingFieldId == 4) {
+                      if ((element.trackingFieldId == 3 ||
+                              element.trackingFieldId == 4) &&
+                          element.setInfo.length == 1) {
+                        value.delete(element.workoutPlanId);
+                      }
+                    }
+                  },
+                );
+
+                timerXMoreBox.whenData(
+                  (value) {
+                    for (var element in widget.exercises) {
+                      if ((element.trackingFieldId == 3 ||
+                              element.trackingFieldId == 4) &&
+                          element.setInfo.length > 1) {
                         value.delete(element.workoutPlanId);
                       }
                     }
@@ -307,12 +324,90 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             );
                           },
                         ),
-                      // if ((widget.exercises[exerciseIndex].trackingFieldId ==
-                      //             3 ||
-                      //         widget.exercises[exerciseIndex].trackingFieldId ==
-                      //             4) &&
-                      //     widget.exercises[exerciseIndex].setInfo.length >
-                      //         1) // Timer X more than 1 set
+                      if ((widget.exercises[exerciseIndex].trackingFieldId ==
+                                  3 ||
+                              widget.exercises[exerciseIndex].trackingFieldId ==
+                                  4) &&
+                          widget.exercises[exerciseIndex].setInfo.length >
+                              1) // Timer X more than 1 set
+                        TimerXMoreProgressCard(
+                          exercise: widget.exercises[exerciseIndex],
+                          setInfoIndex: setInfoCompleteList[exerciseIndex],
+                          proccessOnTap: () {
+                            if (exerciseIndex <= maxExcerciseIndex &&
+                                setInfoCompleteList[exerciseIndex] <
+                                    maxSetInfoList[exerciseIndex]) {
+                              timerXMoreBox.whenData(
+                                (value) {
+                                  final record = value.get(widget
+                                      .exercises[exerciseIndex].workoutPlanId);
+
+                                  if (record != null &&
+                                      record.setInfo.length > 0) {
+                                    workoutRecordBox.whenData(
+                                      (_) {
+                                        _.put(
+                                          widget.exercises[exerciseIndex]
+                                              .workoutPlanId,
+                                          record,
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          DialogTools.errorDialog(
+                                        message: '먼저 운동을 진행해 주세요 🏋🏻',
+                                        confirmText: '확인',
+                                        confirmOnTap: () => context.pop(),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                },
+                              );
+                            }
+
+                            if (!workoutFinish) {
+                              _checkLastExercise(); //끝났는지 체크!
+                            }
+
+                            if (setInfoCompleteList[exerciseIndex] <
+                                maxSetInfoList[exerciseIndex]) {
+                              setState(() {
+                                setInfoCompleteList[exerciseIndex] += 1;
+                                print(
+                                    'setInfoCompleteIndex[$exerciseIndex] : ${setInfoCompleteList[exerciseIndex]}');
+                              });
+                            }
+
+                            //운동 변경
+                            if (setInfoCompleteList[exerciseIndex] ==
+                                    maxSetInfoList[exerciseIndex] &&
+                                exerciseIndex < maxExcerciseIndex) {
+                              //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
+                              setState(() {
+                                exerciseIndex += 1; // 운동 변경
+                              });
+
+                              while (setInfoCompleteList[exerciseIndex] ==
+                                      maxSetInfoList[exerciseIndex] &&
+                                  exerciseIndex < maxExcerciseIndex) {
+                                setState(() {
+                                  exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                });
+                                if (exerciseIndex == maxExcerciseIndex) {
+                                  break;
+                                }
+                              }
+                            }
+
+                            if (!workoutFinish) {
+                              _checkLastExercise(); //끝났는지 체크!
+                            }
+                          },
+                        ),
                       const SizedBox(
                         height: 18,
                       ),

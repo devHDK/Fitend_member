@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
@@ -8,6 +9,7 @@ import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class TimerXOneProgressCard extends ConsumerStatefulWidget {
@@ -30,6 +32,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
   late int totalSeconds = -1;
   bool initial = true;
   bool isRunning = false;
+  int count = 0;
 
   late AsyncValue<Box> timerBox;
   late AsyncValue<Box> workoutBox;
@@ -97,7 +100,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
     });
 
     setState(() {
-      print(widget.exercise.setInfo[0].seconds!);
+      count = 0;
       totalSeconds = widget.exercise.setInfo[0].seconds!;
     });
   }
@@ -107,6 +110,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
       //0초가 됬을때 저장
       setState(() {
         isRunning = false;
+        count = 0;
       });
       timer.cancel();
 
@@ -123,6 +127,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
     } else {
       setState(() {
         totalSeconds -= 1;
+        count++;
       });
       timerBox.whenData((value) {
         value.put(
@@ -257,7 +262,18 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
             ),
             InkWell(
               // 운동 진행
-              onTap: widget.proccessOnTap,
+              onTap: count < 10
+                  ? () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => DialogTools.errorDialog(
+                          message: '먼저 운동을 진행해 주세요 🏋🏻',
+                          confirmText: '확인',
+                          confirmOnTap: () => context.pop(),
+                        ),
+                      );
+                    }
+                  : widget.proccessOnTap,
               child: Image.asset(
                 'asset/img/icon_foward.png',
               ),

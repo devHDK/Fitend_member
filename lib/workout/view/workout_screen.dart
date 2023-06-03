@@ -309,16 +309,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   if (!workoutFinish) {
                                     _checkLastExercise(); //끝났는지 체크!
                                   }
-                                } else {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) =>
-                                        DialogTools.errorDialog(
-                                      message: '먼저 운동을 진행해 주세요 🏋🏻',
-                                      confirmText: '확인',
-                                      confirmOnTap: () => context.pop(),
-                                    ),
-                                  );
                                 }
                               },
                             );
@@ -353,17 +343,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                         );
                                       },
                                     );
-                                  } else {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          DialogTools.errorDialog(
-                                        message: '먼저 운동을 진행해 주세요 🏋🏻',
-                                        confirmText: '확인',
-                                        confirmOnTap: () => context.pop(),
-                                      ),
-                                    );
-                                    return;
                                   }
                                 },
                               );

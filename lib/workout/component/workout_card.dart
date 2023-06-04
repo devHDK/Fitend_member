@@ -44,10 +44,8 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
             widget.exercise.trackingFieldId == 4) &&
         widget.exercise.setInfo.length == 1) {
       timerRecordBox.whenData(
-        (value) {
-          final record = value.get(widget.exercise.workoutPlanId);
-
-          print('record : $record');
+        (value) async {
+          final record = await value.get(widget.exercise.workoutPlanId);
 
           if (record != null && record is SetInfo) {
             timerSetInfo = record;

@@ -15,11 +15,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 class TimerXOneProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final GestureTapCallback proccessOnTap;
+  final int setInfoIndex;
 
   const TimerXOneProgressCard({
     super.key,
     required this.exercise,
     required this.proccessOnTap,
+    required this.setInfoIndex,
   });
 
   @override
@@ -43,21 +45,21 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
 
     WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
       if (initial) {
-        timerBox.whenData((value) {
-          final record = value.get(widget.exercise.workoutPlanId);
+        timerBox.whenData((value) async {
+          final record = await value.get(widget.exercise.workoutPlanId);
 
-          if (record is SetInfo) {
-            totalSeconds =
-                widget.exercise.setInfo[0].seconds! - record.seconds!;
-          } else if (record == null) {
-            totalSeconds = widget.exercise.setInfo[0].seconds!;
+          if (record != null && record is SetInfo && widget.setInfoIndex == 0) {
+            setState(() {
+              totalSeconds =
+                  widget.exercise.setInfo[0].seconds! - record.seconds!;
+            });
+          } else {
+            setState(() {
+              totalSeconds = widget.exercise.setInfo[0].seconds!;
+            });
           }
-
-          print('record : $record');
-          print('totalSeconds : $totalSeconds');
         });
-
-        setState(() {});
+        print('totalSeconds : $totalSeconds');
         initial = false;
       }
     });
@@ -114,30 +116,27 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
       });
       timer.cancel();
 
-      workoutBox.whenData((value) {
-        value.put(
+      workoutBox.whenData((value) async {
+        await value.put(
           widget.exercise.workoutPlanId,
           WorkoutRecordModel(
             workoutPlanId: widget.exercise.workoutPlanId,
             setInfo: widget.exercise.setInfo,
           ),
         );
-        print(value.get(widget.exercise.workoutPlanId).setInfo.length);
       });
     } else {
       setState(() {
         totalSeconds -= 1;
         count++;
       });
-      timerBox.whenData((value) {
-        value.put(
+      timerBox.whenData((value) async {
+        await value.put(
           widget.exercise.workoutPlanId,
           SetInfo(
               index: 1,
               seconds: widget.exercise.setInfo[0].seconds! - totalSeconds),
         );
-
-        print(value.get(widget.exercise.workoutPlanId).seconds!);
       });
     }
   }

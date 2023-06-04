@@ -158,9 +158,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     timerXmoreBox = timerXMoreRecordBox;
 
     workoutRecordBox.whenData(
-      (value) {
+      (value) async {
         for (var element in model.exercises) {
-          final comfleteSet = value.get(element.workoutPlanId);
+          final comfleteSet = await value.get(element.workoutPlanId);
           if (comfleteSet != null && comfleteSet.setInfo.length > 0) {
             isProcessing = true;
             break;

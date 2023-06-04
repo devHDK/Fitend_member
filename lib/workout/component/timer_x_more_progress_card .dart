@@ -49,30 +49,42 @@ class _WeightWrepsProgressCardState
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
-      if (initial) {
-        timerXmoreBox.whenData((value) {
-          final record = value.get(widget.exercise.workoutPlanId);
+    WidgetsBinding.instance.addPersistentFrameCallback(
+      (timeStamp) {
+        if (initial) {
+          timerXmoreBox.whenData((value) async {
+            final record = await value.get(widget.exercise.workoutPlanId);
 
-          print('record : $record');
+            if (record != null && record is WorkoutRecordModel) {
+              if (record.setInfo.length > widget.setInfoIndex) {
+                setState(() {
+                  totalSeconds =
+                      widget.exercise.setInfo[widget.setInfoIndex].seconds! -
+                          record.setInfo[widget.setInfoIndex].seconds!;
+                });
 
-          if (record is WorkoutRecordModel) {
-            totalSeconds =
-                widget.exercise.setInfo[widget.setInfoIndex].seconds! -
-                    record.setInfo[widget.setInfoIndex].seconds!;
-          } else if (record == null) {
-            totalSeconds =
-                widget.exercise.setInfo[widget.setInfoIndex].seconds!;
-          }
-
+                print('totalSeconds : $totalSeconds');
+              } else {
+                setState(() {
+                  totalSeconds =
+                      widget.exercise.setInfo[widget.setInfoIndex].seconds!;
+                });
+                print('totalSeconds : $totalSeconds');
+              }
+            } else {
+              setState(() {
+                totalSeconds =
+                    widget.exercise.setInfo[widget.setInfoIndex].seconds!;
+              });
+            }
+          });
           print('totalSeconds : $totalSeconds');
-        });
-
-        setState(() {});
-        initial = false;
-        print('init!!!');
-      }
-    });
+          print('initial : $initial');
+          initial = false;
+          print('initial : $initial');
+        }
+      },
+    );
 
     Timer.periodic(
       const Duration(milliseconds: 1000),
@@ -103,8 +115,8 @@ class _WeightWrepsProgressCardState
 
       setState(() {
         totalSeconds = widget.exercise.setInfo[widget.setInfoIndex].seconds!;
-        print('totalSeconds : $totalSeconds');
       });
+      print('totalSeconds : $totalSeconds');
     }
   }
 
@@ -175,7 +187,6 @@ class _WeightWrepsProgressCardState
 
             print('old record');
             print('record.setInfo.length : ${record.setInfo.length}');
-            print(record.setInfo[0].seconds);
 
             value.put(
               widget.exercise.workoutPlanId,
@@ -201,12 +212,9 @@ class _WeightWrepsProgressCardState
                     ),
                   ]),
             );
-
-            print(
-                'length ${value.get(widget.exercise.workoutPlanId).setInfo.length}');
           } else {
             print('timerXmoreBox 처음 저장!');
-            print(value.get(widget.exercise.workoutPlanId));
+            print(totalSeconds);
             value.put(
               widget.exercise.workoutPlanId,
               WorkoutRecordModel(
@@ -229,6 +237,8 @@ class _WeightWrepsProgressCardState
 
   @override
   Widget build(BuildContext context) {
+    print('setInfoIndex : ${widget.setInfoIndex}');
+
     final size = MediaQuery.of(context).size;
     final AsyncValue<Box> workoutRecordBox =
         ref.watch(hiveWorkoutRecordProvider);
@@ -326,7 +336,9 @@ class _WeightWrepsProgressCardState
               border: Border.all(color: POINT_COLOR),
               borderRadius: BorderRadius.circular(12),
               color: totalSeconds ==
-                      widget.exercise.setInfo[widget.setInfoIndex].seconds!
+                          widget
+                              .exercise.setInfo[widget.setInfoIndex].seconds! ||
+                      totalSeconds < 0
                   ? POINT_COLOR
                   : Colors.white,
             ),
@@ -355,14 +367,16 @@ class _WeightWrepsProgressCardState
                       : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
                   style: TextStyle(
                     color: totalSeconds ==
-                            widget
-                                .exercise.setInfo[widget.setInfoIndex].seconds!
+                                widget.exercise.setInfo[widget.setInfoIndex]
+                                    .seconds! ||
+                            totalSeconds < 0
                         ? Colors.white
                         : POINT_COLOR,
                     fontSize: 14,
                     fontWeight: totalSeconds ==
-                            widget
-                                .exercise.setInfo[widget.setInfoIndex].seconds!
+                                widget.exercise.setInfo[widget.setInfoIndex]
+                                    .seconds! ||
+                            totalSeconds < 0
                         ? FontWeight.w700
                         : FontWeight.w400,
                   ),

@@ -41,7 +41,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   late AsyncValue<Box> workoutRecordBox;
   bool isSwipeUp = false;
   bool initial = true;
-  int exerciseIndex = 0;
+  late int exerciseIndex = 0;
   List<int> setInfoCompleteList = [];
   List<int> maxSetInfoList = [];
   bool workoutFinish = false;
@@ -62,16 +62,17 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
       if (initial) {
         workoutRecordBox.whenData(
-          (value) {
+          (value) async {
             for (int i = 0; i < maxExcerciseIndex; i++) {
-              final tempRecord = value.get(widget.exercises[i].workoutPlanId);
+              final tempRecord =
+                  await value.get(widget.exercises[i].workoutPlanId);
 
               if (tempRecord != null && tempRecord.setInfo.length > 0) {
-                setInfoCompleteList[i] = value
-                        .get(widget.exercises[i].workoutPlanId)
-                        .setInfo
-                        .length -
-                    1;
+                setInfoCompleteList[i] = await value
+                    .get(widget.exercises[i].workoutPlanId)
+                    .setInfo
+                    .length;
+                print('setInfoCompleteList[$i] : ${setInfoCompleteList[i]}');
               } else {
                 setInfoCompleteList[i] = 0;
               }
@@ -80,7 +81,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             if (!isPoped) {
               for (int i = 0; i < widget.exercises.length; i++) {
                 if (setInfoCompleteList[i] < maxSetInfoList[i]) {
-                  exerciseIndex = i;
+                  setState(() {
+                    exerciseIndex = i;
+                  });
 
                   break;
                 }
@@ -263,6 +266,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               1) // Timer X 1set
                         TimerXOneProgressCard(
                           exercise: widget.exercises[exerciseIndex],
+                          setInfoIndex: setInfoCompleteList[exerciseIndex],
                           proccessOnTap: () {
                             timerWorkoutBox.whenData(
                               (value) {
@@ -356,8 +360,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 maxSetInfoList[exerciseIndex]) {
                               setState(() {
                                 setInfoCompleteList[exerciseIndex] += 1;
-                                print(
-                                    'setInfoCompleteIndex[$exerciseIndex] : ${setInfoCompleteList[exerciseIndex]}');
                               });
                             }
 
@@ -395,7 +397,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       const SizedBox(
                         height: 18,
                       ),
-                      if (isSwipeUp) _bottomButtons(context, workoutBox),
+                      if (isSwipeUp)
+                        _bottomButtons(context, workoutBox, timerXMoreBox),
                     ],
                   ),
                 ),
@@ -489,7 +492,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     );
   }
 
-  Column _bottomButtons(BuildContext context, AsyncValue<Box<dynamic>> box) {
+  Column _bottomButtons(
+    BuildContext context,
+    AsyncValue<Box<dynamic>> box,
+    AsyncValue<Box<dynamic>> box2,
+  ) {
     return Column(
       children: [
         const Divider(
@@ -551,13 +558,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               img: 'asset/img/icon_stop.png',
               name: '운동 종료',
               onTap: () {
-                box.whenData((value) {
-                  print('21 ${value.get(21).setInfo.length}');
-                  print('23 ${value.get(23).setInfo.length}');
-                  print('24 ${value.get(24).setInfo.length}');
-                  print('25 ${value.get(25).setInfo.length}');
-                });
-
                 print(setInfoCompleteList);
                 print(maxSetInfoList);
               },

@@ -3,6 +3,8 @@ import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
+import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
@@ -31,6 +33,8 @@ class WorkoutListScreen extends ConsumerStatefulWidget {
 class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   late WorkoutModel workoutModel;
   late AsyncValue<Box> workoutBox;
+  late AsyncValue<Box> timerXmoreBox;
+  late AsyncValue<Box> timerXoneBox;
   bool isProcessing = false;
   bool isPoped = false;
 
@@ -83,6 +87,26 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               },
             );
 
+            timerXmoreBox.whenData((value) {
+              for (var element in workoutModel.exercises) {
+                if ((element.trackingFieldId == 3 ||
+                        element.trackingFieldId == 4) &&
+                    element.setInfo.length > 1) {
+                  value.delete(element.workoutPlanId);
+                }
+              }
+            });
+
+            timerXoneBox.whenData((value) {
+              for (var element in workoutModel.exercises) {
+                if ((element.trackingFieldId == 3 ||
+                        element.trackingFieldId == 4) &&
+                    element.setInfo.length == 1) {
+                  value.delete(element.workoutPlanId);
+                }
+              }
+            });
+
             Navigator.of(context).pop();
 
             await Navigator.of(context)
@@ -107,7 +131,12 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
-    final AsyncValue<Box> box = ref.watch(hiveWorkoutRecordProvider);
+    final AsyncValue<Box> workoutRecordBox =
+        ref.watch(hiveWorkoutRecordProvider);
+    final AsyncValue<Box> timerXoneRecordBox =
+        ref.watch(hiveTimerRecordProvider);
+    final AsyncValue<Box> timerXMoreRecordBox =
+        ref.watch(hiveTimerXMoreRecordProvider);
 
     if (state is WorkoutModelLoading) {
       return const Center(
@@ -124,9 +153,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     final model = state as WorkoutModel;
 
     workoutModel = model;
-    workoutBox = box;
+    workoutBox = workoutRecordBox;
+    timerXoneBox = timerXoneRecordBox;
+    timerXmoreBox = timerXMoreRecordBox;
 
-    box.whenData(
+    workoutRecordBox.whenData(
       (value) {
         for (var element in model.exercises) {
           final comfleteSet = value.get(element.workoutPlanId);
@@ -172,7 +203,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 (context, index) {
                   final exerciseModel = model.exercises[index];
                   int completeSetCount = 0;
-                  box.when(
+                  workoutRecordBox.when(
                     data: (data) {
                       final record = data.get(exerciseModel.workoutPlanId);
                       if (record != null) {

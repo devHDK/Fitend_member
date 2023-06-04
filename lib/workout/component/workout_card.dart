@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-class WorkoutCard extends ConsumerWidget {
+class WorkoutCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int completeSetCount;
   final int? exerciseIndex;
@@ -24,7 +24,12 @@ class WorkoutCard extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WorkoutCard> createState() => _WorkoutCardState();
+}
+
+class _WorkoutCardState extends ConsumerState<WorkoutCard> {
+  @override
+  Widget build(BuildContext context) {
     final AsyncValue<Box> workoutRecordBox =
         ref.watch(hiveWorkoutRecordProvider);
     final AsyncValue<Box> timerRecordBox = ref.watch(hiveTimerRecordProvider);
@@ -33,24 +38,31 @@ class WorkoutCard extends ConsumerWidget {
     List<Widget> firstList = [];
     List<Widget> secondList = [];
 
-    late SetInfo timerSetInfo;
+    late SetInfo timerSetInfo = SetInfo(index: 1, seconds: 0);
 
-    if ((exercise.trackingFieldId == 3 || exercise.trackingFieldId == 4) &&
-        exercise.setInfo.length == 1) {
-      timerRecordBox.whenData((value) {
-        final record = value.get(exercise.workoutPlanId);
-        if (record != null) {
-          timerSetInfo = record;
-        } else {
-          timerSetInfo = SetInfo(index: 1, seconds: 0);
-        }
-      });
+    if ((widget.exercise.trackingFieldId == 3 ||
+            widget.exercise.trackingFieldId == 4) &&
+        widget.exercise.setInfo.length == 1) {
+      timerRecordBox.whenData(
+        (value) {
+          final record = value.get(widget.exercise.workoutPlanId);
+
+          print('record : $record');
+
+          if (record != null && record is SetInfo) {
+            timerSetInfo = record;
+          } else {
+            timerSetInfo = SetInfo(index: 1, seconds: 0);
+          }
+        },
+      );
     }
 
     List.generate(
-      exercise.setInfo.length,
-      (index) => exercise.setInfo.length != 1 ||
-              (exercise.trackingFieldId != 3 && exercise.trackingFieldId != 4)
+      widget.exercise.setInfo.length,
+      (index) => widget.exercise.setInfo.length != 1 ||
+              (widget.exercise.trackingFieldId != 3 &&
+                  widget.exercise.trackingFieldId != 4)
           ? countList.add(
               Row(
                 children: [
@@ -59,7 +71,7 @@ class WorkoutCard extends ConsumerWidget {
                     height: 8,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: index <= completeSetCount - 1
+                      color: index <= widget.completeSetCount - 1
                           ? POINT_COLOR
                           : BODY_TEXT_COLOR,
                     ),
@@ -80,7 +92,7 @@ class WorkoutCard extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(5),
                       child: LinearProgressIndicator(
                         value: (timerSetInfo.seconds! /
-                            exercise.setInfo[0].seconds!),
+                            widget.exercise.setInfo[0].seconds!),
                         backgroundColor: LIGHT_GRAY_COLOR,
                         valueColor:
                             const AlwaysStoppedAnimation<Color>(POINT_COLOR),
@@ -92,20 +104,20 @@ class WorkoutCard extends ConsumerWidget {
             ),
     );
 
-    if (exercise.setInfo.length > 5) {
+    if (widget.exercise.setInfo.length > 5) {
       firstList = countList.sublist(0, 5);
-      secondList = countList.sublist(5, exercise.setInfo.length);
+      secondList = countList.sublist(5, widget.exercise.setInfo.length);
     }
 
     return Container(
-      padding: isSelected != null
+      padding: widget.isSelected != null
           ? const EdgeInsets.symmetric(horizontal: 28)
           : null,
       width: MediaQuery.of(context).size.width,
       height: 157,
       decoration: BoxDecoration(
         color: BACKGROUND_COLOR,
-        border: isSelected != null && isSelected!
+        border: widget.isSelected != null && widget.isSelected!
             ? Border.all(
                 color: POINT_COLOR,
                 width: 1.0,
@@ -115,16 +127,16 @@ class WorkoutCard extends ConsumerWidget {
       child: Row(
         children: [
           _renderImage(
-            exercise.videos[0].thumbnail,
-            exercise.targetMuscles[0].image,
+            widget.exercise.videos[0].thumbnail,
+            widget.exercise.targetMuscles[0].image,
           ),
           const SizedBox(
             width: 23,
           ),
           Expanded(
             child: _RenderBody(
-                exerciseIndex: exerciseIndex,
-                exercise: exercise,
+                exerciseIndex: widget.exerciseIndex,
+                exercise: widget.exercise,
                 countList: countList,
                 firstList: firstList,
                 secondList: secondList),

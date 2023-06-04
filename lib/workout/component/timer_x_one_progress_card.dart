@@ -110,7 +110,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
       //0초가 됬을때 저장
       setState(() {
         isRunning = false;
-        count = 0;
+        count = 11;
       });
       timer.cancel();
 
@@ -181,6 +181,8 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                   ? () => onStopPressed()
                   : () => onStartPressed(),
           child: Container(
+            width: 100,
+            height: 24,
             decoration: BoxDecoration(
               border: Border.all(color: POINT_COLOR),
               borderRadius: BorderRadius.circular(12),

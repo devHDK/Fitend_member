@@ -386,6 +386,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               _checkLastExercise(); //끝났는지 체크!
                             }
                           },
+                          resetSet: () {
+                            setState(() {
+                              setInfoCompleteList[exerciseIndex] = 0;
+                            });
+                          },
                         ),
                       const SizedBox(
                         height: 18,

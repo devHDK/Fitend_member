@@ -17,12 +17,14 @@ class TimerXMoreProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
   final GestureTapCallback proccessOnTap;
+  final GestureTapCallback resetSet;
 
   const TimerXMoreProgressCard({
     super.key,
     required this.exercise,
     required this.setInfoIndex,
     required this.proccessOnTap,
+    required this.resetSet,
   });
 
   @override
@@ -32,7 +34,6 @@ class TimerXMoreProgressCard extends ConsumerStatefulWidget {
 
 class _WeightWrepsProgressCardState
     extends ConsumerState<TimerXMoreProgressCard> {
-  int index = 0;
   bool colorChanged = false;
 
   Timer? timer;
@@ -92,13 +93,18 @@ class _WeightWrepsProgressCardState
   @override
   void didUpdateWidget(covariant TimerXMoreProgressCard oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     if (oldWidget.setInfoIndex != widget.setInfoIndex) {
       if (timer!.isActive) {
         timer!.cancel();
         isRunning = false;
+        count = 0;
       }
 
-      totalSeconds = widget.exercise.setInfo[widget.setInfoIndex].seconds!;
+      setState(() {
+        totalSeconds = widget.exercise.setInfo[widget.setInfoIndex].seconds!;
+        print('totalSeconds : $totalSeconds');
+      });
     }
   }
 
@@ -132,6 +138,8 @@ class _WeightWrepsProgressCardState
       value.delete(widget.exercise.workoutPlanId);
     });
 
+    widget.resetSet();
+
     setState(() {
       totalSeconds = widget.exercise.setInfo[0].seconds!;
       count = 0;
@@ -143,7 +151,7 @@ class _WeightWrepsProgressCardState
       //0초가 됬을때 저장
       setState(() {
         isRunning = false;
-        count = 0;
+        count = 11;
       });
       timer.cancel();
     } else {
@@ -156,12 +164,18 @@ class _WeightWrepsProgressCardState
         (value) {
           final record = value.get(widget.exercise.workoutPlanId);
 
-          if (record != null && widget.setInfoIndex < record.setInfo.length) {
+          if (record != null &&
+              widget.setInfoIndex < record.setInfo.length &&
+              record is WorkoutRecordModel) {
             record.setInfo[widget.setInfoIndex] =
                 record.setInfo[widget.setInfoIndex].copyWith(
               seconds: widget.exercise.setInfo[widget.setInfoIndex].seconds! -
                   totalSeconds,
             );
+
+            print('old record');
+            print('record.setInfo.length : ${record.setInfo.length}');
+            print(record.setInfo[0].seconds);
 
             value.put(
               widget.exercise.workoutPlanId,
@@ -173,22 +187,23 @@ class _WeightWrepsProgressCardState
               ),
             );
           } else if (record != null &&
+              record is WorkoutRecordModel &&
               widget.setInfoIndex == record.setInfo.length) {
             value.put(
               widget.exercise.workoutPlanId,
               WorkoutRecordModel(
-                workoutPlanId: widget.exercise.workoutPlanId,
-                setInfo: [
-                  ...record.setInfo,
-                  SetInfo(
-                    index: record.setInfo.lenth + 1,
-                    seconds:
-                        widget.exercise.setInfo[widget.setInfoIndex].seconds! -
-                            totalSeconds,
-                  ),
-                ],
-              ),
+                  workoutPlanId: widget.exercise.workoutPlanId,
+                  setInfo: [
+                    ...record.setInfo,
+                    SetInfo(
+                      index: record.setInfo.length + 1,
+                      seconds: 1,
+                    ),
+                  ]),
             );
+
+            print(
+                'length ${value.get(widget.exercise.workoutPlanId).setInfo.length}');
           } else {
             print('timerXmoreBox 처음 저장!');
             print(value.get(widget.exercise.workoutPlanId));
@@ -278,11 +293,7 @@ class _WeightWrepsProgressCardState
     return Column(
       children: [
         Text(
-          widget.exercise.trackingFieldId == 1
-              ? '${widget.exercise.setInfo[index].weight}kg ∙ ${widget.exercise.setInfo[index].reps}회'
-              : widget.exercise.trackingFieldId == 2
-                  ? '${widget.exercise.setInfo[index].reps}회'
-                  : '${(widget.exercise.setInfo[index].seconds! / 60).floor()}분 ${widget.exercise.setInfo[index].seconds! % 60}초',
+          '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분 ${widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60}초',
           style: const TextStyle(
             color: GRAY_COLOR,
             fontSize: 16,
@@ -309,10 +320,13 @@ class _WeightWrepsProgressCardState
                   ? () => onStopPressed()
                   : () => onStartPressed(),
           child: Container(
+            width: 100,
+            height: 24,
             decoration: BoxDecoration(
               border: Border.all(color: POINT_COLOR),
               borderRadius: BorderRadius.circular(12),
-              color: totalSeconds == widget.exercise.setInfo[0].seconds!
+              color: totalSeconds ==
+                      widget.exercise.setInfo[widget.setInfoIndex].seconds!
                   ? POINT_COLOR
                   : Colors.white,
             ),
@@ -322,7 +336,9 @@ class _WeightWrepsProgressCardState
                 isRunning
                     ? Image.asset('asset/img/icon_pause_small.png')
                     : totalSeconds > 0 &&
-                            totalSeconds < widget.exercise.setInfo[0].seconds!
+                            totalSeconds <
+                                widget.exercise.setInfo[widget.setInfoIndex]
+                                    .seconds!
                         ? Image.asset('asset/img/icon_replay_small.png')
                         : totalSeconds == 0
                             ? Image.asset('asset/img/icon_reset_small.png')

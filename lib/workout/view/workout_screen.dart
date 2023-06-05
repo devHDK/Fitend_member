@@ -1,7 +1,10 @@
+import 'package:fitend_member/common/component/custom_clipper.dart';
+import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
@@ -48,6 +51,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   bool isPoped = false;
   bool lastChecked = false;
   late int maxExcerciseIndex;
+  bool isTooltipVisible = true;
 
   @override
   void initState() {
@@ -94,6 +98,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         initial = false;
       }
     });
+
+    Future.delayed(const Duration(seconds: 5), () {
+      setState(() {
+        isTooltipVisible = false;
+      });
+    });
   }
 
   @override
@@ -105,6 +115,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         ref.watch(hiveTimerXMoreRecordProvider);
 
     workoutRecordBox = workoutBox;
+
+    if (isTooltipVisible) {
+      Future.delayed(const Duration(seconds: 5), () {
+        setState(() {
+          isTooltipVisible = false;
+        });
+      });
+    }
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -163,6 +181,34 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           icon: const Icon(Icons.arrow_back),
           color: Colors.black,
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  isTooltipVisible = !isTooltipVisible;
+                });
+
+                if (isTooltipVisible) {
+                  Future.delayed(const Duration(seconds: 5), () {
+                    setState(() {
+                      isTooltipVisible = false;
+                    });
+                  });
+                }
+              },
+              child: CircleAvatar(
+                radius: 18,
+                backgroundColor: POINT_COLOR,
+                child: CustomNetworkImage(
+                  imageUrl:
+                      '$s3Url${widget.exercises[exerciseIndex].trainerProfileImage}',
+                ),
+              ),
+            ),
+          )
+        ],
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -183,6 +229,52 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               ),
             ),
           ),
+          if (isTooltipVisible)
+            Positioned(
+              left: 28,
+              top: 110,
+              right: 28,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const MyClipPath(),
+                  Container(
+                    width: size.width,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.black.withOpacity(0.8),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Tip 📣',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            widget.exercises[exerciseIndex].description,
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           AnimatedPositioned(
             bottom: 0.0,
             curve: Curves.linear,
@@ -239,6 +331,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                               setState(() {
                                 exerciseIndex += 1; // 운동 변경
+                                isTooltipVisible = true;
                               });
 
                               while (setInfoCompleteList[exerciseIndex] ==
@@ -295,7 +388,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       exerciseIndex < maxExcerciseIndex) {
                                     //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                                     setState(() {
-                                      exerciseIndex += 1; // 운동 변경
+                                      exerciseIndex += 1;
+                                      isTooltipVisible = true;
+                                      // 운동 변경
                                     });
 
                                     while (setInfoCompleteList[exerciseIndex] ==
@@ -369,7 +464,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 exerciseIndex < maxExcerciseIndex) {
                               //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                               setState(() {
-                                exerciseIndex += 1; // 운동 변경
+                                exerciseIndex += 1;
+                                isTooltipVisible = true;
+                                // 운동 변경
                               });
 
                               while (setInfoCompleteList[exerciseIndex] ==

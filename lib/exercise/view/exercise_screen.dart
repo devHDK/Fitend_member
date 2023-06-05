@@ -136,11 +136,14 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          CircleAvatar(
-                            backgroundColor: POINT_COLOR,
-                            child: CustomNetworkImage(
-                              imageUrl:
-                                  '$s3Url${widget.exercise.trainerProfileImage}',
+                          GestureDetector(
+                            onTap: () {},
+                            child: CircleAvatar(
+                              backgroundColor: POINT_COLOR,
+                              child: CustomNetworkImage(
+                                imageUrl:
+                                    '$s3Url${widget.exercise.trainerProfileImage}',
+                              ),
                             ),
                           ),
                           const SizedBox(

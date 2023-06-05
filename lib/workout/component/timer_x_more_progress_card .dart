@@ -142,18 +142,24 @@ class _WeightWrepsProgressCardState
 
     timerXmoreBox.whenData(
       (value) {
-        value.delete(widget.exercise.workoutPlanId);
+        var record = value.get(widget.exercise.workoutPlanId);
+
+        if (record is WorkoutRecordModel) {
+          record.setInfo.removeLast();
+
+          value.put(widget.exercise.workoutPlanId, record);
+        }
       },
     );
 
-    workoutBox.whenData((value) {
-      value.delete(widget.exercise.workoutPlanId);
-    });
+    // workoutBox.whenData((value) {
+    //   value.delete(widget.exercise.workoutPlanId);
+    // });
 
-    widget.resetSet();
+    // widget.resetSet();
 
     setState(() {
-      totalSeconds = widget.exercise.setInfo[0].seconds!;
+      totalSeconds = widget.exercise.setInfo[widget.setInfoIndex].seconds!;
       count = 0;
     });
   }

@@ -5,7 +5,7 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio_retry.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/flavors.dart';
-import 'package:fitend_member/user/provider/user_me_provider.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';

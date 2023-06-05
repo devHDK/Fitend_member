@@ -4,7 +4,7 @@ import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/user/model/user_model.dart';
-import 'package:fitend_member/user/provider/user_me_provider.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

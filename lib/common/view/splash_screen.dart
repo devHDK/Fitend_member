@@ -55,7 +55,7 @@ class _BottomView extends StatelessWidget {
             style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
-                color: BODY_TEXT_COLOR),
+                color: LIGHT_GRAY_COLOR),
           ),
           const SizedBox(
             height: 40,

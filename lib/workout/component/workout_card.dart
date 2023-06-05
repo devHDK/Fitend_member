@@ -71,7 +71,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                       borderRadius: BorderRadius.circular(5),
                       color: index <= widget.completeSetCount - 1
                           ? POINT_COLOR
-                          : BODY_TEXT_COLOR,
+                          : LIGHT_GRAY_COLOR,
                     ),
                   ),
                   const SizedBox(
@@ -235,7 +235,7 @@ class _RenderBody extends StatelessWidget {
               ? '${exercise.setInfo.length} SET'
               : '${(exercise.setInfo[0].seconds! / 60).floor()} 분',
           style: const TextStyle(
-            color: BODY_TEXT_COLOR,
+            color: LIGHT_GRAY_COLOR,
             fontSize: 14,
             fontWeight: FontWeight.w400,
           ),

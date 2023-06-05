@@ -5,7 +5,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
-import 'package:fitend_member/user/provider/user_me_provider.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';

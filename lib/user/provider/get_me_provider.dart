@@ -29,7 +29,9 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
     required this.repository,
     required this.storage,
   }) : super(UserModelLoading()) {
-    getMe();
+    Future.delayed(const Duration(seconds: 5), () {
+      getMe();
+    });
   }
 
   getMe() async {

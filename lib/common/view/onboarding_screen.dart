@@ -25,23 +25,34 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       backgroundColor: BACKGROUND_COLOR,
       child: _flavorBanner(
         child: Center(
-          child: AnimatedTextKit(
-            animatedTexts: [
-              ColorizeAnimatedText(
-                'F I T E N D',
-                textStyle: GoogleFonts.audiowide(
+          child: DefaultTextStyle(
+            style: GoogleFonts.audiowide(
+              fontSize: 45,
+              fontWeight: FontWeight.w500,
+              color: POINT_COLOR,
+            ),
+            child: AnimatedTextKit(
+              totalRepeatCount: 2,
+              animatedTexts: [
+                ColorizeAnimatedText(
+                  'F I T E N D',
+                  textStyle: GoogleFonts.audiowide(
                     fontSize: 45,
-                    // color: POINT_COLOR,
-                    fontWeight: FontWeight.w500),
-                colors: [
-                  POINT_COLOR,
-                  POINT_COLOR,
-                  Colors.white,
-                ],
-                speed: const Duration(milliseconds: 300),
-                textDirection: TextDirection.rtl,
-              ),
-            ],
+                    fontWeight: FontWeight.w500,
+                  ),
+                  colors: [
+                    Colors.white,
+                    Colors.white,
+                    POINT_COLOR,
+                  ],
+                  textAlign: TextAlign.center,
+                  speed: const Duration(milliseconds: 300),
+                  textDirection: TextDirection.rtl,
+                ),
+                // TypewriterAnimatedText('F I T'),
+                // TypewriterAnimatedText('F I T E N D'),
+              ],
+            ),
           ),
         ),
         show: F.appFlavor == Flavor.development || F.appFlavor == Flavor.local

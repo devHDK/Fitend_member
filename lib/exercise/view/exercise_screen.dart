@@ -120,7 +120,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ),
                       const Divider(
                         height: 1,
-                        color: BODY_TEXT_COLOR,
+                        color: LIGHT_GRAY_COLOR,
                       ),
                     ],
                   ),
@@ -167,7 +167,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                               Text(
                                 'by ${widget.exercise.trainerNickname} 트레이너',
                                 style: const TextStyle(
-                                  color: BODY_TEXT_COLOR,
+                                  color: LIGHT_GRAY_COLOR,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -193,7 +193,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ),
                       const Divider(
                         height: 1,
-                        color: BODY_TEXT_COLOR,
+                        color: LIGHT_GRAY_COLOR,
                       ),
                     ],
                   ),

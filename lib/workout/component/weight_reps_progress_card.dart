@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class WeightWrepsProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
@@ -27,6 +29,7 @@ class _WeightWrepsProgressCardState
     extends ConsumerState<WeightWrepsProgressCard> {
   int index = 0;
   bool colorChanged = false;
+  int count = 0;
 
   @override
   void initState() {
@@ -36,6 +39,7 @@ class _WeightWrepsProgressCardState
       (timer) {
         setState(() {
           colorChanged = !colorChanged;
+          count += 1;
         });
       },
     );
@@ -167,7 +171,23 @@ class _WeightWrepsProgressCardState
             ),
             InkWell(
               // 운동 진행
-              onTap: widget.proccessOnTap,
+              onTap: count > 10
+                  ? () {
+                      setState(() {
+                        count = 0;
+                      });
+                      widget.proccessOnTap();
+                    }
+                  : () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => DialogTools.errorDialog(
+                          message: '먼저 운동을 진행해 주세요 🏋🏻',
+                          confirmText: '확인',
+                          confirmOnTap: () => context.pop(),
+                        ),
+                      );
+                    },
               child: Image.asset(
                 'asset/img/icon_foward.png',
               ),

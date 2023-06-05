@@ -5,7 +5,7 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
-import 'package:fitend_member/user/provider/user_me_provider.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
 import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/material.dart';
@@ -99,8 +99,6 @@ class AuthProvider extends ChangeNotifier {
 
     // getMe Error...
     if (user is UserModelError) {
-      print(loginIn);
-
       return loginIn && user.statusCode != 504 ? '/splash/login' : '/error';
     }
 

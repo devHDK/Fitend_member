@@ -47,7 +47,7 @@ class WorkoutBanner extends StatelessWidget {
             Text(
               subTitle,
               style: const TextStyle(
-                color: BODY_TEXT_COLOR,
+                color: LIGHT_GRAY_COLOR,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
               ),
@@ -57,7 +57,7 @@ class WorkoutBanner extends StatelessWidget {
             ),
             const Divider(
               thickness: 1,
-              color: BODY_TEXT_COLOR,
+              color: LIGHT_GRAY_COLOR,
             ),
             const SizedBox(
               height: 19,
@@ -84,7 +84,7 @@ class WorkoutBanner extends StatelessWidget {
                       ? ' ${timeString[1]}분'
                       : ' ${timeString[0]}시간 ${timeString[1]}분',
                   style: const TextStyle(
-                    color: BODY_TEXT_COLOR,
+                    color: LIGHT_GRAY_COLOR,
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),

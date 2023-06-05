@@ -2,7 +2,6 @@ import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
-import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:flutter/material.dart';
@@ -30,8 +29,8 @@ class WorkoutCard extends ConsumerStatefulWidget {
 class _WorkoutCardState extends ConsumerState<WorkoutCard> {
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<Box> workoutRecordBox =
-        ref.watch(hiveWorkoutRecordProvider);
+    // final AsyncValue<Box> workoutRecordBox =
+    //     ref.watch(hiveWorkoutRecordProvider);
     final AsyncValue<Box> timerRecordBox = ref.watch(hiveTimerRecordProvider);
 
     List<Widget> countList = [];
@@ -44,8 +43,8 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
             widget.exercise.trackingFieldId == 4) &&
         widget.exercise.setInfo.length == 1) {
       timerRecordBox.whenData(
-        (value) async {
-          final record = await value.get(widget.exercise.workoutPlanId);
+        (value) {
+          final record = value.get(widget.exercise.workoutPlanId);
 
           if (record != null && record is SetInfo) {
             timerSetInfo = record;

@@ -520,7 +520,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             context: context,
             builder: (context) {
               return DialogTools.confirmDialog(
-                message: '완료하지 않은 운동이 있어요 \n 🤓마저 진행할까요?',
+                message: '완료하지 않은 운동이 있어요🤓\n 마저 진행할까요?',
                 confirmText: '네, 마저할게요',
                 cancelText: '아니요, 그만할래요',
                 confirmOnTap: () {
@@ -655,8 +655,23 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               img: 'asset/img/icon_stop.png',
               name: '운동 종료',
               onTap: () {
-                print(setInfoCompleteList);
-                print(maxSetInfoList);
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return DialogTools.confirmDialog(
+                      message: '오늘의 운동을 종료할까요?\n 종료 후에는 다시 진행할 수 없어요 🙉',
+                      confirmText: '아니요, 계속할게요',
+                      cancelText: '네, 종료할게요',
+                      confirmOnTap: () {
+                        context.pop();
+                      },
+                      cancelOnTap: () {
+                        context.pop();
+                        //완료
+                      },
+                    );
+                  },
+                );
               },
             ),
           ],

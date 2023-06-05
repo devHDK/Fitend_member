@@ -9,10 +9,7 @@ part of 'workout_records_repository.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
 class _WorkoutRecordsRepository implements WorkoutRecordsRepository {
-  _WorkoutRecordsRepository(
-    this._dio, {
-    this.baseUrl,
-  });
+  _WorkoutRecordsRepository(this._dio);
 
   final Dio _dio;
 

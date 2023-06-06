@@ -49,8 +49,8 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
           print('keyboardHeight :  $keyboardHeight');
           scrollController.animateTo(
             _scrollOffset + 345,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.decelerate,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.linear,
           );
         });
       } else {

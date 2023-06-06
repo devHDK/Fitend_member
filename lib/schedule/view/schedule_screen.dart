@@ -27,23 +27,31 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   DateTime maxDate = DateTime(DateTime.now().year);
   int initListItemCount = 0;
   int refetchItemCount = 0;
+  bool initial = true;
 
   @override
   void initState() {
     super.initState();
     controller.addListener(listener);
 
-    Future.delayed(const Duration(milliseconds: 500), () {
-      controller.jumpTo(
-        130 * 14 + 130.0 * initListItemCount,
-      );
-      refetchItemCount = 0;
-    });
-
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   controller.animateTo(130 * 14 + 130.0 * listItemCount,
-    //       duration: const Duration(milliseconds: 100), curve: Curves.linear);
+    // Future.delayed(const Duration(milliseconds: 300), () {
+    //   controller.jumpTo(
+    //     130 * 14 + 130.0 * initListItemCount,
+    //   );
+    //   refetchItemCount = 0;
     // });
+
+    WidgetsBinding.instance.addPersistentFrameCallback((_) {
+      if (initial) {
+        controller.jumpTo(
+          130 * 14 + 130.0 * initListItemCount,
+        );
+        refetchItemCount = 0;
+        print('scrolled!!!!!!');
+
+        initial = false;
+      }
+    });
   }
 
   @override

@@ -26,7 +26,7 @@ class PostWorkoutRecordFeedbackModel {
       );
 
   factory PostWorkoutRecordFeedbackModel.fromJson(Map<String, dynamic> json) =>
-      _$PostWorkoutRecordFeedbackFromJson(json);
+      _$PostWorkoutRecordFeedbackModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PostWorkoutRecordFeedbackToJson(this);
+  Map<String, dynamic> toJson() => _$PostWorkoutRecordFeedbackModelToJson(this);
 }

@@ -6,7 +6,7 @@ part of 'post_workout_record_feedback_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PostWorkoutRecordFeedbackModel _$PostWorkoutRecordFeedbackFromJson(
+PostWorkoutRecordFeedbackModel _$PostWorkoutRecordFeedbackModelFromJson(
         Map<String, dynamic> json) =>
     PostWorkoutRecordFeedbackModel(
       strengthIndex: json['strengthIndex'] as int,
@@ -14,7 +14,7 @@ PostWorkoutRecordFeedbackModel _$PostWorkoutRecordFeedbackFromJson(
       contents: json['contents'] as String,
     );
 
-Map<String, dynamic> _$PostWorkoutRecordFeedbackToJson(
+Map<String, dynamic> _$PostWorkoutRecordFeedbackModelToJson(
         PostWorkoutRecordFeedbackModel instance) =>
     <String, dynamic>{
       'strengthIndex': instance.strengthIndex,

@@ -37,4 +37,6 @@ class SetInfo {
 
   factory SetInfo.fromJson(Map<String, dynamic> json) =>
       _$SetInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SetInfoToJson(this);
 }

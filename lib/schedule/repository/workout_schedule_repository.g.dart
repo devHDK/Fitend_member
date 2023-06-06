@@ -9,7 +9,10 @@ part of 'workout_schedule_repository.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
 class _WorkoutScheduleRepository implements WorkoutScheduleRepository {
-  _WorkoutScheduleRepository(this._dio);
+  _WorkoutScheduleRepository(
+    this._dio, {
+    this.baseUrl,
+  });
 
   final Dio _dio;
 
@@ -23,7 +26,7 @@ class _WorkoutScheduleRepository implements WorkoutScheduleRepository {
     queryParameters.addAll(params.toJson());
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<WorkoutScheduleModel>(Options(
       method: 'GET',
@@ -47,7 +50,7 @@ class _WorkoutScheduleRepository implements WorkoutScheduleRepository {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<WorkoutModel>(Options(
       method: 'GET',
@@ -83,7 +86,7 @@ class _WorkoutScheduleRepository implements WorkoutScheduleRepository {
     )
         .compose(
           _dio.options,
-          '/workoutSchedules/${id}/feedback',
+          '/workoutSchedules/${id}/feedbacks',
           queryParameters: queryParameters,
           data: _data,
         )

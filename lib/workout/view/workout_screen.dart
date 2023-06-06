@@ -15,8 +15,10 @@ import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
+import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
+import 'package:fitend_member/workout/repository/workout_records_repository.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:flutter/material.dart';
@@ -116,6 +118,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     final AsyncValue<Box> timerWorkoutBox = ref.watch(hiveTimerRecordProvider);
     final AsyncValue<Box> timerXMoreBox =
         ref.watch(hiveTimerXMoreRecordProvider);
+    final recordRepository = ref.read(workoutRecordsRepositoryProvider);
 
     workoutRecordBox = workoutBox;
 
@@ -233,50 +236,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             ),
           ),
           if (isTooltipVisible)
-            Positioned(
-              left: 28,
-              top: 110,
-              right: 28,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const MyClipPath(),
-                  Container(
-                    width: size.width,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.black.withOpacity(0.8),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Tip 📣',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            widget.exercises[exerciseIndex].description,
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            _ShowTip(
+              size: size,
+              widget: widget,
+              exerciseIndex: exerciseIndex,
             ),
           AnimatedPositioned(
             bottom: 0.0,
@@ -315,7 +278,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             }
 
                             if (!workoutFinish) {
-                              _checkLastExercise(); //끝났는지 체크!
+                              _checkLastExercise(
+                                recordRepository: recordRepository,
+                                workoutBox: workoutBox,
+                              ); //끝났는지 체크!
                             }
 
                             if (setInfoCompleteList[exerciseIndex] <
@@ -350,7 +316,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             }
 
                             if (!workoutFinish) {
-                              _checkLastExercise(); //끝났는지 체크!
+                              _checkLastExercise(
+                                recordRepository: recordRepository,
+                                workoutBox: workoutBox,
+                              ); //끝났는지 체크!
                             }
                           },
                         ),
@@ -409,7 +378,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   }
 
                                   if (!workoutFinish) {
-                                    _checkLastExercise(); //끝났는지 체크!
+                                    _checkLastExercise(
+                                      recordRepository: recordRepository,
+                                      workoutBox: workoutBox,
+                                    ); //끝났는지 체크!
                                   }
                                 }
                               },
@@ -451,7 +423,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             }
 
                             if (!workoutFinish) {
-                              _checkLastExercise(); //끝났는지 체크!
+                              _checkLastExercise(
+                                recordRepository: recordRepository,
+                                workoutBox: workoutBox,
+                              ); //끝났는지 체크!
                             }
 
                             if (setInfoCompleteList[exerciseIndex] <
@@ -485,7 +460,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             }
 
                             if (!workoutFinish) {
-                              _checkLastExercise(); //끝났는지 체크!
+                              _checkLastExercise(
+                                recordRepository: recordRepository,
+                                workoutBox: workoutBox,
+                              ); //끝났는지 체크!
                             }
                           },
                           resetSet: () {
@@ -498,7 +476,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         height: 18,
                       ),
                       if (isSwipeUp)
-                        _bottomButtons(context, workoutBox, timerXMoreBox),
+                        _bottomButtons(
+                          workoutBox,
+                          recordRepository,
+                        ),
                     ],
                   ),
                 ),
@@ -510,15 +491,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     );
   }
 
-  void _checkLastExercise() {
+  void _checkLastExercise({
+    required WorkoutRecordsRepository recordRepository,
+    required AsyncValue<Box> workoutBox,
+  }) {
     if (exerciseIndex == maxExcerciseIndex &&
         setInfoCompleteList[exerciseIndex] == maxSetInfoList[exerciseIndex]) {
       // 리스트 끝의 운동을 다 했는지 확인!
       bool finish = true;
       for (int i = 0; i <= maxExcerciseIndex; i++) {
         if (setInfoCompleteList[i] != maxSetInfoList[i]) {
-          print('setInfoCompleteIndex[$i] : ${setInfoCompleteList[i]}');
-          print('maxSetInfoIndex[$i] : ${maxSetInfoList[i]}');
           showDialog(
             context: context,
             builder: (context) {
@@ -532,10 +514,36 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   });
                   context.pop();
                 },
-                cancelOnTap: () {
+                cancelOnTap: () async {
                   print('완료쓰!!');
                   context.pop();
-                  context.goNamed(WorkoutFeedbackScreen.routeName);
+
+                  List<WorkoutRecordModel> tempRecordList = [];
+
+                  workoutBox.whenData(
+                    (value) {
+                      for (var e in widget.exercises) {
+                        final record = value.get(e.workoutPlanId);
+
+                        if (record != null && record is WorkoutRecordModel) {
+                          tempRecordList.add(record);
+                        }
+                      }
+                    },
+                  );
+
+                  print(tempRecordList);
+
+                  // await recordRepository.postWorkoutRecords(
+                  //   body: PostWorkoutRecordModel(records: tempRecordList),
+                  // );
+
+                  // context.goNamed(
+                  //   WorkoutFeedbackScreen.routeName,
+                  //   pathParameters: {
+                  //     'workoutScheduleId': widget.workoutScheduleId.toString(),
+                  //   },
+                  // );
                   //완료
                 },
               );
@@ -553,6 +561,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         setState(() {
           workoutFinish = true;
         });
+        // GoRouter.of(context).goNamed(
+        //   WorkoutFeedbackScreen.routeName,
+        //   pathParameters: {
+        //     'workoutScheduleId': widget.workoutScheduleId.toString(),
+        //   },
+        // );
         //완료
       }
     }
@@ -593,11 +607,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     );
   }
 
-  Column _bottomButtons(
-    BuildContext context,
-    AsyncValue<Box<dynamic>> box,
-    AsyncValue<Box<dynamic>> box2,
-  ) {
+  Column _bottomButtons(AsyncValue<Box<dynamic>> workoutBox,
+      WorkoutRecordsRepository recordRepository) {
     return Column(
       children: [
         const Divider(
@@ -661,7 +672,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (context) {
+                  builder: (_) {
                     return DialogTools.confirmDialog(
                       message: '오늘의 운동을 종료할까요?\n 종료 후에는 다시 진행할 수 없어요 🙉',
                       confirmText: '아니요, 계속할게요',
@@ -669,15 +680,68 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       confirmOnTap: () {
                         context.pop();
                       },
-                      cancelOnTap: () {
+                      cancelOnTap: () async {
                         context.pop();
-                        context.goNamed(
+                        //완료쓰
+
+                        List<WorkoutRecordModel> tempRecordList = [];
+
+                        workoutBox.whenData(
+                          (value) {
+                            for (var e in widget.exercises) {
+                              final record = value.get(e.workoutPlanId);
+
+                              if (record != null &&
+                                  record is WorkoutRecordModel) {
+                                List<SetInfo> tempSetInfo =
+                                    record.setInfo.map((e) {
+                                  return e.copyWith(
+                                    index: e.index,
+                                    reps: e.reps == 0 || e.reps == null
+                                        ? null
+                                        : e.reps,
+                                    weight: e.weight == 0 || e.weight == null
+                                        ? null
+                                        : e.weight,
+                                    seconds: e.seconds == 0 || e.seconds == null
+                                        ? null
+                                        : e.seconds,
+                                  );
+                                }).toList();
+
+                                record.copyWith(
+                                  setInfo: tempSetInfo,
+                                );
+
+                                tempRecordList.add(record);
+                              }
+                            }
+                          },
+                        );
+
+                        print(tempRecordList);
+
+                        final ret = await recordRepository.postWorkoutRecords(
+                          body: PostWorkoutRecordModel(
+                            records: tempRecordList,
+                          ),
+                        );
+
+                        GoRouter.of(_).goNamed(
                           WorkoutFeedbackScreen.routeName,
                           pathParameters: {
                             'workoutScheduleId':
                                 widget.workoutScheduleId.toString(),
                           },
                         );
+
+                        // context.goNamed(
+                        //   WorkoutFeedbackScreen.routeName,
+                        //   pathParameters: {
+                        //     'workoutScheduleId':
+                        //         widget.workoutScheduleId.toString(),
+                        //   },
+                        // );
                         //완료
                       },
                     );
@@ -717,6 +781,66 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               fontWeight: FontWeight.w400,
             ),
           )
+        ],
+      ),
+    );
+  }
+}
+
+class _ShowTip extends StatelessWidget {
+  const _ShowTip({
+    required this.size,
+    required this.widget,
+    required this.exerciseIndex,
+  });
+
+  final Size size;
+  final WorkoutScreen widget;
+  final int exerciseIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: 28,
+      top: 110,
+      right: 28,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const MyClipPath(),
+          Container(
+            width: size.width,
+            height: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.black.withOpacity(0.8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Tip 📣',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    widget.exercises[exerciseIndex].description,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

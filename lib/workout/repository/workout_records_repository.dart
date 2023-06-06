@@ -21,6 +21,7 @@ abstract class WorkoutRecordsRepository {
   @Headers({
     'accessToken': 'true',
   })
-  Future<void> postWorkoutRecords(
-      {@Body() required PostWorkoutRecordModel body});
+  Future<void> postWorkoutRecords({
+    @Body() required PostWorkoutRecordModel body,
+  });
 }

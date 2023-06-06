@@ -15,7 +15,6 @@ import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
-import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
@@ -684,48 +683,48 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         context.pop();
                         //완료쓰
 
-                        List<WorkoutRecordModel> tempRecordList = [];
+                        // List<WorkoutRecordModel> tempRecordList = [];
 
-                        workoutBox.whenData(
-                          (value) {
-                            for (var e in widget.exercises) {
-                              final record = value.get(e.workoutPlanId);
+                        // workoutBox.whenData(
+                        //   (value) {
+                        //     for (var e in widget.exercises) {
+                        //       final record = value.get(e.workoutPlanId);
 
-                              if (record != null &&
-                                  record is WorkoutRecordModel) {
-                                List<SetInfo> tempSetInfo =
-                                    record.setInfo.map((e) {
-                                  return e.copyWith(
-                                    index: e.index,
-                                    reps: e.reps == 0 || e.reps == null
-                                        ? null
-                                        : e.reps,
-                                    weight: e.weight == 0 || e.weight == null
-                                        ? null
-                                        : e.weight,
-                                    seconds: e.seconds == 0 || e.seconds == null
-                                        ? null
-                                        : e.seconds,
-                                  );
-                                }).toList();
+                        //       if (record != null &&
+                        //           record is WorkoutRecordModel) {
+                        //         List<SetInfo> tempSetInfo =
+                        //             record.setInfo.map((e) {
+                        //           return e.copyWith(
+                        //             index: e.index,
+                        //             reps: e.reps == 0 || e.reps == null
+                        //                 ? null
+                        //                 : e.reps,
+                        //             weight: e.weight == 0 || e.weight == null
+                        //                 ? null
+                        //                 : e.weight,
+                        //             seconds: e.seconds == 0 || e.seconds == null
+                        //                 ? null
+                        //                 : e.seconds,
+                        //           );
+                        //         }).toList();
 
-                                record.copyWith(
-                                  setInfo: tempSetInfo,
-                                );
+                        //         record.copyWith(
+                        //           setInfo: tempSetInfo,
+                        //         );
 
-                                tempRecordList.add(record);
-                              }
-                            }
-                          },
-                        );
+                        //         tempRecordList.add(record);
+                        //       }
+                        //     }
+                        //   },
+                        // );
 
-                        print(tempRecordList);
+                        // print(tempRecordList);
 
-                        final ret = await recordRepository.postWorkoutRecords(
-                          body: PostWorkoutRecordModel(
-                            records: tempRecordList,
-                          ),
-                        );
+                        // final ret = await recordRepository.postWorkoutRecords(
+                        //   body: PostWorkoutRecordModel(
+                        //     records: tempRecordList,
+                        //   ),
+                        // );
 
                         GoRouter.of(_).goNamed(
                           WorkoutFeedbackScreen.routeName,
@@ -735,13 +734,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                           },
                         );
 
-                        // context.goNamed(
-                        //   WorkoutFeedbackScreen.routeName,
-                        //   pathParameters: {
-                        //     'workoutScheduleId':
-                        //         widget.workoutScheduleId.toString(),
-                        //   },
-                        // );
                         //완료
                       },
                     );

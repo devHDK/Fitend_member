@@ -1,6 +1,11 @@
+import 'package:dio/dio.dart';
+import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:fitend_member/workout/model/post_workout_record_feedback_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class WorkoutFeedbackScreen extends ConsumerStatefulWidget {
   static String get routeName => 'workoutFeedback';
@@ -99,6 +104,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final repository = ref.read(workoutScheduleRepositoryProvider);
 
     final baseBorder = OutlineInputBorder(
       borderSide: const BorderSide(
@@ -148,76 +154,66 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                       const SizedBox(
                         height: 24,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '코치님께 전하고 싶은 내용을 적어주세요 📤',
-                            style: _titleStyle,
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          TextFormField(
-                            maxLines: 8,
-                            style: const TextStyle(color: Colors.white),
-                            controller: contentsController,
-                            cursorColor: POINT_COLOR,
-                            focusNode: focusNode,
-                            onTapOutside: (event) {
-                              focusNode.unfocus();
-                            },
-                            keyboardType: TextInputType.multiline,
-                            decoration: InputDecoration(
-                              focusColor: POINT_COLOR,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 11,
-                              ),
-                              filled: true,
-                              border: baseBorder,
-                              enabledBorder: baseBorder,
-                              focusedBorder: baseBorder.copyWith(
-                                borderSide: baseBorder.borderSide.copyWith(
-                                  color: POINT_COLOR,
-                                ),
-                              ),
-                              labelText: focusNode.hasFocus
-                                  ? '자유롭게 입력해주세요'
-                                  : '운동관련 궁금증, 요청사항 등을 형식에 관계없이\n자유롭게 입력해주세요 :)',
-                              labelStyle: TextStyle(
-                                color: focusNode.hasFocus
-                                    ? POINT_COLOR
-                                    : GRAY_COLOR,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 40,
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: Container(
-                              width: size.width,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: POINT_COLOR,
-                              ),
-                              child: const Center(
-                                child: Text(
-                                  '평가 저장하기',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
+                      _renderContentFeedback(baseBorder, size),
+                      const SizedBox(
+                        height: 40,
                       ),
+                      TextButton(
+                        onPressed: issueIndex == 0 || strengthIndex == 0
+                            ? () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => DialogTools.errorDialog(
+                                    message: '작성되지 않은 항목이 있어요!',
+                                    confirmText: '확인',
+                                    confirmOnTap: () {
+                                      context.pop();
+                                    },
+                                  ),
+                                );
+                              }
+                            : () async {
+                                context.pop();
+                                try {
+                                  await repository.postWorkoutRecordsFeedback(
+                                    id: widget.workoutScheduleId,
+                                    body: PostWorkoutRecordFeedbackModel(
+                                      strengthIndex: strengthIndex,
+                                      issueIndex: issueIndex,
+                                      contents: contentsController.text,
+                                    ),
+                                  );
+                                } on DioError catch (e) {
+                                  print(e.message);
+
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        DialogTools.errorDialog(
+                                      message: e.message ?? '',
+                                      confirmText: '확인',
+                                      confirmOnTap: () => context.pop(),
+                                    ),
+                                  );
+                                }
+                              },
+                        child: Container(
+                          width: size.width,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: POINT_COLOR,
+                          ),
+                          child: const Center(
+                            child: Text(
+                              '평가 저장하기',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ],
@@ -226,6 +222,55 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Column _renderContentFeedback(OutlineInputBorder baseBorder, Size size) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '코치님께 전하고 싶은 내용을 적어주세요 📤',
+          style: _titleStyle,
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        TextFormField(
+          maxLines: 8,
+          style: const TextStyle(color: Colors.white),
+          controller: contentsController,
+          cursorColor: POINT_COLOR,
+          focusNode: focusNode,
+          onTapOutside: (event) {
+            focusNode.unfocus();
+          },
+          keyboardType: TextInputType.multiline,
+          decoration: InputDecoration(
+            focusColor: POINT_COLOR,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 11,
+            ),
+            filled: true,
+            border: baseBorder,
+            enabledBorder: baseBorder,
+            focusedBorder: baseBorder.copyWith(
+              borderSide: baseBorder.borderSide.copyWith(
+                color: POINT_COLOR,
+              ),
+            ),
+            labelText: focusNode.hasFocus || contentsController.text.isNotEmpty
+                ? '자유롭게 입력해주세요'
+                : '운동관련 궁금증, 요청사항 등을 형식에 관계없이\n자유롭게 입력해주세요 :)',
+            labelStyle: TextStyle(
+              color: focusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

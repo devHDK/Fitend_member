@@ -18,6 +18,7 @@ import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
+import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -27,12 +28,14 @@ class WorkoutScreen extends ConsumerStatefulWidget {
   final List<Exercise> exercises;
   final DateTime date;
   final WorkoutModel workout;
+  final int workoutScheduleId;
 
   const WorkoutScreen({
     super.key,
     required this.exercises,
     required this.date,
     required this.workout,
+    required this.workoutScheduleId,
   });
 
   @override
@@ -532,6 +535,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 cancelOnTap: () {
                   print('완료쓰!!');
                   context.pop();
+                  context.goNamed(WorkoutFeedbackScreen.routeName);
                   //완료
                 },
               );
@@ -667,6 +671,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       },
                       cancelOnTap: () {
                         context.pop();
+                        context.goNamed(
+                          WorkoutFeedbackScreen.routeName,
+                          pathParameters: {
+                            'workoutScheduleId':
+                                widget.workoutScheduleId.toString(),
+                          },
+                        );
                         //완료
                       },
                     );

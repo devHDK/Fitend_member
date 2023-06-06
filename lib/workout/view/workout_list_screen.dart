@@ -69,6 +69,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                   exercises: workoutModel.exercises,
                   date: DateTime.parse(workoutModel.startDate),
                   workout: workoutModel,
+                  workoutScheduleId: widget.id,
                 ),
               ),
             )
@@ -115,6 +116,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 exercises: workoutModel.exercises,
                 date: DateTime.parse(workoutModel.startDate),
                 workout: workoutModel,
+                workoutScheduleId: widget.id,
               ),
             ))
                 .then((value) {
@@ -262,6 +264,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                   exercises: model.exercises,
                   date: DateTime.parse(model.startDate),
                   workout: model,
+                  workoutScheduleId: widget.id,
                 ),
               ))
                   .then((value) {

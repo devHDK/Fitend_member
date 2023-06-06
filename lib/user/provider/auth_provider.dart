@@ -7,6 +7,7 @@ import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
+import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,6 +71,14 @@ class AuthProvider extends ChangeNotifier {
                 ),
               ],
             ),
+            GoRoute(
+              path: 'workoutFeedback/:workoutScheduleId',
+              name: WorkoutFeedbackScreen.routeName,
+              builder: (context, state) => WorkoutFeedbackScreen(
+                workoutScheduleId:
+                    int.parse(state.pathParameters['workoutScheduleId']!),
+              ),
+            )
           ],
         ),
         GoRoute(

@@ -70,46 +70,47 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     );
 
     return TextFormField(
-        controller: widget.controller,
-        style: const TextStyle(color: Colors.white),
-        cursorColor: POINT_COLOR,
-        //비밀번호 입력할때
-        obscureText: widget.obscureText,
-        autofocus: widget.autoFocus,
-        focusNode: focusNode,
-        onChanged: widget.onChanged,
-        keyboardType: widget.textInputType,
-        autofillHints: widget.autoFillHint,
-        onTapOutside: (event) {
-          focusNode.unfocus();
-        },
-        decoration: InputDecoration(
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
-          hintText: widget.hintText,
-          // errorText: errorText,
-          hintStyle: const TextStyle(
-            color: GRAY_COLOR,
-            fontSize: 14.0,
-            fontWeight: FontWeight.w400,
+      controller: widget.controller,
+      style: const TextStyle(color: Colors.white),
+      cursorColor: POINT_COLOR,
+      //비밀번호 입력할때
+      obscureText: widget.obscureText,
+      autofocus: widget.autoFocus,
+      focusNode: focusNode,
+      onChanged: widget.onChanged,
+      keyboardType: widget.textInputType,
+      autofillHints: widget.autoFillHint,
+      onTapOutside: (event) {
+        focusNode.unfocus();
+      },
+      decoration: InputDecoration(
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+        hintText: widget.hintText,
+        // errorText: errorText,
+        hintStyle: const TextStyle(
+          color: GRAY_COLOR,
+          fontSize: 14.0,
+          fontWeight: FontWeight.w400,
+        ),
+        filled: true,
+        fillColor: BACKGROUND_COLOR,
+        border: baseBorder,
+        enabledBorder: baseBorder,
+        focusedBorder: baseBorder.copyWith(
+          borderSide: baseBorder.borderSide.copyWith(
+            color: POINT_COLOR,
           ),
-          filled: true,
-          fillColor: BACKGROUND_COLOR,
-          border: baseBorder,
-          enabledBorder: baseBorder,
-          focusedBorder: baseBorder.copyWith(
-            borderSide: baseBorder.borderSide.copyWith(
-              color: POINT_COLOR,
-            ),
-          ),
-          labelText: focusNode.hasFocus || widget.controller.text.isEmpty
-              ? widget.fullLabelText
-              : widget.labelText,
-          labelStyle: TextStyle(
-            color: focusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-          ),
-        ));
+        ),
+        labelText: focusNode.hasFocus || widget.controller.text.isEmpty
+            ? widget.fullLabelText
+            : widget.labelText,
+        labelStyle: TextStyle(
+          color: focusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
   }
 }

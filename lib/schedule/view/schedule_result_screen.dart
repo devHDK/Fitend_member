@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_workout_edit_provider.dart';
@@ -7,10 +8,12 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
+import 'package:fitend_member/workout/provider/workout_records_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 
 const List<String> strengthResults = [
   '매우쉬움 😁',
@@ -47,12 +50,40 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   WorkoutFeedbackRecordModel? feedback;
   List<WorkoutRecordResult> workoutResults = [];
   List<WorkoutRecordModel> workoutRecords = [];
+  bool initial = true;
+  bool hasLocalData = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPersistentFrameCallback((_) {
+      if (initial && !hasLocalData) {
+        getResults();
+
+        initial = false;
+      }
+    });
+  }
+
+  void getResults() async {
+    final provider = ref.read(workoutRecordsProvider.notifier);
+
+    await provider.getWorkoutResults(
+        workoutScheduleId: widget.workoutScheduleId);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final workoutFeedbackBox = ref.watch(hiveWorkoutFeedbackProvider);
-    final workoutRecordBox = ref.watch(hiveWorkoutRecordProvider);
     final workoutEditBox = ref.watch(hiveWorkoutEditProvider);
+    final workoutRecordBox = ref.watch(hiveWorkoutRecordProvider);
+
+    final pstate = ref.watch(workoutRecordsProvider);
 
     late WorkoutResultModel state;
 
@@ -88,6 +119,36 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         workoutResults.length < widget.exercises.length ||
         feedback == null ||
         feedback!.strengthIndex == null) {
+      //local 데이터가 없을때!
+
+      if (pstate is WorkoutResultModelLoading) {
+        return const Scaffold(
+          backgroundColor: BACKGROUND_COLOR,
+          body: Center(
+            child: CircularProgressIndicator(
+              color: POINT_COLOR,
+            ),
+          ),
+        );
+      }
+
+      if (pstate is WorkoutResultModelError) {
+        showDialog(
+          context: context,
+          builder: (context) => DialogTools.errorDialog(
+            message: pstate.message,
+            confirmText: '확인',
+            confirmOnTap: () => context.pop(),
+          ),
+        );
+      }
+
+      if (pstate is WorkoutResultModel) {
+        state = pstate;
+        state = state.copyWith(
+            startDate:
+                '${DateFormat('M월 dd일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday]}요일');
+      }
     } else {
       for (var i = 0; i < workoutResults.length; i++) {
         for (var j = 0; j < workoutResults[i].setInfo.length; j++) {
@@ -95,16 +156,15 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         }
       }
 
-      print(workoutResults.length);
-
       state = WorkoutResultModel(
         startDate:
-            '${DateFormat('MM월 dd일').format(feedback!.startDate)} ${weekday[feedback!.startDate.weekday]}요일',
+            '${DateFormat('M월 dd일').format(feedback!.startDate)} ${weekday[feedback!.startDate.weekday]}요일',
         strengthIndex: feedback!.strengthIndex!,
         issueIndexes: feedback!.issueIndexes!,
         contents: feedback!.contents!,
         workoutRecords: workoutResults,
       );
+      hasLocalData = true;
     }
 
     return Scaffold(
@@ -171,99 +231,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
               itemBuilder: (context, index) {
                 final model = state.workoutRecords[index];
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      model.exerciseName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 6,
-                    ),
-                    Text(
-                      model.targetMuscles[0],
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    ...model.setInfo.map((e) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '${e.index} SET',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            if (model.trackingFieldId == 1)
-                              Text(
-                                e.weight != null ? '${e.weight}kg' : '-',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            if (model.trackingFieldId == 1 ||
-                                model.trackingFieldId == 2)
-                              Text(
-                                e.reps != null ? '${e.reps}kg' : '-',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            if (model.trackingFieldId == 3 ||
-                                model.trackingFieldId == 4)
-                              Text(
-                                e.seconds != null
-                                    ? '${(e.seconds! / 3600).floor().toString().padLeft(2, '0')} : ${(e.seconds! / 60).floor().toString().padLeft(2, '0')} : ${(e.seconds! % 60).toString().padLeft(2, '0')}  '
-                                    : '-',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            Text(
-                              e.reps != null ||
-                                      e.seconds != null ||
-                                      e.weight != null
-                                  ? '✅'
-                                  : '❌',
-                              style: const TextStyle(
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    const SizedBox(
-                      height: 16,
-                    )
-                  ],
-                );
+                return _renderExerciseResult(model, index, state);
               },
               separatorBuilder: (context, index) {
                 return const Divider(
@@ -429,6 +397,111 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Column _renderExerciseResult(
+      WorkoutRecordResult model, int index, WorkoutResultModel state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(
+          height: 20,
+        ),
+        Text(
+          model.exerciseName,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(
+          height: 6,
+        ),
+        Text(
+          model.targetMuscles[0],
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.white,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+        ...model.setInfo.mapIndexed((seq, e) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${e.index} SET',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                if (model.trackingFieldId == 1)
+                  Text(
+                    e.weight != null ? '${e.weight}kg' : '-',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                if (model.trackingFieldId == 1 || model.trackingFieldId == 2)
+                  Text(
+                    e.reps != null ? '${e.reps}kg' : '-',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                if (model.trackingFieldId == 3 || model.trackingFieldId == 4)
+                  Text(
+                    e.seconds != null
+                        ? '${(e.seconds! / 3600).floor().toString().padLeft(2, '0')} : ${(e.seconds! / 60).floor().toString().padLeft(2, '0')} : ${(e.seconds! % 60).toString().padLeft(2, '0')}  '
+                        : '-',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                Text(
+                  e.reps != null || e.seconds != null || e.weight != null
+                      ? '✅'
+                      : '❌',
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+        const SizedBox(
+          height: 16,
+        ),
+        if (index == state.workoutRecords.length - 1)
+          const Column(
+            children: [
+              Divider(
+                color: GRAY_COLOR,
+                height: 1,
+              ),
+              SizedBox(
+                height: 40,
+              ),
+            ],
+          )
+      ],
     );
   }
 }

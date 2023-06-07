@@ -209,7 +209,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             icon: const Icon(Icons.arrow_back)),
         centerTitle: true,
         title: Text(
-          '${DateFormat('MM월 dd일').format(DateTime.parse(model.startDate))} ${weekday[DateTime.parse(model.startDate).weekday]}요일',
+          '${DateFormat('M월 dd일').format(DateTime.parse(model.startDate))} ${weekday[DateTime.parse(model.startDate).weekday]}요일',
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,

@@ -4,8 +4,18 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'workout_result_model.g.dart';
 
+abstract class WorkoutResultModelBase {}
+
+class WorkoutResultModelLoading extends WorkoutResultModelBase {}
+
+class WorkoutResultModelError extends WorkoutResultModelBase {
+  final String message;
+
+  WorkoutResultModelError({required this.message});
+}
+
 @JsonSerializable()
-class WorkoutResultModel {
+class WorkoutResultModel extends WorkoutResultModelBase {
   final String startDate;
   final int strengthIndex;
   final List<int> issueIndexes;

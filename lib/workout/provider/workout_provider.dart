@@ -31,7 +31,7 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
 
       state = response;
     } catch (e) {
-      state = WorkoutModelError(message: '데이터를 불러올수없습니다.');
+      state = WorkoutModelError(message: '데이터를 불러올수없습니다');
     }
   }
 }

@@ -45,6 +45,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
       timerRecordBox.whenData(
         (value) {
           final record = value.get(widget.exercise.workoutPlanId);
+          print('record : $record');
 
           if (record != null && record is SetInfo) {
             timerSetInfo = record;

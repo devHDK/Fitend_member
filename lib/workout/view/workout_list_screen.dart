@@ -14,8 +14,10 @@ import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart'
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
+import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
+import 'package:fitend_member/workout/provider/workout_records_provider.dart';
 import 'package:fitend_member/workout/view/workout_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,6 +46,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   bool isProcessing = false;
   bool isPoped = false;
   bool isWorkoutComplete = false;
+  bool initial = true;
+  bool hasLocal = false;
 
   @override
   void initState() {
@@ -53,6 +57,14 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         if (isProcessing && !isPoped && !isWorkoutComplete) {
           _showConfirmDialog();
           isProcessing = false;
+        }
+
+        if (isWorkoutComplete && initial && !hasLocal) {
+          ref
+              .read(workoutRecordsProvider.notifier)
+              .getWorkoutResults(workoutScheduleId: widget.id);
+
+          initial = false;
         }
       },
     );
@@ -147,9 +159,12 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         ref.watch(hiveTimerRecordProvider);
     final AsyncValue<Box> timerXMoreRecordBox =
         ref.watch(hiveTimerXMoreRecordProvider);
+
     final AsyncValue<Box> workoutEditBox = ref.watch(hiveWorkoutEditProvider);
     final AsyncValue<Box> workoutFeedbackBox =
         ref.watch(hiveWorkoutFeedbackProvider);
+
+    final pstate = ref.watch(workoutRecordsProvider);
 
     if (state is WorkoutModelLoading) {
       return const Center(
@@ -171,33 +186,112 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     timerXmoreBox = timerXMoreRecordBox;
     isWorkoutComplete = model.isWorkoutComplete;
 
-    workoutEditBox.whenData(
-      // api로 받아온 데이터 hive
-      (value) {
-        for (int i = 0; i < model.exercises.length; i++) {
-          final record = value.get(model.exercises[i].workoutPlanId);
+    if (model.isWorkoutComplete) {
+      print('model.isWorkoutComplete : ${model.isWorkoutComplete}');
+      workoutRecordBox.whenData(
+        (value) {
+          final record = value.get(model.exercises[0].workoutPlanId);
+          if (record == null && pstate is WorkoutResultModel) {
+            hasLocal = false;
+            for (var i = 0; i < pstate.workoutRecords.length; i++) {
+              value.put(
+                pstate.workoutRecords[i].workoutPlanId,
+                WorkoutRecordModel(
+                  workoutPlanId: pstate.workoutRecords[i].workoutPlanId,
+                  setInfo: pstate.workoutRecords[i].setInfo,
+                ),
+              );
+            }
+          }
+        },
+      );
 
-          if (record != null && record is WorkoutRecordResult) {
-            model.exercises[i].copyWith(setInfo: record.setInfo);
+      workoutFeedbackBox.whenData(
+        (value) {
+          final record = value.get(widget.id);
+          if ((record == null || record.strengthIndex == null) &&
+              pstate is WorkoutResultModel) {
+            hasLocal = false;
+            value.put(
+              widget.id,
+              WorkoutFeedbackRecordModel(
+                startDate: DateTime.parse(pstate.startDate),
+                strengthIndex: pstate.strengthIndex,
+                issueIndexes: pstate.issueIndexes,
+                contents: pstate.contents,
+              ),
+            );
+          }
+        },
+      );
 
-            print(
-                'model.exercises[$i].setInfo : ${model.exercises[i].setInfo} ');
+      workoutEditBox.whenData(
+        (value) {
+          final record = value.get(model.exercises[0].workoutPlanId);
+          if (record == null && pstate is WorkoutResultModel) {
+            hasLocal = false;
+            for (var i = 0; i < pstate.workoutRecords.length; i++) {
+              value.put(
+                pstate.workoutRecords[i].workoutPlanId,
+                WorkoutRecordResult(
+                  exerciseName: pstate.workoutRecords[i].exerciseName,
+                  targetMuscles: pstate.workoutRecords[i].targetMuscles,
+                  trackingFieldId: pstate.workoutRecords[i].trackingFieldId,
+                  workoutPlanId: pstate.workoutRecords[i].workoutPlanId,
+                  setInfo: pstate.workoutRecords[i].setInfo,
+                ),
+              );
+            }
+          }
+        },
+      );
+
+      timerXoneBox.whenData((value) {
+        if (pstate is WorkoutResultModel) {
+          for (var i = 0; i < pstate.workoutRecords.length; i++) {
+            if (pstate.workoutRecords[i].setInfo.length == 1 &&
+                (pstate.workoutRecords[i].trackingFieldId == 3 ||
+                    pstate.workoutRecords[i].trackingFieldId == 4)) {
+              final record = value.get(pstate.workoutRecords[i].workoutPlanId);
+              if (record == null) {
+                hasLocal = false;
+                value.put(pstate.workoutRecords[i].workoutPlanId,
+                    pstate.workoutRecords[i].setInfo[0]);
+              }
+            }
           }
         }
-      },
-    );
+      });
+      setState(() {});
+    } else {
+      workoutEditBox.whenData(
+        // api로 받아온 데이터 hive로 저장
+        (value) {
+          for (int i = 0; i < model.exercises.length; i++) {
+            final record = value.get(model.exercises[i].workoutPlanId);
 
-    workoutRecordBox.whenData(
-      (value) async {
-        for (var element in model.exercises) {
-          final comfleteSet = await value.get(element.workoutPlanId);
-          if (comfleteSet != null && comfleteSet.setInfo.length > 0) {
-            isProcessing = true;
-            break;
+            if (record != null && record is WorkoutRecordResult) {
+              model.exercises[i] =
+                  model.exercises[i].copyWith(setInfo: record.setInfo);
+              hasLocal = true;
+            }
           }
-        }
-      },
-    );
+        },
+      );
+
+      workoutRecordBox.whenData(
+        (value) async {
+          for (var element in model.exercises) {
+            final comfleteSet = await value.get(element.workoutPlanId);
+            if (comfleteSet != null && comfleteSet.setInfo.length > 0) {
+              isProcessing = true;
+              hasLocal = true;
+              break;
+            }
+          }
+        },
+      );
+    }
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -239,7 +333,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                   workoutRecordBox.when(
                     data: (data) {
                       final record = data.get(exerciseModel.workoutPlanId);
-                      if (record != null) {
+                      if (record != null && record is WorkoutRecordModel) {
                         List<SetInfo> savedSetInfo = record.setInfo;
                         int unCompletecnt = 0;
 

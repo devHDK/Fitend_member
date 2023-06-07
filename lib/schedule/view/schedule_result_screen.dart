@@ -456,7 +456,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                   ),
                 if (model.trackingFieldId == 1 || model.trackingFieldId == 2)
                   Text(
-                    e.reps != null ? '${e.reps}kg' : '-',
+                    e.reps != null ? '${e.reps}회' : '-',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,

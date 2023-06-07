@@ -36,7 +36,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
   double keyboardHeight = 0;
 
   int strengthIndex = 0;
-  int issueIndex = 0;
+  List<int> issueIndexes = [];
   String contents = '';
 
   bool initKeyboardVisible = true;
@@ -159,12 +159,12 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                         height: 40,
                       ),
                       TextButton(
-                        onPressed: issueIndex == 0 || strengthIndex == 0
+                        onPressed: strengthIndex == 0
                             ? () {
                                 showDialog(
                                   context: context,
                                   builder: (context) => DialogTools.errorDialog(
-                                    message: '작성되지 않은 항목이 있어요!',
+                                    message: '운동 강도를 평가해 주세요!',
                                     confirmText: '확인',
                                     confirmOnTap: () {
                                       context.pop();
@@ -178,7 +178,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                     id: widget.workoutScheduleId,
                                     body: PostWorkoutRecordFeedbackModel(
                                       strengthIndex: strengthIndex,
-                                      issueIndex: issueIndex,
+                                      issueIndexes: issueIndexes,
                                       contents: contentsController.text,
                                     ),
                                   );
@@ -289,13 +289,17 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         GestureDetector(
           onTap: () {
             setState(() {
-              issueIndex = 1;
+              if (issueIndexes.contains(1)) {
+                issueIndexes.remove(1);
+              } else {
+                issueIndexes.add(1);
+              }
             });
           },
           child: _issueContainer(
             size,
             text: '운동 부위에 통증이 있어요',
-            isSelected: issueIndex == 1,
+            isSelected: issueIndexes.contains(1),
           ),
         ),
         const SizedBox(
@@ -304,13 +308,17 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         GestureDetector(
           onTap: () {
             setState(() {
-              issueIndex = 2;
+              if (issueIndexes.contains(2)) {
+                issueIndexes.remove(2);
+              } else {
+                issueIndexes.add(2);
+              }
             });
           },
           child: _issueContainer(
             size,
             text: '운동 자세를 잘 모르겠어요',
-            isSelected: issueIndex == 2,
+            isSelected: issueIndexes.contains(2),
           ),
         ),
         const SizedBox(
@@ -319,13 +327,17 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         GestureDetector(
           onTap: () {
             setState(() {
-              issueIndex = 3;
+              if (issueIndexes.contains(3)) {
+                issueIndexes.remove(3);
+              } else {
+                issueIndexes.add(3);
+              }
             });
           },
           child: _issueContainer(
             size,
             text: '운동 자극이 잘 안 느껴져요',
-            isSelected: issueIndex == 3,
+            isSelected: issueIndexes.contains(3),
           ),
         )
       ],

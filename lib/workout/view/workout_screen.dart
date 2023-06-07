@@ -15,11 +15,11 @@ import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
-import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
+import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -683,62 +683,62 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         context.pop();
                         //완료쓰
 
-                        List<WorkoutRecordModel> tempRecordList = [];
+                        // List<WorkoutRecordModel> tempRecordList = [];
 
-                        workoutBox.whenData(
-                          (value) {
-                            for (int i = 0; i < widget.exercises.length; i++) {
-                              final record =
-                                  value.get(widget.exercises[i].workoutPlanId);
+                        // workoutBox.whenData(
+                        //   (value) {
+                        //     for (int i = 0; i < widget.exercises.length; i++) {
+                        //       final record =
+                        //           value.get(widget.exercises[i].workoutPlanId);
 
-                              if (record != null &&
-                                  record is WorkoutRecordModel) {
-                                if (record.setInfo.length < maxSetInfoList[i]) {
-                                  for (int j = 0;
-                                      j <
-                                          maxSetInfoList[i] -
-                                              record.setInfo.length;
-                                      j++) {
-                                    record.setInfo.add(
-                                      SetInfo(index: record.setInfo.length + 1),
-                                    );
-                                  }
-                                }
-                                value.put(
-                                    widget.exercises[i].workoutPlanId, record);
-                                tempRecordList.add(record);
-                              } else {
-                                var tempRecord = WorkoutRecordModel(
-                                  workoutPlanId:
-                                      widget.exercises[i].workoutPlanId,
-                                  setInfo: [],
-                                );
-                                for (int j = 0; j < maxSetInfoList[i]; j++) {
-                                  tempRecord.setInfo.add(SetInfo(index: j + 1));
-                                }
-                                value.put(widget.exercises[i].workoutPlanId,
-                                    tempRecord);
-                                tempRecordList.add(tempRecord);
-                              }
-                            }
-                          },
-                        );
-
-                        await recordRepository.postWorkoutRecords(
-                          body: PostWorkoutRecordModel(
-                            records: tempRecordList,
-                          ),
-                        );
-
-                        // GoRouter.of(_).goNamed(
-                        //   WorkoutFeedbackScreen.routeName,
-                        //   pathParameters: {
-                        //     'workoutScheduleId':
-                        //         widget.workoutScheduleId.toString(),
+                        //       if (record != null &&
+                        //           record is WorkoutRecordModel) {
+                        //         if (record.setInfo.length < maxSetInfoList[i]) {
+                        //           for (int j = 0;
+                        //               j <
+                        //                   maxSetInfoList[i] -
+                        //                       record.setInfo.length;
+                        //               j++) {
+                        //             record.setInfo.add(
+                        //               SetInfo(index: record.setInfo.length + 1),
+                        //             );
+                        //           }
+                        //         }
+                        //         value.put(
+                        //             widget.exercises[i].workoutPlanId, record);
+                        //         tempRecordList.add(record);
+                        //       } else {
+                        //         var tempRecord = WorkoutRecordModel(
+                        //           workoutPlanId:
+                        //               widget.exercises[i].workoutPlanId,
+                        //           setInfo: [],
+                        //         );
+                        //         for (int j = 0; j < maxSetInfoList[i]; j++) {
+                        //           tempRecord.setInfo.add(SetInfo(index: j + 1));
+                        //         }
+                        //         value.put(widget.exercises[i].workoutPlanId,
+                        //             tempRecord);
+                        //         tempRecordList.add(tempRecord);
+                        //       }
+                        //     }
                         //   },
                         // );
 
-                        //완료
+                        // await recordRepository.postWorkoutRecords(
+                        //   body: PostWorkoutRecordModel(
+                        //     records: tempRecordList,
+                        //   ),
+                        // );
+
+                        GoRouter.of(_).goNamed(
+                          WorkoutFeedbackScreen.routeName,
+                          pathParameters: {
+                            'workoutScheduleId':
+                                widget.workoutScheduleId.toString(),
+                          },
+                        );
+
+                        //완료!!!!!!!!!
                       },
                     );
                   },

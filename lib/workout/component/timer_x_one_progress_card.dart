@@ -266,6 +266,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
               onTap: count < 10
                   ? () {
                       showDialog(
+                        barrierDismissible: false,
                         context: context,
                         builder: (context) => DialogTools.errorDialog(
                           message: '먼저 운동을 진행해 주세요 🏋🏻',

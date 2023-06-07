@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_tools.dart';
@@ -15,6 +16,7 @@ import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
+import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
@@ -493,7 +495,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   void _checkLastExercise({
     required WorkoutRecordsRepository recordRepository,
     required AsyncValue<Box> workoutBox,
-  }) {
+  }) async {
     if (exerciseIndex == maxExcerciseIndex &&
         setInfoCompleteList[exerciseIndex] == maxSetInfoList[exerciseIndex]) {
       // 리스트 끝의 운동을 다 했는지 확인!
@@ -501,6 +503,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       for (int i = 0; i <= maxExcerciseIndex; i++) {
         if (setInfoCompleteList[i] != maxSetInfoList[i]) {
           showDialog(
+            barrierDismissible: false,
             context: context,
             builder: (context) {
               return DialogTools.confirmDialog(
@@ -517,33 +520,70 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   print('완료쓰!!');
                   context.pop();
 
-                  List<WorkoutRecordModel> tempRecordList = [];
+                  try {
+                    List<WorkoutRecordModel> tempRecordList = [];
 
-                  workoutBox.whenData(
-                    (value) {
-                      for (var e in widget.exercises) {
-                        final record = value.get(e.workoutPlanId);
+                    workoutBox.whenData(
+                      (value) {
+                        for (int i = 0; i < widget.exercises.length; i++) {
+                          final record =
+                              value.get(widget.exercises[i].workoutPlanId);
 
-                        if (record != null && record is WorkoutRecordModel) {
-                          tempRecordList.add(record);
+                          if (record != null && record is WorkoutRecordModel) {
+                            if (record.setInfo.length < maxSetInfoList[i]) {
+                              for (int j = 0;
+                                  j < maxSetInfoList[i] - record.setInfo.length;
+                                  j++) {
+                                record.setInfo.add(
+                                  SetInfo(index: record.setInfo.length + 1),
+                                );
+                              }
+                            }
+                            value.put(
+                                widget.exercises[i].workoutPlanId, record);
+                            tempRecordList.add(record);
+                          } else {
+                            var tempRecord = WorkoutRecordModel(
+                              workoutPlanId: widget.exercises[i].workoutPlanId,
+                              setInfo: [],
+                            );
+                            for (int j = 0; j < maxSetInfoList[i]; j++) {
+                              tempRecord.setInfo.add(SetInfo(index: j + 1));
+                            }
+                            value.put(
+                                widget.exercises[i].workoutPlanId, tempRecord);
+                            tempRecordList.add(tempRecord);
+                          }
                         }
-                      }
-                    },
-                  );
+                      },
+                    );
 
-                  print(tempRecordList);
+                    await recordRepository.postWorkoutRecords(
+                      body: PostWorkoutRecordModel(
+                        records: tempRecordList,
+                      ),
+                    );
 
-                  // await recordRepository.postWorkoutRecords(
-                  //   body: PostWorkoutRecordModel(records: tempRecordList),
-                  // );
-
-                  // context.goNamed(
-                  //   WorkoutFeedbackScreen.routeName,
-                  //   pathParameters: {
-                  //     'workoutScheduleId': widget.workoutScheduleId.toString(),
-                  //   },
-                  // );
-                  //완료
+                    GoRouter.of(context).goNamed(
+                      WorkoutFeedbackScreen.routeName,
+                      pathParameters: {
+                        'workoutScheduleId':
+                            widget.workoutScheduleId.toString(),
+                      },
+                    );
+                  } on DioError {
+                    showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) => DialogTools.errorDialog(
+                        message: '다시 시도해주세요',
+                        confirmText: '확인',
+                        confirmOnTap: () {
+                          context.pop();
+                        },
+                      ),
+                    );
+                  }
                 },
               );
             },
@@ -556,17 +596,69 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       }
 
       if (finish) {
-        print('완료쓰!!');
         setState(() {
           workoutFinish = true;
         });
-        // GoRouter.of(context).goNamed(
-        //   WorkoutFeedbackScreen.routeName,
-        //   pathParameters: {
-        //     'workoutScheduleId': widget.workoutScheduleId.toString(),
-        //   },
-        // );
-        //완료
+        try {
+          List<WorkoutRecordModel> tempRecordList = [];
+
+          workoutBox.whenData(
+            (value) {
+              for (int i = 0; i < widget.exercises.length; i++) {
+                final record = value.get(widget.exercises[i].workoutPlanId);
+
+                if (record != null && record is WorkoutRecordModel) {
+                  if (record.setInfo.length < maxSetInfoList[i]) {
+                    for (int j = 0;
+                        j < maxSetInfoList[i] - record.setInfo.length;
+                        j++) {
+                      record.setInfo.add(
+                        SetInfo(index: record.setInfo.length + 1),
+                      );
+                    }
+                  }
+                  value.put(widget.exercises[i].workoutPlanId, record);
+                  tempRecordList.add(record);
+                } else {
+                  var tempRecord = WorkoutRecordModel(
+                    workoutPlanId: widget.exercises[i].workoutPlanId,
+                    setInfo: [],
+                  );
+                  for (int j = 0; j < maxSetInfoList[i]; j++) {
+                    tempRecord.setInfo.add(SetInfo(index: j + 1));
+                  }
+                  value.put(widget.exercises[i].workoutPlanId, tempRecord);
+                  tempRecordList.add(tempRecord);
+                }
+              }
+            },
+          );
+
+          await recordRepository.postWorkoutRecords(
+            body: PostWorkoutRecordModel(
+              records: tempRecordList,
+            ),
+          );
+
+          GoRouter.of(context).goNamed(
+            WorkoutFeedbackScreen.routeName,
+            pathParameters: {
+              'workoutScheduleId': widget.workoutScheduleId.toString(),
+            },
+          );
+        } on DioError {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => DialogTools.errorDialog(
+              message: '다시 시도해주세요',
+              confirmText: '확인',
+              confirmOnTap: () {
+                context.pop();
+              },
+            ),
+          );
+        }
       }
     }
   }
@@ -670,6 +762,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               name: '운동 종료',
               onTap: () {
                 showDialog(
+                  barrierDismissible: false,
                   context: context,
                   builder: (_) {
                     return DialogTools.confirmDialog(
@@ -681,62 +774,80 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       },
                       cancelOnTap: () async {
                         context.pop();
-                        //완료쓰
 
-                        // List<WorkoutRecordModel> tempRecordList = [];
+                        try {
+                          List<WorkoutRecordModel> tempRecordList = [];
 
-                        // workoutBox.whenData(
-                        //   (value) {
-                        //     for (int i = 0; i < widget.exercises.length; i++) {
-                        //       final record =
-                        //           value.get(widget.exercises[i].workoutPlanId);
+                          workoutBox.whenData(
+                            (value) {
+                              for (int i = 0;
+                                  i < widget.exercises.length;
+                                  i++) {
+                                final record = value
+                                    .get(widget.exercises[i].workoutPlanId);
 
-                        //       if (record != null &&
-                        //           record is WorkoutRecordModel) {
-                        //         if (record.setInfo.length < maxSetInfoList[i]) {
-                        //           for (int j = 0;
-                        //               j <
-                        //                   maxSetInfoList[i] -
-                        //                       record.setInfo.length;
-                        //               j++) {
-                        //             record.setInfo.add(
-                        //               SetInfo(index: record.setInfo.length + 1),
-                        //             );
-                        //           }
-                        //         }
-                        //         value.put(
-                        //             widget.exercises[i].workoutPlanId, record);
-                        //         tempRecordList.add(record);
-                        //       } else {
-                        //         var tempRecord = WorkoutRecordModel(
-                        //           workoutPlanId:
-                        //               widget.exercises[i].workoutPlanId,
-                        //           setInfo: [],
-                        //         );
-                        //         for (int j = 0; j < maxSetInfoList[i]; j++) {
-                        //           tempRecord.setInfo.add(SetInfo(index: j + 1));
-                        //         }
-                        //         value.put(widget.exercises[i].workoutPlanId,
-                        //             tempRecord);
-                        //         tempRecordList.add(tempRecord);
-                        //       }
-                        //     }
-                        //   },
-                        // );
+                                if (record != null &&
+                                    record is WorkoutRecordModel) {
+                                  if (record.setInfo.length <
+                                      maxSetInfoList[i]) {
+                                    for (int j = 0;
+                                        j <
+                                            maxSetInfoList[i] -
+                                                record.setInfo.length;
+                                        j++) {
+                                      record.setInfo.add(
+                                        SetInfo(
+                                            index: record.setInfo.length + 1),
+                                      );
+                                    }
+                                  }
+                                  value.put(widget.exercises[i].workoutPlanId,
+                                      record);
+                                  tempRecordList.add(record);
+                                } else {
+                                  var tempRecord = WorkoutRecordModel(
+                                    workoutPlanId:
+                                        widget.exercises[i].workoutPlanId,
+                                    setInfo: [],
+                                  );
+                                  for (int j = 0; j < maxSetInfoList[i]; j++) {
+                                    tempRecord.setInfo
+                                        .add(SetInfo(index: j + 1));
+                                  }
+                                  value.put(widget.exercises[i].workoutPlanId,
+                                      tempRecord);
+                                  tempRecordList.add(tempRecord);
+                                }
+                              }
+                            },
+                          );
 
-                        // await recordRepository.postWorkoutRecords(
-                        //   body: PostWorkoutRecordModel(
-                        //     records: tempRecordList,
-                        //   ),
-                        // );
+                          await recordRepository.postWorkoutRecords(
+                            body: PostWorkoutRecordModel(
+                              records: tempRecordList,
+                            ),
+                          );
 
-                        GoRouter.of(_).goNamed(
-                          WorkoutFeedbackScreen.routeName,
-                          pathParameters: {
-                            'workoutScheduleId':
-                                widget.workoutScheduleId.toString(),
-                          },
-                        );
+                          GoRouter.of(_).goNamed(
+                            WorkoutFeedbackScreen.routeName,
+                            pathParameters: {
+                              'workoutScheduleId':
+                                  widget.workoutScheduleId.toString(),
+                            },
+                          );
+                        } on DioError {
+                          showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) => DialogTools.errorDialog(
+                              message: '다시 시도해주세요',
+                              confirmText: '확인',
+                              confirmOnTap: () {
+                                context.pop();
+                              },
+                            ),
+                          );
+                        }
 
                         //완료!!!!!!!!!
                       },

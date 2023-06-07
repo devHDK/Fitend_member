@@ -167,6 +167,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                         onPressed: strengthIndex == 0
                             ? () {
                                 showDialog(
+                                  barrierDismissible: false,
                                   context: context,
                                   builder: (context) => DialogTools.errorDialog(
                                     message: '운동 강도를 평가해 주세요!',
@@ -212,16 +213,17 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                       }
                                     },
                                   );
-
-                                  context.pop();
                                 } on DioError catch (e) {
                                   print(e.message);
 
                                   showDialog(
+                                    barrierDismissible: false,
                                     context: context,
                                     builder: (context) =>
                                         DialogTools.errorDialog(
-                                      message: e.message ?? '',
+                                      message: e.error != null
+                                          ? e.error.toString()
+                                          : '',
                                       confirmText: '확인',
                                       confirmOnTap: () => context.pop(),
                                     ),

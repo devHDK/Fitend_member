@@ -216,11 +216,14 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: WorkoutBanner(
-              title: model.workoutTitle,
-              subTitle: model.workoutSubTitle,
-              exerciseCount: model.exercises.length,
-              time: model.workoutTotalTime,
+            child: Hero(
+              tag: model.workoutScheduleId,
+              child: WorkoutBanner(
+                title: model.workoutTitle,
+                subTitle: model.workoutSubTitle,
+                exerciseCount: model.exercises.length,
+                time: model.workoutTotalTime,
+              ),
             ),
           ),
           SliverPadding(

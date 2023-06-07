@@ -186,10 +186,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                           },
                         );
                       },
-                      child: ScheduleCard.fromModel(
-                        model: e,
-                        date: schedules.data![index].startDate,
-                        isDateVisible: seq == 0 ? true : false,
+                      child: Hero(
+                        tag: e.workoutScheduleId,
+                        child: ScheduleCard.fromModel(
+                          model: e,
+                          date: schedules.data![index].startDate,
+                          isDateVisible: seq == 0 ? true : false,
+                        ),
                       ),
                     );
                   },

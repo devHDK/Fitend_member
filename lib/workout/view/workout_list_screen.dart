@@ -5,11 +5,13 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_edit_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
+import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/view/workout_screen.dart';
 import 'package:flutter/material.dart';
@@ -141,6 +143,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         ref.watch(hiveTimerRecordProvider);
     final AsyncValue<Box> timerXMoreRecordBox =
         ref.watch(hiveTimerXMoreRecordProvider);
+    final AsyncValue<Box> workoutEditBox = ref.watch(hiveWorkoutEditProvider);
 
     if (state is WorkoutModelLoading) {
       return const Center(
@@ -154,12 +157,28 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       return ErrorDialog(error: state.message);
     }
 
-    final model = state as WorkoutModel;
+    var model = state as WorkoutModel;
 
     workoutModel = model;
     workoutBox = workoutRecordBox;
     timerXoneBox = timerXoneRecordBox;
     timerXmoreBox = timerXMoreRecordBox;
+
+    workoutEditBox.whenData(
+      // api로 받아온 데이터 hive
+      (value) {
+        for (int i = 0; i < model.exercises.length; i++) {
+          final record = value.get(model.exercises[i].workoutPlanId);
+
+          if (record != null && record is WorkoutRecordResult) {
+            model.exercises[i].copyWith(setInfo: record.setInfo);
+
+            print(
+                'model.exercises[$i].setInfo : ${model.exercises[i].setInfo} ');
+          }
+        }
+      },
+    );
 
     workoutRecordBox.whenData(
       (value) async {
@@ -271,7 +290,24 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: POINT_COLOR),
             onPressed: () async {
-              final ret = await Navigator.of(context)
+              workoutEditBox.whenData(
+                (value) {
+                  for (var e in state.exercises) {
+                    value.put(
+                      e.workoutPlanId,
+                      WorkoutRecordResult(
+                        exerciseName: e.name,
+                        targetMuscles: [e.targetMuscles[0].name],
+                        trackingFieldId: e.trackingFieldId,
+                        workoutPlanId: e.workoutPlanId,
+                        setInfo: e.setInfo,
+                      ),
+                    );
+                  }
+                },
+              );
+
+              await Navigator.of(context)
                   .push(MaterialPageRoute(
                 builder: (context) => WorkoutScreen(
                   exercises: model.exercises,

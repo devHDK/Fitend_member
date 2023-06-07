@@ -173,7 +173,6 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                 );
                               }
                             : () async {
-                                context.pop();
                                 try {
                                   await repository.postWorkoutRecordsFeedback(
                                     id: widget.workoutScheduleId,
@@ -183,6 +182,8 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                       contents: contentsController.text,
                                     ),
                                   );
+
+                                  context.pop();
                                 } on DioError catch (e) {
                                   print(e.message);
 

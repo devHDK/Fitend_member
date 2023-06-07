@@ -6,6 +6,7 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -209,7 +210,18 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                     data: (data) {
                       final record = data.get(exerciseModel.workoutPlanId);
                       if (record != null) {
-                        completeSetCount = record.setInfo.length;
+                        List<SetInfo> savedSetInfo = record.setInfo;
+                        int unCompletecnt = 0;
+
+                        for (SetInfo info in savedSetInfo) {
+                          if (info.reps == null &&
+                              info.seconds == null &&
+                              info.weight == null) {
+                            unCompletecnt += 1;
+                          }
+                        }
+                        completeSetCount =
+                            record.setInfo.length - unCompletecnt;
                       } else {
                         completeSetCount = 0;
                       }

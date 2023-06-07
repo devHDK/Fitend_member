@@ -134,6 +134,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
+
     final AsyncValue<Box> workoutRecordBox =
         ref.watch(hiveWorkoutRecordProvider);
     final AsyncValue<Box> timerXoneRecordBox =

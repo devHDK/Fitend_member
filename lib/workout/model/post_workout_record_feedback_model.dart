@@ -5,8 +5,8 @@ part 'post_workout_record_feedback_model.g.dart';
 @JsonSerializable()
 class PostWorkoutRecordFeedbackModel {
   final int strengthIndex;
-  final List<int> issueIndexes;
-  final String contents;
+  final List<int>? issueIndexes;
+  final String? contents;
 
   PostWorkoutRecordFeedbackModel({
     required this.strengthIndex,

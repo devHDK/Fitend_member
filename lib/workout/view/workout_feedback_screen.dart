@@ -179,7 +179,9 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                     body: PostWorkoutRecordFeedbackModel(
                                       strengthIndex: strengthIndex,
                                       issueIndexes: issueIndexes,
-                                      contents: contentsController.text,
+                                      contents: contentsController.text.isEmpty
+                                          ? null
+                                          : contentsController.text,
                                     ),
                                   );
 

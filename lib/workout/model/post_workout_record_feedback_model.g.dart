@@ -10,9 +10,10 @@ PostWorkoutRecordFeedbackModel _$PostWorkoutRecordFeedbackModelFromJson(
         Map<String, dynamic> json) =>
     PostWorkoutRecordFeedbackModel(
       strengthIndex: json['strengthIndex'] as int,
-      issueIndexes:
-          (json['issueIndexes'] as List<dynamic>).map((e) => e as int).toList(),
-      contents: json['contents'] as String,
+      issueIndexes: (json['issueIndexes'] as List<dynamic>?)
+          ?.map((e) => e as int)
+          .toList(),
+      contents: json['contents'] as String?,
     );
 
 Map<String, dynamic> _$PostWorkoutRecordFeedbackModelToJson(

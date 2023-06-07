@@ -6,9 +6,11 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_edit_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
+import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
@@ -144,6 +146,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     final AsyncValue<Box> timerXMoreRecordBox =
         ref.watch(hiveTimerXMoreRecordProvider);
     final AsyncValue<Box> workoutEditBox = ref.watch(hiveWorkoutEditProvider);
+    final AsyncValue<Box> workoutFeedbackBox =
+        ref.watch(hiveWorkoutFeedbackProvider);
 
     if (state is WorkoutModelLoading) {
       return const Center(
@@ -293,14 +297,32 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               workoutEditBox.whenData(
                 (value) {
                   for (var e in state.exercises) {
+                    final record = value.get(e.workoutPlanId);
+
+                    if (record == null) {
+                      value.put(
+                        e.workoutPlanId,
+                        WorkoutRecordResult(
+                          exerciseName: e.name,
+                          targetMuscles: [e.targetMuscles[0].name],
+                          trackingFieldId: e.trackingFieldId,
+                          workoutPlanId: e.workoutPlanId,
+                          setInfo: e.setInfo,
+                        ),
+                      );
+                    }
+                  }
+                },
+              );
+
+              workoutFeedbackBox.whenData(
+                (value) {
+                  final record = value.get(model.workoutScheduleId);
+                  if (record == null) {
                     value.put(
-                      e.workoutPlanId,
-                      WorkoutRecordResult(
-                        exerciseName: e.name,
-                        targetMuscles: [e.targetMuscles[0].name],
-                        trackingFieldId: e.trackingFieldId,
-                        workoutPlanId: e.workoutPlanId,
-                        setInfo: e.setInfo,
+                      model.workoutScheduleId,
+                      WorkoutFeedbackRecordModel(
+                        startDate: DateTime.parse(model.startDate),
                       ),
                     );
                   }

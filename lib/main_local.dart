@@ -1,4 +1,5 @@
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
+import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,8 @@ void main() async {
   Hive.registerAdapter<WorkoutRecordModel>(WorkoutRecordModelAdapter());
   Hive.registerAdapter<WorkoutRecordResult>(WorkoutRecordResultAdapter());
   Hive.registerAdapter<SetInfo>(SetInfoAdapter());
+  Hive.registerAdapter<WorkoutFeedbackRecordModel>(
+      WorkoutFeedbackRecordModelAdapter());
 
   runApp(
     const ProviderScope(

@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
+import 'package:fitend_member/schedule/model/post_workout_record_feedback_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_pagenate_params.dart';
-import 'package:fitend_member/workout/model/post_workout_record_feedback_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:retrofit/retrofit.dart';

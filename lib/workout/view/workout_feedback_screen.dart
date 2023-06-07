@@ -1,11 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
+import 'package:fitend_member/schedule/model/post_workout_record_feedback_model.dart';
+import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
-import 'package:fitend_member/workout/model/post_workout_record_feedback_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class WorkoutFeedbackScreen extends ConsumerStatefulWidget {
   static String get routeName => 'workoutFeedback';
@@ -105,6 +108,8 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final repository = ref.read(workoutScheduleRepositoryProvider);
+    final AsyncValue<Box> workoutFeedbackBox =
+        ref.watch(hiveWorkoutFeedbackProvider);
 
     final baseBorder = OutlineInputBorder(
       borderSide: const BorderSide(
@@ -183,6 +188,29 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                           ? null
                                           : contentsController.text,
                                     ),
+                                  );
+
+                                  workoutFeedbackBox.whenData(
+                                    (value) {
+                                      final record =
+                                          value.get(widget.workoutScheduleId);
+
+                                      if (record != null &&
+                                          record
+                                              is WorkoutFeedbackRecordModel) {
+                                        value.put(
+                                          widget.workoutScheduleId,
+                                          record.copyWith(
+                                            strengthIndex: strengthIndex,
+                                            issueIndexes: issueIndexes,
+                                            contents:
+                                                contentsController.text.isEmpty
+                                                    ? null
+                                                    : contentsController.text,
+                                          ),
+                                        );
+                                      }
+                                    },
                                   );
 
                                   context.pop();

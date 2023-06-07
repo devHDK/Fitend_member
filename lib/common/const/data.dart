@@ -40,3 +40,4 @@ String workoutRecordBox = 'WorkoutRecords';
 String timerXOneRecordBox = 'timerXoneRecords';
 String timerXMoreRecordBox = 'timerXMoreRecords';
 String workoutEdit = 'WorkoutEdit';
+String workoutFeedback = 'WorkoutFeedback';

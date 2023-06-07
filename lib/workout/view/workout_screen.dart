@@ -624,7 +624,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               img: 'asset/img/icon_change.png',
               name: '운동 변경',
               onTap: () async {
-                final ret = Navigator.of(context)
+                Navigator.of(context)
                     .push(
                   MaterialPageRoute(
                     builder: (context) => WorkoutChangeScreen(

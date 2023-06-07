@@ -38,6 +38,7 @@ Workout _$WorkoutFromJson(Map<String, dynamic> json) => Workout(
       title: json['title'] as String,
       subTitle: json['subTitle'] as String,
       isComplete: json['isComplete'] as bool,
+      isRecord: json['isRecord'] as bool,
       workoutScheduleId: json['workoutScheduleId'] as int,
       selected: json['selected'] as bool? ?? false,
     );
@@ -47,6 +48,7 @@ Map<String, dynamic> _$WorkoutToJson(Workout instance) => <String, dynamic>{
       'title': instance.title,
       'subTitle': instance.subTitle,
       'isComplete': instance.isComplete,
+      'isRecord': instance.isRecord,
       'workoutScheduleId': instance.workoutScheduleId,
       'selected': instance.selected,
     };

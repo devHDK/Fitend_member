@@ -74,6 +74,7 @@ class Workout {
   final String title;
   final String subTitle;
   final bool isComplete;
+  final bool isRecord;
   final int workoutScheduleId;
   bool? selected;
 
@@ -82,6 +83,7 @@ class Workout {
       required this.title,
       required this.subTitle,
       required this.isComplete,
+      required this.isRecord,
       required this.workoutScheduleId,
       this.selected = false});
 
@@ -90,6 +92,7 @@ class Workout {
     String? title,
     String? subTitle,
     bool? isComplete,
+    bool? isRecord,
     int? workoutScheduleId,
     bool? selected,
   }) =>
@@ -98,6 +101,7 @@ class Workout {
         title: title ?? this.title,
         subTitle: subTitle ?? this.subTitle,
         isComplete: isComplete ?? this.isComplete,
+        isRecord: isRecord ?? this.isRecord,
         workoutScheduleId: workoutScheduleId ?? this.workoutScheduleId,
         selected: selected ?? this.selected,
       );

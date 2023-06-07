@@ -13,11 +13,11 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 const List<String> strengthResults = [
-  '매우쉬움😁',
-  '쉬움😀',
-  '보통😊',
-  '힘듦😓',
-  '매우힘듦🥵'
+  '매우쉬움 😁',
+  '쉬움 😀',
+  '보통 😊',
+  '힘듦 😓',
+  '매우힘듦 🥵'
 ];
 
 const List<String> issuedResults = [
@@ -162,7 +162,117 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                 ),
               ),
             ),
-          )
+          ),
+          _renderWorkoutResultTitle(),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 28),
+            sliver: SliverList.separated(
+              itemCount: state.workoutRecords.length,
+              itemBuilder: (context, index) {
+                final model = state.workoutRecords[index];
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      model.exerciseName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 6,
+                    ),
+                    Text(
+                      model.targetMuscles[0],
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    ...model.setInfo.map((e) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '${e.index} SET',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            if (model.trackingFieldId == 1)
+                              Text(
+                                e.weight != null ? '${e.weight}kg' : '-',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            if (model.trackingFieldId == 1 ||
+                                model.trackingFieldId == 2)
+                              Text(
+                                e.reps != null ? '${e.reps}kg' : '-',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            if (model.trackingFieldId == 3 ||
+                                model.trackingFieldId == 4)
+                              Text(
+                                e.seconds != null
+                                    ? '${(e.seconds! / 3600).floor().toString().padLeft(2, '0')} : ${(e.seconds! / 60).floor().toString().padLeft(2, '0')} : ${(e.seconds! % 60).toString().padLeft(2, '0')}  '
+                                    : '-',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            Text(
+                              e.reps != null ||
+                                      e.seconds != null ||
+                                      e.weight != null
+                                  ? '✅'
+                                  : '❌',
+                              style: const TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    const SizedBox(
+                      height: 16,
+                    )
+                  ],
+                );
+              },
+              separatorBuilder: (context, index) {
+                return const Divider(
+                  color: GRAY_COLOR,
+                  height: 1,
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -286,6 +396,39 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  SliverToBoxAdapter _renderWorkoutResultTitle() {
+    return const SliverToBoxAdapter(
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: 28,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 24,
+            ),
+            Text(
+              '오늘의 운동결과🎯',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            Divider(
+              color: GRAY_COLOR,
+              height: 1,
+            )
+          ],
+        ),
+      ),
     );
   }
 }

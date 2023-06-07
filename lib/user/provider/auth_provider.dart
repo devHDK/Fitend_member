@@ -3,6 +3,7 @@ import 'package:fitend_member/common/view/onboarding_screen.dart';
 import 'package:fitend_member/common/view/splash_screen.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
+import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -77,6 +78,16 @@ class AuthProvider extends ChangeNotifier {
               builder: (context, state) => WorkoutFeedbackScreen(
                 workoutScheduleId:
                     int.parse(state.pathParameters['workoutScheduleId']!),
+                exercises: state.extra as List<Exercise>,
+              ),
+            ),
+            GoRoute(
+              path: 'scheduleResult/:workoutScheduleId',
+              name: ScheduleResultScreen.routeName,
+              builder: (context, state) => ScheduleResultScreen(
+                workoutScheduleId:
+                    int.parse(state.pathParameters["workoutScheduleId"]!),
+                exercises: state.extra as List<Exercise>,
               ),
             )
           ],

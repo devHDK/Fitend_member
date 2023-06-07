@@ -2,9 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
+import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/post_workout_record_feedback_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,10 +16,12 @@ class WorkoutFeedbackScreen extends ConsumerStatefulWidget {
   static String get routeName => 'workoutFeedback';
 
   final int workoutScheduleId;
+  final List<Exercise> exercises;
 
   const WorkoutFeedbackScreen({
     super.key,
     required this.workoutScheduleId,
+    required this.exercises,
   });
 
   @override
@@ -212,6 +216,15 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                         );
                                       }
                                     },
+                                  );
+
+                                  context.goNamed(
+                                    ScheduleResultScreen.routeName,
+                                    pathParameters: {
+                                      "workoutScheduleId":
+                                          widget.workoutScheduleId.toString(),
+                                    },
+                                    extra: widget.exercises,
                                   );
                                 } on DioError catch (e) {
                                   print(e.message);

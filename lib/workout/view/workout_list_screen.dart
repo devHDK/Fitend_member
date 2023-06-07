@@ -11,6 +11,7 @@ import 'package:fitend_member/common/provider/hive_workout_record_provider.dart'
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
+import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
@@ -42,13 +43,14 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   late AsyncValue<Box> timerXoneBox;
   bool isProcessing = false;
   bool isPoped = false;
+  bool isWorkoutComplete = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPersistentFrameCallback(
       (timeStamp) {
-        if (isProcessing && !isPoped) {
+        if (isProcessing && !isPoped && !isWorkoutComplete) {
           _showConfirmDialog();
           isProcessing = false;
         }
@@ -167,6 +169,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     workoutBox = workoutRecordBox;
     timerXoneBox = timerXoneRecordBox;
     timerXmoreBox = timerXMoreRecordBox;
+    isWorkoutComplete = model.isWorkoutComplete;
 
     workoutEditBox.whenData(
       // api로 받아온 데이터 hive
@@ -296,60 +299,70 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           ),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: POINT_COLOR),
-            onPressed: () async {
-              workoutEditBox.whenData(
-                (value) {
-                  for (var e in state.exercises) {
-                    final record = value.get(e.workoutPlanId);
-
-                    if (record == null) {
-                      value.put(
-                        e.workoutPlanId,
-                        WorkoutRecordResult(
-                          exerciseName: e.name,
-                          targetMuscles: [e.targetMuscles[0].name],
-                          trackingFieldId: e.trackingFieldId,
-                          workoutPlanId: e.workoutPlanId,
-                          setInfo: e.setInfo,
-                        ),
-                      );
-                    }
-                  }
-                },
-              );
-
-              workoutFeedbackBox.whenData(
-                (value) {
-                  final record = value.get(model.workoutScheduleId);
-                  if (record == null) {
-                    value.put(
-                      model.workoutScheduleId,
-                      WorkoutFeedbackRecordModel(
-                        startDate: DateTime.parse(model.startDate),
-                      ),
+            onPressed: model.isWorkoutComplete
+                ? () {
+                    context.goNamed(
+                      ScheduleResultScreen.routeName,
+                      pathParameters: {
+                        "workoutScheduleId": model.workoutScheduleId.toString(),
+                      },
+                      extra: model.exercises,
                     );
                   }
-                },
-              );
+                : () async {
+                    workoutEditBox.whenData(
+                      (value) {
+                        for (var e in state.exercises) {
+                          final record = value.get(e.workoutPlanId);
 
-              await Navigator.of(context)
-                  .push(MaterialPageRoute(
-                builder: (context) => WorkoutScreen(
-                  exercises: model.exercises,
-                  date: DateTime.parse(model.startDate),
-                  workout: model,
-                  workoutScheduleId: widget.id,
-                ),
-              ))
-                  .then((value) {
-                setState(() {
-                  isPoped = true;
-                });
-              });
-            },
-            child: const Text(
-              '운동 시작하기💪',
-              style: TextStyle(
+                          if (record == null) {
+                            value.put(
+                              e.workoutPlanId,
+                              WorkoutRecordResult(
+                                exerciseName: e.name,
+                                targetMuscles: [e.targetMuscles[0].name],
+                                trackingFieldId: e.trackingFieldId,
+                                workoutPlanId: e.workoutPlanId,
+                                setInfo: e.setInfo,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    );
+
+                    workoutFeedbackBox.whenData(
+                      (value) {
+                        final record = value.get(model.workoutScheduleId);
+                        if (record == null) {
+                          value.put(
+                            model.workoutScheduleId,
+                            WorkoutFeedbackRecordModel(
+                              startDate: DateTime.parse(model.startDate),
+                            ),
+                          );
+                        }
+                      },
+                    );
+
+                    await Navigator.of(context)
+                        .push(MaterialPageRoute(
+                      builder: (context) => WorkoutScreen(
+                        exercises: model.exercises,
+                        date: DateTime.parse(model.startDate),
+                        workout: model,
+                        workoutScheduleId: widget.id,
+                      ),
+                    ))
+                        .then((value) {
+                      setState(() {
+                        isPoped = true;
+                      });
+                    });
+                  },
+            child: Text(
+              model.isWorkoutComplete ? '결과보기📝' : '운동 시작하기💪',
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),

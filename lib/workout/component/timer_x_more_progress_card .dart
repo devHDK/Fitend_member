@@ -98,7 +98,9 @@ class _WeightWrepsProgressCardState
 
   @override
   void dispose() {
-    timer!.cancel();
+    if (timer!.isActive) {
+      timer!.cancel();
+    }
     super.dispose();
   }
 

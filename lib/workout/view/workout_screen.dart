@@ -570,6 +570,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         'workoutScheduleId':
                             widget.workoutScheduleId.toString(),
                       },
+                      extra: widget.exercises,
                     );
                   } on DioError {
                     showDialog(
@@ -645,6 +646,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             pathParameters: {
               'workoutScheduleId': widget.workoutScheduleId.toString(),
             },
+            extra: widget.exercises,
           );
         } on DioError {
           showDialog(
@@ -828,12 +830,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             ),
                           );
 
-                          GoRouter.of(_).goNamed(
+                          GoRouter.of(context).goNamed(
                             WorkoutFeedbackScreen.routeName,
                             pathParameters: {
                               'workoutScheduleId':
                                   widget.workoutScheduleId.toString(),
                             },
+                            extra: widget.exercises,
                           );
                         } on DioError {
                           showDialog(

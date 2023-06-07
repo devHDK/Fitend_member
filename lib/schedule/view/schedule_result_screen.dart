@@ -12,12 +12,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-const List<String> strengthResult = [
+const List<String> strengthResults = [
   '매우쉬움😁',
   '쉬움😀',
   '보통😊',
   '힘듦😓',
   '매우힘듦🥵'
+];
+
+const List<String> issuedResults = [
+  '운동 부위에 통증이 있어요',
+  '운동 자세를 잘 모르겠어요',
+  '운동 자극이 잘 안 느껴져요',
 ];
 
 class ScheduleResultScreen extends ConsumerStatefulWidget {
@@ -102,6 +108,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     }
 
     return Scaffold(
+      backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
         backgroundColor: BACKGROUND_COLOR,
         title: Text(
@@ -127,13 +134,158 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           )
         ],
       ),
-      body: const CustomScrollView(
+      body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: Column(),
+            child: Container(
+              color: DARK_GRAY_COLOR,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 20,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _renderTitle(),
+                    _renderStrengthResult(state),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    if (state.issueIndexes.isNotEmpty)
+                      _renderIssueResult(state),
+                    if (state.contents.isNotEmpty) _renderContentsResult(state),
+                    const SizedBox(
+                      height: 20,
+                    )
+                  ],
+                ),
+              ),
+            ),
           )
         ],
       ),
+    );
+  }
+
+  Column _renderTitle() {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '오늘의 운동평가📝',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(
+          height: 12,
+        ),
+        Divider(
+          color: GRAY_COLOR,
+          height: 1,
+        ),
+        SizedBox(
+          height: 20,
+        ),
+      ],
+    );
+  }
+
+  Column _renderStrengthResult(WorkoutResultModel state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '운동의 강도는 어떠셨나요? 🔥',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Text(
+          '  ∙  ${strengthResults[state.strengthIndex - 1]}',
+          style: const TextStyle(
+            color: LIGHT_GRAY_COLOR,
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Column _renderIssueResult(WorkoutResultModel state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '특이사항이 있다면 알려주세요 🙏',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        ...state.issueIndexes.map(
+          (e) {
+            return Column(
+              children: [
+                Text(
+                  '  ∙  ${issuedResults[e - 1]}',
+                  style: const TextStyle(
+                    color: LIGHT_GRAY_COLOR,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const SizedBox(
+                  height: 8,
+                )
+              ],
+            );
+          },
+        ).toList(),
+        const SizedBox(
+          height: 24,
+        )
+      ],
+    );
+  }
+
+  Column _renderContentsResult(WorkoutResultModel state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '코치님께 전하고 싶은 내용을 적어주세요 📤',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Text(
+          state.contents,
+          style: const TextStyle(
+            color: LIGHT_GRAY_COLOR,
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
     );
   }
 }

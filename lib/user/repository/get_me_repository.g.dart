@@ -43,12 +43,13 @@ class _GetMeRepository implements GetMeRepository {
   }
 
   @override
-  Future<void> confirmPassword({required String password}) async {
+  Future<void> confirmPassword({required PostConfirmPassword password}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
-    final _data = password;
+    final _data = <String, dynamic>{};
+    _data.addAll(password.toJson());
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'POST',
       headers: _headers,
@@ -64,15 +65,13 @@ class _GetMeRepository implements GetMeRepository {
   }
 
   @override
-  Future<void> changePassword({
-    required String password,
-    required String newPassword,
-  }) async {
+  Future<void> changePassword({required PostChangePassword password}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
-    final _data = password;
+    final _data = <String, dynamic>{};
+    _data.addAll(password.toJson());
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'PUT',
       headers: _headers,

@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
+import 'package:fitend_member/user/model/post_change_password.dart';
+import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/repository/auth_repository.dart';
 import 'package:fitend_member/user/repository/get_me_repository.dart';
@@ -113,12 +115,15 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   }
 
   Future<void> confirmPassword({
-    required String password,
+    required PostConfirmPassword password,
   }) async {
     try {
       await repository.confirmPassword(password: password);
-    } on DioError {
-      throw Error();
+    } on DioError catch (e) {
+      throw DioError(
+        requestOptions: e.requestOptions,
+        response: e.response,
+      );
     }
   }
 
@@ -127,14 +132,13 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     required String newPassword,
   }) async {
     try {
-      if (password != newPassword) {
-        throw Error();
-      }
-
       await repository.changePassword(
-          password: password, newPassword: newPassword);
-    } on DioError {
-      throw Error();
+          password: PostChangePassword(
+        password: password,
+        newPassword: newPassword,
+      ));
+    } on DioError catch (e) {
+      throw DioError(requestOptions: e.requestOptions, response: e.response);
     }
   }
 }

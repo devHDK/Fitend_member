@@ -2,6 +2,7 @@ import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
+import 'package:fitend_member/user/view/password_confirm_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -90,89 +91,24 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 24, bottom: 20),
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        model.user.nickname,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 26,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      const Text(
-                        '회원님',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      const Icon(
-                        Icons.mail_outline,
-                        size: 20,
-                        color: LIGHT_GRAY_COLOR,
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        model.user.email,
-                        style: const TextStyle(
-                          color: LIGHT_GRAY_COLOR,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Image.asset('asset/img/icon_phone.png'),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        formattedPhoneNumber,
-                        style: const TextStyle(
-                          color: LIGHT_GRAY_COLOR,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            _renderUserInfo(model, formattedPhoneNumber),
             const Divider(
               color: DARK_GRAY_COLOR,
               height: 1,
             ),
-            _renderLabel(
-              name: '비밀번호 변경',
-              child: Image.asset(
-                'asset/img/icon_next.png',
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const PasswordConfirmScreen(),
+                  ),
+                );
+              },
+              child: _renderLabel(
+                name: '비밀번호 변경',
+                child: Image.asset(
+                  'asset/img/icon_next.png',
+                ),
               ),
             ),
             const Divider(
@@ -234,6 +170,84 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Padding _renderUserInfo(UserModel model, String formattedPhoneNumber) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 24, bottom: 20),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                model.user.nickname,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 26,
+                ),
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              const Text(
+                '회원님',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const Icon(
+                Icons.mail_outline,
+                size: 20,
+                color: LIGHT_GRAY_COLOR,
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              Text(
+                model.user.email,
+                style: const TextStyle(
+                  color: LIGHT_GRAY_COLOR,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Image.asset('asset/img/icon_phone.png'),
+              const SizedBox(
+                width: 8,
+              ),
+              Text(
+                formattedPhoneNumber,
+                style: const TextStyle(
+                  color: LIGHT_GRAY_COLOR,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

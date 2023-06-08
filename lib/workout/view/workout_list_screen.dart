@@ -52,22 +52,36 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPersistentFrameCallback(
-      (timeStamp) {
-        if (isProcessing && !isPoped && !isWorkoutComplete) {
-          _showConfirmDialog();
-          isProcessing = false;
-        }
 
-        if (isWorkoutComplete && initial && !hasLocal) {
-          ref
-              .read(workoutRecordsProvider.notifier)
-              .getWorkoutResults(workoutScheduleId: widget.id);
+    ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
 
-          initial = false;
-        }
-      },
-    );
+    Future.delayed(
+        const Duration(
+          milliseconds: 100,
+        ), () {
+      WidgetsBinding.instance.addPersistentFrameCallback(
+        (timeStamp) {
+          if (isWorkoutComplete && initial && !hasLocal) {
+            ref
+                .read(workoutRecordsProvider.notifier)
+                .getWorkoutResults(workoutScheduleId: widget.id);
+
+            initial = false;
+          }
+          if (isProcessing && !isPoped && !isWorkoutComplete) {
+            _showConfirmDialog();
+            isProcessing = false;
+          }
+        },
+      );
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
   }
 
   Future<dynamic> _showConfirmDialog() {
@@ -187,10 +201,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     isWorkoutComplete = model.isWorkoutComplete;
 
     if (model.isWorkoutComplete) {
-      print('model.isWorkoutComplete : ${model.isWorkoutComplete}');
       workoutRecordBox.whenData(
         (value) {
           final record = value.get(model.exercises[0].workoutPlanId);
+
           if (record == null && pstate is WorkoutResultModel) {
             hasLocal = false;
             for (var i = 0; i < pstate.workoutRecords.length; i++) {

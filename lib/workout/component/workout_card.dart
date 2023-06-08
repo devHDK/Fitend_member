@@ -45,8 +45,6 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
       timerRecordBox.whenData(
         (value) {
           final record = value.get(widget.exercise.workoutPlanId);
-          print('record : $record');
-
           if (record != null && record is SetInfo) {
             timerSetInfo = record;
           } else {
@@ -89,8 +87,10 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(5),
                       child: LinearProgressIndicator(
-                        value: (timerSetInfo.seconds! /
-                            widget.exercise.setInfo[0].seconds!),
+                        value: timerSetInfo.seconds == null
+                            ? (0 / widget.exercise.setInfo[0].seconds!)
+                            : (timerSetInfo.seconds! /
+                                widget.exercise.setInfo[0].seconds!),
                         backgroundColor: LIGHT_GRAY_COLOR,
                         valueColor:
                             const AlwaysStoppedAnimation<Color>(POINT_COLOR),

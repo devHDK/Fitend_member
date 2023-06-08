@@ -134,7 +134,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
                             message: '이미 완료한 운동이에요 😗',
                             confirmText: '확인',
                             confirmOnTap: () {
-                              context.pop();
+                              context.pop('');
                             },
                           ).show(context);
                         } else {

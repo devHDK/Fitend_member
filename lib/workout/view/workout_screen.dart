@@ -278,12 +278,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               _hiveDataControl(workoutBox);
                             }
 
-                            if (!workoutFinish) {
-                              _checkLastExercise(
-                                recordRepository: recordRepository,
-                                workoutBox: workoutBox,
-                              ); //끝났는지 체크!
-                            }
+                            // if (!workoutFinish) {
+                            //   _checkLastExercise(
+                            //     recordRepository: recordRepository,
+                            //     workoutBox: workoutBox,
+                            //   ); //끝났는지 체크!
+                            // }
 
                             if (setInfoCompleteList[exerciseIndex] <
                                 maxSetInfoList[exerciseIndex]) {
@@ -324,12 +324,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             }
                           },
                         ),
+                      // Timer X 1set
                       if ((widget.exercises[exerciseIndex].trackingFieldId ==
                                   3 ||
                               widget.exercises[exerciseIndex].trackingFieldId ==
                                   4) &&
-                          widget.exercises[exerciseIndex].setInfo.length ==
-                              1) // Timer X 1set
+                          widget.exercises[exerciseIndex].setInfo.length == 1)
                         TimerXOneProgressCard(
                           exercise: widget.exercises[exerciseIndex],
                           setInfoIndex: setInfoCompleteList[exerciseIndex],
@@ -389,12 +389,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             );
                           },
                         ),
+
+                      // Timer X more
                       if ((widget.exercises[exerciseIndex].trackingFieldId ==
                                   3 ||
                               widget.exercises[exerciseIndex].trackingFieldId ==
                                   4) &&
-                          widget.exercises[exerciseIndex].setInfo.length >
-                              1) // Timer X more than 1 set
+                          widget.exercises[exerciseIndex].setInfo.length > 1)
                         TimerXMoreProgressCard(
                           exercise: widget.exercises[exerciseIndex],
                           setInfoIndex: setInfoCompleteList[exerciseIndex],
@@ -423,12 +424,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               );
                             }
 
-                            if (!workoutFinish) {
-                              _checkLastExercise(
-                                recordRepository: recordRepository,
-                                workoutBox: workoutBox,
-                              ); //끝났는지 체크!
-                            }
+                            // if (!workoutFinish) {
+                            //   _checkLastExercise(
+                            //     recordRepository: recordRepository,
+                            //     workoutBox: workoutBox,
+                            //   ); //끝났는지 체크!
+                            // }
 
                             if (setInfoCompleteList[exerciseIndex] <
                                 maxSetInfoList[exerciseIndex]) {
@@ -517,9 +518,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   context.pop();
                 },
                 cancelOnTap: () async {
-                  print('완료쓰!!');
                   context.pop();
-
+                  //완료!!!
                   try {
                     List<WorkoutRecordModel> tempRecordList = [];
 
@@ -532,7 +532,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                           if (record != null && record is WorkoutRecordModel) {
                             if (record.setInfo.length < maxSetInfoList[i]) {
                               for (int j = 0;
-                                  j < maxSetInfoList[i] - record.setInfo.length;
+                                  j <
+                                      maxSetInfoList[i] -
+                                          setInfoCompleteList[i];
                                   j++) {
                                 record.setInfo.add(
                                   SetInfo(index: record.setInfo.length + 1),
@@ -611,7 +613,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 if (record != null && record is WorkoutRecordModel) {
                   if (record.setInfo.length < maxSetInfoList[i]) {
                     for (int j = 0;
-                        j < maxSetInfoList[i] - record.setInfo.length;
+                        j <= maxSetInfoList[i] - setInfoCompleteList[i];
                         j++) {
                       record.setInfo.add(
                         SetInfo(index: record.setInfo.length + 1),
@@ -785,7 +787,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               for (int i = 0;
                                   i < widget.exercises.length;
                                   i++) {
-                                final record = value
+                                var record = value
                                     .get(widget.exercises[i].workoutPlanId);
 
                                 if (record != null &&
@@ -795,7 +797,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     for (int j = 0;
                                         j <
                                             maxSetInfoList[i] -
-                                                record.setInfo.length;
+                                                setInfoCompleteList[i];
                                         j++) {
                                       record.setInfo.add(
                                         SetInfo(
@@ -803,6 +805,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       );
                                     }
                                   }
+
                                   value.put(widget.exercises[i].workoutPlanId,
                                       record);
                                   tempRecordList.add(record);
@@ -851,7 +854,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             ),
                           );
                         }
-
                         //완료!!!!!!!!!
                       },
                     );

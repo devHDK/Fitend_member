@@ -9,6 +9,7 @@ import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart'
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_records_provider.dart';
+import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -160,8 +161,9 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         startDate:
             '${DateFormat('M월 dd일').format(feedback!.startDate)} ${weekday[feedback!.startDate.weekday]}요일',
         strengthIndex: feedback!.strengthIndex!,
-        issueIndexes: feedback!.issueIndexes!,
-        contents: feedback!.contents!,
+        issueIndexes:
+            feedback!.issueIndexes != null ? feedback!.issueIndexes! : [],
+        contents: feedback!.contents != null ? feedback!.contents! : '',
         workoutRecords: workoutResults,
       );
       hasLocalData = true;
@@ -184,7 +186,13 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: IconButton(
-              onPressed: () => context.pop(),
+              onPressed: () => context.goNamed(
+                WorkoutListScreen.routeName,
+                pathParameters: {
+                  "workoutScheduleId": widget.workoutScheduleId.toString(),
+                },
+                extra: true,
+              ),
               icon: const Icon(
                 Icons.close_sharp,
                 color: Colors.white,

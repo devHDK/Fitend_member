@@ -192,10 +192,6 @@ class _WeightWrepsProgressCardState
               seconds: widget.exercise.setInfo[widget.setInfoIndex].seconds! -
                   totalSeconds,
             );
-
-            print('old record');
-            print('record.setInfo.length : ${record.setInfo.length}');
-
             value.put(
               widget.exercise.workoutPlanId,
               WorkoutRecordModel(
@@ -245,8 +241,6 @@ class _WeightWrepsProgressCardState
 
   @override
   Widget build(BuildContext context) {
-    print('setInfoIndex : ${widget.setInfoIndex}');
-
     final size = MediaQuery.of(context).size;
     final AsyncValue<Box> workoutRecordBox =
         ref.watch(hiveWorkoutRecordProvider);

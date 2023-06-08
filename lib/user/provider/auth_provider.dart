@@ -58,9 +58,20 @@ class AuthProvider extends ChangeNotifier {
             GoRoute(
               path: 'workout/:workoutScheduleId',
               name: WorkoutListScreen.routeName,
-              builder: (context, state) => WorkoutListScreen(
-                id: int.parse(state.pathParameters['workoutScheduleId']!),
-              ),
+              // builder: (context, state) => WorkoutListScreen(
+              //   id: int.parse(state.pathParameters['workoutScheduleId']!),
+              // ),
+              pageBuilder: (context, state) {
+                return CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: WorkoutListScreen(
+                    id: int.parse(state.pathParameters['workoutScheduleId']!),
+                  ),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                );
+              },
               routes: [
                 GoRoute(
                   path: 'exercise',
@@ -84,11 +95,24 @@ class AuthProvider extends ChangeNotifier {
             GoRoute(
               path: 'scheduleResult/:workoutScheduleId',
               name: ScheduleResultScreen.routeName,
-              builder: (context, state) => ScheduleResultScreen(
-                workoutScheduleId:
-                    int.parse(state.pathParameters["workoutScheduleId"]!),
-                exercises: state.extra as List<Exercise>,
-              ),
+              // builder: (context, state) => ScheduleResultScreen(
+              //   workoutScheduleId:
+              //       int.parse(state.pathParameters["workoutScheduleId"]!),
+              //   exercises: state.extra as List<Exercise>,
+              // ),
+              pageBuilder: (context, state) {
+                return CustomTransitionPage<void>(
+                  key: state.pageKey,
+                  child: ScheduleResultScreen(
+                    workoutScheduleId:
+                        int.parse(state.pathParameters["workoutScheduleId"]!),
+                    exercises: state.extra as List<Exercise>,
+                  ),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                );
+              },
             )
           ],
         ),

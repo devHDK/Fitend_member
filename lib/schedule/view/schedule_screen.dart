@@ -5,10 +5,11 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
-import 'package:fitend_member/user/provider/get_me_provider.dart';
+import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
+import 'package:go_router/go_router.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
@@ -130,7 +131,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           actions: [
             IconButton(
               onPressed: () {
-                ref.read(userMeProvider.notifier).logout();
+                // ref.read(userMeProvider.notifier).logout();
+                context.goNamed(MyPageScreen.routeName);
               },
               icon: const Padding(
                 padding: EdgeInsets.only(right: 28),

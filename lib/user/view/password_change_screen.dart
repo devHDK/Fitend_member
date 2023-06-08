@@ -146,6 +146,15 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
                   int count = 0;
                   Navigator.of(context).popUntil((_) => count++ >= 2);
 
+                  showDialog(
+                    context: context,
+                    builder: (context) => DialogTools.errorDialog(
+                      message: '비밀번호가 변경되었습니다!',
+                      confirmText: '확인',
+                      confirmOnTap: () => context.pop(),
+                    ),
+                  );
+
                   setState(() {
                     buttonOn = true;
                   });

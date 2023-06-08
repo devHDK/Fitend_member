@@ -35,6 +35,7 @@ const deployIp = '';
 final s3Url = F.appFlavor != Flavor.production
     ? 'https://d20e02zksul93k.cloudfront.net/'
     : '';
+const muscleImageUrl = 'public/targetMuscles/';
 
 String workoutRecordBox = 'WorkoutRecords';
 String timerXOneRecordBox = 'timerXoneRecords';

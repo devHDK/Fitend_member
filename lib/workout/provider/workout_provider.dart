@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +31,8 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
       print(response);
 
       state = response;
-    } catch (e) {
+    } on DioError catch (e) {
+      print(e.response!.statusCode);
       state = WorkoutModelError(message: '데이터를 불러올수없습니다');
     }
   }

@@ -124,10 +124,8 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
       ),
       child: Row(
         children: [
-          _renderImage(
-            widget.exercise.videos[0].thumbnail,
-            widget.exercise.targetMuscles[0].image,
-          ),
+          _renderImage(widget.exercise.videos[0].thumbnail,
+              widget.exercise.targetMuscles[0].id),
           const SizedBox(
             width: 23,
           ),
@@ -144,7 +142,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
     );
   }
 
-  Stack _renderImage(String thumnail, String muscle) {
+  Stack _renderImage(String thumnail, int muscleId) {
     return Stack(
       children: [
         SizedBox(
@@ -164,7 +162,8 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
             width: 35,
             height: 35,
             child: ClipRRect(
-              child: CustomNetworkImage(imageUrl: '$s3Url$muscle'),
+              child: CustomNetworkImage(
+                  imageUrl: '$s3Url$muscleImageUrl$muscleId.png'),
             ),
           ),
         )

@@ -7,24 +7,24 @@ import 'package:fitend_member/user/repository/get_me_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final userMeProvider =
-    StateNotifierProvider<UserMeStateNotifier, UserModelBase?>((ref) {
+final getMeProvider =
+    StateNotifierProvider<GetMeStateNotifier, UserModelBase?>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
-  final userMeRepository = ref.watch(getMeRepositoryProvider);
+  final getMeRepository = ref.watch(getMeRepositoryProvider);
   final storage = ref.watch(secureStorageProvider);
 
-  return UserMeStateNotifier(
+  return GetMeStateNotifier(
       authRepository: authRepository,
-      repository: userMeRepository,
+      repository: getMeRepository,
       storage: storage);
 });
 
-class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
+class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   final AuthRepository authRepository;
-  final UserMeRepository repository;
+  final GetMeRepository repository;
   final FlutterSecureStorage storage;
 
-  UserMeStateNotifier({
+  GetMeStateNotifier({
     required this.authRepository,
     required this.repository,
     required this.storage,
@@ -110,5 +110,31 @@ class UserMeStateNotifier extends StateNotifier<UserModelBase?> {
       storage.delete(key: REFRESH_TOKEN_KEY),
       storage.delete(key: ACCESS_TOKEN_KEY),
     ]);
+  }
+
+  Future<void> confirmPassword({
+    required String password,
+  }) async {
+    try {
+      await repository.confirmPassword(password: password);
+    } on DioError {
+      throw Error();
+    }
+  }
+
+  Future<void> changePassword({
+    required String password,
+    required String newPassword,
+  }) async {
+    try {
+      if (password != newPassword) {
+        throw Error();
+      }
+
+      await repository.changePassword(
+          password: password, newPassword: newPassword);
+    } on DioError {
+      throw Error();
+    }
   }
 }

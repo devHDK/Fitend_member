@@ -1,6 +1,10 @@
+import 'package:fitend_member/common/component/dialog_tools.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class MyPageScreen extends ConsumerStatefulWidget {
@@ -29,6 +33,36 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(getMeProvider);
+
+    if (state is UserModelLoading) {
+      return const Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+            child: CircularProgressIndicator(
+          color: POINT_COLOR,
+        )),
+      );
+    }
+
+    if (state is UserModelError) {
+      showDialog(
+        context: context,
+        builder: (context) => DialogTools.errorDialog(
+          message: '데이터를 불러올수없습니다😂',
+          confirmText: '확인',
+          confirmOnTap: () => context.pop(),
+        ),
+      );
+    }
+
+    final model = state as UserModel;
+
+    String formattedPhoneNumber = model.user.phone != null
+        ? model.user.phone!.replaceAllMapped(RegExp(r'(\d{3})(\d{3,4})(\d{4})'),
+            (m) => '${m[1]}-${m[2]}-${m[3]}')
+        : '';
+
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
@@ -60,21 +94,21 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               padding: const EdgeInsets.only(top: 24, bottom: 20),
               child: Column(
                 children: [
-                  const Row(
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        'Alex',
-                        style: TextStyle(
+                        model.user.nickname,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
                           fontSize: 26,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
-                      Text(
+                      const Text(
                         '회원님',
                         style: TextStyle(
                           color: Colors.white,
@@ -87,20 +121,20 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                   const SizedBox(
                     height: 8,
                   ),
-                  const Row(
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.mail_outline,
                         size: 20,
                         color: LIGHT_GRAY_COLOR,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       Text(
-                        'abc@dfasdfasfasdfasdfas.fdfdfda',
-                        style: TextStyle(
+                        model.user.email,
+                        style: const TextStyle(
                           color: LIGHT_GRAY_COLOR,
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
@@ -118,9 +152,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                       const SizedBox(
                         width: 8,
                       ),
-                      const Text(
-                        '010-1234-1234',
-                        style: TextStyle(
+                      Text(
+                        formattedPhoneNumber,
+                        style: const TextStyle(
                           color: LIGHT_GRAY_COLOR,
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
@@ -175,8 +209,28 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               color: DARK_GRAY_COLOR,
               height: 1,
             ),
-            _renderLabel(
-              name: '로그아웃',
+            InkWell(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => DialogTools.confirmDialog(
+                    message: '로그아웃 하시겠습니까?',
+                    confirmText: '확인',
+                    cancelText: '취소',
+                    confirmOnTap: () {
+                      ref.read(getMeProvider.notifier).logout();
+                    },
+                    cancelOnTap: () => context.pop(),
+                  ),
+                );
+              },
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 40,
+                child: _renderLabel(
+                  name: '로그아웃',
+                ),
+              ),
             )
           ],
         ),

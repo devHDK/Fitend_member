@@ -24,7 +24,7 @@ class AuthProvider extends ChangeNotifier {
 
   AuthProvider({required this.ref}) {
     ref.listen<UserModelBase?>(
-      userMeProvider,
+      getMeProvider,
       (previous, next) {
         if (previous != next) {
           notifyListeners();
@@ -131,7 +131,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<String?> redirectLogic(
       BuildContext context, GoRouterState state) async {
-    final UserModelBase? user = ref.read(userMeProvider);
+    final UserModelBase? user = ref.read(getMeProvider);
 
     final loginIn = state.location == '/splash/login';
 

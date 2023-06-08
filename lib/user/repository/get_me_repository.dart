@@ -6,19 +6,36 @@ import 'package:retrofit/retrofit.dart';
 
 part 'get_me_repository.g.dart';
 
-final getMeRepositoryProvider = Provider<UserMeRepository>((ref) {
+final getMeRepositoryProvider = Provider<GetMeRepository>((ref) {
   final dio = ref.watch(dioProvider);
 
-  return UserMeRepository(dio);
+  return GetMeRepository(dio);
 });
 
 @RestApi()
-abstract class UserMeRepository {
-  factory UserMeRepository(Dio dio) = _UserMeRepository;
+abstract class GetMeRepository {
+  factory GetMeRepository(Dio dio) = _GetMeRepository;
 
   @GET('/users/getMe')
   @Headers({
     'accessToken': 'true',
   })
   Future<UserModel> getMe();
+
+  @POST('/users/password/confirm')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<void> confirmPassword({
+    @Body() required String password,
+  });
+
+  @PUT('/users/password')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<void> changePassword({
+    @Body() required String password,
+    @Body() required String newPassword,
+  });
 }

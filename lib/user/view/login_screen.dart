@@ -42,7 +42,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-    final state = ref.watch(userMeProvider);
+    final state = ref.watch(getMeProvider);
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -166,7 +166,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         _saveEmailAndPassword();
                       }
 
-                      final ret = await ref.read(userMeProvider.notifier).login(
+                      final ret = await ref.read(getMeProvider.notifier).login(
                             email: idTextcontroller.text,
                             password: passwordTextcontroller.text,
                             platform: Platform.isIOS ? 'ios' : 'android',

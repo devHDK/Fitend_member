@@ -153,7 +153,7 @@ class CustomInterceptor extends Interceptor {
       } on DioError catch (e) {
         //circular dependency error
         // A, B
-        ref.read(userMeProvider.notifier).logout();
+        ref.read(getMeProvider.notifier).logout();
 
         return handler.reject(e);
       }

@@ -28,6 +28,7 @@ class WorkoutScheduleStateNotifier
   Future<void> paginate({
     required DateTime startDate,
     bool fetchMore = false,
+    bool isRefetch = false,
     bool isUpScrolling = false,
     bool isDownScrolling = false,
   }) async {
@@ -36,7 +37,8 @@ class WorkoutScheduleStateNotifier
       final isRefetching = state is WorkoutScheduleRefetching;
       final isFetchMore = state is WorkoutScheduleFetchingMore;
 
-      if (fetchMore && (isLoading || isFetchMore || isRefetching)) {
+      if (fetchMore ||
+          isRefetch && (isLoading || isFetchMore || isRefetching)) {
         return;
       }
 
@@ -47,6 +49,7 @@ class WorkoutScheduleStateNotifier
         state = WorkoutScheduleFetchingMore(
           data: pState.data,
         );
+      } else if (isRefetch) {
       } else {
         // 데이터를 처음부터 가져오는 상황
         if (state is WorkoutScheduleModel) {

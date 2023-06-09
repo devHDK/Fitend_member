@@ -69,6 +69,7 @@ dependencies:
   flutter_native_splash: ^2.2.19
   intl: ^0.18.1
   package_info_plus: ^4.0.2
+  table_calendar: ^3.0.9
 
 
 dev_dependencies:

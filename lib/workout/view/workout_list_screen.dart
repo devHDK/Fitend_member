@@ -56,25 +56,27 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     // ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
 
     Future.delayed(
-        const Duration(
-          milliseconds: 100,
-        ), () {
-      WidgetsBinding.instance.addPersistentFrameCallback(
-        (timeStamp) {
-          if (isWorkoutComplete && initial && !hasLocal) {
-            ref
-                .read(workoutRecordsProvider.notifier)
-                .getWorkoutResults(workoutScheduleId: widget.id);
+      const Duration(
+        milliseconds: 100,
+      ),
+      () {
+        WidgetsBinding.instance.addPersistentFrameCallback(
+          (timeStamp) {
+            if (isWorkoutComplete && initial && !hasLocal) {
+              ref
+                  .read(workoutRecordsProvider.notifier)
+                  .getWorkoutResults(workoutScheduleId: widget.id);
 
-            initial = false;
-          }
-          if (isProcessing && !isPoped && !isWorkoutComplete) {
-            _showConfirmDialog();
-            isProcessing = false;
-          }
-        },
-      );
-    });
+              initial = false;
+            }
+            if (isProcessing && !isPoped && !isWorkoutComplete) {
+              _showConfirmDialog();
+              isProcessing = false;
+            }
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -323,6 +325,23 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             fontWeight: FontWeight.w700,
           ),
         ),
+        actions: [
+          if (!model.isWorkoutComplete)
+            GestureDetector(
+              onTap: () async {
+                showDialog(
+                  context: context,
+                  builder: (context) => CalendarDialog(
+                    scheduleDate: DateTime.parse(model.startDate),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 28),
+                child: Image.asset('asset/img/icon_daymove.png'),
+              ),
+            )
+        ],
       ),
       body: CustomScrollView(
         slivers: [

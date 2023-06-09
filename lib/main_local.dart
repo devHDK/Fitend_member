@@ -5,7 +5,6 @@ import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'app.dart';
 import 'flavors.dart';
@@ -23,10 +22,6 @@ void main() async {
   Hive.registerAdapter<SetInfo>(SetInfoAdapter());
   Hive.registerAdapter<WorkoutFeedbackRecordModel>(
       WorkoutFeedbackRecordModelAdapter());
-
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  String version = packageInfo.version;
-  String buildNumber = packageInfo.buildNumber;
 
   runApp(
     const ProviderScope(

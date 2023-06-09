@@ -1,5 +1,8 @@
+import 'package:fitend_member/common/component/calendar.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ndialog/ndialog.dart';
 
 class DialogTools {
@@ -144,6 +147,100 @@ class DialogTools {
                 const SizedBox(
                   height: 8,
                 ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CalendarDialog extends ConsumerStatefulWidget {
+  const CalendarDialog({
+    super.key,
+    required this.scheduleDate,
+  });
+
+  final DateTime scheduleDate;
+
+  @override
+  ConsumerState<CalendarDialog> createState() => _CalendarDialogState();
+}
+
+class _CalendarDialogState extends ConsumerState<CalendarDialog> {
+  DateTime selectedDay = DateTime.utc(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  DateTime focusedDay = DateTime.now();
+
+  void changeScheduleDate() async {
+    try {} catch (e) {}
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DialogBackground(
+      blur: 0.2,
+      dialog: Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          width: 319,
+          height: 430,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            color: Colors.white,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Calendar(
+                  scheduleDate: widget.scheduleDate,
+                  focusedDay: focusedDay,
+                  selectedDay: selectedDay,
+                  onDaySelected: (selectedDay, focusedDay) {
+                    print(selectedDay);
+                    print(focusedDay);
+
+                    setState(() {
+                      this.selectedDay = selectedDay;
+                    });
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        changeScheduleDate();
+
+                        context.pop();
+                      },
+                      child: const Text(
+                        '확인',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => context.pop(),
+                      child: const Text(
+                        '취소',
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),

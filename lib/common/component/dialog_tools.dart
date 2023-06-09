@@ -1,5 +1,7 @@
 import 'package:fitend_member/common/component/calendar.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/data/global_varialbles.dart';
+import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -169,13 +171,21 @@ class CalendarDialog extends ConsumerStatefulWidget {
 }
 
 class _CalendarDialogState extends ConsumerState<CalendarDialog> {
-  DateTime selectedDay = DateTime.utc(
-    DateTime.now().year,
-    DateTime.now().month,
-    DateTime.now().day,
-  );
+  DateTime? selectedDay;
+  DateTime? focusedDay;
+  DateTime? firstDay;
+  DateTime? lastDay;
 
-  DateTime focusedDay = DateTime.now();
+  @override
+  void initState() {
+    super.initState();
+    selectedDay = widget.scheduleDate;
+    focusedDay = widget.scheduleDate;
+    firstDay = widget.scheduleDate
+        .subtract(Duration(days: widget.scheduleDate.weekday - 1));
+    lastDay = lastDay = widget.scheduleDate
+        .add(Duration(days: 7 - widget.scheduleDate.weekday));
+  }
 
   void changeScheduleDate() async {
     try {} catch (e) {}
@@ -183,6 +193,21 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
 
   @override
   Widget build(BuildContext context) {
+    List<WorkoutData> scheduleList = [];
+    if (firstDay != null && lastDay != null) {
+      scheduleList = scheduleListGlobal
+          .where((element) =>
+              element.startDate.compareTo(firstDay!) >= 0 &&
+              element.startDate.compareTo(lastDay!) <= 0 &&
+              element.workouts!.isNotEmpty)
+          .toList();
+    }
+
+    Map<String, List<Workout>> map = {
+      for (var data in scheduleList)
+        "${data.startDate.month}-${data.startDate.day}": data.workouts!
+    };
+
     return DialogBackground(
       blur: 0.2,
       dialog: Dialog(
@@ -199,12 +224,16 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
             child: Column(
               children: [
                 Calendar(
+                  schedules: scheduleList,
                   scheduleDate: widget.scheduleDate,
-                  focusedDay: focusedDay,
-                  selectedDay: selectedDay,
+                  focusedDay:
+                      focusedDay != null ? focusedDay! : widget.scheduleDate,
+                  selectedDay: selectedDay != null ? selectedDay! : null,
                   onDaySelected: (selectedDay, focusedDay) {
-                    print(selectedDay);
-                    print(focusedDay);
+                    if (map["${selectedDay.month}-${selectedDay.day}"] !=
+                        null) {
+                      print(map["${selectedDay.month}-${selectedDay.day}"]);
+                    }
 
                     setState(() {
                       this.selectedDay = selectedDay;

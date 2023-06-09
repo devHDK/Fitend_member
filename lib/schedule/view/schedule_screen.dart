@@ -2,6 +2,7 @@ import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/component/schedule_card.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
@@ -48,7 +49,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           130 * 14 + 130.0 * initListItemCount,
         );
         refetchItemCount = 0;
-        print('scrolled!!!!!!');
 
         initial = false;
       }
@@ -102,6 +102,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     }
 
     final schedules = state as WorkoutScheduleModel;
+    scheduleListGlobal = schedules.data!;
 
     minDate = schedules.data![0].startDate.subtract(const Duration(days: 31));
     maxDate = schedules.data![schedules.data!.length - 1].startDate

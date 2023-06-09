@@ -37,8 +37,7 @@ class WorkoutScheduleStateNotifier
       final isRefetching = state is WorkoutScheduleRefetching;
       final isFetchMore = state is WorkoutScheduleFetchingMore;
 
-      if (fetchMore ||
-          isRefetch && (isLoading || isFetchMore || isRefetching)) {
+      if (fetchMore && (isLoading || isFetchMore || isRefetching)) {
         return;
       }
 

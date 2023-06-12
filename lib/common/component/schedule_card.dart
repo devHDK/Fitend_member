@@ -5,7 +5,7 @@ import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class ScheduleCard extends StatelessWidget {
+class ScheduleCard extends StatefulWidget {
   final DateTime? date;
   final String? title;
   final String? subTitle;
@@ -15,6 +15,7 @@ class ScheduleCard extends StatelessWidget {
   final bool selected;
   final bool? isDateVisible;
   final int? workoutScheduleId;
+  final Function? onNotifyParent;
 
   const ScheduleCard({
     super.key,
@@ -27,12 +28,14 @@ class ScheduleCard extends StatelessWidget {
     required this.selected,
     this.isDateVisible = true,
     this.workoutScheduleId,
+    this.onNotifyParent,
   });
 
   factory ScheduleCard.fromModel({
     DateTime? date,
     required Workout model,
     bool? isDateVisible,
+    VoidCallback? onNotifyParent,
   }) {
     return ScheduleCard(
       date: date,
@@ -43,17 +46,23 @@ class ScheduleCard extends StatelessWidget {
       selected: model.selected!,
       isDateVisible: isDateVisible,
       workoutScheduleId: model.workoutScheduleId,
+      onNotifyParent: onNotifyParent ?? onNotifyParent,
     );
   }
 
   @override
+  State<ScheduleCard> createState() => _ScheduleCardState();
+}
+
+class _ScheduleCardState extends State<ScheduleCard> {
+  @override
   Widget build(BuildContext context) {
     return Container(
-      height: selected ? 175 : 130,
+      height: widget.selected ? 175 : 130,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         color: Colors.transparent,
-        image: selected
+        image: widget.selected
             ? const DecorationImage(
                 image: AssetImage("asset/img/schedule_image_pt.png"),
                 fit: BoxFit.fill,
@@ -74,7 +83,9 @@ class ScheduleCard extends StatelessWidget {
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: selected && isDateVisible! && date != null
+                      color: widget.selected &&
+                              widget.isDateVisible! &&
+                              widget.date != null
                           ? Colors.white
                           : Colors.transparent,
                     ),
@@ -90,11 +101,11 @@ class ScheduleCard extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        if (date != null)
+                        if (widget.date != null)
                           Text(
-                            weekday[date!.weekday - 1],
+                            weekday[widget.date!.weekday - 1],
                             style: TextStyle(
-                              color: isDateVisible!
+                              color: widget.isDateVisible!
                                   ? Colors.white
                                   : Colors.transparent,
                               fontSize: 14,
@@ -104,11 +115,11 @@ class ScheduleCard extends StatelessWidget {
                         const SizedBox(
                           height: 5,
                         ),
-                        if (date != null)
+                        if (widget.date != null)
                           Text(
-                            date!.day.toString(),
+                            widget.date!.day.toString(),
                             style: TextStyle(
-                              color: isDateVisible!
+                              color: widget.isDateVisible!
                                   ? Colors.white
                                   : Colors.transparent,
                               fontSize: 14,
@@ -128,7 +139,7 @@ class ScheduleCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title != null ? title! : '',
+                        widget.title != null ? widget.title! : '',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -139,7 +150,7 @@ class ScheduleCard extends StatelessWidget {
                         height: 10,
                       ),
                       Text(
-                        subTitle != null ? subTitle! : '',
+                        widget.subTitle != null ? widget.subTitle! : '',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -149,13 +160,13 @@ class ScheduleCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (isComplete == null)
+                if (widget.isComplete == null)
                   const SizedBox(
                     width: 24,
                   )
-                else if (!isComplete! &&
-                    !selected &&
-                    date!.isAfter(
+                else if (!widget.isComplete! &&
+                    !widget.selected &&
+                    widget.date!.isAfter(
                       DateTime(
                         DateTime.now().year,
                         DateTime.now().month,
@@ -163,9 +174,9 @@ class ScheduleCard extends StatelessWidget {
                       ),
                     )) //오늘, 오늘 이후 스케줄이 미완료
                   Image.asset('asset/img/round_checked.png')
-                else if (!isComplete! &&
-                    !selected &&
-                    date!.isBefore(
+                else if (!widget.isComplete! &&
+                    !widget.selected &&
+                    widget.date!.isBefore(
                       DateTime(
                         DateTime.now().year,
                         DateTime.now().month,
@@ -173,11 +184,11 @@ class ScheduleCard extends StatelessWidget {
                       ),
                     )) // 어제 스케줄이 미완료
                   Image.asset('asset/img/round_fail.png')
-                else if (isComplete! && !selected)
+                else if (widget.isComplete! && !widget.selected)
                   Image.asset('asset/img/round_success.png') // 스케줄이 완료 일때
               ],
             ),
-            if (selected)
+            if (widget.selected)
               Column(
                 children: [
                   const SizedBox(
@@ -190,14 +201,20 @@ class ScheduleCard extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: POINT_COLOR,
                       ),
-                      onPressed: workoutScheduleId == null
+                      onPressed: widget.workoutScheduleId == null
                           ? null
-                          : () {
-                              context.goNamed(WorkoutListScreen.routeName,
+                          : () async {
+                              var val = await context.pushNamed(
+                                  WorkoutListScreen.routeName,
                                   pathParameters: {
                                     'workoutScheduleId':
-                                        workoutScheduleId!.toString(),
+                                        widget.workoutScheduleId!.toString(),
                                   });
+
+                              if (val == true &&
+                                  widget.onNotifyParent != null) {
+                                widget.onNotifyParent!();
+                              }
                             },
                       child: const Text(
                         '운동확인 하기🔍',
@@ -210,7 +227,7 @@ class ScheduleCard extends StatelessWidget {
                   )
                 ],
               ),
-            if (!selected)
+            if (!widget.selected)
               const SizedBox(
                 height: 35,
               ),

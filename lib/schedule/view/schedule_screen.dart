@@ -84,9 +84,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     }
   }
 
-  @override
-  void didUpdateWidget(covariant ScheduleScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
+  void _onChildEvent() {
+    print('_onChildEvent');
+    setState(() {});
   }
 
   @override
@@ -106,8 +106,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       return ErrorDialog(error: state.message);
     }
 
-    final schedules = state as WorkoutScheduleModel;
-    scheduleListGlobal = schedules.data!;
+    var schedules = state as WorkoutScheduleModel;
+
+    if (scheduleListGlobal.length < schedules.data!.length) {
+      scheduleListGlobal = schedules.data!;
+    }
 
     minDate = schedules.data![0].startDate.subtract(const Duration(days: 31));
     maxDate = schedules.data![schedules.data!.length - 1].startDate
@@ -200,6 +203,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                           model: e,
                           date: schedules.data![index].startDate,
                           isDateVisible: seq == 0 ? true : false,
+                          onNotifyParent: _onChildEvent,
                         ),
                       ),
                     );

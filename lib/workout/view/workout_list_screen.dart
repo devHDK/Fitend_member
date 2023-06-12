@@ -11,6 +11,7 @@ import 'package:fitend_member/common/provider/hive_workout_record_provider.dart'
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
+import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -316,7 +317,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => context.pop(true),
             icon: const Icon(Icons.arrow_back)),
         centerTitle: true,
         title: Text(
@@ -353,6 +354,16 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                                   ),
                                 ),
                               );
+
+                          //스케줄 업데이트
+                          print('스케줄 업데이트');
+                          ref
+                              .read(workoutScheduleProvider(
+                                DateTime.parse(
+                                  changedDate['changedDate'].toString(),
+                                ),
+                              ).notifier)
+                              .updateScheduleFromBuffer();
                         },
                       );
 

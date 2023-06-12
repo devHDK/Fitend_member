@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_pagenate_params.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
@@ -115,5 +116,10 @@ class WorkoutScheduleStateNotifier
     } catch (e) {
       state = WorkoutScheduleModelError(message: '데이터를 불러오지 못했습니다.');
     }
+  }
+
+  void updateScheduleFromBuffer() {
+    state = WorkoutScheduleModel(data: scheduleListGlobal);
+    print('schedule state update!!');
   }
 }

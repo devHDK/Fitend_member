@@ -36,4 +36,12 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
       state = WorkoutModelError(message: '데이터를 불러올수없습니다');
     }
   }
+
+  void updateWorkoutState({
+    required String dateTime,
+  }) {
+    final pstate = state as WorkoutModel;
+
+    state = pstate.copyWith(startDate: dateTime);
+  }
 }

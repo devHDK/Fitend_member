@@ -85,6 +85,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   }
 
   @override
+  void didUpdateWidget(covariant ScheduleScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state =
         ref.watch(workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)));

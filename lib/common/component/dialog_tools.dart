@@ -207,7 +207,43 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
                           1,
             ),
           );
+
+      //이전 스케줄 인덱스
+      final beforeChangeScheduleIndex =
+          scheduleListGlobal.indexWhere((element) {
+        return element.startDate == widget.scheduleDate;
+      });
+
+      print('beforeChangeScheduleIndex :  $beforeChangeScheduleIndex');
+
+      //이전 워크아웃 인덱스
+      final beforWorkoutIndex = scheduleListGlobal[beforeChangeScheduleIndex]
+          .workouts!
+          .indexWhere((element) =>
+              element.workoutScheduleId == widget.workoutScheduleId);
+      print('beforWorkoutIndex :  $beforWorkoutIndex');
+
+      //변경할 날짜의 스케줄 인덱스
+      final afterCahngeSchdedulIndex = scheduleListGlobal.indexWhere((element) {
+        final localTime =
+            DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(selectedDay!);
+        return element.startDate == DateTime.parse(localTime);
+      });
+
+      print('afterCahngeSchdedulIndex :  $afterCahngeSchdedulIndex');
+
+      //변경
+      scheduleListGlobal[afterCahngeSchdedulIndex].workouts!.add(
+          scheduleListGlobal[beforeChangeScheduleIndex]
+              .workouts![beforWorkoutIndex]);
+
+      //기존건 삭제
+      scheduleListGlobal[beforeChangeScheduleIndex]
+          .workouts!
+          .removeAt(beforWorkoutIndex);
     } catch (e) {
+      print(e);
+
       showDialog(
         context: context,
         builder: (context) => DialogTools.errorDialog(
@@ -281,7 +317,6 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
                         if (selectedDay != null &&
                             selectedDay!.compareTo(widget.scheduleDate) != 0) {
                           changeScheduleDate();
-
                           context.pop({'changedDate': selectedDay});
                         } else {
                           print('오늘날짜 선택!');

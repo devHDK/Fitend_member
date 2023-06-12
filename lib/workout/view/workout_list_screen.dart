@@ -48,6 +48,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   bool isWorkoutComplete = false;
   bool initial = true;
   bool hasLocal = false;
+  bool changedDate = false;
 
   @override
   void initState() {
@@ -195,11 +196,12 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     }
 
     var model = state as WorkoutModel;
-
     workoutModel = model;
+
     workoutBox = workoutRecordBox;
     timerXoneBox = timerXoneRecordBox;
     timerXmoreBox = timerXMoreRecordBox;
+
     isWorkoutComplete = model.isWorkoutComplete;
 
     if (model.isWorkoutComplete) {
@@ -278,7 +280,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           }
         }
       });
-      setState(() {});
     } else {
       workoutEditBox.whenData(
         // api로 받아온 데이터 hive로 저장
@@ -319,7 +320,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             icon: const Icon(Icons.arrow_back)),
         centerTitle: true,
         title: Text(
-          '${DateFormat('M월 dd일').format(DateTime.parse(model.startDate))} ${weekday[DateTime.parse(model.startDate).weekday]}요일',
+          '${DateFormat('M월 dd일').format(DateTime.parse(workoutModel.startDate))} ${weekday[DateTime.parse(workoutModel.startDate).weekday]}요일',
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -329,14 +330,56 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           if (!model.isWorkoutComplete)
             GestureDetector(
               onTap: () async {
-                showDialog(
+                await showDialog(
                     context: context,
                     builder: (context) {
                       return CalendarDialog(
-                        scheduleDate: DateTime.parse(model.startDate),
+                        scheduleDate: DateTime.parse(workoutModel.startDate),
                         workoutScheduleId: widget.id,
                       );
-                    });
+                    }).then(
+                  (changedDate) {
+                    if (changedDate['changedDate'] != null) {
+                      print('change date!!!');
+
+                      setState(
+                        () {
+                          ref
+                              .read(workoutProvider(widget.id).notifier)
+                              .updateWorkoutState(
+                                dateTime: DateFormat('yyyy-MM-dd').format(
+                                  DateTime.parse(
+                                    changedDate['changedDate'].toString(),
+                                  ),
+                                ),
+                              );
+                        },
+                      );
+
+                      workoutFeedbackBox.whenData(
+                        (value) async {
+                          final record = value.get(widget.id);
+                          if (record != null &&
+                              record is WorkoutFeedbackRecordModel) {
+                            hasLocal = false;
+                            await value.put(
+                              widget.id,
+                              record.copyWith(
+                                startDate: DateTime.parse(
+                                  DateFormat('yyyy-MM-dd').format(
+                                    DateTime.parse(
+                                      changedDate['changedDate'].toString(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    }
+                  },
+                );
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 28),

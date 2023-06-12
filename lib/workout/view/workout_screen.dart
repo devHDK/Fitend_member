@@ -1,13 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
-import 'package:fitend_member/common/component/dialog_tools.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_edit_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
@@ -15,6 +16,7 @@ import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
+import 'package:fitend_member/workout/component/update_seinfo_dialog_widgets.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -59,6 +61,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   late int maxExcerciseIndex;
   bool isTooltipVisible = true;
 
+  final repsTextController = TextEditingController();
+  final weightTextController = TextEditingController();
+  final timerMinTextController = TextEditingController();
+  final timerSecondTextController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -82,7 +89,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     .get(widget.exercises[i].workoutPlanId)
                     .setInfo
                     .length;
-                print('setInfoCompleteList[$i] : ${setInfoCompleteList[i]}');
               } else {
                 setInfoCompleteList[i] = 0;
               }
@@ -113,6 +119,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 
   @override
+  void dispose() {
+    repsTextController.dispose();
+    weightTextController.dispose();
+    timerMinTextController.dispose();
+    timerSecondTextController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final AsyncValue<Box> workoutBox = ref.watch(hiveWorkoutRecordProvider);
@@ -120,6 +136,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     final AsyncValue<Box> timerXMoreBox =
         ref.watch(hiveTimerXMoreRecordProvider);
     final recordRepository = ref.read(workoutRecordsRepositoryProvider);
+
+    final workoutEditBox = ref.watch(hiveWorkoutEditProvider);
 
     workoutRecordBox = workoutBox;
 
@@ -139,7 +157,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         leading: IconButton(
           // onPressed: () => GoRouter.of(context).pop('result'),
           onPressed: () {
-            DialogTools.confirmDialog(
+            DialogWidgets.confirmDialog(
               message: '아직 운동이 끝나지 않았어요 😮\n저장 후 뒤로 갈까요?',
               confirmText: '네, 저장할게요',
               cancelText: '아니요, 리셋할래요',
@@ -271,6 +289,24 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         WeightWrepsProgressCard(
                           exercise: widget.exercises[exerciseIndex],
                           setInfoIndex: setInfoCompleteList[exerciseIndex],
+                          updateSeinfoTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => RepsXWeight(
+                                initialReps: widget
+                                    .exercises[exerciseIndex]
+                                    .setInfo[setInfoCompleteList[exerciseIndex]]
+                                    .reps!,
+                                initialWeight: widget
+                                    .exercises[exerciseIndex]
+                                    .setInfo[setInfoCompleteList[exerciseIndex]]
+                                    .weight!,
+                                repsController: repsTextController,
+                                weightController: weightTextController,
+                                confirmOnTap: () {},
+                              ),
+                            );
+                          },
                           proccessOnTap: () {
                             if (exerciseIndex <= maxExcerciseIndex &&
                                 setInfoCompleteList[exerciseIndex] <
@@ -278,19 +314,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               _hiveDataControl(workoutBox);
                             }
 
-                            // if (!workoutFinish) {
-                            //   _checkLastExercise(
-                            //     recordRepository: recordRepository,
-                            //     workoutBox: workoutBox,
-                            //   ); //끝났는지 체크!
-                            // }
-
                             if (setInfoCompleteList[exerciseIndex] <
                                 maxSetInfoList[exerciseIndex]) {
                               setState(() {
                                 setInfoCompleteList[exerciseIndex] += 1;
-                                print(
-                                    'setInfoCompleteIndex[$exerciseIndex] : ${setInfoCompleteList[exerciseIndex]}');
                               });
                             }
 
@@ -424,13 +451,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               );
                             }
 
-                            // if (!workoutFinish) {
-                            //   _checkLastExercise(
-                            //     recordRepository: recordRepository,
-                            //     workoutBox: workoutBox,
-                            //   ); //끝났는지 체크!
-                            // }
-
                             if (setInfoCompleteList[exerciseIndex] <
                                 maxSetInfoList[exerciseIndex]) {
                               setState(() {
@@ -507,7 +527,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             barrierDismissible: false,
             context: context,
             builder: (context) {
-              return DialogTools.confirmDialog(
+              return DialogWidgets.confirmDialog(
                 message: '완료하지 않은 운동이 있어요🤓\n 마저 진행할까요?',
                 confirmText: '네, 마저할게요',
                 cancelText: '아니요, 그만할래요',
@@ -578,7 +598,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     showDialog(
                       barrierDismissible: false,
                       context: context,
-                      builder: (context) => DialogTools.errorDialog(
+                      builder: (context) => DialogWidgets.errorDialog(
                         message: '다시 시도해주세요',
                         confirmText: '확인',
                         confirmOnTap: () {
@@ -654,7 +674,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           showDialog(
             barrierDismissible: false,
             context: context,
-            builder: (context) => DialogTools.errorDialog(
+            builder: (context) => DialogWidgets.errorDialog(
               message: '다시 시도해주세요',
               confirmText: '확인',
               confirmOnTap: () {
@@ -754,7 +774,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               name: '영상 녹화',
               textColor: LIGHT_GRAY_COLOR,
               onTap: () {
-                DialogTools.errorDialog(
+                DialogWidgets.errorDialog(
                   message: '곧 업데이트 예정이에요 🙏',
                   confirmText: '확인',
                   confirmOnTap: () => context.pop(),
@@ -769,7 +789,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   barrierDismissible: false,
                   context: context,
                   builder: (_) {
-                    return DialogTools.confirmDialog(
+                    return DialogWidgets.confirmDialog(
                       message: '오늘의 운동을 종료할까요?\n 종료 후에는 다시 진행할 수 없어요 🙉',
                       confirmText: '아니요, 계속할게요',
                       cancelText: '네, 종료할게요',
@@ -845,7 +865,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                           showDialog(
                             barrierDismissible: false,
                             context: context,
-                            builder: (context) => DialogTools.errorDialog(
+                            builder: (context) => DialogWidgets.errorDialog(
                               message: '다시 시도해주세요',
                               confirmText: '확인',
                               confirmOnTap: () {

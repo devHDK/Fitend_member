@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:fitend_member/common/component/dialog_tools.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -173,7 +173,8 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                 showDialog(
                                   barrierDismissible: false,
                                   context: context,
-                                  builder: (context) => DialogTools.errorDialog(
+                                  builder: (context) =>
+                                      DialogWidgets.errorDialog(
                                     message: '운동 강도를 평가해 주세요!',
                                     confirmText: '확인',
                                     confirmOnTap: () {
@@ -233,7 +234,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                     barrierDismissible: false,
                                     context: context,
                                     builder: (context) =>
-                                        DialogTools.errorDialog(
+                                        DialogWidgets.errorDialog(
                                       message: e.error != null
                                           ? e.error.toString()
                                           : '',

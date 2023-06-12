@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:fitend_member/common/component/dialog_tools.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
@@ -270,7 +270,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                       showDialog(
                         barrierDismissible: false,
                         context: context,
-                        builder: (context) => DialogTools.errorDialog(
+                        builder: (context) => DialogWidgets.errorDialog(
                           message: '먼저 운동을 진행해 주세요 🏋🏻',
                           confirmText: '확인',
                           confirmOnTap: () => context.pop(),

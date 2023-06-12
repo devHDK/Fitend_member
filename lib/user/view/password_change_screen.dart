@@ -1,5 +1,5 @@
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
-import 'package:fitend_member/common/component/dialog_tools.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
@@ -128,7 +128,7 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
 
                   showDialog(
                     context: context,
-                    builder: (context) => DialogTools.errorDialog(
+                    builder: (context) => DialogWidgets.errorDialog(
                       message: '입력하신 비밀번호가 일치하지 않아요 😂',
                       confirmText: '확인',
                       confirmOnTap: () => context.pop(),
@@ -148,7 +148,7 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
 
                   showDialog(
                     context: context,
-                    builder: (context) => DialogTools.errorDialog(
+                    builder: (context) => DialogWidgets.errorDialog(
                       message: '비밀번호가 변경되었습니다!',
                       confirmText: '확인',
                       confirmOnTap: () => context.pop(),
@@ -165,7 +165,7 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
 
                   showDialog(
                     context: context,
-                    builder: (context) => DialogTools.errorDialog(
+                    builder: (context) => DialogWidgets.errorDialog(
                       message: '오류가 발생하였습니다.😂',
                       confirmText: '확인',
                       confirmOnTap: () => context.pop(),

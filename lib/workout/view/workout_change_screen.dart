@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/component/dialog_tools.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
@@ -130,7 +130,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
                             widget.workout.exercises[selectedIndex].setInfo
                                     .length <=
                                 record.setInfo.length) {
-                          DialogTools.errorDialog(
+                          DialogWidgets.errorDialog(
                             message: '이미 완료한 운동이에요 😗',
                             confirmText: '확인',
                             confirmOnTap: () {

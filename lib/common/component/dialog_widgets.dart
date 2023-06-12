@@ -10,7 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:ndialog/ndialog.dart';
 
-class DialogTools {
+class DialogWidgets {
   static DialogBackground confirmDialog({
     required String message,
     required String confirmText,
@@ -246,7 +246,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
 
       showDialog(
         context: context,
-        builder: (context) => DialogTools.errorDialog(
+        builder: (context) => DialogWidgets.errorDialog(
           message: '오류가 발생하였습니다 다시 시도해주세요!',
           confirmText: '확인',
           confirmOnTap: () => context.pop(),
@@ -322,7 +322,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
                           print('오늘날짜 선택!');
                           showDialog(
                             context: context,
-                            builder: (context) => DialogTools.errorDialog(
+                            builder: (context) => DialogWidgets.errorDialog(
                               message: '오늘 이외의 날짜를 선택해주세요!',
                               confirmText: '확인',
                               confirmOnTap: () => context.pop(),

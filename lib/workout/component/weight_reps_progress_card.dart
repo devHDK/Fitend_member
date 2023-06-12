@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:fitend_member/common/component/dialog_tools.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 class WeightWrepsProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
+  final GestureTapCallback updateSeinfoTap;
   final GestureTapCallback proccessOnTap;
 
   const WeightWrepsProgressCard({
@@ -18,6 +19,7 @@ class WeightWrepsProgressCard extends ConsumerStatefulWidget {
     required this.exercise,
     required this.setInfoIndex,
     required this.proccessOnTap,
+    required this.updateSeinfoTap,
   });
 
   @override
@@ -151,7 +153,9 @@ class _WeightWrepsProgressCardState
         Row(
           children: [
             InkWell(
-              onTap: () {},
+              onTap: () {
+                widget.updateSeinfoTap();
+              },
               child: Image.asset(
                 'asset/img/icon_edit.png',
               ),
@@ -182,7 +186,7 @@ class _WeightWrepsProgressCardState
                       showDialog(
                         barrierDismissible: false,
                         context: context,
-                        builder: (context) => DialogTools.errorDialog(
+                        builder: (context) => DialogWidgets.errorDialog(
                           message: '먼저 운동을 진행해 주세요 🏋🏻',
                           confirmText: '확인',
                           confirmOnTap: () => context.pop(),

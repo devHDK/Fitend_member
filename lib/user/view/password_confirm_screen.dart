@@ -1,5 +1,5 @@
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
-import 'package:fitend_member/common/component/dialog_tools.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -118,7 +118,7 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
 
                   showDialog(
                     context: context,
-                    builder: (context) => DialogTools.errorDialog(
+                    builder: (context) => DialogWidgets.errorDialog(
                       message: '비밀번호가 맞지 않아요 😂',
                       confirmText: '확인',
                       confirmOnTap: () => context.pop(),

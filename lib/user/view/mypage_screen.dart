@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/component/dialog_tools.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -50,7 +50,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
     if (state is UserModelError) {
       showDialog(
         context: context,
-        builder: (context) => DialogTools.errorDialog(
+        builder: (context) => DialogWidgets.errorDialog(
           message: '데이터를 불러올수없습니다😂',
           confirmText: '확인',
           confirmOnTap: () => context.pop(),
@@ -150,7 +150,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (context) => DialogTools.confirmDialog(
+                  builder: (context) => DialogWidgets.confirmDialog(
                     message: '로그아웃 하시겠습니까?',
                     confirmText: '확인',
                     cancelText: '취소',

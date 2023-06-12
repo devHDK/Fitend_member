@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/component/dialog_tools.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_workout_edit_provider.dart';
@@ -136,7 +136,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       if (pstate is WorkoutResultModelError) {
         showDialog(
           context: context,
-          builder: (context) => DialogTools.errorDialog(
+          builder: (context) => DialogWidgets.errorDialog(
             message: pstate.message,
             confirmText: '확인',
             confirmOnTap: () => context.pop(),

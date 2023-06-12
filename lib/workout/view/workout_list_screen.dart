@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/component/dialog_tools.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -55,7 +55,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   void initState() {
     super.initState();
 
-    // ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
+    ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
 
     Future.delayed(
       const Duration(
@@ -64,16 +64,17 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       () {
         WidgetsBinding.instance.addPersistentFrameCallback(
           (timeStamp) {
-            if (isWorkoutComplete && initial && !hasLocal) {
-              ref
-                  .read(workoutRecordsProvider.notifier)
-                  .getWorkoutResults(workoutScheduleId: widget.id);
-
+            if (initial) {
+              if (isWorkoutComplete && !hasLocal) {
+                ref
+                    .read(workoutRecordsProvider.notifier)
+                    .getWorkoutResults(workoutScheduleId: widget.id);
+              }
+              if (isProcessing && !isPoped && !isWorkoutComplete) {
+                _showConfirmDialog();
+                isProcessing = false;
+              }
               initial = false;
-            }
-            if (isProcessing && !isPoped && !isWorkoutComplete) {
-              _showConfirmDialog();
-              isProcessing = false;
             }
           },
         );
@@ -84,15 +85,16 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
+    // if (!isPoped) {
+    //   ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
+    // }
   }
 
   Future<dynamic> _showConfirmDialog() {
     return showDialog(
       context: context,
       builder: (context) {
-        return DialogTools.confirmDialog(
+        return DialogWidgets.confirmDialog(
           message: '진행 중이던 운동이 있어요 🏃‍♂️\n이어서 진행할까요?',
           confirmText: '네, 이어서 할게요',
           cancelText: '아니요, 처음부터 할래요',
@@ -285,7 +287,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       workoutEditBox.whenData(
         // api로 받아온 데이터 hive로 저장
         (value) {
-          print('length : ${model.exercises.length}');
           for (int i = 0; i < model.exercises.length; i++) {
             final record = value.get(model.exercises[i].workoutPlanId);
 

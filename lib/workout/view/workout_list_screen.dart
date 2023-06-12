@@ -285,6 +285,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       workoutEditBox.whenData(
         // api로 받아온 데이터 hive로 저장
         (value) {
+          print('length : ${model.exercises.length}');
           for (int i = 0; i < model.exercises.length; i++) {
             final record = value.get(model.exercises[i].workoutPlanId);
 
@@ -321,7 +322,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             icon: const Icon(Icons.arrow_back)),
         centerTitle: true,
         title: Text(
-          '${DateFormat('M월 dd일').format(DateTime.parse(workoutModel.startDate))} ${weekday[DateTime.parse(workoutModel.startDate).weekday]}요일',
+          '${DateFormat('M월 dd일').format(DateTime.parse(workoutModel.startDate))} ${weekday[DateTime.parse(workoutModel.startDate).weekday - 1]}요일',
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -341,8 +342,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                     }).then(
                   (changedDate) {
                     if (changedDate['changedDate'] != null) {
-                      print('change date!!!');
-
                       setState(
                         () {
                           ref
@@ -356,7 +355,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                               );
 
                           //스케줄 업데이트
-                          print('스케줄 업데이트');
                           ref
                               .read(workoutScheduleProvider(
                                 DateTime.parse(

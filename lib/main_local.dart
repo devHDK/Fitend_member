@@ -1,4 +1,7 @@
+import 'package:fitend_member/exercise/model/exercise_model.dart';
+import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
+import 'package:fitend_member/exercise/model/target_muscle_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
@@ -22,6 +25,9 @@ void main() async {
   Hive.registerAdapter<SetInfo>(SetInfoAdapter());
   Hive.registerAdapter<WorkoutFeedbackRecordModel>(
       WorkoutFeedbackRecordModelAdapter());
+  Hive.registerAdapter<Exercise>(ExerciseAdapter());
+  Hive.registerAdapter<TargetMuscle>(TargetMuscleAdapter());
+  Hive.registerAdapter<ExerciseVideo>(ExerciseVideoAdapter());
 
   runApp(
     const ProviderScope(

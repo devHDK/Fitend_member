@@ -40,5 +40,6 @@ const muscleImageUrl = 'public/targetMuscles/';
 String workoutRecordBox = 'WorkoutRecords';
 String timerXOneRecordBox = 'timerXoneRecords';
 String timerXMoreRecordBox = 'timerXMoreRecords';
-String workoutEdit = 'WorkoutEdit';
+String workoutResult = 'workoutResult';
+String modifiedExercise = 'modifiedExercise';
 String workoutFeedback = 'WorkoutFeedback';

@@ -1,12 +1,18 @@
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'target_muscle_model.g.dart';
 
 @JsonSerializable()
+@HiveType(typeId: 6)
 class TargetMuscle {
+  @HiveField(1)
   final int id;
+  @HiveField(2)
   final String name;
+  @HiveField(3)
   final String muscleType;
+  @HiveField(4)
   final String type;
 
   TargetMuscle({
@@ -31,4 +37,6 @@ class TargetMuscle {
 
   factory TargetMuscle.fromJson(Map<String, dynamic> json) =>
       _$TargetMuscleFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TargetMuscleToJson(this);
 }

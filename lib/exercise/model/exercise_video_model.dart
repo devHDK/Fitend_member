@@ -1,11 +1,16 @@
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'exercise_video_model.g.dart';
 
 @JsonSerializable()
+@HiveType(typeId: 7)
 class ExerciseVideo {
+  @HiveField(1)
   final String url;
+  @HiveField(2)
   final int index;
+  @HiveField(3)
   final String thumbnail;
 
   ExerciseVideo({
@@ -27,4 +32,6 @@ class ExerciseVideo {
 
   factory ExerciseVideo.fromJson(Map<String, dynamic> json) =>
       _$ExerciseVideoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ExerciseVideoToJson(this);
 }

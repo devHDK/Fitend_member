@@ -3,9 +3,10 @@ import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
-import 'package:fitend_member/common/provider/hive_workout_edit_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
@@ -44,6 +45,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   late AsyncValue<Box> workoutBox;
   late AsyncValue<Box> timerXmoreBox;
   late AsyncValue<Box> timerXoneBox;
+  late AsyncValue<Box> modifiedExercise;
   bool isProcessing = false;
   bool isPoped = false;
   bool isWorkoutComplete = false;
@@ -147,6 +149,17 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               }
             });
 
+            modifiedExercise.whenData(
+              (value) {
+                for (var element in workoutModel.exercises) {
+                  final exercise = value.get(element.workoutPlanId);
+                  if (exercise == null) {
+                    value.put(element.workoutPlanId, exercise);
+                  }
+                }
+              },
+            );
+
             Navigator.of(context).pop();
 
             await Navigator.of(context)
@@ -180,9 +193,12 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     final AsyncValue<Box> timerXMoreRecordBox =
         ref.watch(hiveTimerXMoreRecordProvider);
 
-    final AsyncValue<Box> workoutEditBox = ref.watch(hiveWorkoutEditProvider);
+    final AsyncValue<Box> workoutResultBox =
+        ref.watch(hiveWorkoutResultProvider);
     final AsyncValue<Box> workoutFeedbackBox =
         ref.watch(hiveWorkoutFeedbackProvider);
+    final AsyncValue<Box> modifiedExerciseBox =
+        ref.watch(hiveModifiedExerciseProvider);
 
     final pstate = ref.watch(workoutRecordsProvider);
 
@@ -204,6 +220,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     workoutBox = workoutRecordBox;
     timerXoneBox = timerXoneRecordBox;
     timerXmoreBox = timerXMoreRecordBox;
+    modifiedExercise = modifiedExerciseBox;
 
     isWorkoutComplete = model.isWorkoutComplete;
 
@@ -246,7 +263,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         },
       );
 
-      workoutEditBox.whenData(
+      workoutResultBox.whenData(
         (value) {
           final record = value.get(model.exercises[0].workoutPlanId);
           if (record == null && pstate is WorkoutResultModel) {
@@ -284,7 +301,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         }
       });
     } else {
-      workoutEditBox.whenData(
+      workoutResultBox.whenData(
         // api로 받아온 데이터 hive로 저장
         (value) {
           for (int i = 0; i < model.exercises.length; i++) {
@@ -492,7 +509,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                     );
                   }
                 : () async {
-                    workoutEditBox.whenData(
+                    workoutResultBox.whenData(
                       (value) {
                         for (var e in state.exercises) {
                           final record = value.get(e.workoutPlanId);
@@ -523,6 +540,20 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                               startDate: DateTime.parse(model.startDate),
                             ),
                           );
+                        }
+                      },
+                    );
+
+                    modifiedExerciseBox.whenData(
+                      (value) {
+                        for (int i = 0; i < model.exercises.length; i++) {
+                          final exercise =
+                              value.get(model.exercises[i].workoutPlanId);
+                          if (exercise == null) {
+                            //저장된게 없으면 저장
+                            value.put(model.exercises[i].workoutPlanId,
+                                model.exercises[i]);
+                          }
                         }
                       },
                     );

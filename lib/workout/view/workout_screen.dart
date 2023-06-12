@@ -6,9 +6,10 @@ import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
-import 'package:fitend_member/common/provider/hive_workout_edit_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
@@ -50,6 +51,8 @@ class WorkoutScreen extends ConsumerStatefulWidget {
 class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     with SingleTickerProviderStateMixin {
   late AsyncValue<Box> workoutRecordBox;
+  late AsyncValue<Box> workoutResultBox;
+  late AsyncValue<Box> modifiedExerciseBox;
   bool isSwipeUp = false;
   bool initial = true;
   late int exerciseIndex = 0;
@@ -61,6 +64,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   late int maxExcerciseIndex;
   bool isTooltipVisible = true;
 
+  List<Exercise> modifiedExercises = [];
+
   final repsTextController = TextEditingController();
   final weightTextController = TextEditingController();
   final timerMinTextController = TextEditingController();
@@ -70,11 +75,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   void initState() {
     super.initState();
 
-    setInfoCompleteList = List.generate(widget.exercises.length, (index) => 0);
-    maxSetInfoList = List.generate(widget.exercises.length, (index) {
-      return widget.exercises[index].setInfo.length;
+    setInfoCompleteList = List.generate(modifiedExercises.length, (index) => 0);
+    maxSetInfoList = List.generate(modifiedExercises.length, (index) {
+      return modifiedExercises[index].setInfo.length;
     });
-    maxExcerciseIndex = widget.exercises.length - 1;
+    maxExcerciseIndex = modifiedExercises.length - 1;
 
     WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
       if (initial) {
@@ -107,6 +112,17 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             }
           },
         );
+
+        modifiedExerciseBox.whenData((value) {
+          for (int i = 0; i < widget.exercises.length; i++) {
+            final record = value.get(widget.exercises[i].workoutPlanId);
+
+            if (record != null && record is Exercise) {
+              modifiedExercises.add(record);
+            }
+          }
+        });
+
         initial = false;
       }
     });
@@ -135,18 +151,24 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     final AsyncValue<Box> timerWorkoutBox = ref.watch(hiveTimerRecordProvider);
     final AsyncValue<Box> timerXMoreBox =
         ref.watch(hiveTimerXMoreRecordProvider);
+    final AsyncValue<Box> modifiedBox = ref.watch(hiveModifiedExerciseProvider);
     final recordRepository = ref.read(workoutRecordsRepositoryProvider);
 
-    final workoutEditBox = ref.watch(hiveWorkoutEditProvider);
+    final AsyncValue<Box> workoutResult = ref.watch(hiveWorkoutResultProvider);
 
     workoutRecordBox = workoutBox;
+    workoutResultBox = workoutResult;
+    modifiedExerciseBox = modifiedBox;
 
     if (isTooltipVisible) {
-      Future.delayed(const Duration(seconds: 5), () {
-        setState(() {
-          isTooltipVisible = false;
-        });
-      });
+      Future.delayed(
+        const Duration(seconds: 5),
+        () {
+          setState(() {
+            isTooltipVisible = false;
+          });
+        },
+      );
     }
 
     return Scaffold(
@@ -194,6 +216,22 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                           element.setInfo.length > 1) {
                         value.delete(element.workoutPlanId);
                       }
+                    }
+                  },
+                );
+
+                workoutResultBox.whenData(
+                  (value) {
+                    for (var element in widget.exercises) {
+                      value.delete(element.workoutPlanId);
+                    }
+                  },
+                );
+
+                modifiedBox.whenData(
+                  (value) {
+                    for (var element in widget.exercises) {
+                      value.delete(element.workoutPlanId);
                     }
                   },
                 );
@@ -283,27 +321,47 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   child: Column(
                     children: [
-                      if (widget.exercises[exerciseIndex].trackingFieldId ==
+                      if (modifiedExercises[exerciseIndex].trackingFieldId ==
                               1 ||
-                          widget.exercises[exerciseIndex].trackingFieldId == 2)
+                          modifiedExercises[exerciseIndex].trackingFieldId == 2)
                         WeightWrepsProgressCard(
-                          exercise: widget.exercises[exerciseIndex],
+                          exercise: modifiedExercises[exerciseIndex],
                           setInfoIndex: setInfoCompleteList[exerciseIndex],
                           updateSeinfoTap: () {
                             showDialog(
                               context: context,
                               builder: (context) => RepsXWeight(
-                                initialReps: widget
-                                    .exercises[exerciseIndex]
+                                initialReps: modifiedExercises[exerciseIndex]
                                     .setInfo[setInfoCompleteList[exerciseIndex]]
                                     .reps!,
-                                initialWeight: widget
-                                    .exercises[exerciseIndex]
+                                initialWeight: modifiedExercises[exerciseIndex]
                                     .setInfo[setInfoCompleteList[exerciseIndex]]
                                     .weight!,
                                 repsController: repsTextController,
                                 weightController: weightTextController,
-                                confirmOnTap: () {},
+                                confirmOnTap: () {
+                                  setState(() {
+                                    context.pop();
+                                    modifiedExercises[exerciseIndex].setInfo[
+                                            setInfoCompleteList[
+                                                exerciseIndex]] =
+                                        modifiedExercises[exerciseIndex]
+                                            .setInfo[setInfoCompleteList[
+                                                exerciseIndex]]
+                                            .copyWith(
+                                              reps: int.parse(
+                                                  repsTextController.text),
+                                              weight: int.parse(
+                                                  weightTextController.text),
+                                            );
+                                  });
+                                  modifiedBox.whenData((value) {
+                                    value.put(
+                                        modifiedExercises[exerciseIndex]
+                                            .workoutPlanId,
+                                        modifiedExercises[exerciseIndex]);
+                                  });
+                                },
                               ),
                             );
                           },
@@ -352,13 +410,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                           },
                         ),
                       // Timer X 1set
-                      if ((widget.exercises[exerciseIndex].trackingFieldId ==
+                      if ((modifiedExercises[exerciseIndex].trackingFieldId ==
                                   3 ||
-                              widget.exercises[exerciseIndex].trackingFieldId ==
+                              modifiedExercises[exerciseIndex]
+                                      .trackingFieldId ==
                                   4) &&
-                          widget.exercises[exerciseIndex].setInfo.length == 1)
+                          modifiedExercises[exerciseIndex].setInfo.length == 1)
                         TimerXOneProgressCard(
-                          exercise: widget.exercises[exerciseIndex],
+                          exercise: modifiedExercises[exerciseIndex],
                           setInfoIndex: setInfoCompleteList[exerciseIndex],
                           proccessOnTap: () {
                             timerWorkoutBox.whenData(
@@ -368,12 +427,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 if (record is SetInfo) {
                                   workoutBox.whenData((_) {
                                     _.put(
-                                      widget.exercises[exerciseIndex]
+                                      modifiedExercises[exerciseIndex]
                                           .workoutPlanId,
                                       WorkoutRecordModel(
-                                        workoutPlanId: widget
-                                            .exercises[exerciseIndex]
-                                            .workoutPlanId,
+                                        workoutPlanId:
+                                            modifiedExercises[exerciseIndex]
+                                                .workoutPlanId,
                                         setInfo: [record],
                                       ),
                                     );
@@ -418,13 +477,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         ),
 
                       // Timer X more
-                      if ((widget.exercises[exerciseIndex].trackingFieldId ==
+                      if ((modifiedExercises[exerciseIndex].trackingFieldId ==
                                   3 ||
-                              widget.exercises[exerciseIndex].trackingFieldId ==
+                              modifiedExercises[exerciseIndex]
+                                      .trackingFieldId ==
                                   4) &&
-                          widget.exercises[exerciseIndex].setInfo.length > 1)
+                          modifiedExercises[exerciseIndex].setInfo.length > 1)
                         TimerXMoreProgressCard(
-                          exercise: widget.exercises[exerciseIndex],
+                          exercise: modifiedExercises[exerciseIndex],
                           setInfoIndex: setInfoCompleteList[exerciseIndex],
                           proccessOnTap: () {
                             if (exerciseIndex <= maxExcerciseIndex &&
@@ -440,7 +500,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     workoutRecordBox.whenData(
                                       (_) {
                                         _.put(
-                                          widget.exercises[exerciseIndex]
+                                          modifiedExercises[exerciseIndex]
                                               .workoutPlanId,
                                           record,
                                         );
@@ -695,12 +755,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         if (record != null && record.setInfo.length > 0) {
           //local DB에 데이터가 있을때
           value.put(
-            widget.exercises[exerciseIndex].workoutPlanId,
+            modifiedExercises[exerciseIndex].workoutPlanId,
             WorkoutRecordModel(
-              workoutPlanId: widget.exercises[exerciseIndex].workoutPlanId,
+              workoutPlanId: modifiedExercises[exerciseIndex].workoutPlanId,
               setInfo: [
                 ...record.setInfo,
-                widget.exercises[exerciseIndex]
+                modifiedExercises[exerciseIndex]
                     .setInfo[setInfoCompleteList[exerciseIndex]],
               ],
             ),
@@ -710,9 +770,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           value.put(
             widget.exercises[exerciseIndex].workoutPlanId,
             WorkoutRecordModel(
-              workoutPlanId: widget.exercises[exerciseIndex].workoutPlanId,
+              workoutPlanId: modifiedExercises[exerciseIndex].workoutPlanId,
               setInfo: [
-                widget.exercises[exerciseIndex]
+                modifiedExercises[exerciseIndex]
                     .setInfo[setInfoCompleteList[exerciseIndex]],
               ],
             ),
@@ -765,7 +825,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) =>
-                      ExerciseScreen(exercise: widget.exercises[0]),
+                      ExerciseScreen(exercise: widget.exercises[exerciseIndex]),
                 ));
               },
             ),
@@ -859,7 +919,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               'workoutScheduleId':
                                   widget.workoutScheduleId.toString(),
                             },
-                            extra: widget.exercises,
+                            extra: modifiedExercises,
                           );
                         } on DioError {
                           showDialog(

@@ -1,7 +1,7 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
-import 'package:fitend_member/common/provider/hive_workout_edit_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -81,7 +81,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   @override
   Widget build(BuildContext context) {
     final workoutFeedbackBox = ref.watch(hiveWorkoutFeedbackProvider);
-    final workoutEditBox = ref.watch(hiveWorkoutEditProvider);
+    final workoutResultBox = ref.watch(hiveWorkoutResultProvider);
     final workoutRecordBox = ref.watch(hiveWorkoutRecordProvider);
 
     final pstate = ref.watch(workoutRecordsProvider);
@@ -94,7 +94,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       },
     );
 
-    workoutEditBox.whenData(
+    workoutResultBox.whenData(
       (value) {
         for (var i = 0; i < widget.exercises.length; i++) {
           final record = value.get(widget.exercises[i].workoutPlanId);

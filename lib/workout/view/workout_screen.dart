@@ -75,12 +75,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   void initState() {
     super.initState();
 
-    setInfoCompleteList = List.generate(modifiedExercises.length, (index) => 0);
-    maxSetInfoList = List.generate(modifiedExercises.length, (index) {
-      return modifiedExercises[index].setInfo.length;
-    });
-    maxExcerciseIndex = modifiedExercises.length - 1;
-
     WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
       if (initial) {
         workoutRecordBox.whenData(
@@ -98,30 +92,41 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 setInfoCompleteList[i] = 0;
               }
             }
-
-            if (!isPoped) {
-              for (int i = 0; i < widget.exercises.length; i++) {
-                if (setInfoCompleteList[i] < maxSetInfoList[i]) {
-                  setState(() {
-                    exerciseIndex = i;
-                  });
-
-                  break;
-                }
-              }
-            }
           },
         );
 
-        modifiedExerciseBox.whenData((value) {
+        modifiedExerciseBox.whenData((value) async {
           for (int i = 0; i < widget.exercises.length; i++) {
-            final record = value.get(widget.exercises[i].workoutPlanId);
+            final record = await value.get(widget.exercises[i].workoutPlanId);
 
             if (record != null && record is Exercise) {
               modifiedExercises.add(record);
             }
           }
         });
+
+        setInfoCompleteList =
+            List.generate(modifiedExercises.length, (index) => 0);
+        maxSetInfoList = List.generate(modifiedExercises.length, (index) {
+          return modifiedExercises[index].setInfo.length;
+        });
+        maxExcerciseIndex = modifiedExercises.length - 1;
+
+        if (!isPoped) {
+          print('widget.exercises.length : ${widget.exercises.length}');
+          print('widget.exercises : ${widget.exercises}');
+          for (int i = 0; i < widget.exercises.length; i++) {
+            if (setInfoCompleteList[i] < maxSetInfoList[i]) {
+              print('setInfoCompleteList[$i] : ${setInfoCompleteList[i]}');
+
+              setState(() {
+                exerciseIndex = i;
+              });
+
+              break;
+            }
+          }
+        }
 
         initial = false;
       }

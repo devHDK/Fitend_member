@@ -1,10 +1,13 @@
 import 'package:fitend_member/common/component/calendar.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
+import 'package:fitend_member/schedule/model/put_workout_schedule_date_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
+import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:ndialog/ndialog.dart';
 
 class DialogTools {
@@ -162,9 +165,11 @@ class CalendarDialog extends ConsumerStatefulWidget {
   const CalendarDialog({
     super.key,
     required this.scheduleDate,
+    required this.workoutScheduleId,
   });
 
   final DateTime scheduleDate;
+  final int workoutScheduleId;
 
   @override
   ConsumerState<CalendarDialog> createState() => _CalendarDialogState();
@@ -175,6 +180,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
   DateTime? focusedDay;
   DateTime? firstDay;
   DateTime? lastDay;
+  Map<String, List<Workout>>? dateData = {};
 
   @override
   void initState() {
@@ -188,7 +194,29 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
   }
 
   void changeScheduleDate() async {
-    try {} catch (e) {}
+    try {
+      await ref.read(workoutScheduleRepositoryProvider).putworkoutScheduleDate(
+            id: widget.workoutScheduleId,
+            body: PutWorkoutScheduleModel(
+              startDate: DateFormat('yyyy-MM-dd').format(selectedDay!),
+              seq:
+                  dateData!["${selectedDay!.month}-${selectedDay!.day}"] == null
+                      ? 1
+                      : dateData!["${selectedDay!.month}-${selectedDay!.day}"]!
+                              .length +
+                          1,
+            ),
+          );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => DialogTools.errorDialog(
+          message: '오류가 발생하였습니다 다시 시도해주세요!',
+          confirmText: '확인',
+          confirmOnTap: () => context.pop(),
+        ),
+      );
+    }
   }
 
   @override
@@ -203,10 +231,12 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
           .toList();
     }
 
-    Map<String, List<Workout>> map = {
+    Map<String, List<Workout>> dateMap = {
       for (var data in scheduleList)
         "${data.startDate.month}-${data.startDate.day}": data.workouts!
     };
+
+    dateData = dateMap;
 
     return DialogBackground(
       blur: 0.2,
@@ -230,10 +260,10 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
                       focusedDay != null ? focusedDay! : widget.scheduleDate,
                   selectedDay: selectedDay != null ? selectedDay! : null,
                   onDaySelected: (selectedDay, focusedDay) {
-                    if (map["${selectedDay.month}-${selectedDay.day}"] !=
-                        null) {
-                      print(map["${selectedDay.month}-${selectedDay.day}"]);
-                    }
+                    // if (dateMap["${selectedDay.month}-${selectedDay.day}"] !=
+                    //     null) {
+                    //   print(dateMap["${selectedDay.month}-${selectedDay.day}"]);
+                    // }
 
                     setState(() {
                       this.selectedDay = selectedDay;
@@ -248,9 +278,22 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        changeScheduleDate();
+                        if (selectedDay != null &&
+                            selectedDay!.compareTo(widget.scheduleDate) != 0) {
+                          changeScheduleDate();
 
-                        context.pop();
+                          context.pop({'changedDate': selectedDay});
+                        } else {
+                          print('오늘날짜 선택!');
+                          showDialog(
+                            context: context,
+                            builder: (context) => DialogTools.errorDialog(
+                              message: '오늘 이외의 날짜를 선택해주세요!',
+                              confirmText: '확인',
+                              confirmOnTap: () => context.pop(),
+                            ),
+                          );
+                        }
                       },
                       child: const Text(
                         '확인',

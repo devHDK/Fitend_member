@@ -330,11 +330,13 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             GestureDetector(
               onTap: () async {
                 showDialog(
-                  context: context,
-                  builder: (context) => CalendarDialog(
-                    scheduleDate: DateTime.parse(model.startDate),
-                  ),
-                );
+                    context: context,
+                    builder: (context) {
+                      return CalendarDialog(
+                        scheduleDate: DateTime.parse(model.startDate),
+                        workoutScheduleId: widget.id,
+                      );
+                    });
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 28),

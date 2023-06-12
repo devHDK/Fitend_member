@@ -28,8 +28,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
 
   void getPackage() async {
     packageInfo = await PackageInfo.fromPlatform();
-
-    version = packageInfo!.version;
+    setState(() {
+      version = packageInfo!.version;
+    });
   }
 
   @override

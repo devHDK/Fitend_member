@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
@@ -32,6 +33,8 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
     // final AsyncValue<Box> workoutRecordBox =
     //     ref.watch(hiveWorkoutRecordProvider);
     final AsyncValue<Box> timerRecordBox = ref.watch(hiveTimerRecordProvider);
+    final AsyncValue<Box> modifiedExerciseBox =
+        ref.watch(hiveModifiedExerciseProvider);
 
     List<Widget> countList = [];
     List<Widget> firstList = [];

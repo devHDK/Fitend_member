@@ -93,101 +93,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     }
   }
 
-  Future<dynamic> _showConfirmDialog() {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return DialogWidgets.confirmDialog(
-          message: '진행 중이던 운동이 있어요 🏃‍♂️\n이어서 진행할까요?',
-          confirmText: '네, 이어서 할게요',
-          cancelText: '아니요, 처음부터 할래요',
-          confirmOnTap: () async {
-            Navigator.of(context).pop();
-
-            await Navigator.of(context)
-                .push(
-              MaterialPageRoute(
-                builder: (context) => WorkoutScreen(
-                  exercises: workoutModel.exercises,
-                  date: DateTime.parse(workoutModel.startDate),
-                  workout: workoutModel,
-                  workoutScheduleId: widget.id,
-                ),
-              ),
-            )
-                .then((value) {
-              setState(() {
-                isPoped = true;
-
-                ref
-                    .read(workoutProvider(widget.id).notifier)
-                    .getWorkout(id: widget.id);
-              });
-            });
-          },
-          cancelOnTap: () async {
-            workoutBox.whenData(
-              (value) {
-                for (var element in workoutModel.exercises) {
-                  value.delete(element.workoutPlanId);
-                }
-              },
-            );
-
-            timerXmoreBox.whenData((value) {
-              for (var element in workoutModel.exercises) {
-                if ((element.trackingFieldId == 3 ||
-                        element.trackingFieldId == 4) &&
-                    element.setInfo.length > 1) {
-                  value.delete(element.workoutPlanId);
-                }
-              }
-            });
-
-            timerXoneBox.whenData((value) {
-              for (var element in workoutModel.exercises) {
-                if ((element.trackingFieldId == 3 ||
-                        element.trackingFieldId == 4) &&
-                    element.setInfo.length == 1) {
-                  value.delete(element.workoutPlanId);
-                }
-              }
-            });
-
-            modifiedExercise.whenData(
-              (value) async {
-                for (var element in workoutModel.exercises) {
-                  await value.put(element.workoutPlanId, element);
-                }
-              },
-            );
-
-            Navigator.of(context).pop();
-
-            await Navigator.of(context)
-                .push(MaterialPageRoute(
-              builder: (context) => WorkoutScreen(
-                exercises: workoutModel.exercises,
-                date: DateTime.parse(workoutModel.startDate),
-                workout: workoutModel,
-                workoutScheduleId: widget.id,
-              ),
-            ))
-                .then((value) {
-              setState(() {
-                isPoped = true;
-
-                ref
-                    .read(workoutProvider(widget.id).notifier)
-                    .getWorkout(id: widget.id);
-              });
-            });
-          },
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
@@ -598,6 +503,101 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<dynamic> _showConfirmDialog() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return DialogWidgets.confirmDialog(
+          message: '진행 중이던 운동이 있어요 🏃‍♂️\n이어서 진행할까요?',
+          confirmText: '네, 이어서 할게요',
+          cancelText: '아니요, 처음부터 할래요',
+          confirmOnTap: () async {
+            Navigator.of(context).pop();
+
+            await Navigator.of(context)
+                .push(
+              MaterialPageRoute(
+                builder: (context) => WorkoutScreen(
+                  exercises: workoutModel.exercises,
+                  date: DateTime.parse(workoutModel.startDate),
+                  workout: workoutModel,
+                  workoutScheduleId: widget.id,
+                ),
+              ),
+            )
+                .then((value) {
+              setState(() {
+                isPoped = true;
+
+                ref
+                    .read(workoutProvider(widget.id).notifier)
+                    .getWorkout(id: widget.id);
+              });
+            });
+          },
+          cancelOnTap: () async {
+            workoutBox.whenData(
+              (value) {
+                for (var element in workoutModel.exercises) {
+                  value.delete(element.workoutPlanId);
+                }
+              },
+            );
+
+            timerXmoreBox.whenData((value) {
+              for (var element in workoutModel.exercises) {
+                if ((element.trackingFieldId == 3 ||
+                        element.trackingFieldId == 4) &&
+                    element.setInfo.length > 1) {
+                  value.delete(element.workoutPlanId);
+                }
+              }
+            });
+
+            timerXoneBox.whenData((value) {
+              for (var element in workoutModel.exercises) {
+                if ((element.trackingFieldId == 3 ||
+                        element.trackingFieldId == 4) &&
+                    element.setInfo.length == 1) {
+                  value.delete(element.workoutPlanId);
+                }
+              }
+            });
+
+            modifiedExercise.whenData(
+              (value) async {
+                for (var element in workoutModel.exercises) {
+                  await value.put(element.workoutPlanId, element);
+                }
+              },
+            );
+
+            Navigator.of(context).pop();
+
+            await Navigator.of(context)
+                .push(MaterialPageRoute(
+              builder: (context) => WorkoutScreen(
+                exercises: workoutModel.exercises,
+                date: DateTime.parse(workoutModel.startDate),
+                workout: workoutModel,
+                workoutScheduleId: widget.id,
+              ),
+            ))
+                .then((value) {
+              setState(() {
+                isPoped = true;
+
+                ref
+                    .read(workoutProvider(widget.id).notifier)
+                    .getWorkout(id: widget.id);
+              });
+            });
+          },
+        );
+      },
     );
   }
 }

@@ -618,8 +618,61 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   4) &&
                           modifiedExercises[exerciseIndex].setInfo.length > 1)
                         TimerXMoreProgressCard(
+                          minController: timerMinTextController,
+                          secController: timerSecondTextController,
                           exercise: modifiedExercises[exerciseIndex],
                           setInfoIndex: setInfoCompleteList[exerciseIndex],
+                          updateSeinfoTap: () {
+                            if (mounted) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => TimerSetinfoDialog(
+                                  initialTime: modifiedExercises[exerciseIndex]
+                                      .setInfo[
+                                          setInfoCompleteList[exerciseIndex]]
+                                      .seconds!,
+                                  minController: timerMinTextController,
+                                  secController: timerSecondTextController,
+                                  confirmOnTap: () {
+                                    if (mounted) {
+                                      setState(
+                                        () {
+                                          modifiedExercises[exerciseIndex]
+                                                      .setInfo[
+                                                  setInfoCompleteList[
+                                                      exerciseIndex]] =
+                                              modifiedExercises[exerciseIndex]
+                                                  .setInfo[setInfoCompleteList[
+                                                      exerciseIndex]]
+                                                  .copyWith(
+                                                    seconds: int.parse(
+                                                              timerMinTextController
+                                                                  .text,
+                                                            ) *
+                                                            60 +
+                                                        int.parse(
+                                                            timerSecondTextController
+                                                                .text),
+                                                  );
+                                        },
+                                      );
+
+                                      modifiedBox.whenData(
+                                        (value) async {
+                                          await value.put(
+                                              modifiedExercises[exerciseIndex]
+                                                  .workoutPlanId,
+                                              modifiedExercises[exerciseIndex]);
+                                        },
+                                      );
+
+                                      context.pop();
+                                    }
+                                  },
+                                ),
+                              );
+                            }
+                          },
                           proccessOnTap: () {
                             if (exerciseIndex <= maxExcerciseIndex &&
                                 setInfoCompleteList[exerciseIndex] <

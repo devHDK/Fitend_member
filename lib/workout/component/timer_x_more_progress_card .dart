@@ -16,6 +16,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 class TimerXMoreProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
+  final TextEditingController minController;
+  final TextEditingController secController;
+  final GestureTapCallback updateSeinfoTap;
   final GestureTapCallback proccessOnTap;
   final GestureTapCallback resetSet;
 
@@ -23,8 +26,11 @@ class TimerXMoreProgressCard extends ConsumerStatefulWidget {
     super.key,
     required this.exercise,
     required this.setInfoIndex,
+    required this.updateSeinfoTap,
     required this.proccessOnTap,
     required this.resetSet,
+    required this.minController,
+    required this.secController,
   });
 
   @override
@@ -45,9 +51,15 @@ class _WeightWrepsProgressCardState
   late AsyncValue<Box> workoutBox;
   late AsyncValue<Box> timerXmoreBox;
 
+  void minControllerListener() {}
+  void secControllerListener() {}
+
   @override
   void initState() {
     super.initState();
+
+    widget.minController.addListener(minControllerListener);
+    widget.secController.addListener(secControllerListener);
 
     WidgetsBinding.instance.addPersistentFrameCallback(
       (timeStamp) {
@@ -79,9 +91,8 @@ class _WeightWrepsProgressCardState
             }
           });
           print('totalSeconds : $totalSeconds');
-          print('initial : $initial');
+
           initial = false;
-          print('initial : $initial');
         }
       },
     );
@@ -120,6 +131,32 @@ class _WeightWrepsProgressCardState
       });
       print('totalSeconds : $totalSeconds');
     }
+
+    timerXmoreBox.whenData((value) async {
+      final record = await value.get(widget.exercise.workoutPlanId);
+
+      if (record != null && record is WorkoutRecordModel) {
+        if (record.setInfo.length > widget.setInfoIndex) {
+          setState(() {
+            totalSeconds =
+                widget.exercise.setInfo[widget.setInfoIndex].seconds! -
+                    record.setInfo[widget.setInfoIndex].seconds!;
+          });
+
+          print('totalSeconds : $totalSeconds');
+        } else {
+          setState(() {
+            totalSeconds =
+                widget.exercise.setInfo[widget.setInfoIndex].seconds!;
+          });
+          print('totalSeconds : $totalSeconds');
+        }
+      } else {
+        setState(() {
+          totalSeconds = widget.exercise.setInfo[widget.setInfoIndex].seconds!;
+        });
+      }
+    });
   }
 
   void onStartPressed() {
@@ -396,7 +433,11 @@ class _WeightWrepsProgressCardState
         Row(
           children: [
             InkWell(
-              onTap: () {},
+              onTap: isRunning
+                  ? null
+                  : () {
+                      widget.updateSeinfoTap();
+                    },
               child: Image.asset(
                 'asset/img/icon_edit.png',
               ),

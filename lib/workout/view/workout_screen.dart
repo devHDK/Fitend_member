@@ -15,9 +15,10 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
+import 'package:fitend_member/workout/component/dialog/reps_seinfo_dialog_widgets.dart';
+import 'package:fitend_member/workout/component/dialog/weight_reps_seinfo_dialog_widgets.dart';
 import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
-import 'package:fitend_member/workout/component/update_seinfo_dialog_widgets.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -333,57 +334,111 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         WeightWrepsProgressCard(
                           exercise: modifiedExercises[exerciseIndex],
                           setInfoIndex: setInfoCompleteList[exerciseIndex],
-                          updateSeinfoTap: () {
-                            if (mounted) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => RepsXWeight(
-                                  initialReps: modifiedExercises[exerciseIndex]
-                                      .setInfo[
-                                          setInfoCompleteList[exerciseIndex]]
-                                      .reps!,
-                                  initialWeight: modifiedExercises[
-                                          exerciseIndex]
-                                      .setInfo[
-                                          setInfoCompleteList[exerciseIndex]]
-                                      .weight!,
-                                  repsController: repsTextController,
-                                  weightController: weightTextController,
-                                  confirmOnTap: () {
-                                    if (mounted) {
-                                      setState(() {
-                                        modifiedExercises[exerciseIndex]
-                                                .setInfo[
-                                            setInfoCompleteList[
-                                                exerciseIndex]] = SetInfo(
-                                            index:
-                                                modifiedExercises[exerciseIndex]
+                          updateSeinfoTap: modifiedExercises[exerciseIndex]
+                                      .trackingFieldId ==
+                                  1
+                              ? () {
+                                  if (mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          RepsXWeightSetinfoDialog(
+                                        initialReps:
+                                            modifiedExercises[exerciseIndex]
+                                                .setInfo[setInfoCompleteList[
+                                                    exerciseIndex]]
+                                                .reps!,
+                                        initialWeight:
+                                            modifiedExercises[exerciseIndex]
+                                                .setInfo[setInfoCompleteList[
+                                                    exerciseIndex]]
+                                                .weight!,
+                                        repsController: repsTextController,
+                                        weightController: weightTextController,
+                                        confirmOnTap: () {
+                                          if (mounted) {
+                                            setState(() {
+                                              modifiedExercises[exerciseIndex]
+                                                      .setInfo[
+                                                  setInfoCompleteList[
+                                                      exerciseIndex]] = SetInfo(
+                                                  index: modifiedExercises[
+                                                          exerciseIndex]
+                                                      .setInfo[
+                                                          setInfoCompleteList[
+                                                              exerciseIndex]]
+                                                      .index,
+                                                  reps: int.parse(
+                                                      repsTextController.text),
+                                                  weight: int.parse(
+                                                      weightTextController.text));
+                                            });
+
+                                            modifiedBox.whenData(
+                                              (value) async {
+                                                await value.put(
+                                                    modifiedExercises[
+                                                            exerciseIndex]
+                                                        .workoutPlanId,
+                                                    modifiedExercises[
+                                                        exerciseIndex]);
+                                              },
+                                            );
+
+                                            context.pop();
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  }
+                                }
+                              : () {
+                                  if (mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => RepsSetinfoDialog(
+                                        initialReps:
+                                            modifiedExercises[exerciseIndex]
+                                                .setInfo[setInfoCompleteList[
+                                                    exerciseIndex]]
+                                                .reps!,
+                                        repsController: repsTextController,
+                                        confirmOnTap: () {
+                                          if (mounted) {
+                                            setState(() {
+                                              modifiedExercises[exerciseIndex]
+                                                      .setInfo[
+                                                  setInfoCompleteList[
+                                                      exerciseIndex]] = SetInfo(
+                                                index: modifiedExercises[
+                                                        exerciseIndex]
                                                     .setInfo[
                                                         setInfoCompleteList[
                                                             exerciseIndex]]
                                                     .index,
-                                            reps: int.parse(
-                                                repsTextController.text),
-                                            weight: int.parse(
-                                                weightTextController.text));
-                                      });
+                                                reps: int.parse(
+                                                    repsTextController.text),
+                                              );
+                                            });
 
-                                      modifiedBox.whenData(
-                                        (value) async {
-                                          await value.put(
-                                              modifiedExercises[exerciseIndex]
-                                                  .workoutPlanId,
-                                              modifiedExercises[exerciseIndex]);
+                                            modifiedBox.whenData(
+                                              (value) async {
+                                                await value.put(
+                                                    modifiedExercises[
+                                                            exerciseIndex]
+                                                        .workoutPlanId,
+                                                    modifiedExercises[
+                                                        exerciseIndex]);
+                                              },
+                                            );
+
+                                            context.pop();
+                                          }
                                         },
-                                      );
-
-                                      context.pop();
-                                    }
-                                  },
-                                ),
-                              );
-                            }
-                          },
+                                      ),
+                                    );
+                                  }
+                                },
                           proccessOnTap: () {
                             print('exerciseIndex : $exerciseIndex');
                             print(

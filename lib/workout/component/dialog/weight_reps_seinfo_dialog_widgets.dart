@@ -3,8 +3,8 @@ import 'package:fitend_member/workout/component/setinfo_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
 
-class RepsXWeight extends StatefulWidget {
-  const RepsXWeight({
+class RepsXWeightSetinfoDialog extends StatefulWidget {
+  const RepsXWeightSetinfoDialog({
     super.key,
     required this.initialReps,
     required this.initialWeight,
@@ -20,10 +20,11 @@ class RepsXWeight extends StatefulWidget {
   final GestureTapCallback confirmOnTap;
 
   @override
-  State<RepsXWeight> createState() => _RepsXWeightState();
+  State<RepsXWeightSetinfoDialog> createState() =>
+      _RepsXWeightSetinfoDialogState();
 }
 
-class _RepsXWeightState extends State<RepsXWeight> {
+class _RepsXWeightSetinfoDialogState extends State<RepsXWeightSetinfoDialog> {
   @override
   void initState() {
     widget.repsController.addListener(repsControllerListener);

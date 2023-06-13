@@ -29,7 +29,7 @@ class WeightWrepsProgressCard extends ConsumerStatefulWidget {
 
 class _WeightWrepsProgressCardState
     extends ConsumerState<WeightWrepsProgressCard> {
-  int index = 0;
+  // int index = 0;
   bool colorChanged = false;
   int count = 0;
 
@@ -107,10 +107,10 @@ class _WeightWrepsProgressCardState
       children: [
         Text(
           widget.exercise.trackingFieldId == 1
-              ? '${widget.exercise.setInfo[index].weight}kg ∙ ${widget.exercise.setInfo[index].reps}회'
+              ? '${widget.exercise.setInfo[widget.setInfoIndex].weight}kg ∙ ${widget.exercise.setInfo[widget.setInfoIndex].reps}회'
               : widget.exercise.trackingFieldId == 2
-                  ? '${widget.exercise.setInfo[index].reps}회'
-                  : '${(widget.exercise.setInfo[index].seconds! / 60).floor()}분 ${widget.exercise.setInfo[index].seconds! % 30}초',
+                  ? '${widget.exercise.setInfo[widget.setInfoIndex].reps}회'
+                  : '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분 ${widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60}초',
           style: const TextStyle(
             color: GRAY_COLOR,
             fontSize: 16,

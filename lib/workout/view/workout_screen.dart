@@ -75,7 +75,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
+    setInfoCompleteList = List.generate(widget.exercises.length, (index) => 0);
+    maxSetInfoList = List.generate(widget.exercises.length,
+        (index) => widget.exercises[index].setInfo.length);
+    maxExcerciseIndex = widget.exercises.length - 1;
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (initial) {
         workoutRecordBox.whenData(
           (value) async {
@@ -105,20 +110,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           }
         });
 
-        setInfoCompleteList =
-            List.generate(modifiedExercises.length, (index) => 0);
-        maxSetInfoList = List.generate(modifiedExercises.length, (index) {
-          return modifiedExercises[index].setInfo.length;
-        });
-        maxExcerciseIndex = modifiedExercises.length - 1;
-
         if (!isPoped) {
-          print('widget.exercises.length : ${widget.exercises.length}');
-          print('widget.exercises : ${widget.exercises}');
           for (int i = 0; i < widget.exercises.length; i++) {
             if (setInfoCompleteList[i] < maxSetInfoList[i]) {
-              print('setInfoCompleteList[$i] : ${setInfoCompleteList[i]}');
-
               setState(() {
                 exerciseIndex = i;
               });
@@ -141,6 +135,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
   @override
   void dispose() {
+    modifiedExercises = [];
+
     repsTextController.dispose();
     weightTextController.dispose();
     timerMinTextController.dispose();
@@ -152,14 +148,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final AsyncValue<Box> workoutBox = ref.watch(hiveWorkoutRecordProvider);
-    final AsyncValue<Box> timerWorkoutBox = ref.watch(hiveTimerRecordProvider);
+    final AsyncValue<Box> workoutBox = ref.read(hiveWorkoutRecordProvider);
+    final AsyncValue<Box> timerWorkoutBox = ref.read(hiveTimerRecordProvider);
     final AsyncValue<Box> timerXMoreBox =
-        ref.watch(hiveTimerXMoreRecordProvider);
-    final AsyncValue<Box> modifiedBox = ref.watch(hiveModifiedExerciseProvider);
+        ref.read(hiveTimerXMoreRecordProvider);
+    final AsyncValue<Box> modifiedBox = ref.read(hiveModifiedExerciseProvider);
     final recordRepository = ref.read(workoutRecordsRepositoryProvider);
 
-    final AsyncValue<Box> workoutResult = ref.watch(hiveWorkoutResultProvider);
+    final AsyncValue<Box> workoutResult = ref.read(hiveWorkoutResultProvider);
 
     workoutRecordBox = workoutBox;
     workoutResultBox = workoutResult;
@@ -184,67 +180,72 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         leading: IconButton(
           // onPressed: () => GoRouter.of(context).pop('result'),
           onPressed: () {
-            DialogWidgets.confirmDialog(
-              message: '아직 운동이 끝나지 않았어요 😮\n저장 후 뒤로 갈까요?',
-              confirmText: '네, 저장할게요',
-              cancelText: '아니요, 리셋할래요',
-              confirmOnTap: () {
-                int count = 0;
-                Navigator.of(context).popUntil((_) => count++ >= 2);
-              },
-              cancelOnTap: () {
-                workoutBox.whenData(
-                  (value) {
-                    for (var element in widget.exercises) {
-                      value.delete(element.workoutPlanId);
-                    }
-                  },
-                );
-
-                timerWorkoutBox.whenData(
-                  (value) {
-                    for (var element in widget.exercises) {
-                      if ((element.trackingFieldId == 3 ||
-                              element.trackingFieldId == 4) &&
-                          element.setInfo.length == 1) {
+            if (mounted) {
+              DialogWidgets.confirmDialog(
+                message: '아직 운동이 끝나지 않았어요 😮\n저장 후 뒤로 갈까요?',
+                confirmText: '네, 저장할게요',
+                cancelText: '아니요, 리셋할래요',
+                confirmOnTap: () {
+                  int count = 0;
+                  if (mounted) {
+                    Navigator.of(context).popUntil((_) => count++ >= 2);
+                  }
+                },
+                cancelOnTap: () {
+                  workoutBox.whenData(
+                    (value) {
+                      for (var element in widget.exercises) {
                         value.delete(element.workoutPlanId);
                       }
-                    }
-                  },
-                );
+                    },
+                  );
 
-                timerXMoreBox.whenData(
-                  (value) {
-                    for (var element in widget.exercises) {
-                      if ((element.trackingFieldId == 3 ||
-                              element.trackingFieldId == 4) &&
-                          element.setInfo.length > 1) {
+                  modifiedBox.whenData(
+                    (value) async {
+                      for (var element in widget.exercises) {
+                        await value.delete(element.workoutPlanId);
+                      }
+                    },
+                  );
+
+                  timerWorkoutBox.whenData(
+                    (value) {
+                      for (var element in widget.exercises) {
+                        if ((element.trackingFieldId == 3 ||
+                                element.trackingFieldId == 4) &&
+                            element.setInfo.length == 1) {
+                          value.delete(element.workoutPlanId);
+                        }
+                      }
+                    },
+                  );
+
+                  timerXMoreBox.whenData(
+                    (value) {
+                      for (var element in widget.exercises) {
+                        if ((element.trackingFieldId == 3 ||
+                                element.trackingFieldId == 4) &&
+                            element.setInfo.length > 1) {
+                          value.delete(element.workoutPlanId);
+                        }
+                      }
+                    },
+                  );
+
+                  workoutResultBox.whenData(
+                    (value) {
+                      for (var element in widget.exercises) {
                         value.delete(element.workoutPlanId);
                       }
-                    }
-                  },
-                );
-
-                workoutResultBox.whenData(
-                  (value) {
-                    for (var element in widget.exercises) {
-                      value.delete(element.workoutPlanId);
-                    }
-                  },
-                );
-
-                modifiedBox.whenData(
-                  (value) {
-                    for (var element in widget.exercises) {
-                      value.delete(element.workoutPlanId);
-                    }
-                  },
-                );
-
-                int count = 0;
-                Navigator.of(context).popUntil((_) => count++ >= 2);
-              },
-            ).show(context);
+                    },
+                  );
+                  int count = 0;
+                  if (mounted) {
+                    Navigator.of(context).popUntil((_) => count++ >= 2);
+                  }
+                },
+              ).show(context);
+            }
           },
           icon: const Icon(Icons.arrow_back),
           color: Colors.black,
@@ -333,44 +334,61 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                           exercise: modifiedExercises[exerciseIndex],
                           setInfoIndex: setInfoCompleteList[exerciseIndex],
                           updateSeinfoTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => RepsXWeight(
-                                initialReps: modifiedExercises[exerciseIndex]
-                                    .setInfo[setInfoCompleteList[exerciseIndex]]
-                                    .reps!,
-                                initialWeight: modifiedExercises[exerciseIndex]
-                                    .setInfo[setInfoCompleteList[exerciseIndex]]
-                                    .weight!,
-                                repsController: repsTextController,
-                                weightController: weightTextController,
-                                confirmOnTap: () {
-                                  setState(() {
-                                    context.pop();
-                                    modifiedExercises[exerciseIndex].setInfo[
+                            if (mounted) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => RepsXWeight(
+                                  initialReps: modifiedExercises[exerciseIndex]
+                                      .setInfo[
+                                          setInfoCompleteList[exerciseIndex]]
+                                      .reps!,
+                                  initialWeight: modifiedExercises[
+                                          exerciseIndex]
+                                      .setInfo[
+                                          setInfoCompleteList[exerciseIndex]]
+                                      .weight!,
+                                  repsController: repsTextController,
+                                  weightController: weightTextController,
+                                  confirmOnTap: () {
+                                    if (mounted) {
+                                      setState(() {
+                                        modifiedExercises[exerciseIndex]
+                                                .setInfo[
                                             setInfoCompleteList[
-                                                exerciseIndex]] =
-                                        modifiedExercises[exerciseIndex]
-                                            .setInfo[setInfoCompleteList[
-                                                exerciseIndex]]
-                                            .copyWith(
-                                              reps: int.parse(
-                                                  repsTextController.text),
-                                              weight: int.parse(
-                                                  weightTextController.text),
-                                            );
-                                  });
-                                  modifiedBox.whenData((value) {
-                                    value.put(
-                                        modifiedExercises[exerciseIndex]
-                                            .workoutPlanId,
-                                        modifiedExercises[exerciseIndex]);
-                                  });
-                                },
-                              ),
-                            );
+                                                exerciseIndex]] = SetInfo(
+                                            index:
+                                                modifiedExercises[exerciseIndex]
+                                                    .setInfo[
+                                                        setInfoCompleteList[
+                                                            exerciseIndex]]
+                                                    .index,
+                                            reps: int.parse(
+                                                repsTextController.text),
+                                            weight: int.parse(
+                                                weightTextController.text));
+                                      });
+
+                                      modifiedBox.whenData(
+                                        (value) async {
+                                          await value.put(
+                                              modifiedExercises[exerciseIndex]
+                                                  .workoutPlanId,
+                                              modifiedExercises[exerciseIndex]);
+                                        },
+                                      );
+
+                                      context.pop();
+                                    }
+                                  },
+                                ),
+                              );
+                            }
                           },
                           proccessOnTap: () {
+                            print('exerciseIndex : $exerciseIndex');
+                            print(
+                                'setInfoCompleteList[exerciseIndex] : ${setInfoCompleteList[exerciseIndex]}');
+
                             if (exerciseIndex <= maxExcerciseIndex &&
                                 setInfoCompleteList[exerciseIndex] <
                                     maxSetInfoList[exerciseIndex]) {
@@ -773,7 +791,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         } else {
           //local DB에 데이터가 없을때
           value.put(
-            widget.exercises[exerciseIndex].workoutPlanId,
+            modifiedExercises[exerciseIndex].workoutPlanId,
             WorkoutRecordModel(
               workoutPlanId: modifiedExercises[exerciseIndex].workoutPlanId,
               setInfo: [
@@ -924,7 +942,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               'workoutScheduleId':
                                   widget.workoutScheduleId.toString(),
                             },
-                            extra: modifiedExercises,
+                            extra: widget.exercises,
                           );
                         } on DioError {
                           showDialog(

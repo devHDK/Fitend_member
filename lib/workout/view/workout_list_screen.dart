@@ -64,7 +64,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         milliseconds: 100,
       ),
       () {
-        WidgetsBinding.instance.addPersistentFrameCallback(
+        WidgetsBinding.instance.addPostFrameCallback(
           (timeStamp) {
             if (initial) {
               if (isWorkoutComplete && !hasLocal) {
@@ -72,6 +72,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                     .read(workoutRecordsProvider.notifier)
                     .getWorkoutResults(workoutScheduleId: widget.id);
               }
+
               if (isProcessing && !isPoped && !isWorkoutComplete) {
                 _showConfirmDialog();
                 isProcessing = false;
@@ -87,7 +88,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // if (!isPoped) {
+    // if (isPoped) {
     //   ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
     // }
   }
@@ -117,6 +118,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 .then((value) {
               setState(() {
                 isPoped = true;
+
+                ref
+                    .read(workoutProvider(widget.id).notifier)
+                    .getWorkout(id: widget.id);
               });
             });
           },
@@ -150,12 +155,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             });
 
             modifiedExercise.whenData(
-              (value) {
+              (value) async {
                 for (var element in workoutModel.exercises) {
-                  final exercise = value.get(element.workoutPlanId);
-                  if (exercise == null) {
-                    value.put(element.workoutPlanId, exercise);
-                  }
+                  await value.put(element.workoutPlanId, element);
                 }
               },
             );
@@ -174,6 +176,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 .then((value) {
               setState(() {
                 isPoped = true;
+
+                ref
+                    .read(workoutProvider(widget.id).notifier)
+                    .getWorkout(id: widget.id);
               });
             });
           },
@@ -185,27 +191,29 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
-
-    final AsyncValue<Box> workoutRecordBox =
-        ref.watch(hiveWorkoutRecordProvider);
-    final AsyncValue<Box> timerXoneRecordBox =
-        ref.watch(hiveTimerRecordProvider);
-    final AsyncValue<Box> timerXMoreRecordBox =
-        ref.watch(hiveTimerXMoreRecordProvider);
-
-    final AsyncValue<Box> workoutResultBox =
-        ref.watch(hiveWorkoutResultProvider);
-    final AsyncValue<Box> workoutFeedbackBox =
-        ref.watch(hiveWorkoutFeedbackProvider);
-    final AsyncValue<Box> modifiedExerciseBox =
-        ref.watch(hiveModifiedExerciseProvider);
-
     final pstate = ref.watch(workoutRecordsProvider);
 
+    final AsyncValue<Box> workoutRecordBox =
+        ref.read(hiveWorkoutRecordProvider);
+    final AsyncValue<Box> timerXoneRecordBox =
+        ref.read(hiveTimerRecordProvider);
+    final AsyncValue<Box> timerXMoreRecordBox =
+        ref.read(hiveTimerXMoreRecordProvider);
+
+    final AsyncValue<Box> workoutResultBox =
+        ref.read(hiveWorkoutResultProvider);
+    final AsyncValue<Box> workoutFeedbackBox =
+        ref.read(hiveWorkoutFeedbackProvider);
+    final AsyncValue<Box> modifiedExerciseBox =
+        ref.read(hiveModifiedExerciseProvider);
+
     if (state is WorkoutModelLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: POINT_COLOR,
+      return const Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: POINT_COLOR,
+          ),
         ),
       );
     }
@@ -214,8 +222,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       return ErrorDialog(error: state.message);
     }
 
-    var model = state as WorkoutModel;
+    final model = state as WorkoutModel;
     workoutModel = model;
+
+    // print(
+    //     'model.exercises[0].setInfo[0].reps : ${model.exercises[0].setInfo[0].reps}');
 
     workoutBox = workoutRecordBox;
     timerXoneBox = timerXoneRecordBox;
@@ -302,7 +313,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       });
     } else {
       workoutResultBox.whenData(
-        // api로 받아온 데이터 hive로 저장
         (value) {
           for (int i = 0; i < model.exercises.length; i++) {
             final record = value.get(model.exercises[i].workoutPlanId);
@@ -551,6 +561,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                               value.get(model.exercises[i].workoutPlanId);
                           if (exercise == null) {
                             //저장된게 없으면 저장
+
                             value.put(model.exercises[i].workoutPlanId,
                                 model.exercises[i]);
                           }
@@ -571,6 +582,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                       setState(() {
                         isPoped = true;
                       });
+
+                      ref
+                          .read(workoutProvider(widget.id).notifier)
+                          .getWorkout(id: widget.id);
                     });
                   },
             child: Text(

@@ -24,8 +24,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
 
   Future<void> getWorkout({required int id}) async {
     try {
-      final isLoading = state is WorkoutModelLoading;
-
       final response = await repository.getWorkout(id: id);
 
       print(response);

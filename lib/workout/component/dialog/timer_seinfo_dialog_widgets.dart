@@ -3,49 +3,46 @@ import 'package:fitend_member/workout/component/setinfo_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
 
-class RepsXWeightSetinfoDialog extends StatefulWidget {
-  const RepsXWeightSetinfoDialog({
+class TimerSetinfoDialog extends StatefulWidget {
+  const TimerSetinfoDialog({
     super.key,
-    required this.initialReps,
-    required this.initialWeight,
-    required this.repsController,
-    required this.weightController,
+    required this.initialTime,
+    required this.minController,
+    required this.secController,
     required this.confirmOnTap,
   });
 
-  final int initialReps;
-  final int initialWeight;
-  final TextEditingController repsController;
-  final TextEditingController weightController;
+  final int initialTime;
+  final TextEditingController minController;
+  final TextEditingController secController;
   final GestureTapCallback confirmOnTap;
 
   @override
-  State<RepsXWeightSetinfoDialog> createState() =>
-      _RepsXWeightSetinfoDialogState();
+  State<TimerSetinfoDialog> createState() => _TimerSetinfoDialogState();
 }
 
-class _RepsXWeightSetinfoDialogState extends State<RepsXWeightSetinfoDialog> {
+class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
   @override
   void initState() {
     super.initState();
-    widget.repsController.addListener(repsControllerListener);
-    widget.weightController.addListener(weightControllerListener);
+    widget.minController.addListener(minControllerListener);
+    widget.secController.addListener(secControllerListener);
   }
 
   @override
   void dispose() {
-    widget.repsController.removeListener(repsControllerListener);
-    widget.weightController.removeListener(weightControllerListener);
+    widget.minController.removeListener(minControllerListener);
+    widget.secController.removeListener(secControllerListener);
     super.dispose();
   }
 
-  void repsControllerListener() {}
-  void weightControllerListener() {}
+  void minControllerListener() {}
+  void secControllerListener() {}
 
   @override
   Widget build(BuildContext context) {
-    widget.repsController.text = widget.initialReps.toString();
-    widget.weightController.text = widget.initialWeight.toString();
+    widget.minController.text = (widget.initialTime / 60).floor().toString();
+    widget.secController.text = (widget.initialTime % 60).toString();
 
     return DialogBackground(
       blur: 0.2,
@@ -79,14 +76,14 @@ class _RepsXWeightSetinfoDialogState extends State<RepsXWeightSetinfoDialog> {
                   children: [
                     Expanded(
                       child: SetInfoTextField(
-                        controller: widget.weightController,
+                        controller: widget.minController,
                       ),
                     ),
                     const SizedBox(
                       width: 8,
                     ),
                     const Text(
-                      'kg',
+                      'min',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
@@ -99,14 +96,14 @@ class _RepsXWeightSetinfoDialogState extends State<RepsXWeightSetinfoDialog> {
                     ),
                     Expanded(
                       child: SetInfoTextField(
-                        controller: widget.repsController,
+                        controller: widget.secController,
                       ),
                     ),
                     const SizedBox(
                       width: 8,
                     ),
                     const Text(
-                      '회',
+                      'sec',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,

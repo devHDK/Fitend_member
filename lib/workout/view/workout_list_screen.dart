@@ -88,9 +88,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // if (isPoped) {
-    //   ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
-    // }
+    if (isWorkoutComplete) {
+      ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
+    }
   }
 
   Future<dynamic> _showConfirmDialog() {

@@ -31,9 +31,7 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
 
   void _onFocusChanged() {
     if (focusNode.hasFocus) {
-      setState(() {
-        print('focusNode.hasFocus');
-      });
+      setState(() {});
     } else {
       setState(() {
         focusNode.unfocus();

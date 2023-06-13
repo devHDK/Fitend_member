@@ -16,6 +16,7 @@ import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/dialog/reps_seinfo_dialog_widgets.dart';
+import 'package:fitend_member/workout/component/dialog/timer_seinfo_dialog_widgets.dart';
 import 'package:fitend_member/workout/component/dialog/weight_reps_seinfo_dialog_widgets.dart';
 import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
@@ -338,6 +339,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       .trackingFieldId ==
                                   1
                               ? () {
+                                  // weight X reps
                                   if (mounted) {
                                     showDialog(
                                       context: context,
@@ -393,6 +395,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   }
                                 }
                               : () {
+                                  // reps
                                   if (mounted) {
                                     showDialog(
                                       context: context,
@@ -497,6 +500,59 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         TimerXOneProgressCard(
                           exercise: modifiedExercises[exerciseIndex],
                           setInfoIndex: setInfoCompleteList[exerciseIndex],
+                          minController: timerMinTextController,
+                          secController: timerSecondTextController,
+                          updateSeinfoTap: () {
+                            if (mounted) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => TimerSetinfoDialog(
+                                  initialTime: modifiedExercises[exerciseIndex]
+                                      .setInfo[
+                                          setInfoCompleteList[exerciseIndex]]
+                                      .seconds!,
+                                  minController: timerMinTextController,
+                                  secController: timerSecondTextController,
+                                  confirmOnTap: () {
+                                    if (mounted) {
+                                      setState(
+                                        () {
+                                          modifiedExercises[exerciseIndex]
+                                                      .setInfo[
+                                                  setInfoCompleteList[
+                                                      exerciseIndex]] =
+                                              modifiedExercises[exerciseIndex]
+                                                  .setInfo[setInfoCompleteList[
+                                                      exerciseIndex]]
+                                                  .copyWith(
+                                                    seconds: int.parse(
+                                                              timerMinTextController
+                                                                  .text,
+                                                            ) *
+                                                            60 +
+                                                        int.parse(
+                                                            timerSecondTextController
+                                                                .text),
+                                                  );
+                                        },
+                                      );
+
+                                      modifiedBox.whenData(
+                                        (value) async {
+                                          await value.put(
+                                              modifiedExercises[exerciseIndex]
+                                                  .workoutPlanId,
+                                              modifiedExercises[exerciseIndex]);
+                                        },
+                                      );
+
+                                      context.pop();
+                                    }
+                                  },
+                                ),
+                              );
+                            }
+                          },
                           proccessOnTap: () {
                             timerWorkoutBox.whenData(
                               (value) {
@@ -890,7 +946,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     .then(
                   (value) {
                     setState(() {
-                      exerciseIndex = value;
+                      if (value != null) {
+                        exerciseIndex = value;
+                      }
                       isPoped = true;
                     });
                   },

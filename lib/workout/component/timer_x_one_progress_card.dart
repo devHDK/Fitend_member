@@ -14,14 +14,20 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 class TimerXOneProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
-  final GestureTapCallback proccessOnTap;
   final int setInfoIndex;
+  final TextEditingController minController;
+  final TextEditingController secController;
+  final GestureTapCallback updateSeinfoTap;
+  final GestureTapCallback proccessOnTap;
 
   const TimerXOneProgressCard({
     super.key,
     required this.exercise,
     required this.proccessOnTap,
     required this.setInfoIndex,
+    required this.updateSeinfoTap,
+    required this.minController,
+    required this.secController,
   });
 
   @override
@@ -39,9 +45,15 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
   late AsyncValue<Box> timerBox;
   late AsyncValue<Box> workoutBox;
 
+  void minControllerListener() {}
+  void secControllerListener() {}
+
   @override
   void initState() {
     super.initState();
+
+    widget.minController.addListener(minControllerListener);
+    widget.secController.addListener(secControllerListener);
 
     WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
       if (initial) {
@@ -70,6 +82,10 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
     if (timer.isActive) {
       timer.cancel();
     }
+
+    widget.minController.removeListener(minControllerListener);
+    widget.secController.removeListener(secControllerListener);
+
     super.dispose();
   }
 
@@ -106,6 +122,27 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
     setState(() {
       count = 0;
       totalSeconds = widget.exercise.setInfo[0].seconds!;
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant TimerXOneProgressCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    timerBox.whenData((value) {
+      final record = value.get(widget.exercise.workoutPlanId);
+      print(record);
+      if (record != null && record is SetInfo && widget.setInfoIndex == 0) {
+        setState(() {
+          print('didUpdateWidget1');
+          totalSeconds = widget.exercise.setInfo[0].seconds! - record.seconds!;
+        });
+      } else {
+        setState(() {
+          print('didUpdateWidget2');
+          totalSeconds = widget.exercise.setInfo[0].seconds!;
+        });
+      }
     });
   }
 
@@ -155,7 +192,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
     return Column(
       children: [
         Text(
-          '${(widget.exercise.setInfo[0].seconds! / 60).floor()}분 ${widget.exercise.setInfo[0].seconds! % 30}초',
+          '${(widget.exercise.setInfo[0].seconds! / 60).floor()}분 ${widget.exercise.setInfo[0].seconds! % 60}초',
           style: const TextStyle(
             color: GRAY_COLOR,
             fontSize: 16,
@@ -234,7 +271,11 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
         Row(
           children: [
             InkWell(
-              onTap: () {},
+              onTap: isRunning
+                  ? null
+                  : () {
+                      widget.updateSeinfoTap();
+                    },
               child: Image.asset(
                 'asset/img/icon_edit.png',
               ),
@@ -277,7 +318,16 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                         ),
                       );
                     }
-                  : widget.proccessOnTap,
+                  : () {
+                      if (timer.isActive) {
+                        timer.cancel();
+                        setState(() {
+                          isRunning = false;
+                        });
+                      }
+
+                      widget.proccessOnTap();
+                    },
               child: Image.asset(
                 'asset/img/icon_foward.png',
               ),

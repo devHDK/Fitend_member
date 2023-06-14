@@ -86,6 +86,8 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
                   child: CustomNetworkImage(
                     imageUrl: widget.video.thumbnail,
                     boxFit: BoxFit.fill,
+                    width: MediaQuery.of(context).size.width,
+                    height: 685,
                   ),
                 ),
 

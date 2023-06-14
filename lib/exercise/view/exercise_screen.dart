@@ -70,26 +70,32 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 width: MediaQuery.of(context).size.width,
                 height: 660,
                 child: GuideVideoPlayer(
-                  videos: [
-                    ExerciseVideo(
-                        url:
-                            'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-                        index: 1,
-                        thumbnail:
-                            'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg'),
-                    ExerciseVideo(
-                        url:
-                            'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-                        index: 2,
-                        thumbnail:
-                            'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg'),
-                    ExerciseVideo(
-                        url:
-                            'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-                        index: 3,
-                        thumbnail:
-                            'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg'),
-                  ],
+                  videos: widget.exercise.videos
+                      .map((e) => ExerciseVideo(
+                          url: '$s3Url${e.url}',
+                          index: e.index,
+                          thumbnail: '$s3Url${e.thumbnail}'))
+                      .toList(),
+                  //  [
+                  // ExerciseVideo(
+                  //     url:
+                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+                  //     index: 1,
+                  //     thumbnail:
+                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg'),
+                  // ExerciseVideo(
+                  //     url:
+                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                  //     index: 2,
+                  //     thumbnail:
+                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg'),
+                  // ExerciseVideo(
+                  //     url:
+                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                  //     index: 3,
+                  //     thumbnail:
+                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg'),
+                  // ],
                 ),
               ),
             ),

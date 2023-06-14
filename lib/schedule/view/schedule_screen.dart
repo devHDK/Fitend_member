@@ -138,19 +138,19 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         backgroundColor: BACKGROUND_COLOR,
         appBar: LogoAppbar(
           actions: [
-            IconButton(
-              onPressed: () {
-                // ref.read(userMeProvider.notifier).logout();
-                context.goNamed(MyPageScreen.routeName);
-              },
-              icon: const Padding(
-                padding: EdgeInsets.only(right: 28),
-                child: Icon(
+            Padding(
+              padding: const EdgeInsets.only(right: 28.0),
+              child: GestureDetector(
+                onTap: () {
+                  // ref.read(userMeProvider.notifier).logout();
+                  context.goNamed(MyPageScreen.routeName);
+                },
+                child: const Icon(
                   Icons.person_outline_sharp,
                   size: 30,
                 ),
               ),
-            )
+            ),
           ],
         ),
         body: ListView.builder(

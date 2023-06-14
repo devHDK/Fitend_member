@@ -195,7 +195,7 @@ class _ScheduleCardState extends State<ScheduleCard> {
                     height: 23,
                   ),
                   SizedBox(
-                    width: 319,
+                    width: MediaQuery.of(context).size.width,
                     height: 44,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(

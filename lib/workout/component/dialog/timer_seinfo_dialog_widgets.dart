@@ -46,6 +46,7 @@ class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
 
     return DialogBackground(
       blur: 0.2,
+      dismissable: false,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
         child: Container(

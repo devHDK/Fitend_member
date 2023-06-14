@@ -20,6 +20,7 @@ class DialogWidgets {
   }) {
     return DialogBackground(
       blur: 0.2,
+      dismissable: false,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
@@ -103,7 +104,8 @@ class DialogWidgets {
     required GestureTapCallback confirmOnTap,
   }) {
     return DialogBackground(
-      blur: 0.3,
+      blur: 0.2,
+      dismissable: false,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
@@ -276,6 +278,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
 
     return DialogBackground(
       blur: 0.2,
+      dismissable: false,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
         child: Container(

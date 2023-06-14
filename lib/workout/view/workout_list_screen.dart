@@ -414,7 +414,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             borderRadius: BorderRadius.circular(10),
           ),
           child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: POINT_COLOR),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: POINT_COLOR,
+            ),
             onPressed: model.isWorkoutComplete
                 ? () {
                     context.goNamed(

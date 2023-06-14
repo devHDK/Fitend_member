@@ -67,7 +67,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   }
 
   void getResults() async {
-    final provider = ref.read(workoutRecordsProvider.notifier);
+    final provider =
+        ref.read(workoutRecordsProvider(widget.workoutScheduleId).notifier);
 
     await provider.getWorkoutResults(
         workoutScheduleId: widget.workoutScheduleId);
@@ -84,7 +85,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     final workoutResultBox = ref.watch(hiveWorkoutResultProvider);
     final workoutRecordBox = ref.watch(hiveWorkoutRecordProvider);
 
-    final pstate = ref.watch(workoutRecordsProvider);
+    final pstate = ref.watch(workoutRecordsProvider(widget.workoutScheduleId));
 
     late WorkoutResultModel state;
 
@@ -116,10 +117,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       },
     );
 
-    if (workoutRecords.length < widget.exercises.length ||
-        workoutResults.length < widget.exercises.length ||
-        feedback == null ||
-        feedback!.strengthIndex == null) {
+    if (feedback == null || feedback!.strengthIndex == null) {
       //local 데이터가 없을때!
 
       if (pstate is WorkoutResultModelLoading) {
@@ -159,13 +157,16 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
 
       state = WorkoutResultModel(
         startDate:
-            '${DateFormat('M월 dd일').format(feedback!.startDate)} ${weekday[feedback!.startDate.weekday]}요일',
+            '${DateFormat('M월 dd일').format(feedback!.startDate)} ${weekday[feedback!.startDate.weekday - 1]}요일',
         strengthIndex: feedback!.strengthIndex!,
         issueIndexes:
             feedback!.issueIndexes != null ? feedback!.issueIndexes! : [],
         contents: feedback!.contents != null ? feedback!.contents! : '',
         workoutRecords: workoutResults,
       );
+
+      print('state.startDate : ${state.startDate}');
+
       hasLocalData = true;
     }
 
@@ -220,9 +221,11 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                     const SizedBox(
                       height: 24,
                     ),
-                    if (state.issueIndexes.isNotEmpty)
+                    if (state.issueIndexes != null &&
+                        state.issueIndexes!.isNotEmpty)
                       _renderIssueResult(state),
-                    if (state.contents.isNotEmpty) _renderContentsResult(state),
+                    if (state.contents != null && state.contents!.isNotEmpty)
+                      _renderContentsResult(state),
                     const SizedBox(
                       height: 20,
                     )
@@ -322,7 +325,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         const SizedBox(
           height: 8,
         ),
-        ...state.issueIndexes.map(
+        ...state.issueIndexes!.map(
           (e) {
             return Column(
               children: [
@@ -364,7 +367,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           height: 8,
         ),
         Text(
-          state.contents,
+          state.contents!,
           style: const TextStyle(
             color: LIGHT_GRAY_COLOR,
             fontSize: 14,

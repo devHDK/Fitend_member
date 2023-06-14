@@ -67,9 +67,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         WidgetsBinding.instance.addPostFrameCallback(
           (timeStamp) {
             if (initial) {
+              print(hasLocal);
               if (isWorkoutComplete && !hasLocal) {
+                print('getWorkoutResults');
                 ref
-                    .read(workoutRecordsProvider.notifier)
+                    .read(workoutRecordsProvider(widget.id).notifier)
                     .getWorkoutResults(workoutScheduleId: widget.id);
               }
 
@@ -96,7 +98,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
-    final pstate = ref.watch(workoutRecordsProvider);
+    final pstate = ref.watch(workoutRecordsProvider(widget.id));
 
     final AsyncValue<Box> workoutRecordBox =
         ref.read(hiveWorkoutRecordProvider);
@@ -141,10 +143,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     isWorkoutComplete = model.isWorkoutComplete;
 
     if (model.isWorkoutComplete) {
+      // 완료된 운동
       workoutRecordBox.whenData(
         (value) {
           final record = value.get(model.exercises[0].workoutPlanId);
-
           if (record == null && pstate is WorkoutResultModel) {
             hasLocal = false;
             for (var i = 0; i < pstate.workoutRecords.length; i++) {
@@ -163,9 +165,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       workoutFeedbackBox.whenData(
         (value) {
           final record = value.get(widget.id);
-          if ((record == null || record.strengthIndex == null) &&
-              pstate is WorkoutResultModel) {
-            hasLocal = false;
+          print('$record');
+          if ((record == null) && pstate is WorkoutResultModel) {
             value.put(
               widget.id,
               WorkoutFeedbackRecordModel(
@@ -175,6 +176,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 contents: pstate.contents,
               ),
             );
+            hasLocal = false;
           }
         },
       );
@@ -183,7 +185,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         (value) {
           final record = value.get(model.exercises[0].workoutPlanId);
           if (record == null && pstate is WorkoutResultModel) {
-            hasLocal = false;
             for (var i = 0; i < pstate.workoutRecords.length; i++) {
               value.put(
                 pstate.workoutRecords[i].workoutPlanId,
@@ -196,6 +197,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 ),
               );
             }
+            hasLocal = false;
           }
         },
       );
@@ -208,9 +210,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                     pstate.workoutRecords[i].trackingFieldId == 4)) {
               final record = value.get(pstate.workoutRecords[i].workoutPlanId);
               if (record == null) {
-                hasLocal = false;
                 value.put(pstate.workoutRecords[i].workoutPlanId,
                     pstate.workoutRecords[i].setInfo[0]);
+                hasLocal = false;
               }
             }
           }
@@ -466,7 +468,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                               value.get(model.exercises[i].workoutPlanId);
                           if (exercise == null) {
                             //저장된게 없으면 저장
-
                             value.put(model.exercises[i].workoutPlanId,
                                 model.exercises[i]);
                           }

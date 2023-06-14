@@ -60,9 +60,10 @@ WorkoutResultModel _$WorkoutResultModelFromJson(Map<String, dynamic> json) =>
     WorkoutResultModel(
       startDate: json['startDate'] as String,
       strengthIndex: json['strengthIndex'] as int,
-      issueIndexes:
-          (json['issueIndexes'] as List<dynamic>).map((e) => e as int).toList(),
-      contents: json['contents'] as String,
+      issueIndexes: (json['issueIndexes'] as List<dynamic>?)
+          ?.map((e) => e as int)
+          .toList(),
+      contents: json['contents'] as String?,
       workoutRecords: (json['workoutRecords'] as List<dynamic>)
           .map((e) => WorkoutRecordResult.fromJson(e as Map<String, dynamic>))
           .toList(),

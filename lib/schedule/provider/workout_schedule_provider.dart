@@ -122,4 +122,6 @@ class WorkoutScheduleStateNotifier
     state = WorkoutScheduleModel(data: scheduleListGlobal);
     print('schedule state update!!');
   }
+
+  void updateScheduleState() {}
 }

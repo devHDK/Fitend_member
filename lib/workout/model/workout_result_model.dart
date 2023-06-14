@@ -18,15 +18,15 @@ class WorkoutResultModelError extends WorkoutResultModelBase {
 class WorkoutResultModel extends WorkoutResultModelBase {
   final String startDate;
   final int strengthIndex;
-  final List<int> issueIndexes;
-  final String contents;
+  final List<int>? issueIndexes;
+  final String? contents;
   final List<WorkoutRecordResult> workoutRecords;
 
   WorkoutResultModel({
     required this.startDate,
     required this.strengthIndex,
-    required this.issueIndexes,
-    required this.contents,
+    this.issueIndexes,
+    this.contents,
     required this.workoutRecords,
   });
 

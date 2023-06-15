@@ -81,6 +81,8 @@ class _RepsXWeightSetinfoDialogState extends State<RepsXWeightSetinfoDialog> {
                     Expanded(
                       child: SetInfoTextField(
                         controller: widget.weightController,
+                        textInputType: const TextInputType.numberWithOptions(
+                            decimal: true),
                       ),
                     ),
                     const SizedBox(

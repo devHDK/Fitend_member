@@ -62,7 +62,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
           scrollController.animateTo(
             _scrollOffset + 345,
             duration: const Duration(milliseconds: 200),
-            curve: Curves.linear,
+            curve: Curves.ease,
           );
         });
       } else {

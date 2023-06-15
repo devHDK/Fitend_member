@@ -204,14 +204,14 @@ class _ScheduleCardState extends State<ScheduleCard> {
                       onPressed: widget.workoutScheduleId == null
                           ? null
                           : () async {
-                              var val = await context.pushNamed(
+                              var dateChanged = await context.pushNamed(
                                   WorkoutListScreen.routeName,
                                   pathParameters: {
                                     'workoutScheduleId':
                                         widget.workoutScheduleId!.toString(),
                                   });
 
-                              if (val == true &&
+                              if (dateChanged == true &&
                                   widget.onNotifyParent != null) {
                                 widget.onNotifyParent!();
                               }

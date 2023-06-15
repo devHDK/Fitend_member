@@ -61,7 +61,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
 
     Future.delayed(
       const Duration(
-        milliseconds: 100,
+        milliseconds: 500,
       ),
       () {
         WidgetsBinding.instance.addPostFrameCallback(
@@ -335,14 +335,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: Hero(
-              tag: model.workoutScheduleId,
-              child: WorkoutBanner(
-                title: model.workoutTitle,
-                subTitle: model.workoutSubTitle,
-                exerciseCount: model.exercises.length,
-                time: model.workoutTotalTime,
-              ),
+            child: WorkoutBanner(
+              title: model.workoutTitle,
+              subTitle: model.workoutSubTitle,
+              exerciseCount: model.exercises.length,
+              time: model.workoutTotalTime,
             ),
           ),
           SliverPadding(

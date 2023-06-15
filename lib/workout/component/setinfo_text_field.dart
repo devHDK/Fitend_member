@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 
 class SetInfoTextField extends StatefulWidget {
   final TextEditingController controller;
+  TextInputType? textInputType;
 
-  const SetInfoTextField({
+  SetInfoTextField({
     super.key,
     required this.controller,
+    this.textInputType = TextInputType.number,
   });
 
   @override
@@ -71,7 +73,7 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
           ),
         ),
       ),
-      keyboardType: TextInputType.number,
+      keyboardType: widget.textInputType,
     );
   }
 }

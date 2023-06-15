@@ -113,10 +113,30 @@ class AuthProvider extends ChangeNotifier {
                     workoutScheduleId:
                         int.parse(state.pathParameters["workoutScheduleId"]!),
                     exercises: state.extra as List<Exercise>,
+                    key: state.pageKey,
                   ),
+                  transitionDuration: const Duration(microseconds: 3000),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) =>
-                          FadeTransition(opacity: animation, child: child),
+                          SlideTransition(
+                    position: animation.drive(
+                      Tween(
+                        begin: const Offset(0, 4.0),
+                        end: Offset.zero,
+                      ).chain(
+                        CurveTween(curve: Curves.ease),
+                      ),
+                    ),
+                    // Tween(
+                    //   begin: const Offset(0, 4.0),
+                    //   end: const Offset(0, 0),
+                    // ).animate(animation),
+                    child: ScheduleResultScreen(
+                      workoutScheduleId:
+                          int.parse(state.pathParameters["workoutScheduleId"]!),
+                      exercises: state.extra as List<Exercise>,
+                    ),
+                  ),
                 );
               },
             )

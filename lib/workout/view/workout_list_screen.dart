@@ -46,6 +46,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   late AsyncValue<Box> timerXmoreBox;
   late AsyncValue<Box> timerXoneBox;
   late AsyncValue<Box> modifiedExercise;
+  late AsyncValue<Box> workoutResult;
   bool isProcessing = false;
   bool isPoped = false;
   bool isWorkoutComplete = false;
@@ -136,6 +137,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     }
 
     final model = state as WorkoutModel;
+
     workoutModel = model;
 
     // print(
@@ -145,6 +147,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     timerXoneBox = timerXoneRecordBox;
     timerXmoreBox = timerXMoreRecordBox;
     modifiedExercise = modifiedExerciseBox;
+    workoutResult = workoutResultBox;
 
     isWorkoutComplete = model.isWorkoutComplete;
 
@@ -286,6 +289,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                       );
                     }).then(
                   (changedDate) {
+                    if (changedDate == null) {
+                      return;
+                    }
                     if (changedDate['changedDate'] != null) {
                       setState(
                         () {
@@ -577,10 +583,18 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               }
             });
 
+            workoutResult.whenData(
+              (value) {
+                for (var element in workoutModel.exercises) {
+                  value.delete(element.workoutPlanId);
+                }
+              },
+            );
+
             modifiedExercise.whenData(
               (value) async {
                 for (var element in workoutModel.exercises) {
-                  await value.delete(element.workoutPlanId);
+                  await value.put(element.workoutPlanId, element);
                 }
               },
             );

@@ -1,49 +1,97 @@
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/workout/component/setinfo_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ndialog/ndialog.dart';
 
 class TimerSetinfoDialog extends StatefulWidget {
   const TimerSetinfoDialog({
     super.key,
     required this.initialTime,
-    required this.minController,
-    required this.secController,
-    required this.confirmOnTap,
   });
 
   final int initialTime;
-  final TextEditingController minController;
-  final TextEditingController secController;
-  final GestureTapCallback confirmOnTap;
 
   @override
   State<TimerSetinfoDialog> createState() => _TimerSetinfoDialogState();
 }
 
 class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
+  bool buttonEnable = true;
+  final minController = TextEditingController();
+  final secController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    widget.minController.addListener(minControllerListener);
-    widget.secController.addListener(secControllerListener);
+    minController.addListener(minControllerListener);
+    secController.addListener(secControllerListener);
+
+    minController.text = (widget.initialTime / 60).floor().toString();
+    secController.text = (widget.initialTime % 60).toString();
   }
 
   @override
   void dispose() {
-    widget.minController.removeListener(minControllerListener);
-    widget.secController.removeListener(secControllerListener);
+    minController.removeListener(minControllerListener);
+    secController.removeListener(secControllerListener);
     super.dispose();
   }
 
-  void minControllerListener() {}
-  void secControllerListener() {}
+  void minControllerListener() {
+    try {
+      if (minController.text.isNotEmpty && int.parse(minController.text) > 99) {
+        minController.text = 99.toString();
+      }
+
+      buttonEnable = true;
+
+      if (minController.text.isEmpty || secController.text.isEmpty) {
+        buttonEnable = false;
+      }
+
+      if (int.parse(minController.text) < 1 &&
+          int.parse(secController.text) < 1) {
+        buttonEnable = false;
+      }
+
+      setState(() {});
+    } catch (e) {
+      setState(() {
+        setState(() {
+          buttonEnable = false;
+        });
+      });
+    }
+  }
+
+  void secControllerListener() {
+    try {
+      if (secController.text.isNotEmpty && int.parse(secController.text) > 59) {
+        secController.text = 59.toString();
+      }
+
+      buttonEnable = true;
+
+      if (minController.text.isEmpty || secController.text.isEmpty) {
+        buttonEnable = false;
+      }
+
+      if (int.parse(minController.text) < 1 &&
+          int.parse(secController.text) < 1) {
+        buttonEnable = false;
+      }
+
+      setState(() {});
+    } catch (e) {
+      setState(() {
+        buttonEnable = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    widget.minController.text = (widget.initialTime / 60).floor().toString();
-    widget.secController.text = (widget.initialTime % 60).toString();
-
     return DialogBackground(
       blur: 0.2,
       dismissable: false,
@@ -77,7 +125,7 @@ class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
                   children: [
                     Expanded(
                       child: SetInfoTextField(
-                        controller: widget.minController,
+                        controller: minController,
                       ),
                     ),
                     const SizedBox(
@@ -97,7 +145,7 @@ class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
                     ),
                     Expanded(
                       child: SetInfoTextField(
-                        controller: widget.secController,
+                        controller: secController,
                       ),
                     ),
                     const SizedBox(
@@ -118,13 +166,22 @@ class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
                   height: 20,
                 ),
                 GestureDetector(
-                  onTap: () => widget.confirmOnTap(),
+                  onTap: buttonEnable
+                      ? () {
+                          context.pop({
+                            'min': minController.text,
+                            'sec': secController.text,
+                          });
+                        }
+                      : null,
                   child: Container(
                     width: 279,
                     height: 44,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: POINT_COLOR,
+                      color: buttonEnable
+                          ? POINT_COLOR
+                          : POINT_COLOR.withOpacity(0.3),
                     ),
                     child: const Center(
                       child: Text(

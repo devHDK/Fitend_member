@@ -6,7 +6,6 @@ import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/setInfo_model.dart';
-import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -131,17 +130,35 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
 
     timerBox.whenData((value) {
       final record = value.get(widget.exercise.workoutPlanId);
-      print(record);
       if (record != null && record is SetInfo && widget.setInfoIndex == 0) {
-        setState(() {
-          print('didUpdateWidget1');
-          totalSeconds = widget.exercise.setInfo[0].seconds! - record.seconds!;
-        });
-      } else {
-        setState(() {
-          print('didUpdateWidget2');
-          totalSeconds = widget.exercise.setInfo[0].seconds!;
-        });
+        if (record.seconds! < widget.exercise.setInfo[0].seconds!) {
+          setState(() {
+            totalSeconds =
+                widget.exercise.setInfo[0].seconds! - record.seconds!;
+          });
+        } else if (record.seconds! >= widget.exercise.setInfo[0].seconds!) {
+          setState(() {
+            totalSeconds = 0;
+            isRunning = false;
+            count = 11;
+          });
+
+          timer.cancel();
+
+          timerBox.whenData((value) {
+            value.put(
+              widget.exercise.workoutPlanId,
+              SetInfo(
+                index: 1,
+                seconds: widget.exercise.setInfo[0].seconds!,
+              ),
+            );
+          });
+        } else {
+          setState(() {
+            totalSeconds = widget.exercise.setInfo[0].seconds!;
+          });
+        }
       }
     });
   }
@@ -154,16 +171,6 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
         count = 11;
       });
       timer.cancel();
-
-      workoutBox.whenData((value) async {
-        await value.put(
-          widget.exercise.workoutPlanId,
-          WorkoutRecordModel(
-            workoutPlanId: widget.exercise.workoutPlanId,
-            setInfo: widget.exercise.setInfo,
-          ),
-        );
-      });
     } else {
       setState(() {
         totalSeconds -= 1;

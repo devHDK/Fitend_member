@@ -1,46 +1,66 @@
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/workout/component/setinfo_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ndialog/ndialog.dart';
 
 class RepsSetinfoDialog extends StatefulWidget {
   const RepsSetinfoDialog({
     super.key,
     required this.initialReps,
-    required this.repsController,
-    required this.confirmOnTap,
   });
 
   final int initialReps;
-  final TextEditingController repsController;
-  final GestureTapCallback confirmOnTap;
 
   @override
   State<RepsSetinfoDialog> createState() => _RepsSetinfoDialogState();
 }
 
 class _RepsSetinfoDialogState extends State<RepsSetinfoDialog> {
+  bool buttonEnable = true;
+  final repsController = TextEditingController();
+
   @override
   void initState() {
-    widget.repsController.addListener(repsControllerListener);
-
     super.initState();
+    repsController.addListener(repsControllerListener);
+
+    repsController.text = widget.initialReps.toString();
   }
 
   @override
   void dispose() {
-    widget.repsController.removeListener(repsControllerListener);
-
+    repsController.removeListener(repsControllerListener);
     super.dispose();
   }
 
-  void repsControllerListener() {}
-  void weightControllerListener() {}
+  void repsControllerListener() {
+    try {
+      if (repsController.text.isNotEmpty &&
+          int.parse(repsController.text) > 99) {
+        repsController.text = 99.toString();
+      }
+
+      buttonEnable = true;
+
+      if (repsController.text.isEmpty) {
+        buttonEnable = false;
+      }
+
+      if (int.parse(repsController.text) < 1) {
+        buttonEnable = false;
+      }
+
+      setState(() {});
+    } catch (e) {
+      setState(() {
+        buttonEnable = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    widget.repsController.text = widget.initialReps.toString();
-
     return DialogBackground(
       blur: 0.2,
       dismissable: false,
@@ -74,7 +94,7 @@ class _RepsSetinfoDialogState extends State<RepsSetinfoDialog> {
                   children: [
                     Expanded(
                       child: SetInfoTextField(
-                        controller: widget.repsController,
+                        controller: repsController,
                       ),
                     ),
                     const SizedBox(
@@ -95,13 +115,21 @@ class _RepsSetinfoDialogState extends State<RepsSetinfoDialog> {
                   height: 20,
                 ),
                 GestureDetector(
-                  onTap: () => widget.confirmOnTap(),
+                  onTap: buttonEnable
+                      ? () {
+                          context.pop({
+                            'reps': repsController.text,
+                          });
+                        }
+                      : null,
                   child: Container(
                     width: 279,
                     height: 44,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: POINT_COLOR,
+                      color: buttonEnable
+                          ? POINT_COLOR
+                          : POINT_COLOR.withOpacity(0.3),
                     ),
                     child: const Center(
                       child: Text(

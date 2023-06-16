@@ -74,14 +74,11 @@ class _WeightWrepsProgressCardState
                       widget.exercise.setInfo[widget.setInfoIndex].seconds! -
                           record.setInfo[widget.setInfoIndex].seconds!;
                 });
-
-                print('totalSeconds : $totalSeconds');
               } else {
                 setState(() {
                   totalSeconds =
                       widget.exercise.setInfo[widget.setInfoIndex].seconds!;
                 });
-                print('totalSeconds : $totalSeconds');
               }
             } else {
               setState(() {
@@ -137,19 +134,43 @@ class _WeightWrepsProgressCardState
 
       if (record != null && record is WorkoutRecordModel) {
         if (record.setInfo.length > widget.setInfoIndex) {
-          setState(() {
-            totalSeconds =
-                widget.exercise.setInfo[widget.setInfoIndex].seconds! -
-                    record.setInfo[widget.setInfoIndex].seconds!;
-          });
+          if (record.setInfo[widget.setInfoIndex].seconds! <
+              widget.exercise.setInfo[widget.setInfoIndex].seconds!) {
+            setState(() {
+              totalSeconds =
+                  widget.exercise.setInfo[widget.setInfoIndex].seconds! -
+                      record.setInfo[widget.setInfoIndex].seconds!;
+            });
+          } else {
+            setState(() {
+              isRunning = false;
+              count = 11;
+              totalSeconds = 0;
+            });
 
-          print('totalSeconds : $totalSeconds');
+            if (timer!.isActive) {
+              timer!.cancel();
+            }
+
+            record.setInfo[widget.setInfoIndex] =
+                record.setInfo[widget.setInfoIndex].copyWith(
+              seconds: widget.exercise.setInfo[widget.setInfoIndex].seconds!,
+            );
+            value.put(
+              widget.exercise.workoutPlanId,
+              WorkoutRecordModel(
+                workoutPlanId: widget.exercise.workoutPlanId,
+                setInfo: [
+                  ...record.setInfo,
+                ],
+              ),
+            );
+          }
         } else {
           setState(() {
             totalSeconds =
                 widget.exercise.setInfo[widget.setInfoIndex].seconds!;
           });
-          print('totalSeconds : $totalSeconds');
         }
       } else {
         setState(() {

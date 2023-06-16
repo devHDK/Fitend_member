@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/workout/component/setinfo_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ndialog/ndialog.dart';
 
 class RepsXWeightSetinfoDialog extends StatefulWidget {
@@ -8,16 +9,10 @@ class RepsXWeightSetinfoDialog extends StatefulWidget {
     super.key,
     required this.initialReps,
     required this.initialWeight,
-    required this.repsController,
-    required this.weightController,
-    required this.confirmOnTap,
   });
 
   final int initialReps;
-  final int initialWeight;
-  final TextEditingController repsController;
-  final TextEditingController weightController;
-  final GestureTapCallback confirmOnTap;
+  final double initialWeight;
 
   @override
   State<RepsXWeightSetinfoDialog> createState() =>
@@ -25,28 +20,81 @@ class RepsXWeightSetinfoDialog extends StatefulWidget {
 }
 
 class _RepsXWeightSetinfoDialogState extends State<RepsXWeightSetinfoDialog> {
+  bool buttonEnable = true;
+  final repsController = TextEditingController();
+  final weightController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    widget.repsController.addListener(repsControllerListener);
-    widget.weightController.addListener(weightControllerListener);
+    repsController.addListener(repsControllerListener);
+    weightController.addListener(weightControllerListener);
+
+    repsController.text = widget.initialReps.toString();
+    weightController.text = widget.initialWeight.toString();
   }
 
   @override
   void dispose() {
-    widget.repsController.removeListener(repsControllerListener);
-    widget.weightController.removeListener(weightControllerListener);
+    repsController.removeListener(repsControllerListener);
+    weightController.removeListener(weightControllerListener);
     super.dispose();
   }
 
-  void repsControllerListener() {}
-  void weightControllerListener() {}
+  void repsControllerListener() {
+    try {
+      if (repsController.text.isNotEmpty &&
+          int.parse(repsController.text) > 99) {
+        repsController.text = 99.toString();
+      }
+
+      buttonEnable = true;
+
+      if (weightController.text.isEmpty || repsController.text.isEmpty) {
+        buttonEnable = false;
+      }
+
+      if (double.parse(weightController.text) < 0.1 ||
+          int.parse(repsController.text) < 1) {
+        buttonEnable = false;
+      }
+
+      setState(() {});
+    } catch (e) {
+      setState(() {
+        buttonEnable = false;
+      });
+    }
+  }
+
+  void weightControllerListener() {
+    try {
+      if (weightController.text.isNotEmpty &&
+          double.parse(weightController.text) > 999.9) {
+        weightController.text = (999.9).toString();
+      }
+
+      buttonEnable = true;
+
+      if (weightController.text.isEmpty || repsController.text.isEmpty) {
+        buttonEnable = false;
+      }
+
+      if (double.parse(weightController.text) < 0.1 ||
+          int.parse(repsController.text) < 1) {
+        buttonEnable = false;
+      }
+
+      setState(() {});
+    } catch (e) {
+      setState(() {
+        buttonEnable = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    widget.repsController.text = widget.initialReps.toString();
-    widget.weightController.text = widget.initialWeight.toString();
-
     return DialogBackground(
       blur: 0.2,
       dismissable: false,
@@ -80,9 +128,11 @@ class _RepsXWeightSetinfoDialogState extends State<RepsXWeightSetinfoDialog> {
                   children: [
                     Expanded(
                       child: SetInfoTextField(
-                        controller: widget.weightController,
+                        controller: weightController,
                         textInputType: const TextInputType.numberWithOptions(
-                            decimal: true),
+                          decimal: true,
+                        ),
+                        allowedDigits: r'^-?\d*\.?\d?',
                       ),
                     ),
                     const SizedBox(
@@ -102,7 +152,7 @@ class _RepsXWeightSetinfoDialogState extends State<RepsXWeightSetinfoDialog> {
                     ),
                     Expanded(
                       child: SetInfoTextField(
-                        controller: widget.repsController,
+                        controller: repsController,
                       ),
                     ),
                     const SizedBox(
@@ -123,13 +173,22 @@ class _RepsXWeightSetinfoDialogState extends State<RepsXWeightSetinfoDialog> {
                   height: 20,
                 ),
                 GestureDetector(
-                  onTap: () => widget.confirmOnTap(),
+                  onTap: buttonEnable
+                      ? () => {
+                            context.pop({
+                              'weight': weightController.text,
+                              'reps': repsController.text,
+                            })
+                          }
+                      : null,
                   child: Container(
                     width: 279,
                     height: 44,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: POINT_COLOR,
+                      color: buttonEnable
+                          ? POINT_COLOR
+                          : POINT_COLOR.withOpacity(0.3),
                     ),
                     child: const Center(
                       child: Text(

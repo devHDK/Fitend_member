@@ -11,7 +11,7 @@ class SetInfo {
   @HiveField(2)
   int? reps;
   @HiveField(3)
-  int? weight;
+  double? weight;
   @HiveField(4)
   int? seconds;
 
@@ -25,7 +25,7 @@ class SetInfo {
   SetInfo copyWith({
     int? index,
     int? reps,
-    int? weight,
+    double? weight,
     int? seconds,
   }) =>
       SetInfo(

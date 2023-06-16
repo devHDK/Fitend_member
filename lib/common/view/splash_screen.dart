@@ -36,8 +36,8 @@ class _BottomView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(
-            height: 461,
+          const Expanded(
+            child: SizedBox(),
           ),
           const Text(
             '운동 졸업은 핏엔드에서!\n핏엔드에 오신 것을 환영합니다!',
@@ -80,6 +80,9 @@ class _BottomView extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+          const SizedBox(
+            height: 40,
           )
         ],
       ),

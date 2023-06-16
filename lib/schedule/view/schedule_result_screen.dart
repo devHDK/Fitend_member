@@ -90,30 +90,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     late WorkoutResultModel state;
 
     workoutFeedbackBox.whenData(
-      (value) {
-        feedback = value.get(widget.workoutScheduleId);
-      },
-    );
-
-    workoutResultBox.whenData(
-      (value) {
-        for (var i = 0; i < widget.exercises.length; i++) {
-          final record = value.get(widget.exercises[i].workoutPlanId);
-          if (record != null && record is WorkoutRecordResult) {
-            workoutResults.add(record);
-          }
-        }
-      },
-    );
-
-    workoutRecordBox.whenData(
-      (value) {
-        for (var i = 0; i < widget.exercises.length; i++) {
-          final record = value.get(widget.exercises[i].workoutPlanId);
-          if (record != null && record is WorkoutRecordModel) {
-            workoutRecords.add(record);
-          }
-        }
+      (value) async {
+        feedback = await value.get(widget.workoutScheduleId);
       },
     );
 
@@ -146,14 +124,46 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         state = pstate;
         state = state.copyWith(
             startDate:
-                '${DateFormat('M월 dd일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday]}요일');
+                '${DateFormat('M월 dd일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday - 1]}요일');
       }
     } else {
+      print('debug workoutResults : $workoutResults');
+
+      workoutResultBox.whenData(
+        (value) {
+          workoutResults = [];
+
+          for (var i = 0; i < widget.exercises.length; i++) {
+            final record = value.get(widget.exercises[i].workoutPlanId);
+            if (record != null && record is WorkoutRecordResult) {
+              workoutResults.add(record);
+            }
+          }
+        },
+      );
+
+      print('debug workoutResults : $workoutResults');
+
+      workoutRecordBox.whenData(
+        (value) {
+          workoutRecords = [];
+
+          for (var i = 0; i < widget.exercises.length; i++) {
+            final record = value.get(widget.exercises[i].workoutPlanId);
+            if (record != null && record is WorkoutRecordModel) {
+              workoutRecords.add(record);
+            }
+          }
+        },
+      );
+
       for (var i = 0; i < workoutResults.length; i++) {
         for (var j = 0; j < workoutResults[i].setInfo.length; j++) {
           workoutResults[i].setInfo[j] = workoutRecords[i].setInfo[j];
         }
       }
+
+      print('debug workoutResults : $workoutResults');
 
       state = WorkoutResultModel(
         startDate:

@@ -19,7 +19,7 @@ class SetInfoAdapter extends TypeAdapter<SetInfo> {
     return SetInfo(
       index: fields[1] as int,
       reps: fields[2] as int?,
-      weight: fields[3] as int?,
+      weight: fields[3] as double?,
       seconds: fields[4] as int?,
     );
   }
@@ -56,7 +56,7 @@ class SetInfoAdapter extends TypeAdapter<SetInfo> {
 SetInfo _$SetInfoFromJson(Map<String, dynamic> json) => SetInfo(
       index: json['index'] as int,
       reps: json['reps'] as int?,
-      weight: json['weight'] as int?,
+      weight: (json['weight'] as num?)?.toDouble(),
       seconds: json['seconds'] as int?,
     );
 

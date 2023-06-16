@@ -288,7 +288,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             left: 0.0,
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: 690,
+              height: MediaQuery.of(context).size.height - 190,
               child: WorkoutVideoPlayer(
                   video: ExerciseVideo(
                       url:
@@ -347,59 +347,52 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   1
                               ? () {
                                   // weight X reps
-                                  if (mounted) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          RepsXWeightSetinfoDialog(
-                                        initialReps:
-                                            modifiedExercises[exerciseIndex]
-                                                .setInfo[setInfoCompleteList[
-                                                    exerciseIndex]]
-                                                .reps!,
-                                        initialWeight:
-                                            modifiedExercises[exerciseIndex]
-                                                .setInfo[setInfoCompleteList[
-                                                    exerciseIndex]]
-                                                .weight!,
-                                        repsController: repsTextController,
-                                        weightController: weightTextController,
-                                        confirmOnTap: () {
-                                          if (mounted) {
-                                            setState(() {
-                                              modifiedExercises[exerciseIndex]
+
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        RepsXWeightSetinfoDialog(
+                                      initialReps:
+                                          modifiedExercises[exerciseIndex]
+                                              .setInfo[setInfoCompleteList[
+                                                  exerciseIndex]]
+                                              .reps!,
+                                      initialWeight:
+                                          modifiedExercises[exerciseIndex]
+                                              .setInfo[setInfoCompleteList[
+                                                  exerciseIndex]]
+                                              .weight!,
+                                    ),
+                                  ).then(
+                                    (value) {
+                                      if (mounted) {
+                                        setState(() {
+                                          modifiedExercises[exerciseIndex]
                                                       .setInfo[
                                                   setInfoCompleteList[
-                                                      exerciseIndex]] = SetInfo(
-                                                  index: modifiedExercises[
-                                                          exerciseIndex]
-                                                      .setInfo[
-                                                          setInfoCompleteList[
-                                                              exerciseIndex]]
-                                                      .index,
-                                                  reps: int.parse(
-                                                      repsTextController.text),
-                                                  weight: int.parse(
-                                                      weightTextController.text));
-                                            });
+                                                      exerciseIndex]] =
+                                              modifiedExercises[exerciseIndex]
+                                                  .setInfo[setInfoCompleteList[
+                                                      exerciseIndex]]
+                                                  .copyWith(
+                                                      reps: int.parse(
+                                                          value['reps']),
+                                                      weight: double.parse(
+                                                          value['weight']));
+                                        });
 
-                                            modifiedBox.whenData(
-                                              (value) async {
-                                                await value.put(
-                                                    modifiedExercises[
-                                                            exerciseIndex]
-                                                        .workoutPlanId,
-                                                    modifiedExercises[
-                                                        exerciseIndex]);
-                                              },
-                                            );
-
-                                            context.pop();
-                                          }
-                                        },
-                                      ),
-                                    );
-                                  }
+                                        modifiedBox.whenData(
+                                          (value) async {
+                                            await value.put(
+                                                modifiedExercises[exerciseIndex]
+                                                    .workoutPlanId,
+                                                modifiedExercises[
+                                                    exerciseIndex]);
+                                          },
+                                        );
+                                      }
+                                    },
+                                  );
                                 }
                               : () {
                                   // reps
@@ -412,40 +405,37 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                                 .setInfo[setInfoCompleteList[
                                                     exerciseIndex]]
                                                 .reps!,
-                                        repsController: repsTextController,
-                                        confirmOnTap: () {
-                                          if (mounted) {
-                                            setState(() {
-                                              modifiedExercises[exerciseIndex]
-                                                      .setInfo[
-                                                  setInfoCompleteList[
-                                                      exerciseIndex]] = SetInfo(
-                                                index: modifiedExercises[
-                                                        exerciseIndex]
+                                      ),
+                                    ).then(
+                                      (value) {
+                                        if (mounted) {
+                                          setState(() {
+                                            modifiedExercises[exerciseIndex]
+                                                        .setInfo[
+                                                    setInfoCompleteList[
+                                                        exerciseIndex]] =
+                                                modifiedExercises[exerciseIndex]
                                                     .setInfo[
                                                         setInfoCompleteList[
                                                             exerciseIndex]]
-                                                    .index,
-                                                reps: int.parse(
-                                                    repsTextController.text),
-                                              );
-                                            });
+                                                    .copyWith(
+                                                      reps: int.parse(
+                                                          value['reps']),
+                                                    );
+                                          });
 
-                                            modifiedBox.whenData(
-                                              (value) async {
-                                                await value.put(
-                                                    modifiedExercises[
-                                                            exerciseIndex]
-                                                        .workoutPlanId,
-                                                    modifiedExercises[
-                                                        exerciseIndex]);
-                                              },
-                                            );
-
-                                            context.pop();
-                                          }
-                                        },
-                                      ),
+                                          modifiedBox.whenData(
+                                            (value) async {
+                                              await value.put(
+                                                  modifiedExercises[
+                                                          exerciseIndex]
+                                                      .workoutPlanId,
+                                                  modifiedExercises[
+                                                      exerciseIndex]);
+                                            },
+                                          );
+                                        }
+                                      },
                                     );
                                   }
                                 },
@@ -518,46 +508,37 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       .setInfo[
                                           setInfoCompleteList[exerciseIndex]]
                                       .seconds!,
-                                  minController: timerMinTextController,
-                                  secController: timerSecondTextController,
-                                  confirmOnTap: () {
-                                    if (mounted) {
-                                      setState(
-                                        () {
-                                          modifiedExercises[exerciseIndex]
-                                                      .setInfo[
-                                                  setInfoCompleteList[
-                                                      exerciseIndex]] =
-                                              modifiedExercises[exerciseIndex]
-                                                  .setInfo[setInfoCompleteList[
-                                                      exerciseIndex]]
-                                                  .copyWith(
-                                                    seconds: int.parse(
-                                                              timerMinTextController
-                                                                  .text,
-                                                            ) *
-                                                            60 +
-                                                        int.parse(
-                                                            timerSecondTextController
-                                                                .text),
-                                                  );
-                                        },
-                                      );
-
-                                      modifiedBox.whenData(
-                                        (value) async {
-                                          await value.put(
-                                              modifiedExercises[exerciseIndex]
-                                                  .workoutPlanId,
-                                              modifiedExercises[exerciseIndex]);
-                                        },
-                                      );
-
-                                      context.pop();
-                                    }
-                                  },
                                 ),
-                              );
+                              ).then((value) {
+                                if (mounted) {
+                                  setState(
+                                    () {
+                                      modifiedExercises[exerciseIndex].setInfo[
+                                              setInfoCompleteList[
+                                                  exerciseIndex]] =
+                                          modifiedExercises[exerciseIndex]
+                                              .setInfo[setInfoCompleteList[
+                                                  exerciseIndex]]
+                                              .copyWith(
+                                                seconds: int.parse(
+                                                          value['min'],
+                                                        ) *
+                                                        60 +
+                                                    int.parse(value['sec']),
+                                              );
+                                    },
+                                  );
+
+                                  modifiedBox.whenData(
+                                    (value) async {
+                                      await value.put(
+                                          modifiedExercises[exerciseIndex]
+                                              .workoutPlanId,
+                                          modifiedExercises[exerciseIndex]);
+                                    },
+                                  );
+                                }
+                              });
                             }
                           },
                           proccessOnTap: () {
@@ -638,46 +619,37 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       .setInfo[
                                           setInfoCompleteList[exerciseIndex]]
                                       .seconds!,
-                                  minController: timerMinTextController,
-                                  secController: timerSecondTextController,
-                                  confirmOnTap: () {
-                                    if (mounted) {
-                                      setState(
-                                        () {
-                                          modifiedExercises[exerciseIndex]
-                                                      .setInfo[
-                                                  setInfoCompleteList[
-                                                      exerciseIndex]] =
-                                              modifiedExercises[exerciseIndex]
-                                                  .setInfo[setInfoCompleteList[
-                                                      exerciseIndex]]
-                                                  .copyWith(
-                                                    seconds: int.parse(
-                                                              timerMinTextController
-                                                                  .text,
-                                                            ) *
-                                                            60 +
-                                                        int.parse(
-                                                            timerSecondTextController
-                                                                .text),
-                                                  );
-                                        },
-                                      );
-
-                                      modifiedBox.whenData(
-                                        (value) async {
-                                          await value.put(
-                                              modifiedExercises[exerciseIndex]
-                                                  .workoutPlanId,
-                                              modifiedExercises[exerciseIndex]);
-                                        },
-                                      );
-
-                                      context.pop();
-                                    }
-                                  },
                                 ),
-                              );
+                              ).then((value) {
+                                if (mounted) {
+                                  setState(
+                                    () {
+                                      modifiedExercises[exerciseIndex].setInfo[
+                                              setInfoCompleteList[
+                                                  exerciseIndex]] =
+                                          modifiedExercises[exerciseIndex]
+                                              .setInfo[setInfoCompleteList[
+                                                  exerciseIndex]]
+                                              .copyWith(
+                                                seconds: int.parse(
+                                                          value['min'],
+                                                        ) *
+                                                        60 +
+                                                    int.parse(value['sec']),
+                                              );
+                                    },
+                                  );
+
+                                  modifiedBox.whenData(
+                                    (value) async {
+                                      await value.put(
+                                          modifiedExercises[exerciseIndex]
+                                              .workoutPlanId,
+                                          modifiedExercises[exerciseIndex]);
+                                    },
+                                  );
+                                }
+                              });
                             }
                           },
                           proccessOnTap: () {

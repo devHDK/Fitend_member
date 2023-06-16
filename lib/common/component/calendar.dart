@@ -11,33 +11,19 @@ class Calendar extends StatelessWidget {
     required this.onDaySelected,
     required this.scheduleDate,
     required this.schedules,
+    required this.firstDay,
+    required this.lastDay,
   });
   final DateTime? selectedDay;
   final DateTime focusedDay;
   final DateTime scheduleDate;
+  final DateTime firstDay;
+  final DateTime lastDay;
   final OnDaySelected onDaySelected;
   final List<WorkoutData> schedules;
 
   @override
   Widget build(BuildContext context) {
-    DateTime today = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
-
-    DateTime firstDay = scheduleDate
-                    .subtract(Duration(days: scheduleDate.weekday - 1))
-                    .compareTo(today) <=
-                0 &&
-            scheduleDate
-                    .add(Duration(days: 7 - scheduleDate.weekday))
-                    .compareTo(today) >=
-                0
-        ? today
-        : scheduleDate;
-    DateTime lastDay =
-        scheduleDate.add(Duration(days: 7 - scheduleDate.weekday));
     Map<String, List<Workout>> map = {
       for (var data in schedules)
         "${data.startDate.month}-${data.startDate.day}": data.workouts!

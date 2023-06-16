@@ -183,13 +183,29 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
   DateTime? firstDay;
   DateTime? lastDay;
   Map<String, List<Workout>>? dateData = {};
+  DateTime today = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
 
   @override
   void initState() {
     super.initState();
     selectedDay = widget.scheduleDate;
     focusedDay = widget.scheduleDate;
-    firstDay = widget.scheduleDate;
+
+    firstDay = widget.scheduleDate
+                    .subtract(Duration(days: widget.scheduleDate.weekday - 1))
+                    .compareTo(today) <=
+                0 &&
+            widget.scheduleDate
+                    .add(Duration(days: 7 - widget.scheduleDate.weekday))
+                    .compareTo(today) >=
+                0
+        ? today
+        : widget.scheduleDate
+            .subtract(Duration(days: widget.scheduleDate.weekday - 1));
     lastDay = widget.scheduleDate
         .add(Duration(days: 7 - widget.scheduleDate.weekday));
   }

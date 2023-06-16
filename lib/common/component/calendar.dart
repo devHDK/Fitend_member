@@ -20,7 +20,22 @@ class Calendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime firstDay = scheduleDate;
+    DateTime today = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+
+    DateTime firstDay = scheduleDate
+                    .subtract(Duration(days: scheduleDate.weekday - 1))
+                    .compareTo(today) <=
+                0 &&
+            scheduleDate
+                    .add(Duration(days: 7 - scheduleDate.weekday))
+                    .compareTo(today) >=
+                0
+        ? today
+        : scheduleDate;
     DateTime lastDay =
         scheduleDate.add(Duration(days: 7 - scheduleDate.weekday));
     Map<String, List<Workout>> map = {

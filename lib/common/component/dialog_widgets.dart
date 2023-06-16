@@ -189,9 +189,8 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
     super.initState();
     selectedDay = widget.scheduleDate;
     focusedDay = widget.scheduleDate;
-    firstDay = widget.scheduleDate
-        .subtract(Duration(days: widget.scheduleDate.weekday - 1));
-    lastDay = lastDay = widget.scheduleDate
+    firstDay = widget.scheduleDate;
+    lastDay = widget.scheduleDate
         .add(Duration(days: 7 - widget.scheduleDate.weekday));
   }
 

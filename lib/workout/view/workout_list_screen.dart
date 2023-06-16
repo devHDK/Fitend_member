@@ -67,7 +67,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
 
     Future.delayed(
       const Duration(
-        milliseconds: 500,
+        milliseconds: 300,
       ),
       () {
         WidgetsBinding.instance.addPostFrameCallback(
@@ -247,6 +247,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               isProcessing = true;
               hasLocal = true;
               break;
+            } else {
+              hasLocal = false;
             }
           }
         },

@@ -53,6 +53,12 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   bool hasLocal = false;
   bool changedDate = false;
 
+  final today = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
   @override
   void initState() {
     super.initState();
@@ -264,7 +270,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           ),
         ),
         actions: [
-          if (!model.isWorkoutComplete)
+          if (!model.isWorkoutComplete &&
+              DateTime.parse(model.startDate).compareTo(today) >= 0 &&
+              !hasLocal)
             GestureDetector(
               onTap: () async {
                 await showDialog(

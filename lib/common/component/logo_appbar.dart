@@ -3,10 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
+  final GestureTapCallback? tapLogo;
 
   const LogoAppbar({
     super.key,
     this.actions,
+    this.tapLogo,
   });
 
   @override
@@ -18,12 +20,15 @@ class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: false,
       title: Padding(
         padding: const EdgeInsets.only(left: 10),
-        child: Text(
-          'F I T E N D',
-          style: GoogleFonts.audiowide(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w400,
+        child: InkWell(
+          onTap: tapLogo != null ? () => tapLogo!() : null,
+          child: Text(
+            'F I T E N D',
+            style: GoogleFonts.audiowide(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
       ),

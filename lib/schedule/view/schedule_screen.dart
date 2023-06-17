@@ -29,6 +29,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   DateTime maxDate = DateTime(DateTime.now().year);
   int initListItemCount = 0;
   int refetchItemCount = 0;
+  int todayLocation = 0;
   bool initial = true;
 
   @override
@@ -48,6 +49,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         controller.jumpTo(
           130 * 14 + 130.0 * initListItemCount,
         );
+
+        todayLocation += 130 * 14 + 130 * initListItemCount;
+
         refetchItemCount = 0;
 
         initial = false;
@@ -74,6 +78,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       double previousOffset = controller.offset;
       controller.jumpTo(
           previousOffset + (130 * 31 + 130 * refetchItemCount)); //기존 위치로 이동
+      todayLocation += 130 * 31 + 130 * refetchItemCount;
       refetchItemCount = 0;
     }
 
@@ -137,6 +142,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       child: Scaffold(
         backgroundColor: BACKGROUND_COLOR,
         appBar: LogoAppbar(
+          tapLogo: () {
+            controller.animateTo(todayLocation.toDouble(),
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.ease);
+          },
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 28.0),

@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,19 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDjjXhqajEtaLLTjb6Z7ZF8pkFbSL0kR9c',
-    appId: '1:924335070648:web:10e1ec9e1a1d196cd0c34d',
-    messagingSenderId: '924335070648',
-    projectId: 'fitend-dev',
-    authDomain: 'fitend-dev.firebaseapp.com',
-    storageBucket: 'fitend-dev.appspot.com',
-    measurementId: 'G-L8FKC1XEZ4',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAuBICRjn3xDdkfB4OR2sMCeb1xCRdLdQU',
-    appId: '1:924335070648:android:c4e1d8329ad00c53d0c34d',
+    appId: '1:924335070648:android:17f062e557f7694dd0c34d',
     messagingSenderId: '924335070648',
     projectId: 'fitend-dev',
     storageBucket: 'fitend-dev.appspot.com',
@@ -63,21 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDVAIzD3KEbglHNVxrw2wQCNCUkG2_59CQ',
-    appId: '1:924335070648:ios:a5e47bac794a7f59d0c34d',
+    appId: '1:924335070648:ios:fcdb81e98c4b8c0cd0c34d',
     messagingSenderId: '924335070648',
     projectId: 'fitend-dev',
     storageBucket: 'fitend-dev.appspot.com',
-    iosClientId: '924335070648-1588ljumlljub951oubsjstombqvcgvl.apps.googleusercontent.com',
-    iosBundleId: 'com.raid.fitend',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDVAIzD3KEbglHNVxrw2wQCNCUkG2_59CQ',
-    appId: '1:924335070648:ios:caf83df2601bb27ad0c34d',
-    messagingSenderId: '924335070648',
-    projectId: 'fitend-dev',
-    storageBucket: 'fitend-dev.appspot.com',
-    iosClientId: '924335070648-rch874oqi7ks8ct6oev3c0ts7u243m4i.apps.googleusercontent.com',
-    iosBundleId: 'com.raid.fitendMember',
+    iosClientId: '924335070648-9ul1f73qal52dq8tloa4ho78fsld9eur.apps.googleusercontent.com',
+    iosBundleId: 'com.raid.fitend.dev',
   );
 }

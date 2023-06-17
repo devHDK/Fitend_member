@@ -70,8 +70,8 @@ class _RepsXWeightSetinfoDialogState extends State<RepsXWeightSetinfoDialog> {
   void weightControllerListener() {
     try {
       if (weightController.text.isNotEmpty &&
-          double.parse(weightController.text) > 999.9) {
-        weightController.text = (999.9).toString();
+          double.parse(weightController.text) > 999.0) {
+        weightController.text = (999.0).toString();
       }
 
       buttonEnable = true;

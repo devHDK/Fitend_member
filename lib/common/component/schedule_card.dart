@@ -1,21 +1,27 @@
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
+import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class ScheduleCard extends StatefulWidget {
+class ScheduleCard extends ConsumerStatefulWidget {
   final DateTime? date;
   final String? title;
   final String? subTitle;
   final String? time;
   final bool? isComplete;
+  final bool? isRecord;
   final String? type;
   final bool selected;
   final bool? isDateVisible;
   final int? workoutScheduleId;
   final Function? onNotifyParent;
+  final List<Exercise>? exercises;
 
   const ScheduleCard({
     super.key,
@@ -24,11 +30,13 @@ class ScheduleCard extends StatefulWidget {
     this.subTitle,
     this.time,
     this.isComplete,
+    this.isRecord,
     this.type,
     required this.selected,
     this.isDateVisible = true,
     this.workoutScheduleId,
     this.onNotifyParent,
+    this.exercises,
   });
 
   factory ScheduleCard.fromModel({
@@ -36,25 +44,34 @@ class ScheduleCard extends StatefulWidget {
     required Workout model,
     bool? isDateVisible,
     VoidCallback? onNotifyParent,
+    List<Exercise>? exercises,
   }) {
     return ScheduleCard(
       date: date,
       title: model.title,
       subTitle: model.subTitle,
       isComplete: model.isComplete,
+      isRecord: model.isRecord,
       type: '',
       selected: model.selected!,
       isDateVisible: isDateVisible,
       workoutScheduleId: model.workoutScheduleId,
       onNotifyParent: onNotifyParent ?? onNotifyParent,
+      exercises: exercises ?? exercises,
     );
   }
 
   @override
-  State<ScheduleCard> createState() => _ScheduleCardState();
+  ConsumerState<ScheduleCard> createState() => _ScheduleCardState();
 }
 
-class _ScheduleCardState extends State<ScheduleCard> {
+class _ScheduleCardState extends ConsumerState<ScheduleCard> {
+  DateTime today = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -83,9 +100,11 @@ class _ScheduleCardState extends State<ScheduleCard> {
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: widget.selected &&
-                              widget.isDateVisible! &&
-                              widget.date != null
+                      color: (widget.selected &&
+                                  widget.isDateVisible! &&
+                                  widget.date != null) ||
+                              (widget.date != null &&
+                                  widget.date!.compareTo(today) == 0)
                           ? Colors.white
                           : Colors.transparent,
                     ),
@@ -166,23 +185,11 @@ class _ScheduleCardState extends State<ScheduleCard> {
                   )
                 else if (!widget.isComplete! &&
                     !widget.selected &&
-                    widget.date!.isAfter(
-                      DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day,
-                      ),
-                    )) //오늘, 오늘 이후 스케줄이 미완료
+                    widget.date!.isAfter(today)) //오늘, 오늘 이후 스케줄이 미완료
                   Image.asset('asset/img/round_checked.png')
                 else if (!widget.isComplete! &&
                     !widget.selected &&
-                    widget.date!.isBefore(
-                      DateTime(
-                        DateTime.now().year,
-                        DateTime.now().month,
-                        DateTime.now().day,
-                      ),
-                    )) // 어제 스케줄이 미완료
+                    widget.date!.isBefore(today)) // 어제 스케줄이 미완료
                   Image.asset('asset/img/round_fail.png')
                 else if (widget.isComplete! && !widget.selected)
                   Image.asset('asset/img/round_success.png') // 스케줄이 완료 일때
@@ -199,29 +206,53 @@ class _ScheduleCardState extends State<ScheduleCard> {
                     height: 44,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: POINT_COLOR,
+                        backgroundColor:
+                            (widget.isRecord! && !widget.isComplete!)
+                                ? Colors.white
+                                : POINT_COLOR,
                       ),
                       onPressed: widget.workoutScheduleId == null
                           ? null
-                          : () async {
-                              var dateChanged = await context.pushNamed(
-                                  WorkoutListScreen.routeName,
-                                  pathParameters: {
-                                    'workoutScheduleId':
-                                        widget.workoutScheduleId!.toString(),
-                                  });
+                          : (widget.isRecord! && !widget.isComplete!)
+                              ? () async {
+                                  final ret = await ref
+                                      .read(workoutScheduleRepositoryProvider)
+                                      .getWorkout(
+                                          id: widget.workoutScheduleId!);
 
-                              if (dateChanged == true &&
-                                  widget.onNotifyParent != null) {
-                                widget.onNotifyParent!();
-                              }
-                            },
-                      child: const Text(
-                        '운동확인 하기🔍',
+                                  GoRouter.of(context).goNamed(
+                                    WorkoutFeedbackScreen.routeName,
+                                    pathParameters: {
+                                      'workoutScheduleId':
+                                          widget.workoutScheduleId.toString(),
+                                    },
+                                    extra: ret.exercises,
+                                  );
+                                }
+                              : () async {
+                                  var dateChanged = await context.pushNamed(
+                                      WorkoutListScreen.routeName,
+                                      pathParameters: {
+                                        'workoutScheduleId': widget
+                                            .workoutScheduleId!
+                                            .toString(),
+                                      });
+
+                                  if (dateChanged == true &&
+                                      widget.onNotifyParent != null) {
+                                    widget.onNotifyParent!();
+                                  }
+                                },
+                      child: Text(
+                        (widget.isRecord! && !widget.isComplete!)
+                            ? '운동 평가하기 📝'
+                            : '운동확인 하기🔍',
                         style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: (widget.isRecord! && !widget.isComplete!)
+                                ? POINT_COLOR
+                                : Colors.white),
                       ),
                     ),
                   )

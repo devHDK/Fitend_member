@@ -16,12 +16,12 @@ class WorkoutFeedbackScreen extends ConsumerStatefulWidget {
   static String get routeName => 'workoutFeedback';
 
   final int workoutScheduleId;
-  final List<Exercise> exercises;
+  final List<Exercise>? exercises;
 
   const WorkoutFeedbackScreen({
     super.key,
     required this.workoutScheduleId,
-    required this.exercises,
+    this.exercises,
   });
 
   @override

@@ -37,25 +37,20 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     super.initState();
     controller.addListener(listener);
 
-    // Future.delayed(const Duration(milliseconds: 300), () {
-    //   controller.jumpTo(
-    //     130 * 14 + 130.0 * initListItemCount,
-    //   );
-    //   refetchItemCount = 0;
-    // });
+    Future.delayed(const Duration(milliseconds: 100), () {
+      WidgetsBinding.instance.addPersistentFrameCallback((_) {
+        if (initial) {
+          controller.jumpTo(
+            130 * 14 + 130.0 * initListItemCount,
+          );
 
-    WidgetsBinding.instance.addPersistentFrameCallback((_) {
-      if (initial) {
-        controller.jumpTo(
-          130 * 14 + 130.0 * initListItemCount,
-        );
+          todayLocation += 130 * 14 + 130 * initListItemCount;
 
-        todayLocation += 130 * 14 + 130 * initListItemCount;
+          refetchItemCount = 0;
 
-        refetchItemCount = 0;
-
-        initial = false;
-      }
+          initial = false;
+        }
+      });
     });
   }
 

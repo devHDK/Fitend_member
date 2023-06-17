@@ -21,6 +21,7 @@ class WorkoutModel extends WorkoutModelBase {
   final List<String> targetMuscleTypes;
   final String workoutTotalTime;
   final bool isWorkoutComplete;
+  final bool isRecord;
   final List<Exercise> exercises;
 
   WorkoutModel({
@@ -32,6 +33,7 @@ class WorkoutModel extends WorkoutModelBase {
     required this.workoutTotalTime,
     required this.isWorkoutComplete,
     required this.exercises,
+    required this.isRecord,
   });
 
   WorkoutModel copyWith({
@@ -42,6 +44,7 @@ class WorkoutModel extends WorkoutModelBase {
     List<String>? targetMuscleTypes,
     String? workoutTotalTime,
     bool? isWorkoutComplete,
+    bool? isRecord,
     List<Exercise>? exercises,
   }) =>
       WorkoutModel(
@@ -52,6 +55,7 @@ class WorkoutModel extends WorkoutModelBase {
         targetMuscleTypes: targetMuscleTypes ?? this.targetMuscleTypes,
         workoutTotalTime: workoutTotalTime ?? this.workoutTotalTime,
         isWorkoutComplete: isWorkoutComplete ?? this.isWorkoutComplete,
+        isRecord: isRecord ?? this.isRecord,
         exercises: exercises ?? this.exercises,
       );
 

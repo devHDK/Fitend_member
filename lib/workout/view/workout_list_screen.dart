@@ -50,6 +50,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   bool isProcessing = false;
   bool isPoped = false;
   bool isWorkoutComplete = false;
+  bool isRecorded = false;
   bool initial = true;
   bool hasLocal = false;
   bool changedDate = false;
@@ -75,14 +76,14 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           (timeStamp) {
             if (initial) {
               print(hasLocal);
-              if (isWorkoutComplete && !hasLocal) {
+              if ((isWorkoutComplete || isRecorded) && !hasLocal) {
                 print('getWorkoutResults');
                 ref
                     .read(workoutRecordsProvider(widget.id).notifier)
                     .getWorkoutResults(workoutScheduleId: widget.id);
               }
 
-              if (isProcessing && !isPoped && !isWorkoutComplete) {
+              if (isProcessing && !isPoped && !isRecorded) {
                 _showConfirmDialog();
                 isProcessing = false;
               }
@@ -150,6 +151,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     workoutResult = workoutResultBox;
 
     isWorkoutComplete = model.isWorkoutComplete;
+    isRecorded = model.isRecord;
 
     if (model.isWorkoutComplete) {
       // 완료된 운동
@@ -417,7 +419,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Container(
@@ -491,14 +493,31 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                     );
 
                     await Navigator.of(context)
-                        .push(MaterialPageRoute(
-                      builder: (context) => WorkoutScreen(
-                        exercises: model.exercises,
-                        date: DateTime.parse(model.startDate),
-                        workout: model,
-                        workoutScheduleId: widget.id,
+                        .push(
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 300),
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            WorkoutScreen(
+                          exercises: model.exercises,
+                          date: DateTime.parse(model.startDate),
+                          workout: model,
+                          workoutScheduleId: widget.id,
+                        ),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) =>
+                                SlideTransition(
+                          position: animation.drive(
+                            Tween(
+                              begin: const Offset(1.0, 0),
+                              end: Offset.zero,
+                            ).chain(
+                              CurveTween(curve: Curves.linearToEaseOut),
+                            ),
+                          ),
+                          child: child,
+                        ),
                       ),
-                    ))
+                    )
                         .then((value) {
                       setState(() {
                         isPoped = true;
@@ -535,12 +554,27 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
 
             await Navigator.of(context)
                 .push(
-              MaterialPageRoute(
-                builder: (context) => WorkoutScreen(
+              PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 300),
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    WorkoutScreen(
                   exercises: workoutModel.exercises,
                   date: DateTime.parse(workoutModel.startDate),
                   workout: workoutModel,
                   workoutScheduleId: widget.id,
+                ),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                        SlideTransition(
+                  position: animation.drive(
+                    Tween(
+                      begin: const Offset(1.0, 0),
+                      end: Offset.zero,
+                    ).chain(
+                      CurveTween(curve: Curves.linearToEaseOut),
+                    ),
+                  ),
+                  child: child,
                 ),
               ),
             )
@@ -602,14 +636,31 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             Navigator.of(context).pop();
 
             await Navigator.of(context)
-                .push(MaterialPageRoute(
-              builder: (context) => WorkoutScreen(
-                exercises: workoutModel.exercises,
-                date: DateTime.parse(workoutModel.startDate),
-                workout: workoutModel,
-                workoutScheduleId: widget.id,
+                .push(
+              PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 300),
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    WorkoutScreen(
+                  exercises: workoutModel.exercises,
+                  date: DateTime.parse(workoutModel.startDate),
+                  workout: workoutModel,
+                  workoutScheduleId: widget.id,
+                ),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) =>
+                        SlideTransition(
+                  position: animation.drive(
+                    Tween(
+                      begin: const Offset(1.0, 0),
+                      end: Offset.zero,
+                    ).chain(
+                      CurveTween(curve: Curves.linearToEaseOut),
+                    ),
+                  ),
+                  child: child,
+                ),
               ),
-            ))
+            )
                 .then((value) {
               setState(() {
                 isPoped = true;

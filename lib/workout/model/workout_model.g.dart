@@ -19,6 +19,7 @@ WorkoutModel _$WorkoutModelFromJson(Map<String, dynamic> json) => WorkoutModel(
       exercises: (json['exercises'] as List<dynamic>)
           .map((e) => Exercise.fromJson(e as Map<String, dynamic>))
           .toList(),
+      isRecord: json['isRecord'] as bool,
     );
 
 Map<String, dynamic> _$WorkoutModelToJson(WorkoutModel instance) =>
@@ -30,5 +31,6 @@ Map<String, dynamic> _$WorkoutModelToJson(WorkoutModel instance) =>
       'targetMuscleTypes': instance.targetMuscleTypes,
       'workoutTotalTime': instance.workoutTotalTime,
       'isWorkoutComplete': instance.isWorkoutComplete,
+      'isRecord': instance.isRecord,
       'exercises': instance.exercises,
     };

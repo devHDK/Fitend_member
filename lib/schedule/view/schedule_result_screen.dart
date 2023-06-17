@@ -4,8 +4,10 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
+import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_records_provider.dart';
@@ -53,6 +55,9 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   List<WorkoutRecordModel> workoutRecords = [];
   bool initial = true;
   bool hasLocalData = false;
+  DateTime startDate = DateTime(
+    DateTime.now().year,
+  );
 
   @override
   void initState() {
@@ -121,6 +126,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       }
 
       if (pstate is WorkoutResultModel) {
+        startDate = DateTime.parse(pstate.startDate);
         state = pstate;
         state = state.copyWith(
             startDate:
@@ -128,7 +134,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       }
     } else {
       print('debug workoutResults : $workoutResults');
-
+      startDate = feedback!.startDate;
       workoutResultBox.whenData(
         (value) {
           workoutResults = [];
@@ -197,13 +203,24 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 20),
             child: IconButton(
-              onPressed: () => context.goNamed(
-                WorkoutListScreen.routeName,
-                pathParameters: {
-                  "workoutScheduleId": widget.workoutScheduleId.toString(),
-                },
-                extra: true,
-              ),
+              onPressed: () {
+                ref
+                    .read(workoutScheduleProvider(DataUtils.getDate(
+                            DateTime.now().subtract(const Duration(days: 15))))
+                        .notifier)
+                    .updateScheduleState(
+                      workoutScheduleId: widget.workoutScheduleId,
+                      startDate: startDate,
+                    );
+
+                context.goNamed(
+                  WorkoutListScreen.routeName,
+                  pathParameters: {
+                    "workoutScheduleId": widget.workoutScheduleId.toString(),
+                  },
+                  extra: true,
+                );
+              },
               icon: const Icon(
                 Icons.close_sharp,
                 color: Colors.white,

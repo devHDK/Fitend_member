@@ -123,5 +123,28 @@ class WorkoutScheduleStateNotifier
     print('schedule state update!!');
   }
 
-  void updateScheduleState() {}
+  void updateScheduleState(
+      {required int workoutScheduleId, required DateTime startDate}) {
+    //이전 스케줄 인덱스
+    final beforeChangeScheduleIndex = scheduleListGlobal.indexWhere(
+      (element) {
+        return element.startDate == startDate;
+      },
+    );
+
+    //이전 워크아웃 인덱스
+    final beforWorkoutIndex = scheduleListGlobal[beforeChangeScheduleIndex]
+        .workouts!
+        .indexWhere(
+            (element) => element.workoutScheduleId == workoutScheduleId);
+
+    scheduleListGlobal[beforeChangeScheduleIndex].workouts![beforWorkoutIndex] =
+        scheduleListGlobal[beforeChangeScheduleIndex]
+            .workouts![beforWorkoutIndex]
+            .copyWith(
+              isComplete: true,
+              isRecord: true,
+            );
+    state = WorkoutScheduleModel(data: scheduleListGlobal);
+  }
 }

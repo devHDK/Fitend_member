@@ -42,12 +42,18 @@ class AuthProvider extends ChangeNotifier {
         GoRoute(
           path: '/splash',
           name: SplashScreen.routeName,
-          builder: (context, state) => const SplashScreen(),
+          pageBuilder: (context, state) => _fadeTransition(
+            state,
+            const SplashScreen(),
+          ),
           routes: [
             GoRoute(
               path: 'login',
               name: LoginScreen.routeName,
-              builder: (context, state) => const LoginScreen(),
+              pageBuilder: (context, state) => _rightToLeftTransiton(
+                state,
+                const LoginScreen(),
+              ),
             ),
           ],
         ),
@@ -59,27 +65,24 @@ class AuthProvider extends ChangeNotifier {
             GoRoute(
               path: 'workout/:workoutScheduleId',
               name: WorkoutListScreen.routeName,
-              // builder: (context, state) => WorkoutListScreen(
-              //   id: int.parse(state.pathParameters['workoutScheduleId']!),
-              // ),
               pageBuilder: (context, state) {
-                return CustomTransitionPage<void>(
-                  key: state.pageKey,
-                  child: WorkoutListScreen(
+                return _rightToLeftTransiton(
+                  state,
+                  WorkoutListScreen(
                     id: int.parse(state.pathParameters['workoutScheduleId']!),
                   ),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) =>
-                          FadeTransition(opacity: animation, child: child),
                 );
               },
               routes: [
                 GoRoute(
                   path: 'exercise',
                   name: ExerciseScreen.routeName,
-                  builder: (context, state) => ExerciseScreen(
-                    id: int.parse(state.pathParameters['workoutScheduleId']!),
-                    exercise: state.extra as Exercise,
+                  pageBuilder: (context, state) => _rightToLeftTransiton(
+                    state,
+                    ExerciseScreen(
+                      id: int.parse(state.pathParameters['workoutScheduleId']!),
+                      exercise: state.extra as Exercise,
+                    ),
                   ),
                 ),
               ],
@@ -87,55 +90,34 @@ class AuthProvider extends ChangeNotifier {
             GoRoute(
               path: 'mypage',
               name: MyPageScreen.routeName,
-              builder: (context, state) => const MyPageScreen(),
+              pageBuilder: (context, state) => _rightToLeftTransiton(
+                state,
+                const MyPageScreen(),
+              ),
             ),
             GoRoute(
               path: 'workoutFeedback/:workoutScheduleId',
               name: WorkoutFeedbackScreen.routeName,
-              builder: (context, state) => WorkoutFeedbackScreen(
-                workoutScheduleId:
-                    int.parse(state.pathParameters['workoutScheduleId']!),
-                exercises: state.extra as List<Exercise>,
+              pageBuilder: (context, state) => _botToTopTransiton(
+                state,
+                WorkoutFeedbackScreen(
+                  workoutScheduleId:
+                      int.parse(state.pathParameters['workoutScheduleId']!),
+                  exercises: state.extra as List<Exercise>,
+                ),
               ),
             ),
             GoRoute(
               path: 'scheduleResult/:workoutScheduleId',
               name: ScheduleResultScreen.routeName,
-              // builder: (context, state) => ScheduleResultScreen(
-              //   workoutScheduleId:
-              //       int.parse(state.pathParameters["workoutScheduleId"]!),
-              //   exercises: state.extra as List<Exercise>,
-              // ),
               pageBuilder: (context, state) {
-                return CustomTransitionPage<void>(
-                  key: state.pageKey,
-                  child: ScheduleResultScreen(
+                return _botToTopTransiton(
+                  state,
+                  ScheduleResultScreen(
                     workoutScheduleId:
                         int.parse(state.pathParameters["workoutScheduleId"]!),
                     exercises: state.extra as List<Exercise>,
                     key: state.pageKey,
-                  ),
-                  transitionDuration: const Duration(microseconds: 3000),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) =>
-                          SlideTransition(
-                    position: animation.drive(
-                      Tween(
-                        begin: const Offset(0, 4.0),
-                        end: Offset.zero,
-                      ).chain(
-                        CurveTween(curve: Curves.ease),
-                      ),
-                    ),
-                    // Tween(
-                    //   begin: const Offset(0, 4.0),
-                    //   end: const Offset(0, 0),
-                    // ).animate(animation),
-                    child: ScheduleResultScreen(
-                      workoutScheduleId:
-                          int.parse(state.pathParameters["workoutScheduleId"]!),
-                      exercises: state.extra as List<Exercise>,
-                    ),
                   ),
                 );
               },
@@ -148,6 +130,56 @@ class AuthProvider extends ChangeNotifier {
           builder: (context, state) => const ErrorScreen(),
         ),
       ];
+
+  CustomTransitionPage<void> _fadeTransition(
+      GoRouterState state, Widget widget) {
+    return CustomTransitionPage<void>(
+      key: state.pageKey,
+      child: widget,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+          FadeTransition(opacity: animation, child: child),
+    );
+  }
+
+  CustomTransitionPage<void> _botToTopTransiton(
+      GoRouterState state, Widget widget) {
+    return CustomTransitionPage<void>(
+      key: state.pageKey,
+      child: widget,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+          SlideTransition(
+        position: animation.drive(
+          Tween(
+            begin: const Offset(0, 2.0),
+            end: Offset.zero,
+          ).chain(
+            CurveTween(curve: Curves.ease),
+          ),
+        ),
+        child: child,
+      ),
+    );
+  }
+
+  CustomTransitionPage<void> _rightToLeftTransiton(
+      GoRouterState state, Widget widget) {
+    return CustomTransitionPage<void>(
+      key: state.pageKey,
+      child: widget,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+          SlideTransition(
+        position: animation.drive(
+          Tween(
+            begin: const Offset(1.0, 0),
+            end: Offset.zero,
+          ).chain(
+            CurveTween(curve: Curves.ease),
+          ),
+        ),
+        child: child,
+      ),
+    );
+  }
 
   Future<String?> redirectLogic(
       BuildContext context, GoRouterState state) async {

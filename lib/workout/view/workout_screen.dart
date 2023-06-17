@@ -968,10 +968,25 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               onTap: () async {
                 Navigator.of(context)
                     .push(
-                  MaterialPageRoute(
-                    builder: (context) => WorkoutChangeScreen(
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 300),
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        WorkoutChangeScreen(
                       exerciseIndex: exerciseIndex,
                       workout: widget.workout,
+                    ),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) =>
+                            SlideTransition(
+                      position: animation.drive(
+                        Tween(
+                          begin: const Offset(1.0, 0),
+                          end: Offset.zero,
+                        ).chain(
+                          CurveTween(curve: Curves.linearToEaseOut),
+                        ),
+                      ),
+                      child: child,
                     ),
                   ),
                 )
@@ -991,10 +1006,27 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               img: 'asset/img/icon_guide.png',
               name: '운동 가이드',
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      ExerciseScreen(exercise: widget.exercises[exerciseIndex]),
-                ));
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 300),
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        ExerciseScreen(
+                            exercise: widget.exercises[exerciseIndex]),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) =>
+                            SlideTransition(
+                      position: animation.drive(
+                        Tween(
+                          begin: const Offset(1.0, 0),
+                          end: Offset.zero,
+                        ).chain(
+                          CurveTween(curve: Curves.linearToEaseOut),
+                        ),
+                      ),
+                      child: child,
+                    ),
+                  ),
+                );
               },
             ),
             _IconButton(
@@ -1064,8 +1096,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     setInfo: [],
                                   );
                                   for (int j = 0; j < maxSetInfoList[i]; j++) {
-                                    tempRecord.setInfo
-                                        .add(SetInfo(index: j + 1));
+                                    tempRecord.setInfo.add(SetInfo(
+                                      index: j + 1,
+                                    ));
                                   }
                                   value.put(widget.exercises[i].workoutPlanId,
                                       tempRecord);

@@ -103,11 +103,28 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
                             password: _passwordController.text),
                       );
 
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => PasswordChangeScreen(
-                      password: _passwordController.text,
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 300),
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          PasswordChangeScreen(
+                        password: _passwordController.text,
+                      ),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) =>
+                              SlideTransition(
+                        position: animation.drive(
+                          Tween(
+                            begin: const Offset(1.0, 0),
+                            end: Offset.zero,
+                          ).chain(
+                            CurveTween(curve: Curves.linearToEaseOut),
+                          ),
+                        ),
+                        child: child,
+                      ),
                     ),
-                  ));
+                  );
                   setState(() {
                     buttonOn = true;
                   });

@@ -100,8 +100,23 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             InkWell(
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const PasswordConfirmScreen(),
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 300),
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const PasswordConfirmScreen(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) =>
+                            SlideTransition(
+                      position: animation.drive(
+                        Tween(
+                          begin: const Offset(1.0, 0),
+                          end: Offset.zero,
+                        ).chain(
+                          CurveTween(curve: Curves.linearToEaseOut),
+                        ),
+                      ),
+                      child: child,
+                    ),
                   ),
                 );
               },

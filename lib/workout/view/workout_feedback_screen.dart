@@ -57,8 +57,8 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         setState(() {
           focusNode.requestFocus();
           addKeyboardHeightListener();
-          print('scrollController.offset :  ${scrollController.offset}');
-          print('keyboardHeight :  $keyboardHeight');
+          // print('scrollController.offset :  ${scrollController.offset}');
+          // print('keyboardHeight :  $keyboardHeight');
           scrollController.animateTo(
             _scrollOffset + 345,
             duration: const Duration(milliseconds: 200),
@@ -90,7 +90,6 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
   void addKeyboardHeightListener() {
     final viewInsets = MediaQuery.of(context).viewInsets;
     final newKeyboardHeight = viewInsets.bottom;
-    print('newKeyboardHeight : $newKeyboardHeight');
     if (newKeyboardHeight > 0) {
       setState(() => keyboardHeight = newKeyboardHeight);
     } else {
@@ -185,7 +184,8 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                               }
                             : () async {
                                 try {
-                                  await repository.postWorkoutRecordsFeedback(
+                                  await repository
+                                      .postWorkoutRecordsFeedback(
                                     id: widget.workoutScheduleId,
                                     body: PostWorkoutRecordFeedbackModel(
                                       strengthIndex: strengthIndex,
@@ -194,41 +194,42 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                           ? null
                                           : contentsController.text,
                                     ),
-                                  );
+                                  )
+                                      .then((value) {
+                                    workoutFeedbackBox.whenData(
+                                      (value) {
+                                        final record =
+                                            value.get(widget.workoutScheduleId);
 
-                                  workoutFeedbackBox.whenData(
-                                    (value) {
-                                      final record =
-                                          value.get(widget.workoutScheduleId);
+                                        if (record != null &&
+                                            record
+                                                is WorkoutFeedbackRecordModel) {
+                                          value.put(
+                                            widget.workoutScheduleId,
+                                            record.copyWith(
+                                              strengthIndex: strengthIndex,
+                                              issueIndexes: issueIndexes,
+                                              contents: contentsController
+                                                      .text.isEmpty
+                                                  ? null
+                                                  : contentsController.text,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    );
 
-                                      if (record != null &&
-                                          record
-                                              is WorkoutFeedbackRecordModel) {
-                                        value.put(
-                                          widget.workoutScheduleId,
-                                          record.copyWith(
-                                            strengthIndex: strengthIndex,
-                                            issueIndexes: issueIndexes,
-                                            contents:
-                                                contentsController.text.isEmpty
-                                                    ? null
-                                                    : contentsController.text,
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  );
-
-                                  context.goNamed(
-                                    ScheduleResultScreen.routeName,
-                                    pathParameters: {
-                                      "workoutScheduleId":
-                                          widget.workoutScheduleId.toString(),
-                                    },
-                                    extra: widget.exercises,
-                                  );
+                                    context.goNamed(
+                                      ScheduleResultScreen.routeName,
+                                      pathParameters: {
+                                        "workoutScheduleId":
+                                            widget.workoutScheduleId.toString(),
+                                      },
+                                      extra: widget.exercises,
+                                    );
+                                  });
                                 } on DioError catch (e) {
-                                  print(e.message);
+                                  // print(e.message);
 
                                   showDialog(
                                     barrierDismissible: false,

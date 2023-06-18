@@ -1,5 +1,5 @@
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
-import 'package:fitend_member/exercise/model/setInfo_model.dart';
+import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/exercise/model/target_muscle_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';

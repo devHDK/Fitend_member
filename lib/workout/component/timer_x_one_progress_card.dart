@@ -5,7 +5,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
-import 'package:fitend_member/exercise/model/setInfo_model.dart';
+import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -70,7 +70,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
             });
           }
         });
-        print('totalSeconds : $totalSeconds');
+        // print('totalSeconds : $totalSeconds');
         initial = false;
       }
     });
@@ -154,11 +154,11 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
               ),
             );
           });
-        } else {
-          setState(() {
-            totalSeconds = widget.exercise.setInfo[0].seconds!;
-          });
         }
+      } else {
+        setState(() {
+          totalSeconds = widget.exercise.setInfo[0].seconds!;
+        });
       }
     });
   }

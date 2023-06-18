@@ -1,4 +1,3 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/layout/default_layout.dart';
 import 'package:fitend_member/flavors.dart';

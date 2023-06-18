@@ -5,11 +5,12 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
-import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
+import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
-import 'package:fitend_member/exercise/model/setInfo_model.dart';
+import 'package:fitend_member/exercise/model/exercise_model.dart';
+import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
@@ -75,9 +76,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         WidgetsBinding.instance.addPostFrameCallback(
           (timeStamp) {
             if (initial) {
-              print(hasLocal);
               if ((isWorkoutComplete || isRecorded) && !hasLocal) {
-                print('getWorkoutResults');
                 ref
                     .read(workoutRecordsProvider(widget.id).notifier)
                     .getWorkoutResults(workoutScheduleId: widget.id);
@@ -138,7 +137,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     }
 
     final model = state as WorkoutModel;
-
     workoutModel = model;
 
     // print(
@@ -176,7 +174,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       workoutFeedbackBox.whenData(
         (value) {
           final record = value.get(widget.id);
-          print('$record');
           if ((record == null) && pstate is WorkoutResultModel) {
             value.put(
               widget.id,
@@ -225,6 +222,20 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                     pstate.workoutRecords[i].setInfo[0]);
                 hasLocal = false;
               }
+            }
+          }
+        }
+      });
+
+      modifiedExerciseBox.whenData((value) {
+        for (var exercise in model.exercises) {
+          if ((exercise.trackingFieldId == 3 ||
+                  exercise.trackingFieldId == 4) &&
+              exercise.setInfo.length == 1) {
+            final record = value.get(exercise.workoutPlanId);
+
+            if (record != null && record is Exercise) {
+              exercise.setInfo[0] = record.setInfo[0];
             }
           }
         }
@@ -597,30 +608,30 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               },
             );
 
-            timerXmoreBox.whenData((value) {
+            timerXmoreBox.whenData((value) async {
               for (var element in workoutModel.exercises) {
                 if ((element.trackingFieldId == 3 ||
                         element.trackingFieldId == 4) &&
                     element.setInfo.length > 1) {
-                  value.delete(element.workoutPlanId);
+                  await value.delete(element.workoutPlanId);
                 }
               }
             });
 
-            timerXoneBox.whenData((value) {
+            timerXoneBox.whenData((value) async {
               for (var element in workoutModel.exercises) {
                 if ((element.trackingFieldId == 3 ||
                         element.trackingFieldId == 4) &&
                     element.setInfo.length == 1) {
-                  value.delete(element.workoutPlanId);
+                  await value.delete(element.workoutPlanId);
                 }
               }
             });
 
             workoutResult.whenData(
-              (value) {
+              (value) async {
                 for (var element in workoutModel.exercises) {
-                  value.delete(element.workoutPlanId);
+                  await value.delete(element.workoutPlanId);
                 }
               },
             );

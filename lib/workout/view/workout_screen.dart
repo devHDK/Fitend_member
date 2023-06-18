@@ -10,12 +10,12 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
-import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
+import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
-import 'package:fitend_member/exercise/model/setInfo_model.dart';
+import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/dialog/reps_seinfo_dialog_widgets.dart';
 import 'package:fitend_member/workout/component/dialog/timer_seinfo_dialog_widgets.dart';
@@ -152,8 +152,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 
   void onTooltipPressed() {
-    print('isTooltipVisible : $isTooltipVisible');
-
     if (isTooltipVisible) {
       timer.cancel();
       setState(() {
@@ -458,10 +456,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   }
                                 },
                           proccessOnTap: () {
-                            print('exerciseIndex : $exerciseIndex');
-                            print(
-                                'setInfoCompleteList[exerciseIndex] : ${setInfoCompleteList[exerciseIndex]}');
-
                             if (exerciseIndex <= maxExcerciseIndex &&
                                 setInfoCompleteList[exerciseIndex] <
                                     maxSetInfoList[exerciseIndex]) {
@@ -829,20 +823,22 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       },
                     );
 
-                    await recordRepository.postWorkoutRecords(
+                    await recordRepository
+                        .postWorkoutRecords(
                       body: PostWorkoutRecordModel(
                         records: tempRecordList,
                       ),
-                    );
-
-                    GoRouter.of(context).goNamed(
-                      WorkoutFeedbackScreen.routeName,
-                      pathParameters: {
-                        'workoutScheduleId':
-                            widget.workoutScheduleId.toString(),
-                      },
-                      extra: widget.exercises,
-                    );
+                    )
+                        .then((value) {
+                      GoRouter.of(context).goNamed(
+                        WorkoutFeedbackScreen.routeName,
+                        pathParameters: {
+                          'workoutScheduleId':
+                              widget.workoutScheduleId.toString(),
+                        },
+                        extra: widget.exercises,
+                      );
+                    });
                   } on DioError {
                     showDialog(
                       barrierDismissible: false,
@@ -862,7 +858,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           );
           finish = false;
           lastChecked = true;
-          print('finish : $finish');
           break;
         }
       }
@@ -906,19 +901,21 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             },
           );
 
-          await recordRepository.postWorkoutRecords(
+          await recordRepository
+              .postWorkoutRecords(
             body: PostWorkoutRecordModel(
               records: tempRecordList,
             ),
-          );
-
-          GoRouter.of(context).goNamed(
-            WorkoutFeedbackScreen.routeName,
-            pathParameters: {
-              'workoutScheduleId': widget.workoutScheduleId.toString(),
-            },
-            extra: widget.exercises,
-          );
+          )
+              .then((value) {
+            GoRouter.of(context).goNamed(
+              WorkoutFeedbackScreen.routeName,
+              pathParameters: {
+                'workoutScheduleId': widget.workoutScheduleId.toString(),
+              },
+              extra: widget.exercises,
+            );
+          });
         } on DioError {
           showDialog(
             barrierDismissible: false,
@@ -1134,20 +1131,22 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             },
                           );
 
-                          await recordRepository.postWorkoutRecords(
+                          await recordRepository
+                              .postWorkoutRecords(
                             body: PostWorkoutRecordModel(
                               records: tempRecordList,
                             ),
-                          );
-
-                          GoRouter.of(context).goNamed(
-                            WorkoutFeedbackScreen.routeName,
-                            pathParameters: {
-                              'workoutScheduleId':
-                                  widget.workoutScheduleId.toString(),
-                            },
-                            extra: widget.exercises,
-                          );
+                          )
+                              .then((value) {
+                            GoRouter.of(context).goNamed(
+                              WorkoutFeedbackScreen.routeName,
+                              pathParameters: {
+                                'workoutScheduleId':
+                                    widget.workoutScheduleId.toString(),
+                              },
+                              extra: widget.exercises,
+                            );
+                          });
                         } on DioError {
                           showDialog(
                             barrierDismissible: false,

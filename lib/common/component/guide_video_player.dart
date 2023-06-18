@@ -33,16 +33,13 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
     firstVideoInit();
 
     if (widget.videos.length > 1) {
-      print('secondVideo');
       secondVideoInit();
     }
     if (widget.videos.length > 2) {
-      print('thirdVideo');
       thirdVideoInit();
     }
 
     firstVideoController!.play();
-    print('Play!!!');
   }
 
   @override

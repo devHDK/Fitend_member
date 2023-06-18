@@ -26,11 +26,8 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
     try {
       final response = await repository.getWorkout(id: id);
 
-      print(response);
-
       state = response;
-    } on DioError catch (e) {
-      print(e.response!.statusCode);
+    } on DioError {
       state = WorkoutModelError(message: '데이터를 불러올수없습니다');
     }
   }

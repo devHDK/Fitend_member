@@ -40,7 +40,6 @@ class WorkoutRecordStateNotifier
 
       state = response;
     } catch (e) {
-      print(e);
       state = WorkoutResultModelError(
         message: '데이터를 불러올수없습니다',
       );

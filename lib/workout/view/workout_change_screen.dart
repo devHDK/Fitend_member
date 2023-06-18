@@ -78,7 +78,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
 
                 return InkWell(
                   onTap: () {
-                    print(index);
                     setState(() {
                       selectedIndex = index;
                     });

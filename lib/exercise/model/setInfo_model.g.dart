@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'setInfo_model.dart';
+part of 'set_info_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

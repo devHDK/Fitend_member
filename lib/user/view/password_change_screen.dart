@@ -138,22 +138,25 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
                 }
 
                 try {
-                  await ref.read(getMeProvider.notifier).changePassword(
+                  await ref
+                      .read(getMeProvider.notifier)
+                      .changePassword(
                         password: widget.password,
                         newPassword: _newPasswordController.text,
-                      );
+                      )
+                      .then((value) {
+                    int count = 0;
+                    Navigator.of(context).popUntil((_) => count++ >= 2);
 
-                  int count = 0;
-                  Navigator.of(context).popUntil((_) => count++ >= 2);
-
-                  showDialog(
-                    context: context,
-                    builder: (context) => DialogWidgets.errorDialog(
-                      message: '비밀번호가 변경되었습니다!',
-                      confirmText: '확인',
-                      confirmOnTap: () => context.pop(),
-                    ),
-                  );
+                    showDialog(
+                      context: context,
+                      builder: (context) => DialogWidgets.errorDialog(
+                        message: '비밀번호가 변경되었습니다!',
+                        confirmText: '확인',
+                        confirmOnTap: () => context.pop(),
+                      ),
+                    );
+                  });
 
                   setState(() {
                     buttonOn = true;

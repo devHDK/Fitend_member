@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
-import 'package:fitend_member/exercise/model/setInfo_model.dart';
+import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/exercise/model/target_muscle_model.dart';
 import 'package:fitend_member/firebase_options.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';

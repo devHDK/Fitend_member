@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/provider/hive_timer_x_more_%20record_provider.dart';
+import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
-import 'package:fitend_member/exercise/model/setInfo_model.dart';
+import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
@@ -87,7 +87,7 @@ class _WeightWrepsProgressCardState
               });
             }
           });
-          print('totalSeconds : $totalSeconds');
+          // print('totalSeconds : $totalSeconds');
 
           initial = false;
         }
@@ -126,7 +126,7 @@ class _WeightWrepsProgressCardState
       setState(() {
         totalSeconds = widget.exercise.setInfo[widget.setInfoIndex].seconds!;
       });
-      print('totalSeconds : $totalSeconds');
+      // print('totalSeconds : $totalSeconds');
     }
 
     timerXmoreBox.whenData((value) async {
@@ -275,8 +275,8 @@ class _WeightWrepsProgressCardState
                   ]),
             );
           } else {
-            print('timerXmoreBox 처음 저장!');
-            print(totalSeconds);
+            // print('timerXmoreBox 처음 저장!');
+            // print(totalSeconds);
             value.put(
               widget.exercise.workoutPlanId,
               WorkoutRecordModel(

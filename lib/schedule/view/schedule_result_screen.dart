@@ -133,7 +133,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                 '${DateFormat('M월 dd일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday - 1]}요일');
       }
     } else {
-      print('debug workoutResults : $workoutResults');
       startDate = feedback!.startDate;
       workoutResultBox.whenData(
         (value) {
@@ -147,8 +146,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           }
         },
       );
-
-      print('debug workoutResults : $workoutResults');
 
       workoutRecordBox.whenData(
         (value) {
@@ -169,8 +166,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         }
       }
 
-      print('debug workoutResults : $workoutResults');
-
       state = WorkoutResultModel(
         startDate:
             '${DateFormat('M월 dd일').format(feedback!.startDate)} ${weekday[feedback!.startDate.weekday - 1]}요일',
@@ -180,8 +175,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         contents: feedback!.contents != null ? feedback!.contents! : '',
         workoutRecords: workoutResults,
       );
-
-      print('state.startDate : ${state.startDate}');
 
       hasLocalData = true;
     }

@@ -85,7 +85,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   }
 
   void _onChildEvent() {
-    print('_onChildEvent');
     setState(() {});
   }
 

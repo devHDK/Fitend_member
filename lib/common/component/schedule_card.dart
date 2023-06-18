@@ -215,19 +215,19 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                           ? null
                           : (widget.isRecord! && !widget.isComplete!)
                               ? () async {
-                                  final ret = await ref
+                                  await ref
                                       .read(workoutScheduleRepositoryProvider)
-                                      .getWorkout(
-                                          id: widget.workoutScheduleId!);
-
-                                  GoRouter.of(context).goNamed(
-                                    WorkoutFeedbackScreen.routeName,
-                                    pathParameters: {
-                                      'workoutScheduleId':
-                                          widget.workoutScheduleId.toString(),
-                                    },
-                                    extra: ret.exercises,
-                                  );
+                                      .getWorkout(id: widget.workoutScheduleId!)
+                                      .then((value) {
+                                    GoRouter.of(context).goNamed(
+                                      WorkoutFeedbackScreen.routeName,
+                                      pathParameters: {
+                                        'workoutScheduleId':
+                                            widget.workoutScheduleId.toString(),
+                                      },
+                                      extra: value.exercises,
+                                    );
+                                  });
                                 }
                               : () async {
                                   var dateChanged = await context.pushNamed(

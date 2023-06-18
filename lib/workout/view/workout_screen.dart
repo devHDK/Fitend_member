@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
@@ -64,7 +66,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   bool isPoped = false;
   bool lastChecked = false;
   late int maxExcerciseIndex;
-  bool isTooltipVisible = true;
+  bool isTooltipVisible = false;
+  int tooltipCount = 0;
+  late Timer timer;
 
   List<Exercise> modifiedExercises = [];
 
@@ -124,14 +128,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           }
         }
 
+        onTooltipPressed();
+
         initial = false;
       }
-    });
-
-    Future.delayed(const Duration(seconds: 5), () {
-      setState(() {
-        isTooltipVisible = false;
-      });
     });
   }
 
@@ -144,7 +144,46 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     timerMinTextController.dispose();
     timerSecondTextController.dispose();
 
+    if (timer.isActive) {
+      timer.cancel();
+    }
+
     super.dispose();
+  }
+
+  void onTooltipPressed() {
+    print('isTooltipVisible : $isTooltipVisible');
+
+    if (isTooltipVisible) {
+      timer.cancel();
+      setState(() {
+        isTooltipVisible = !isTooltipVisible;
+        tooltipCount = 0;
+      });
+    } else {
+      setState(() {
+        isTooltipVisible = !isTooltipVisible;
+        tooltipCount = 3;
+      });
+      timer = Timer.periodic(
+        const Duration(seconds: 1),
+        onTick,
+      );
+    }
+  }
+
+  void onTick(Timer timer) {
+    if (tooltipCount == 0) {
+      //0초가 됬을때 저장
+      timer.cancel();
+      setState(() {
+        isTooltipVisible = false;
+      });
+    } else {
+      setState(() {
+        tooltipCount -= 1;
+      });
+    }
   }
 
   @override
@@ -162,17 +201,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     workoutRecordBox = workoutBox;
     workoutResultBox = workoutResult;
     modifiedExerciseBox = modifiedBox;
-
-    if (isTooltipVisible) {
-      Future.delayed(
-        const Duration(seconds: 5),
-        () {
-          setState(() {
-            isTooltipVisible = false;
-          });
-        },
-      );
-    }
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -257,17 +285,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             padding: const EdgeInsets.only(right: 16),
             child: GestureDetector(
               onTap: () {
-                setState(() {
-                  isTooltipVisible = !isTooltipVisible;
-                });
-
-                if (isTooltipVisible) {
-                  Future.delayed(const Duration(seconds: 5), () {
-                    setState(() {
-                      isTooltipVisible = false;
-                    });
-                  });
-                }
+                onTooltipPressed();
               },
               child: CircleAvatar(
                 radius: 18,
@@ -464,7 +482,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                               setState(() {
                                 exerciseIndex += 1; // 운동 변경
-                                isTooltipVisible = true;
+                                isTooltipVisible = false;
+                                tooltipCount = 0;
+                                onTooltipPressed();
                               });
 
                               while (setInfoCompleteList[exerciseIndex] ==
@@ -570,8 +590,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                                     setState(() {
                                       exerciseIndex += 1;
-                                      isTooltipVisible = true;
-                                      // 운동 변경
+                                      isTooltipVisible = false;
+                                      tooltipCount = 0;
+                                      onTooltipPressed();
                                     });
 
                                     while (setInfoCompleteList[exerciseIndex] ==
@@ -691,7 +712,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                               setState(() {
                                 exerciseIndex += 1;
-                                isTooltipVisible = true;
+                                isTooltipVisible = false;
+                                tooltipCount = 0;
+                                onTooltipPressed();
                                 // 운동 변경
                               });
 
@@ -995,6 +1018,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     setState(() {
                       if (value != null) {
                         exerciseIndex = value;
+                        isTooltipVisible = false;
+                        tooltipCount = 0;
+                        onTooltipPressed();
                       }
                       isPoped = true;
                     });

@@ -14,8 +14,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 class TimerXOneProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
-  final TextEditingController minController;
-  final TextEditingController secController;
   final GestureTapCallback updateSeinfoTap;
   final GestureTapCallback proccessOnTap;
 
@@ -25,8 +23,6 @@ class TimerXOneProgressCard extends ConsumerStatefulWidget {
     required this.proccessOnTap,
     required this.setInfoIndex,
     required this.updateSeinfoTap,
-    required this.minController,
-    required this.secController,
   });
 
   @override
@@ -44,15 +40,9 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
   late AsyncValue<Box> timerBox;
   late AsyncValue<Box> workoutBox;
 
-  void minControllerListener() {}
-  void secControllerListener() {}
-
   @override
   void initState() {
     super.initState();
-
-    widget.minController.addListener(minControllerListener);
-    widget.secController.addListener(secControllerListener);
 
     WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
       if (initial) {
@@ -81,10 +71,6 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
     if (timer.isActive) {
       timer.cancel();
     }
-
-    widget.minController.removeListener(minControllerListener);
-    widget.secController.removeListener(secControllerListener);
-
     super.dispose();
   }
 

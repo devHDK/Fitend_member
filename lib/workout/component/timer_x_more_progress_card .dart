@@ -16,8 +16,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 class TimerXMoreProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
-  final TextEditingController minController;
-  final TextEditingController secController;
   final GestureTapCallback updateSeinfoTap;
   final GestureTapCallback proccessOnTap;
   final GestureTapCallback resetSet;
@@ -29,8 +27,6 @@ class TimerXMoreProgressCard extends ConsumerStatefulWidget {
     required this.updateSeinfoTap,
     required this.proccessOnTap,
     required this.resetSet,
-    required this.minController,
-    required this.secController,
   });
 
   @override
@@ -51,15 +47,9 @@ class _WeightWrepsProgressCardState
   late AsyncValue<Box> workoutBox;
   late AsyncValue<Box> timerXmoreBox;
 
-  void minControllerListener() {}
-  void secControllerListener() {}
-
   @override
   void initState() {
     super.initState();
-
-    widget.minController.addListener(minControllerListener);
-    widget.secController.addListener(secControllerListener);
 
     WidgetsBinding.instance.addPersistentFrameCallback(
       (timeStamp) {
@@ -109,6 +99,7 @@ class _WeightWrepsProgressCardState
     if (timer!.isActive) {
       timer!.cancel();
     }
+
     super.dispose();
   }
 

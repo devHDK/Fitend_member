@@ -291,74 +291,75 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
       dismissable: false,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
-        child: Container(
-          width: 319,
-          height: 430,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            color: Colors.white,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Calendar(
-                  schedules: scheduleList,
-                  scheduleDate: widget.scheduleDate,
-                  focusedDay:
-                      focusedDay != null ? focusedDay! : widget.scheduleDate,
-                  selectedDay: selectedDay != null ? selectedDay! : null,
-                  firstDay: firstDay ?? firstDay!,
-                  lastDay: lastDay ?? lastDay!,
-                  onDaySelected: (selectedDay, focusedDay) {
-                    setState(() {
-                      this.selectedDay = selectedDay;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        if (selectedDay != null &&
-                            selectedDay!.compareTo(widget.scheduleDate) != 0) {
-                          changeScheduleDate();
-                          context.pop({'changedDate': selectedDay});
-                        } else {
-                          // print('오늘날짜 선택!');
-                          showDialog(
-                            context: context,
-                            builder: (context) => DialogWidgets.errorDialog(
-                              message: '오늘 이외의 날짜를 선택해주세요!',
-                              confirmText: '확인',
-                              confirmOnTap: () => context.pop(),
-                            ),
-                          );
-                        }
-                      },
-                      child: const Text(
-                        '확인',
-                        style: TextStyle(
-                          color: Colors.black,
+        child: SingleChildScrollView(
+          child: Container(
+            width: 319,
+            height: 460,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Calendar(
+                    schedules: scheduleList,
+                    scheduleDate: widget.scheduleDate,
+                    focusedDay:
+                        focusedDay != null ? focusedDay! : widget.scheduleDate,
+                    selectedDay: selectedDay != null ? selectedDay! : null,
+                    firstDay: firstDay ?? firstDay!,
+                    lastDay: lastDay ?? lastDay!,
+                    onDaySelected: (selectedDay, focusedDay) {
+                      setState(() {
+                        this.selectedDay = selectedDay;
+                      });
+                    },
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          if (selectedDay != null &&
+                              selectedDay!.compareTo(widget.scheduleDate) !=
+                                  0) {
+                            changeScheduleDate();
+                            context.pop({'changedDate': selectedDay});
+                          } else {
+                            // print('오늘날짜 선택!');
+                            showDialog(
+                              context: context,
+                              builder: (context) => DialogWidgets.errorDialog(
+                                message: '오늘 이외의 날짜를 선택해주세요!',
+                                confirmText: '확인',
+                                confirmOnTap: () => context.pop(),
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text(
+                          '확인',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
                         ),
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () => context.pop(),
-                      child: const Text(
-                        '취소',
-                        style: TextStyle(
-                          color: Colors.red,
+                      TextButton(
+                        onPressed: () => context.pop(),
+                        child: const Text(
+                          '취소',
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

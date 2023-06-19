@@ -34,6 +34,7 @@ class Calendar extends StatelessWidget {
       focusedDay: focusedDay,
       firstDay: firstDay,
       lastDay: lastDay,
+      daysOfWeekVisible: true,
       headerStyle: const HeaderStyle(
         formatButtonVisible: false,
         titleCentered: true,
@@ -45,30 +46,34 @@ class Calendar extends StatelessWidget {
         rightChevronVisible: false,
       ),
       calendarStyle: CalendarStyle(
-          isTodayHighlighted: true,
-          todayTextStyle: const TextStyle(
-            color: Colors.black,
-          ),
-          todayDecoration: BoxDecoration(
-            color: Colors.transparent,
-            border: Border.all(
-              color: POINT_COLOR,
-            ),
-            shape: BoxShape.circle,
-          ),
-          weekendTextStyle: const TextStyle(
-            color: Colors.red,
-          ),
-          selectedDecoration: const BoxDecoration(
-            shape: BoxShape.circle,
+        isTodayHighlighted: true,
+        todayTextStyle: const TextStyle(
+          color: Colors.black,
+        ),
+        todayDecoration: BoxDecoration(
+          color: Colors.transparent,
+          border: Border.all(
             color: POINT_COLOR,
           ),
-          selectedTextStyle: const TextStyle(
-            color: Colors.white,
-          ),
-          outsideDecoration: const BoxDecoration(
-            shape: BoxShape.rectangle,
-          )),
+          shape: BoxShape.circle,
+        ),
+        outsideTextStyle: const TextStyle(
+          color: Colors.black,
+        ),
+        weekendTextStyle: const TextStyle(
+          color: Colors.red,
+        ),
+        selectedDecoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: POINT_COLOR,
+        ),
+        selectedTextStyle: const TextStyle(
+          color: Colors.white,
+        ),
+        // outsideDecoration: const BoxDecoration(
+        //   shape: BoxShape.rectangle,
+        // ),
+      ),
       onDaySelected: onDaySelected,
       selectedDayPredicate: (day) {
         if (selectedDay == null) {
@@ -102,17 +107,17 @@ class Calendar extends StatelessWidget {
           }
           return null;
         },
-        headerTitleBuilder: (context, day) {
-          return Center(
-            child: Text(
-              '${scheduleDate.year} ${scheduleDate.month}월',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          );
-        },
+        // headerTitleBuilder: (context, day) {
+        //   return Center(
+        //     child: Text(
+        //       '${scheduleDate.year} ${scheduleDate.month}월',
+        //       style: const TextStyle(
+        //         fontSize: 20,
+        //         fontWeight: FontWeight.w700,
+        //       ),
+        //     ),
+        //   );
+        // },
       ),
     );
   }

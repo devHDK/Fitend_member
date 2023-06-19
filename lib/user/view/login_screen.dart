@@ -41,8 +41,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
     final state = ref.watch(getMeProvider);
+    final formKey = GlobalKey<FormState>();
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -93,7 +93,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 KeyboardVisibilityBuilder(
                   builder: (p0, isKeyboardVisible) {
                     return SizedBox(
-                      height: isKeyboardVisible ? 100 : 345,
+                      height: isKeyboardVisible
+                          ? 50
+                          : MediaQuery.sizeOf(context).height - 430,
                     );
                   },
                 ),

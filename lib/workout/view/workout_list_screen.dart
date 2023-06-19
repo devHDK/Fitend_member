@@ -430,125 +430,127 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 45,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: POINT_COLOR,
-            ),
-            onPressed: model.isWorkoutComplete
-                ? () {
-                    context.goNamed(
-                      ScheduleResultScreen.routeName,
-                      pathParameters: {
-                        "workoutScheduleId": model.workoutScheduleId.toString(),
-                      },
-                      extra: model.exercises,
-                    );
-                  }
-                : () async {
-                    workoutResultBox.whenData(
-                      (value) {
-                        for (var e in state.exercises) {
-                          final record = value.get(e.workoutPlanId);
+      floatingActionButton: TextButton(
+        onPressed: model.isWorkoutComplete
+            ? () {
+                context.goNamed(
+                  ScheduleResultScreen.routeName,
+                  pathParameters: {
+                    "workoutScheduleId": model.workoutScheduleId.toString(),
+                  },
+                  extra: model.exercises,
+                );
+              }
+            : () async {
+                workoutResultBox.whenData(
+                  (value) {
+                    for (var e in state.exercises) {
+                      final record = value.get(e.workoutPlanId);
 
-                          if (record == null) {
-                            value.put(
-                              e.workoutPlanId,
-                              WorkoutRecordResult(
-                                exerciseName: e.name,
-                                targetMuscles: [e.targetMuscles[0].name],
-                                trackingFieldId: e.trackingFieldId,
-                                workoutPlanId: e.workoutPlanId,
-                                setInfo: e.setInfo,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                    );
-
-                    workoutFeedbackBox.whenData(
-                      (value) {
-                        final record = value.get(model.workoutScheduleId);
-                        if (record == null) {
-                          value.put(
-                            model.workoutScheduleId,
-                            WorkoutFeedbackRecordModel(
-                              startDate: DateTime.parse(model.startDate),
-                            ),
-                          );
-                        }
-                      },
-                    );
-
-                    modifiedExerciseBox.whenData(
-                      (value) {
-                        for (int i = 0; i < model.exercises.length; i++) {
-                          final exercise =
-                              value.get(model.exercises[i].workoutPlanId);
-                          if (exercise == null) {
-                            //저장된게 없으면 저장
-                            value.put(model.exercises[i].workoutPlanId,
-                                model.exercises[i]);
-                          }
-                        }
-                      },
-                    );
-
-                    await Navigator.of(context)
-                        .push(
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 300),
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            WorkoutScreen(
-                          exercises: model.exercises,
-                          date: DateTime.parse(model.startDate),
-                          workout: model,
-                          workoutScheduleId: widget.id,
-                        ),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) =>
-                                SlideTransition(
-                          position: animation.drive(
-                            Tween(
-                              begin: const Offset(1.0, 0),
-                              end: Offset.zero,
-                            ).chain(
-                              CurveTween(curve: Curves.linearToEaseOut),
-                            ),
+                      if (record == null) {
+                        value.put(
+                          e.workoutPlanId,
+                          WorkoutRecordResult(
+                            exerciseName: e.name,
+                            targetMuscles: [e.targetMuscles[0].name],
+                            trackingFieldId: e.trackingFieldId,
+                            workoutPlanId: e.workoutPlanId,
+                            setInfo: e.setInfo,
                           ),
-                          child: child,
+                        );
+                      }
+                    }
+                  },
+                );
+
+                workoutFeedbackBox.whenData(
+                  (value) {
+                    final record = value.get(model.workoutScheduleId);
+                    if (record == null) {
+                      value.put(
+                        model.workoutScheduleId,
+                        WorkoutFeedbackRecordModel(
+                          startDate: DateTime.parse(model.startDate),
+                        ),
+                      );
+                    }
+                  },
+                );
+
+                modifiedExerciseBox.whenData(
+                  (value) {
+                    for (int i = 0; i < model.exercises.length; i++) {
+                      final exercise =
+                          value.get(model.exercises[i].workoutPlanId);
+                      if (exercise == null) {
+                        //저장된게 없으면 저장
+                        value.put(model.exercises[i].workoutPlanId,
+                            model.exercises[i]);
+                      }
+                    }
+                  },
+                );
+
+                await Navigator.of(context)
+                    .push(
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 300),
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        WorkoutScreen(
+                      exercises: model.exercises,
+                      date: DateTime.parse(model.startDate),
+                      workout: model,
+                      workoutScheduleId: widget.id,
+                    ),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) =>
+                            SlideTransition(
+                      position: animation.drive(
+                        Tween(
+                          begin: const Offset(1.0, 0),
+                          end: Offset.zero,
+                        ).chain(
+                          CurveTween(curve: Curves.linearToEaseOut),
                         ),
                       ),
-                    )
-                        .then((value) {
-                      setState(() {
-                        isPoped = true;
-                      });
+                      child: child,
+                    ),
+                  ),
+                )
+                    .then((value) {
+                  setState(() {
+                    isPoped = true;
+                  });
 
-                      ref
-                          .read(workoutProvider(widget.id).notifier)
-                          .getWorkout(id: widget.id);
-                    });
-                  },
-            child: Text(
-              model.isWorkoutComplete ? '결과보기📝' : '운동 시작하기💪',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
+                  ref
+                      .read(workoutProvider(widget.id).notifier)
+                      .getWorkout(id: widget.id);
+                });
+              },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28),
+          child: Container(
+            height: 44,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: POINT_COLOR,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                model.isWorkoutComplete ? '결과보기📝' : '운동 시작하기💪',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonAnimator: _NoAnimationFabAnimator(),
     );
   }
 
@@ -685,5 +687,23 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         );
       },
     );
+  }
+}
+
+class _NoAnimationFabAnimator extends FloatingActionButtonAnimator {
+  @override
+  Offset getOffset(
+      {required Offset begin, required Offset end, required double progress}) {
+    return end;
+  }
+
+  @override
+  Animation<double> getRotationAnimation({required Animation<double> parent}) {
+    return const AlwaysStoppedAnimation<double>(0);
+  }
+
+  @override
+  Animation<double> getScaleAnimation({required Animation<double> parent}) {
+    return const AlwaysStoppedAnimation<double>(1.0);
   }
 }

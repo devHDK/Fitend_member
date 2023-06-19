@@ -1218,7 +1218,7 @@ class _ShowTip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned(
       left: 28,
-      top: 110,
+      top: MediaQuery.of(context).padding.top,
       right: 28,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,

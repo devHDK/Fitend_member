@@ -299,7 +299,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             left: 0.0,
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height - 190,
+              height: MediaQuery.of(context).size.height - 175,
               child: WorkoutVideoPlayer(
                   video: ExerciseVideo(
                       url:

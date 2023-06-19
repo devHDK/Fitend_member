@@ -22,9 +22,10 @@ class WorkoutScheduleStateNotifier
   WorkoutScheduleStateNotifier({
     required this.repository,
     required this.startDate,
-  }) : super(WorkoutScheduleModelLoading()) {
-    paginate(startDate: startDate);
-  }
+  }) : super(WorkoutScheduleModelLoading());
+  // {
+  //   // paginate(startDate: startDate);
+  // }
 
   Future<void> paginate({
     required DateTime startDate,

@@ -38,6 +38,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     controller.addListener(listener);
 
     Future.delayed(const Duration(milliseconds: 100), () {
+      ref
+          .read(workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo))
+              .notifier)
+          .paginate(startDate: DataUtils.getDate(fifteenDaysAgo));
+
       WidgetsBinding.instance.addPersistentFrameCallback((_) {
         if (initial) {
           controller.jumpTo(
@@ -47,6 +52,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           todayLocation += 130 * 14 + 130 * initListItemCount;
 
           refetchItemCount = 0;
+
+          super.didChangeDependencies();
 
           initial = false;
         }

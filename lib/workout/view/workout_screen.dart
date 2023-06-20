@@ -201,7 +201,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 10),
+          padding: const EdgeInsets.only(left: 18),
           child: IconButton(
             // onPressed: () => GoRouter.of(context).pop('result'),
             onPressed: () {

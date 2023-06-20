@@ -280,9 +280,12 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-            onPressed: () => context.pop(true),
-            icon: const Icon(Icons.arrow_back)),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 18),
+          child: IconButton(
+              onPressed: () => context.pop(true),
+              icon: const Icon(Icons.arrow_back)),
+        ),
         centerTitle: true,
         title: Text(
           '${DateFormat('M월 dd일').format(DateTime.parse(workoutModel.startDate))} ${weekday[DateTime.parse(workoutModel.startDate).weekday - 1]}요일',

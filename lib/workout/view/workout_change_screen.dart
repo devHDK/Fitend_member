@@ -45,7 +45,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 10),
+          padding: const EdgeInsets.only(left: 18),
           child: IconButton(
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.arrow_back)),

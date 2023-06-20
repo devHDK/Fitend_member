@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
@@ -30,6 +31,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void initState() {
     super.initState();
     _loadEmailAndPassword();
+    // _getDeviceInfo();
   }
 
   @override
@@ -93,9 +95,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 KeyboardVisibilityBuilder(
                   builder: (p0, isKeyboardVisible) {
                     return SizedBox(
-                      height: isKeyboardVisible
-                          ? 50
-                          : MediaQuery.sizeOf(context).height - 430,
+                      height: !isKeyboardVisible
+                          ? MediaQuery.sizeOf(context).height -
+                              kToolbarHeight -
+                              MediaQuery.viewPaddingOf(context).top -
+                              370
+                          : 50,
                     );
                   },
                 ),
@@ -315,6 +320,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (savedEmail != null && savedPassword != null) {
       _idTextController.text = savedEmail;
       _passwordTextController.text = savedPassword;
+    }
+  }
+
+  void _getDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      print('androidInfo : $androidInfo');
+    } else if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      print('iosInfo :  $iosInfo');
     }
   }
 }

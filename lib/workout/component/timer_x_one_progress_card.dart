@@ -44,7 +44,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPersistentFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (initial) {
         timerBox.whenData((value) async {
           final record = await value.get(widget.exercise.workoutPlanId);

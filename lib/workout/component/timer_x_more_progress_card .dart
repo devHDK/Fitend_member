@@ -51,7 +51,7 @@ class _WeightWrepsProgressCardState
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPersistentFrameCallback(
+    WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
         if (initial) {
           timerXmoreBox.whenData((value) async {

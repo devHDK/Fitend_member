@@ -200,78 +200,81 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        leading: IconButton(
-          // onPressed: () => GoRouter.of(context).pop('result'),
-          onPressed: () {
-            if (mounted) {
-              DialogWidgets.confirmDialog(
-                message: '아직 운동이 끝나지 않았어요 😮\n저장 후 뒤로 갈까요?',
-                confirmText: '네, 저장할게요',
-                cancelText: '아니요, 리셋할래요',
-                confirmOnTap: () {
-                  int count = 0;
-                  if (mounted) {
-                    Navigator.of(context).popUntil((_) => count++ >= 2);
-                  }
-                },
-                cancelOnTap: () {
-                  workoutBox.whenData(
-                    (value) {
-                      for (var element in widget.exercises) {
-                        value.delete(element.workoutPlanId);
-                      }
-                    },
-                  );
-
-                  modifiedBox.whenData(
-                    (value) async {
-                      for (var element in widget.exercises) {
-                        await value.delete(element.workoutPlanId);
-                      }
-                    },
-                  );
-
-                  timerWorkoutBox.whenData(
-                    (value) {
-                      for (var element in widget.exercises) {
-                        if ((element.trackingFieldId == 3 ||
-                                element.trackingFieldId == 4) &&
-                            element.setInfo.length == 1) {
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: IconButton(
+            // onPressed: () => GoRouter.of(context).pop('result'),
+            onPressed: () {
+              if (mounted) {
+                DialogWidgets.confirmDialog(
+                  message: '아직 운동이 끝나지 않았어요 😮\n저장 후 뒤로 갈까요?',
+                  confirmText: '네, 저장할게요',
+                  cancelText: '아니요, 리셋할래요',
+                  confirmOnTap: () {
+                    int count = 0;
+                    if (mounted) {
+                      Navigator.of(context).popUntil((_) => count++ >= 2);
+                    }
+                  },
+                  cancelOnTap: () {
+                    workoutBox.whenData(
+                      (value) {
+                        for (var element in widget.exercises) {
                           value.delete(element.workoutPlanId);
                         }
-                      }
-                    },
-                  );
+                      },
+                    );
 
-                  timerXMoreBox.whenData(
-                    (value) {
-                      for (var element in widget.exercises) {
-                        if ((element.trackingFieldId == 3 ||
-                                element.trackingFieldId == 4) &&
-                            element.setInfo.length > 1) {
+                    modifiedBox.whenData(
+                      (value) async {
+                        for (var element in widget.exercises) {
+                          await value.delete(element.workoutPlanId);
+                        }
+                      },
+                    );
+
+                    timerWorkoutBox.whenData(
+                      (value) {
+                        for (var element in widget.exercises) {
+                          if ((element.trackingFieldId == 3 ||
+                                  element.trackingFieldId == 4) &&
+                              element.setInfo.length == 1) {
+                            value.delete(element.workoutPlanId);
+                          }
+                        }
+                      },
+                    );
+
+                    timerXMoreBox.whenData(
+                      (value) {
+                        for (var element in widget.exercises) {
+                          if ((element.trackingFieldId == 3 ||
+                                  element.trackingFieldId == 4) &&
+                              element.setInfo.length > 1) {
+                            value.delete(element.workoutPlanId);
+                          }
+                        }
+                      },
+                    );
+
+                    workoutResultBox.whenData(
+                      (value) {
+                        for (var element in widget.exercises) {
                           value.delete(element.workoutPlanId);
                         }
-                      }
-                    },
-                  );
-
-                  workoutResultBox.whenData(
-                    (value) {
-                      for (var element in widget.exercises) {
-                        value.delete(element.workoutPlanId);
-                      }
-                    },
-                  );
-                  int count = 0;
-                  if (mounted) {
-                    Navigator.of(context).popUntil((_) => count++ >= 2);
-                  }
-                },
-              ).show(context);
-            }
-          },
-          icon: const Icon(Icons.arrow_back),
-          color: Colors.black,
+                      },
+                    );
+                    int count = 0;
+                    if (mounted) {
+                      Navigator.of(context).popUntil((_) => count++ >= 2);
+                    }
+                  },
+                ).show(context);
+              }
+            },
+            icon: const Icon(Icons.arrow_back),
+            color: Colors.black,
+          ),
         ),
         actions: [
           Padding(

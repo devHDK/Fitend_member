@@ -54,7 +54,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Navigator.pop(context); //뒤로가기
           },
           icon: const Padding(
-            padding: EdgeInsets.only(left: 28),
+            padding: EdgeInsets.only(left: 10),
             child: Icon(Icons.arrow_back_sharp),
           ),
         ),

@@ -55,7 +55,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         elevation: _scrollOffset <= 5.0 ? 0.0 : 1.0,
         leading: IconButton(
           onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back),
+          icon: const Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Icon(Icons.arrow_back)),
           color: _scrollOffset <= 5.0 ? Colors.black : Colors.white,
         ),
       ),

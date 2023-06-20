@@ -44,9 +44,12 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back)),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back)),
+        ),
         centerTitle: true,
         title: const Text(
           '운동리스트',

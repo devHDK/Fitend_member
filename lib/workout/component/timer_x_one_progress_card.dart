@@ -279,7 +279,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
             Expanded(
               child: Row(mainAxisSize: MainAxisSize.max, children: [
                 SizedBox(
-                  width: 231,
+                  width: MediaQuery.sizeOf(context).width - 152,
                   height: 4,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(2),

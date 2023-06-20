@@ -32,11 +32,17 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
     }
   }
 
-  void updateWorkoutState({
+  void updateWorkoutStateDate({
     required String dateTime,
   }) {
     final pstate = state as WorkoutModel;
 
     state = pstate.copyWith(startDate: dateTime);
+  }
+
+  void updateWorkoutStateIsComplete() {
+    final pstate = state as WorkoutModel;
+
+    state = pstate.copyWith(isWorkoutComplete: true);
   }
 }

@@ -10,6 +10,7 @@ import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart'
 import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
+import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/provider/workout_records_provider.dart';
 import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/material.dart';
@@ -204,7 +205,11 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                     .updateScheduleState(
                       workoutScheduleId: widget.workoutScheduleId,
                       startDate: startDate,
-                    );
+                    ); //스케줄 업데이트
+
+                ref
+                    .read(workoutProvider(widget.workoutScheduleId).notifier)
+                    .updateWorkoutStateIsComplete(); //workout list 업데이트
 
                 context.goNamed(
                   WorkoutListScreen.routeName,

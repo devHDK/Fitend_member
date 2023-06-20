@@ -216,14 +216,16 @@ class _RenderBody extends StatelessWidget {
                   color: POINT_COLOR,
                   borderRadius: BorderRadius.circular(7),
                 ),
-                child: const Text(
-                  '진행중🏃',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white,
+                child: const Center(
+                  child: Text(
+                    '진행중🏃',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               )
           ],

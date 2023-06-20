@@ -131,11 +131,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     // modifiedExercises = [];
 
@@ -304,21 +299,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height - 175,
               child: WorkoutVideoPlayer(
-                  video: ExerciseVideo(
-                      url:
-                          '$s3Url${widget.exercises[exerciseIndex].videos.first.url}',
-                      index: widget.exercises[exerciseIndex].videos.first.index,
-                      thumbnail:
-                          '$s3Url${widget.exercises[exerciseIndex].videos.first.thumbnail}')
-
-                  // ExerciseVideo(
-                  //   url:
-                  //       'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-                  //   index: 1,
-                  //   thumbnail:
-                  //       'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg',
-                  // ),
-                  ),
+                video: ExerciseVideo(
+                    url:
+                        '$s3Url${widget.exercises[exerciseIndex].videos.first.url}',
+                    index: widget.exercises[exerciseIndex].videos.first.index,
+                    thumbnail:
+                        '$s3Url${widget.exercises[exerciseIndex].videos.first.thumbnail}'),
+              ),
             ),
           ),
           if (isTooltipVisible)
@@ -829,7 +816,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       )
                           .then(
                         (value) {
-                          GoRouter.of(context).goNamed(
+                          GoRouter.of(context).pushNamed(
                             WorkoutFeedbackScreen.routeName,
                             pathParameters: {
                               'workoutScheduleId':

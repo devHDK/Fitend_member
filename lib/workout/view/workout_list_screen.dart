@@ -74,9 +74,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         WidgetsBinding.instance.addPostFrameCallback(
           (timeStamp) {
             if (initial) {
-              ref
-                  .read(workoutProvider(widget.id).notifier)
-                  .getWorkout(id: widget.id);
+              // ref
+              //     .read(workoutProvider(widget.id).notifier)
+              //     .getWorkout(id: widget.id);
 
               if ((isWorkoutComplete || isRecorded) && !hasLocal) {
                 ref
@@ -96,12 +96,16 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     );
   }
 
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+
+  //   // ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
+  // }
+
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (isWorkoutComplete && isPoped) {
-      ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
-    }
+  void didUpdateWidget(covariant WorkoutListScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -237,10 +241,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               exercise.setInfo.length == 1) {
             final record = value.get(exercise.workoutPlanId);
 
-            if (record != null && record is Exercise) {
+            if (record is Exercise && record.setInfo[0].seconds != null) {
               exercise.setInfo[0] = record.setInfo[0];
-              print(
-                  'exercise.setInfo[0].seconds : ${exercise.setInfo[0].seconds}');
             }
           }
         }
@@ -319,7 +321,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                         () {
                           ref
                               .read(workoutProvider(widget.id).notifier)
-                              .updateWorkoutState(
+                              .updateWorkoutStateDate(
                                 dateTime: DateFormat('yyyy-MM-dd').format(
                                   DateTime.parse(
                                     changedDate['changedDate'].toString(),
@@ -529,11 +531,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                     .then((value) {
                   setState(() {
                     isPoped = true;
-                  });
 
-                  ref
-                      .read(workoutProvider(widget.id).notifier)
-                      .getWorkout(id: widget.id);
+                    // ref
+                    //     .read(workoutProvider(widget.id).notifier)
+                    //     .getWorkout(id: widget.id);
+                  });
                 });
               },
         child: Padding(
@@ -604,9 +606,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               setState(() {
                 isPoped = true;
 
-                ref
-                    .read(workoutProvider(widget.id).notifier)
-                    .getWorkout(id: widget.id);
+                // ref
+                //     .read(workoutProvider(widget.id).notifier)
+                //     .getWorkout(id: widget.id);
               });
             });
           },
@@ -619,30 +621,30 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               },
             );
 
-            timerXmoreBox.whenData((value) async {
+            timerXmoreBox.whenData((value) {
               for (var element in workoutModel.exercises) {
                 if ((element.trackingFieldId == 3 ||
                         element.trackingFieldId == 4) &&
                     element.setInfo.length > 1) {
-                  await value.delete(element.workoutPlanId);
+                  value.delete(element.workoutPlanId);
                 }
               }
             });
 
-            timerXoneBox.whenData((value) async {
+            timerXoneBox.whenData((value) {
               for (var element in workoutModel.exercises) {
                 if ((element.trackingFieldId == 3 ||
                         element.trackingFieldId == 4) &&
                     element.setInfo.length == 1) {
-                  await value.delete(element.workoutPlanId);
+                  value.delete(element.workoutPlanId);
                 }
               }
             });
 
             workoutResult.whenData(
-              (value) async {
+              (value) {
                 for (var element in workoutModel.exercises) {
-                  await value.delete(element.workoutPlanId);
+                  value.delete(element.workoutPlanId);
                 }
               },
             );
@@ -687,9 +689,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               setState(() {
                 isPoped = true;
 
-                ref
-                    .read(workoutProvider(widget.id).notifier)
-                    .getWorkout(id: widget.id);
+                // ref
+                //     .read(workoutProvider(widget.id).notifier)
+                //     .getWorkout(id: widget.id);
               });
             });
           },

@@ -230,15 +230,17 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         }
       });
 
-      modifiedExerciseBox.whenData((value) async {
+      modifiedExerciseBox.whenData((value) {
         for (var exercise in model.exercises) {
           if ((exercise.trackingFieldId == 3 ||
                   exercise.trackingFieldId == 4) &&
               exercise.setInfo.length == 1) {
-            final record = await value.get(exercise.workoutPlanId);
+            final record = value.get(exercise.workoutPlanId);
 
             if (record != null && record is Exercise) {
               exercise.setInfo[0] = record.setInfo[0];
+              print(
+                  'exercise.setInfo[0].seconds : ${exercise.setInfo[0].seconds}');
             }
           }
         }

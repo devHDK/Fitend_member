@@ -99,7 +99,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     );
 
     if (feedback == null) {
-      print('noData');
       if (pstate is WorkoutResultModelLoading) {
         return const Scaffold(
           backgroundColor: BACKGROUND_COLOR,
@@ -143,7 +142,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
               workoutResults.add(record);
             } else {
               hasLocal = false;
-              print('hasLocal1 = $hasLocal');
             }
           }
         },
@@ -159,7 +157,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
               workoutRecords.add(record);
             } else {
               hasLocal = false;
-              print('hasLocal2 = $hasLocal');
             }
           }
         },

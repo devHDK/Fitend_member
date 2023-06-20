@@ -100,7 +100,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (isWorkoutComplete && isPoped) {
-      print('didChangeDependencies');
       ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
     }
   }
@@ -171,7 +170,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               );
             }
             hasLocal = false;
-            print('hasLocal1 = $hasLocal');
           }
         },
       );
@@ -190,7 +188,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               ),
             );
             hasLocal = false;
-            print('hasLocal2 = $hasLocal');
           }
         },
       );
@@ -212,7 +209,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               );
             }
             hasLocal = false;
-            print('hasLocal3 = $hasLocal');
           }
         },
       );
@@ -228,7 +224,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 value.put(pstate.workoutRecords[i].workoutPlanId,
                     pstate.workoutRecords[i].setInfo[0]);
                 hasLocal = false;
-                print('hasLocal4 = $hasLocal');
               }
             }
           }

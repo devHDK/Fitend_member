@@ -50,11 +50,12 @@ class ScheduleResultScreen extends ConsumerStatefulWidget {
 }
 
 class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
+  late WorkoutResultModel state;
   WorkoutFeedbackRecordModel? feedback;
   List<WorkoutRecordResult> workoutResults = [];
   List<WorkoutRecordModel> workoutRecords = [];
   bool initial = true;
-  bool hasLocalData = false;
+  bool hasLocal = false;
   DateTime startDate = DateTime(
     DateTime.now().year,
   );
@@ -62,8 +63,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPersistentFrameCallback((_) {
-      if (initial && !hasLocalData) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (initial && !hasLocal) {
         getResults();
 
         initial = false;
@@ -86,23 +87,19 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final pstate = ref.watch(workoutRecordsProvider(widget.workoutScheduleId));
     final workoutFeedbackBox = ref.watch(hiveWorkoutFeedbackProvider);
     final workoutResultBox = ref.watch(hiveWorkoutResultProvider);
     final workoutRecordBox = ref.watch(hiveWorkoutRecordProvider);
 
-    final pstate = ref.watch(workoutRecordsProvider(widget.workoutScheduleId));
-
-    late WorkoutResultModel state;
-
     workoutFeedbackBox.whenData(
-      (value) async {
-        feedback = await value.get(widget.workoutScheduleId);
+      (value) {
+        feedback = value.get(widget.workoutScheduleId);
       },
     );
 
-    if (feedback == null || feedback!.strengthIndex == null) {
-      //local 데이터가 없을때!
-
+    if (feedback == null) {
+      print('noData');
       if (pstate is WorkoutResultModelLoading) {
         return const Scaffold(
           backgroundColor: BACKGROUND_COLOR,
@@ -133,6 +130,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                 '${DateFormat('M월 dd일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday - 1]}요일');
       }
     } else {
+      hasLocal = true;
+
       startDate = feedback!.startDate;
       workoutResultBox.whenData(
         (value) {
@@ -142,6 +141,9 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
             final record = value.get(widget.exercises[i].workoutPlanId);
             if (record != null && record is WorkoutRecordResult) {
               workoutResults.add(record);
+            } else {
+              hasLocal = false;
+              print('hasLocal1 = $hasLocal');
             }
           }
         },
@@ -155,6 +157,9 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
             final record = value.get(widget.exercises[i].workoutPlanId);
             if (record != null && record is WorkoutRecordModel) {
               workoutRecords.add(record);
+            } else {
+              hasLocal = false;
+              print('hasLocal2 = $hasLocal');
             }
           }
         },
@@ -175,8 +180,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         contents: feedback!.contents != null ? feedback!.contents! : '',
         workoutRecords: workoutResults,
       );
-
-      hasLocalData = true;
     }
 
     return Scaffold(

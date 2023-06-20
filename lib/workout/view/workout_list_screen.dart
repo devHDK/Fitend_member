@@ -66,8 +66,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   void initState() {
     super.initState();
 
-    ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
-
     Future.delayed(
       const Duration(
         milliseconds: 300,
@@ -76,6 +74,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         WidgetsBinding.instance.addPostFrameCallback(
           (timeStamp) {
             if (initial) {
+              ref
+                  .read(workoutProvider(widget.id).notifier)
+                  .getWorkout(id: widget.id);
+
               if ((isWorkoutComplete || isRecorded) && !hasLocal) {
                 ref
                     .read(workoutRecordsProvider(widget.id).notifier)
@@ -97,7 +99,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (isWorkoutComplete) {
+    if (isWorkoutComplete && isPoped) {
+      print('didChangeDependencies');
       ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
     }
   }
@@ -152,12 +155,12 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     isRecorded = model.isRecord;
 
     if (model.isWorkoutComplete) {
+      hasLocal = true;
       // 완료된 운동
       workoutRecordBox.whenData(
         (value) {
           final record = value.get(model.exercises[0].workoutPlanId);
           if (record == null && pstate is WorkoutResultModel) {
-            hasLocal = false;
             for (var i = 0; i < pstate.workoutRecords.length; i++) {
               value.put(
                 pstate.workoutRecords[i].workoutPlanId,
@@ -167,6 +170,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 ),
               );
             }
+            hasLocal = false;
+            print('hasLocal1 = $hasLocal');
           }
         },
       );
@@ -174,7 +179,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       workoutFeedbackBox.whenData(
         (value) {
           final record = value.get(widget.id);
-          if ((record == null) && pstate is WorkoutResultModel) {
+          if (record == null && pstate is WorkoutResultModel) {
             value.put(
               widget.id,
               WorkoutFeedbackRecordModel(
@@ -185,6 +190,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               ),
             );
             hasLocal = false;
+            print('hasLocal2 = $hasLocal');
           }
         },
       );
@@ -206,6 +212,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               );
             }
             hasLocal = false;
+            print('hasLocal3 = $hasLocal');
           }
         },
       );
@@ -221,6 +228,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 value.put(pstate.workoutRecords[i].workoutPlanId,
                     pstate.workoutRecords[i].setInfo[0]);
                 hasLocal = false;
+                print('hasLocal4 = $hasLocal');
               }
             }
           }
@@ -249,7 +257,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             if (record != null && record is WorkoutRecordResult) {
               model.exercises[i] =
                   model.exercises[i].copyWith(setInfo: record.setInfo);
-              hasLocal = true;
+            } else {
+              hasLocal = false;
             }
           }
         },

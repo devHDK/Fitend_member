@@ -37,28 +37,32 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     super.initState();
     controller.addListener(listener);
 
-    Future.delayed(const Duration(milliseconds: 100), () {
-      ref
-          .read(workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo))
-              .notifier)
-          .paginate(startDate: DataUtils.getDate(fifteenDaysAgo));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (initial) {
+        _getScheduleInitial();
+      }
+    });
+  }
 
-      WidgetsBinding.instance.addPersistentFrameCallback((_) {
-        if (initial) {
+  void _getScheduleInitial() async {
+    await ref
+        .read(
+            workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
+        .paginate(startDate: DataUtils.getDate(fifteenDaysAgo))
+        .then((value) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        todayLocation += 130 * 14 + 130 * initListItemCount;
+
+        if (controller.hasClients) {
           controller.jumpTo(
-            130 * 14 + 130.0 * initListItemCount,
+            todayLocation.toDouble(),
           );
-
-          todayLocation += 130 * 14 + 130 * initListItemCount;
-
-          refetchItemCount = 0;
-
-          super.didChangeDependencies();
-
-          initial = false;
         }
+
+        refetchItemCount = 0;
       });
     });
+    initial = false;
   }
 
   @override

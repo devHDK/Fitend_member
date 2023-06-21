@@ -1,5 +1,6 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/password_confirm_screen.dart';
@@ -131,20 +132,28 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               color: DARK_GRAY_COLOR,
               height: 1,
             ),
-            _renderLabel(
-              name: '서비스 이용 약관',
-              child: Image.asset(
-                'asset/img/icon_next.png',
+            InkWell(
+              onTap: () =>
+                  DataUtils.onWebViewTap(uri: "https://www.google.com"),
+              child: _renderLabel(
+                name: '서비스 이용 약관',
+                child: Image.asset(
+                  'asset/img/icon_next.png',
+                ),
               ),
             ),
             const Divider(
               color: DARK_GRAY_COLOR,
               height: 1,
             ),
-            _renderLabel(
-              name: '개인정보 처리방침',
-              child: Image.asset(
-                'asset/img/icon_next.png',
+            InkWell(
+              onTap: () =>
+                  DataUtils.onWebViewTap(uri: "https://www.google.com"),
+              child: _renderLabel(
+                name: '개인정보 처리방침',
+                child: Image.asset(
+                  'asset/img/icon_next.png',
+                ),
               ),
             ),
             const Divider(

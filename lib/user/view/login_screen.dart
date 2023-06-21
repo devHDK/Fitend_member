@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
@@ -276,7 +277,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
-              onPressed: () {},
+              onPressed: () =>
+                  DataUtils.onWebViewTap(uri: "https://www.google.com"),
               child: const Text(
                 '개인정보처리방침',
                 style: TextStyle(
@@ -290,7 +292,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               width: 40,
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () =>
+                  DataUtils.onWebViewTap(uri: "https://www.google.com"),
               child: const Text(
                 '이용약관',
                 style: TextStyle(

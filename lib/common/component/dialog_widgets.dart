@@ -333,7 +333,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
                             showDialog(
                               context: context,
                               builder: (context) => DialogWidgets.errorDialog(
-                                message: '오늘 이외의 날짜를 선택해주세요!',
+                                message: '기존 스케줄 이외의 날짜를 선택해주세요!',
                                 confirmText: '확인',
                                 confirmOnTap: () => context.pop(),
                               ),

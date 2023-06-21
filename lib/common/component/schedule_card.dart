@@ -104,7 +104,8 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                                   widget.isDateVisible! &&
                                   widget.date != null) ||
                               (widget.date != null &&
-                                  widget.date!.compareTo(today) == 0)
+                                  widget.date!.compareTo(today) == 0 &&
+                                  widget.isDateVisible == true)
                           ? Colors.white
                           : Colors.transparent,
                     ),

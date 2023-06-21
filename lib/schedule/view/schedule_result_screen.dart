@@ -4,10 +4,8 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
-import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
-import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
@@ -198,14 +196,15 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
             padding: const EdgeInsets.only(right: 20),
             child: IconButton(
               onPressed: () {
-                ref
-                    .read(workoutScheduleProvider(DataUtils.getDate(
-                            DateTime.now().subtract(const Duration(days: 15))))
-                        .notifier)
-                    .updateScheduleState(
-                      workoutScheduleId: widget.workoutScheduleId,
-                      startDate: startDate,
-                    ); //스케줄 업데이트
+                // ref
+                //     .read(workoutScheduleProvider(DataUtils.getDate(
+                //             DateTime.now().subtract(const Duration(days: 15))))
+                //         .notifier)
+                //     .updateScheduleState(
+                //       workoutScheduleId: widget.workoutScheduleId,
+                //       startDate: startDate,
+                //     );
+                // 스케줄 업데이트
 
                 ref
                     .read(workoutProvider(widget.workoutScheduleId).notifier)

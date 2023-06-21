@@ -76,7 +76,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     final provider = ref.read(
         workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier);
 
-    if (controller.offset < controller.position.minScrollExtent + 30) {
+    if (controller.offset < controller.position.minScrollExtent + 200) {
       //스크롤을 맨위로 올렸을때
       provider.paginate(
           startDate: minDate, fetchMore: true, isUpScrolling: true);

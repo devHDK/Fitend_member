@@ -104,6 +104,7 @@ class AuthProvider extends ChangeNotifier {
                   workoutScheduleId:
                       int.parse(state.pathParameters['workoutScheduleId']!),
                   exercises: state.extra as List<Exercise>,
+                  startdate: state.queryParameters['startDate'] as String,
                 ),
               ),
             ),

@@ -221,13 +221,16 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                                       .getWorkout(id: widget.workoutScheduleId!)
                                       .then((value) {
                                     GoRouter.of(context).goNamed(
-                                      WorkoutFeedbackScreen.routeName,
-                                      pathParameters: {
-                                        'workoutScheduleId':
-                                            widget.workoutScheduleId.toString(),
-                                      },
-                                      extra: value.exercises,
-                                    );
+                                        WorkoutFeedbackScreen.routeName,
+                                        pathParameters: {
+                                          'workoutScheduleId': widget
+                                              .workoutScheduleId
+                                              .toString(),
+                                        },
+                                        extra: value.exercises,
+                                        queryParameters: {
+                                          'startDate': value.startDate
+                                        });
                                   });
                                 }
                               : () async {

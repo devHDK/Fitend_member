@@ -33,6 +33,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 
 class WorkoutScreen extends ConsumerStatefulWidget {
   final List<Exercise> exercises;
@@ -823,6 +824,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   widget.workoutScheduleId.toString(),
                             },
                             extra: widget.exercises,
+                            queryParameters: {
+                              'startDate':
+                                  DateFormat('yyyy-MM-dd').format(widget.date),
+                            },
                           );
                         },
                       );
@@ -902,6 +907,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 'workoutScheduleId': widget.workoutScheduleId.toString(),
               },
               extra: widget.exercises,
+              queryParameters: {
+                'startDate': DateFormat('yyyy-MM-dd').format(widget.date),
+              },
             );
           });
         } on DioError {
@@ -1126,14 +1134,17 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             ),
                           )
                               .then((value) {
-                            GoRouter.of(context).goNamed(
-                              WorkoutFeedbackScreen.routeName,
-                              pathParameters: {
-                                'workoutScheduleId':
-                                    widget.workoutScheduleId.toString(),
-                              },
-                              extra: widget.exercises,
-                            );
+                            GoRouter.of(context)
+                                .goNamed(WorkoutFeedbackScreen.routeName,
+                                    pathParameters: {
+                                      'workoutScheduleId':
+                                          widget.workoutScheduleId.toString(),
+                                    },
+                                    extra: widget.exercises,
+                                    queryParameters: {
+                                      'startDate': DateFormat('yyyy-MM-dd')
+                                          .format(widget.date),
+                                    });
                           });
                         } on DioError {
                           showDialog(

@@ -196,16 +196,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
             padding: const EdgeInsets.only(right: 20),
             child: IconButton(
               onPressed: () {
-                // ref
-                //     .read(workoutScheduleProvider(DataUtils.getDate(
-                //             DateTime.now().subtract(const Duration(days: 15))))
-                //         .notifier)
-                //     .updateScheduleState(
-                //       workoutScheduleId: widget.workoutScheduleId,
-                //       startDate: startDate,
-                //     );
-                // 스케줄 업데이트
-
                 ref
                     .read(workoutProvider(widget.workoutScheduleId).notifier)
                     .updateWorkoutStateIsComplete(); //workout list 업데이트

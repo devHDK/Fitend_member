@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'setInfo_model.g.dart';
+part 'set_info_model.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 2)

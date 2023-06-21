@@ -2,9 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/post_workout_record_feedback_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
+import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:flutter/material.dart';
@@ -17,11 +19,13 @@ class WorkoutFeedbackScreen extends ConsumerStatefulWidget {
 
   final int workoutScheduleId;
   final List<Exercise>? exercises;
+  final String startdate;
 
   const WorkoutFeedbackScreen({
     super.key,
     required this.workoutScheduleId,
     this.exercises,
+    required this.startdate,
   });
 
   @override
@@ -197,14 +201,14 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                   )
                                       .then((value) {
                                     workoutFeedbackBox.whenData(
-                                      (value) {
+                                      (_) {
                                         final record =
-                                            value.get(widget.workoutScheduleId);
+                                            _.get(widget.workoutScheduleId);
 
                                         if (record != null &&
                                             record
                                                 is WorkoutFeedbackRecordModel) {
-                                          value.put(
+                                          _.put(
                                             widget.workoutScheduleId,
                                             record.copyWith(
                                               strengthIndex: strengthIndex,
@@ -218,6 +222,20 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                         }
                                       },
                                     );
+
+                                    ref
+                                        .read(workoutScheduleProvider(
+                                                DataUtils.getDate(DateTime.now()
+                                                    .subtract(const Duration(
+                                                        days: 15))))
+                                            .notifier)
+                                        .updateScheduleState(
+                                          workoutScheduleId:
+                                              widget.workoutScheduleId,
+                                          startDate:
+                                              DateTime.parse(widget.startdate),
+                                        );
+                                    // 스케줄 업데이트
 
                                     context.goNamed(
                                       ScheduleResultScreen.routeName,

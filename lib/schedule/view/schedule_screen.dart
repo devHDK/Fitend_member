@@ -82,9 +82,10 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           startDate: minDate, fetchMore: true, isUpScrolling: true);
 
       double previousOffset = controller.offset;
-      controller.jumpTo(
-          previousOffset + (130 * 31 + 130 * refetchItemCount)); //기존 위치로 이동
       todayLocation += 130 * 31 + 130 * refetchItemCount;
+      controller.jumpTo(
+          previousOffset + (130.0 * 31 + 130 * refetchItemCount)); //기존 위치로 이동
+
       refetchItemCount = 0;
     }
 
@@ -136,9 +137,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       }
     }
 
-    for (int i = 0; i < 31; i++) {
-      if (schedules.data![i].workouts!.length >= 2) {
-        refetchItemCount += schedules.data![i].workouts!.length - 1;
+    if (schedules.data!.length > 31) {
+      for (int i = 0; i < 31; i++) {
+        if (schedules.data![i].workouts!.length >= 2) {
+          refetchItemCount += schedules.data![i].workouts!.length - 1;
+        }
       }
     }
 

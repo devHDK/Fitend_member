@@ -53,5 +53,7 @@
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>Firebase AppConfig</key>
+	<string>$(GOOGLE_APP_ID)</string>
 </dict>
 </plist>

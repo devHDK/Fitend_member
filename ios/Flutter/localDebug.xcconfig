@@ -4,3 +4,4 @@ FLUTTER_TARGET=lib/main_local.dart
 ASSET_PREFIX=local
 BUNDLE_NAME=fitend_local
 BUNDLE_DISPLAY_NAME=fitend_local
+

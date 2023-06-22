@@ -74,7 +74,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     final provider = ref.read(
         workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier);
 
-    if (controller.offset < controller.position.minScrollExtent - 10) {
+    if (controller.offset < controller.position.minScrollExtent + 10) {
       //스크롤을 맨위로 올렸을때
       provider.paginate(
           startDate: minDate, fetchMore: true, isUpScrolling: true);
@@ -87,8 +87,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           temp += element.workouts!.length - 1;
         }
       });
-
-      print('temp $temp');
 
       controller.jumpTo(previousOffset + (130.0 * 31 + 130 * temp));
 
@@ -147,11 +145,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         backgroundColor: BACKGROUND_COLOR,
         appBar: LogoAppbar(
           tapLogo: () {
-            print('todayLocation ontap : $todayLocation');
             controller.animateTo(todayLocation.toDouble(),
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.ease);
-            print('offset ontap : ${controller.offset}');
           },
           actions: [
             Padding(

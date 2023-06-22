@@ -1,37 +1,73 @@
 {
   "project_info": {
-    "project_number": "924335070648",
-    "project_id": "fitend-dev",
-    "storage_bucket": "fitend-dev.appspot.com"
+    "project_number": "533675600650",
+    "project_id": "fitend-prod",
+    "storage_bucket": "fitend-prod.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:924335070648:android:17f062e557f7694dd0c34d",
+        "mobilesdk_app_id": "1:533675600650:android:24bfc747efd660754328f3",
         "android_client_info": {
-          "package_name": "com.raid.fitend.dev"
+          "package_name": "com.raid.fitend"
         }
       },
       "oauth_client": [
         {
-          "client_id": "924335070648-nr31jccg3o8gqge9m2cgc6vh30f7sq3c.apps.googleusercontent.com",
+          "client_id": "533675600650-hm90at0khulh660vgl2svqfifbcjjno5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAuBICRjn3xDdkfB4OR2sMCeb1xCRdLdQU"
+          "current_key": "AIzaSyCveB2_0-d_LPjjC8Vt3VUd8bN576kqPIU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "924335070648-nr31jccg3o8gqge9m2cgc6vh30f7sq3c.apps.googleusercontent.com",
+              "client_id": "533675600650-hm90at0khulh660vgl2svqfifbcjjno5.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "924335070648-1588ljumlljub951oubsjstombqvcgvl.apps.googleusercontent.com",
+              "client_id": "533675600650-klj8dv6kf97uc41sfqmfpeke6tkdiv5b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.raid.fitend"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:533675600650:android:0b6472f9f2b7f5134328f3",
+        "android_client_info": {
+          "package_name": "com.raid.fitend.local"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "533675600650-hm90at0khulh660vgl2svqfifbcjjno5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCveB2_0-d_LPjjC8Vt3VUd8bN576kqPIU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "533675600650-hm90at0khulh660vgl2svqfifbcjjno5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "533675600650-klj8dv6kf97uc41sfqmfpeke6tkdiv5b.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.raid.fitend"

@@ -28,7 +28,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   DateTime minDate = DateTime(DateTime.now().year);
   DateTime maxDate = DateTime(DateTime.now().year);
   int initListItemCount = 0;
-  int refetchItemCount = 0;
+  // int refetchItemCount = 0;
   int todayLocation = 0;
   bool initial = true;
 
@@ -58,8 +58,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             todayLocation.toDouble(),
           );
         }
-
-        refetchItemCount = 0;
       });
     });
     initial = false;
@@ -76,20 +74,26 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     final provider = ref.read(
         workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier);
 
-    if (controller.offset < controller.position.minScrollExtent + 200) {
+    if (controller.offset < controller.position.minScrollExtent - 10) {
       //스크롤을 맨위로 올렸을때
       provider.paginate(
           startDate: minDate, fetchMore: true, isUpScrolling: true);
 
       double previousOffset = controller.offset;
-      todayLocation += 130 * 31 + 130 * refetchItemCount;
-      controller.jumpTo(
-          previousOffset + (130.0 * 31 + 130 * refetchItemCount)); //기존 위치로 이동
+      int temp = 0;
 
-      refetchItemCount = 0;
-    }
+      scheduleListGlobal.mapIndexed((index, element) {
+        if (element.workouts!.length > 1) {
+          temp += element.workouts!.length - 1;
+        }
+      });
 
-    if (controller.offset > controller.position.maxScrollExtent - 300) {
+      print('temp $temp');
+
+      controller.jumpTo(previousOffset + (130.0 * 31 + 130 * temp));
+
+      todayLocation += (130 * 31) + (130 * temp); //기존 위치로 이동
+    } else if (controller.offset > controller.position.maxScrollExtent - 300) {
       //스크롤을 아래로 내렸을때
       provider.paginate(
           startDate: maxDate, fetchMore: true, isDownScrolling: true);
@@ -137,23 +141,17 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       }
     }
 
-    if (schedules.data!.length > 31) {
-      for (int i = 0; i < 31; i++) {
-        if (schedules.data![i].workouts!.length >= 2) {
-          refetchItemCount += schedules.data![i].workouts!.length - 1;
-        }
-      }
-    }
-
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
         backgroundColor: BACKGROUND_COLOR,
         appBar: LogoAppbar(
           tapLogo: () {
+            print('todayLocation ontap : $todayLocation');
             controller.animateTo(todayLocation.toDouble(),
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.ease);
+            print('offset ontap : ${controller.offset}');
           },
           actions: [
             Padding(

@@ -103,10 +103,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   //   // ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
   // }
 
-  @override
-  void didUpdateWidget(covariant WorkoutListScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-  }
+  // @override
+  // void didUpdateWidget(covariant WorkoutListScreen oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -144,9 +144,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
 
     final model = state as WorkoutModel;
     workoutModel = model;
-
-    // print(
-    //     'model.exercises[0].setInfo[0].reps : ${model.exercises[0].setInfo[0].reps}');
 
     workoutBox = workoutRecordBox;
     timerXoneBox = timerXoneRecordBox;
@@ -415,7 +412,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
 
                   return GestureDetector(
                     onTap: () {
-                      GoRouter.of(context).goNamed(
+                      GoRouter.of(context).pushNamed(
                         ExerciseScreen.routeName,
                         pathParameters: {
                           'workoutScheduleId':

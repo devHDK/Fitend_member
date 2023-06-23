@@ -32,6 +32,7 @@ class _WeightWrepsProgressCardState
   // int index = 0;
   bool colorChanged = false;
   int count = 0;
+  int length = 0;
 
   @override
   void initState() {
@@ -103,14 +104,20 @@ class _WeightWrepsProgressCardState
       },
     ).toList();
 
+    if (widget.setInfoIndex > widget.exercise.setInfo.length - 1) {
+      length = widget.setInfoIndex - 1;
+    } else {
+      length = widget.setInfoIndex;
+    }
+
     return Column(
       children: [
         Text(
           widget.exercise.trackingFieldId == 1
-              ? '${widget.exercise.setInfo[widget.setInfoIndex].weight}kg ∙ ${widget.exercise.setInfo[widget.setInfoIndex].reps}회'
+              ? '${widget.exercise.setInfo[length].weight}kg ∙ ${widget.exercise.setInfo[length].reps}회'
               : widget.exercise.trackingFieldId == 2
-                  ? '${widget.exercise.setInfo[widget.setInfoIndex].reps}회'
-                  : '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분 ${widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60}초',
+                  ? '${widget.exercise.setInfo[length].reps}회'
+                  : '${(widget.exercise.setInfo[length].seconds! / 60).floor()}분 ${widget.exercise.setInfo[length].seconds! % 60}초',
           style: const TextStyle(
             color: GRAY_COLOR,
             fontSize: 16,
@@ -138,7 +145,7 @@ class _WeightWrepsProgressCardState
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              '${widget.setInfoIndex + 1}세트 진행중',
+              '${length + 1}세트 진행중',
               style: const TextStyle(
                 color: POINT_COLOR,
                 fontSize: 14,

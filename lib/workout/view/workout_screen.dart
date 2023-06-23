@@ -317,7 +317,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             ),
           AnimatedPositioned(
             bottom: 0.0,
-            curve: Curves.linear,
+            curve: Curves.ease,
             duration: const Duration(milliseconds: 300),
             top: isSwipeUp ? size.height - 315 : size.height - 195,
             child: GestureDetector(
@@ -442,6 +442,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   }
                                 },
                           proccessOnTap: () {
+                            print('exerciseIndex : $exerciseIndex');
+                            print('maxExcerciseIndex : $maxExcerciseIndex');
                             if (exerciseIndex <= maxExcerciseIndex &&
                                 setInfoCompleteList[exerciseIndex] <
                                     maxSetInfoList[exerciseIndex]) {
@@ -459,6 +461,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             if (setInfoCompleteList[exerciseIndex] ==
                                     maxSetInfoList[exerciseIndex] &&
                                 exerciseIndex < maxExcerciseIndex) {
+                              print('exerciseIndex : $exerciseIndex');
+
                               //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                               setState(() {
                                 exerciseIndex += 1; // 운동 변경
@@ -466,16 +470,18 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 tooltipCount = 0;
                                 onTooltipPressed();
                               });
+                              print('exerciseIndex : $exerciseIndex');
 
                               while (setInfoCompleteList[exerciseIndex] ==
                                       maxSetInfoList[exerciseIndex] &&
                                   exerciseIndex < maxExcerciseIndex) {
-                                setState(() {
-                                  exerciseIndex += 1; // 완료된 세트라면 건너뛰기
-                                });
                                 if (exerciseIndex == maxExcerciseIndex) {
                                   break;
                                 }
+
+                                setState(() {
+                                  exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                });
                               }
                             }
 
@@ -576,12 +582,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     while (setInfoCompleteList[exerciseIndex] ==
                                             maxSetInfoList[exerciseIndex] &&
                                         exerciseIndex < maxExcerciseIndex) {
-                                      setState(() {
-                                        exerciseIndex += 1; // 완료된 세트라면 건너뛰기
-                                      });
                                       if (exerciseIndex == maxExcerciseIndex) {
                                         break;
                                       }
+                                      setState(() {
+                                        exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                      });
                                     }
                                   }
 
@@ -697,12 +703,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               while (setInfoCompleteList[exerciseIndex] ==
                                       maxSetInfoList[exerciseIndex] &&
                                   exerciseIndex < maxExcerciseIndex) {
-                                setState(() {
-                                  exerciseIndex += 1; // 완료된 세트라면 건너뛰기
-                                });
                                 if (exerciseIndex == maxExcerciseIndex) {
                                   break;
                                 }
+                                setState(() {
+                                  exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                });
                               }
                             }
 

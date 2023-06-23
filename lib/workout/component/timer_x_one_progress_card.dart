@@ -185,7 +185,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
     return Column(
       children: [
         Text(
-          '${(widget.exercise.setInfo[0].seconds! / 60).floor()}분 ${widget.exercise.setInfo[0].seconds! % 60}초',
+          '${(widget.exercise.setInfo[0].seconds! / 60).floor().toString().padLeft(2, '0')}분 ${(widget.exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초',
           style: const TextStyle(
             color: GRAY_COLOR,
             fontSize: 16,

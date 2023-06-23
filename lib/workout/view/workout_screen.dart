@@ -442,8 +442,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   }
                                 },
                           proccessOnTap: () {
-                            print('exerciseIndex : $exerciseIndex');
-                            print('maxExcerciseIndex : $maxExcerciseIndex');
                             if (exerciseIndex <= maxExcerciseIndex &&
                                 setInfoCompleteList[exerciseIndex] <
                                     maxSetInfoList[exerciseIndex]) {
@@ -461,8 +459,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             if (setInfoCompleteList[exerciseIndex] ==
                                     maxSetInfoList[exerciseIndex] &&
                                 exerciseIndex < maxExcerciseIndex) {
-                              print('exerciseIndex : $exerciseIndex');
-
                               //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                               setState(() {
                                 exerciseIndex += 1; // 운동 변경
@@ -470,7 +466,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 tooltipCount = 0;
                                 onTooltipPressed();
                               });
-                              print('exerciseIndex : $exerciseIndex');
 
                               while (setInfoCompleteList[exerciseIndex] ==
                                       maxSetInfoList[exerciseIndex] &&

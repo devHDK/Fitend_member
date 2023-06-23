@@ -354,7 +354,7 @@ class _WeightWrepsProgressCardState
     return Column(
       children: [
         Text(
-          '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분 ${widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60}초',
+          '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분 ${(widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60).toString().padLeft(2, '0')}초',
           style: const TextStyle(
             color: GRAY_COLOR,
             fontSize: 16,

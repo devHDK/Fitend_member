@@ -438,136 +438,146 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           ),
         ],
       ),
-      floatingActionButton: TextButton(
-        onPressed: model.isWorkoutComplete
-            ? () {
-                context.goNamed(
-                  ScheduleResultScreen.routeName,
-                  pathParameters: {
-                    "workoutScheduleId": model.workoutScheduleId.toString(),
-                  },
-                  extra: model.exercises,
-                );
-              }
-            : today.compareTo(DateTime.parse(workoutModel.startDate)) == 0
-                ? () async {
-                    workoutResultBox.whenData(
-                      (value) {
-                        for (var e in state.exercises) {
-                          final record = value.get(e.workoutPlanId);
+      floatingActionButton: today
+                      .compareTo(DateTime.parse(workoutModel.startDate)) !=
+                  0 &&
+              !model.isWorkoutComplete
+          ? null
+          : TextButton(
+              onPressed: model.isWorkoutComplete
+                  ? () {
+                      context.goNamed(
+                        ScheduleResultScreen.routeName,
+                        pathParameters: {
+                          "workoutScheduleId":
+                              model.workoutScheduleId.toString(),
+                        },
+                        extra: model.exercises,
+                      );
+                    }
+                  : today.compareTo(DateTime.parse(workoutModel.startDate)) == 0
+                      ? () async {
+                          workoutResultBox.whenData(
+                            (value) {
+                              for (var e in state.exercises) {
+                                final record = value.get(e.workoutPlanId);
 
-                          if (record == null) {
-                            value.put(
-                              e.workoutPlanId,
-                              WorkoutRecordResult(
-                                exerciseName: e.name,
-                                targetMuscles: [e.targetMuscles[0].name],
-                                trackingFieldId: e.trackingFieldId,
-                                workoutPlanId: e.workoutPlanId,
-                                setInfo: e.setInfo,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                    );
-
-                    workoutFeedbackBox.whenData(
-                      (value) {
-                        final record = value.get(model.workoutScheduleId);
-                        if (record == null) {
-                          value.put(
-                            model.workoutScheduleId,
-                            WorkoutFeedbackRecordModel(
-                              startDate: DateTime.parse(model.startDate),
-                            ),
+                                if (record == null) {
+                                  value.put(
+                                    e.workoutPlanId,
+                                    WorkoutRecordResult(
+                                      exerciseName: e.name,
+                                      targetMuscles: [e.targetMuscles[0].name],
+                                      trackingFieldId: e.trackingFieldId,
+                                      workoutPlanId: e.workoutPlanId,
+                                      setInfo: e.setInfo,
+                                    ),
+                                  );
+                                }
+                              }
+                            },
                           );
-                        }
-                      },
-                    );
 
-                    modifiedExerciseBox.whenData(
-                      (value) {
-                        for (int i = 0; i < model.exercises.length; i++) {
-                          final exercise =
-                              value.get(model.exercises[i].workoutPlanId);
-                          if (exercise == null) {
-                            //저장된게 없으면 저장
-                            value.put(model.exercises[i].workoutPlanId,
-                                model.exercises[i]);
-                          }
-                        }
-                      },
-                    );
+                          workoutFeedbackBox.whenData(
+                            (value) {
+                              final record = value.get(model.workoutScheduleId);
+                              if (record == null) {
+                                value.put(
+                                  model.workoutScheduleId,
+                                  WorkoutFeedbackRecordModel(
+                                    startDate: DateTime.parse(model.startDate),
+                                  ),
+                                );
+                              }
+                            },
+                          );
 
-                    await Navigator.of(context)
-                        .push(
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 300),
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            WorkoutScreen(
-                          exercises: model.exercises,
-                          date: DateTime.parse(model.startDate),
-                          workout: model,
-                          workoutScheduleId: widget.id,
-                        ),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) =>
-                                SlideTransition(
-                          position: animation.drive(
-                            Tween(
-                              begin: const Offset(1.0, 0),
-                              end: Offset.zero,
-                            ).chain(
-                              CurveTween(curve: Curves.linearToEaseOut),
+                          modifiedExerciseBox.whenData(
+                            (value) {
+                              for (int i = 0; i < model.exercises.length; i++) {
+                                final exercise =
+                                    value.get(model.exercises[i].workoutPlanId);
+                                if (exercise == null) {
+                                  //저장된게 없으면 저장
+                                  value.put(model.exercises[i].workoutPlanId,
+                                      model.exercises[i]);
+                                }
+                              }
+                            },
+                          );
+
+                          await Navigator.of(context)
+                              .push(
+                            PageRouteBuilder(
+                              transitionDuration:
+                                  const Duration(milliseconds: 300),
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      WorkoutScreen(
+                                exercises: model.exercises,
+                                date: DateTime.parse(model.startDate),
+                                workout: model,
+                                workoutScheduleId: widget.id,
+                              ),
+                              transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) =>
+                                  SlideTransition(
+                                position: animation.drive(
+                                  Tween(
+                                    begin: const Offset(1.0, 0),
+                                    end: Offset.zero,
+                                  ).chain(
+                                    CurveTween(curve: Curves.linearToEaseOut),
+                                  ),
+                                ),
+                                child: child,
+                              ),
                             ),
-                          ),
-                          child: child,
-                        ),
-                      ),
-                    )
-                        .then((value) {
-                      setState(() {
-                        isPoped = true;
+                          )
+                              .then((value) {
+                            setState(() {
+                              isPoped = true;
 
-                        // ref
-                        //     .read(workoutProvider(widget.id).notifier)
-                        //     .getWorkout(id: widget.id);
-                      });
-                    });
-                  }
-                : null,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Container(
-            height: 44,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              color: model.isWorkoutComplete ||
-                      today.compareTo(DateTime.parse(workoutModel.startDate)) ==
-                          0
-                  ? POINT_COLOR
-                  : POINT_COLOR.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: Text(
-                model.isWorkoutComplete
-                    ? '결과보기📝'
-                    : today.compareTo(DateTime.parse(workoutModel.startDate)) ==
-                            0
-                        ? '운동 시작하기💪'
-                        : '오늘의 운동만 수행할 수 있어요!',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                              // ref
+                              //     .read(workoutProvider(widget.id).notifier)
+                              //     .getWorkout(id: widget.id);
+                            });
+                          });
+                        }
+                      : null,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: Container(
+                  height: 44,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: model.isWorkoutComplete ||
+                            today.compareTo(
+                                    DateTime.parse(workoutModel.startDate)) ==
+                                0
+                        ? POINT_COLOR
+                        : POINT_COLOR.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      model.isWorkoutComplete
+                          ? '결과보기📝'
+                          : today.compareTo(
+                                      DateTime.parse(workoutModel.startDate)) ==
+                                  0
+                              ? '운동 시작하기💪'
+                              : '오늘의 운동만 수행할 수 있어요!',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButtonAnimator: _NoAnimationFabAnimator(),
     );

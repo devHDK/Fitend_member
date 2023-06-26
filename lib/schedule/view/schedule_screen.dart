@@ -82,7 +82,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       double previousOffset = controller.offset;
       int temp = 0;
 
-      scheduleListGlobal.mapIndexed((index, element) {
+      scheduleListGlobal.map((element) {
         if (element.workouts!.length > 1) {
           temp += element.workouts!.length - 1;
         }
@@ -145,9 +145,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         backgroundColor: BACKGROUND_COLOR,
         appBar: LogoAppbar(
           tapLogo: () {
-            controller.animateTo(todayLocation.toDouble(),
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.ease);
+            print(todayLocation);
+
+            controller.animateTo(
+              todayLocation.toDouble(),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.ease,
+            );
           },
           actions: [
             Padding(

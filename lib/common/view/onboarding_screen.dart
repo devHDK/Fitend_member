@@ -25,12 +25,13 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       child: _flavorBanner(
         child: Center(
           child: DefaultTextStyle(
-              style: GoogleFonts.audiowide(
-                fontSize: 45,
-                fontWeight: FontWeight.w500,
-                color: POINT_COLOR,
-              ),
-              child: const Text('F I T E N D')),
+            style: GoogleFonts.audiowide(
+              fontSize: 45,
+              fontWeight: FontWeight.w500,
+              color: POINT_COLOR,
+            ),
+            child: const Text('F I T E N D'),
+          ),
         ),
         show: F.appFlavor == Flavor.development || F.appFlavor == Flavor.local
             ? true
@@ -50,9 +51,10 @@ Widget _flavorBanner({
             message: F.name,
             color: Colors.green.withOpacity(0.6),
             textStyle: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 12.0,
-                letterSpacing: 1.0),
+              fontWeight: FontWeight.w700,
+              fontSize: 12.0,
+              letterSpacing: 1.0,
+            ),
             textDirection: TextDirection.ltr,
             child: child,
           )

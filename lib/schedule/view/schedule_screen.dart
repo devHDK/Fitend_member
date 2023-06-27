@@ -87,7 +87,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           temp += element.workouts!.length - 1;
         }
       });
-
       controller.jumpTo(previousOffset + (130.0 * 31 + 130 * temp));
 
       todayLocation += (130 * 31) + (130 * temp); //기존 위치로 이동
@@ -145,8 +144,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         backgroundColor: BACKGROUND_COLOR,
         appBar: LogoAppbar(
           tapLogo: () {
-            print(todayLocation);
-
             controller.animateTo(
               todayLocation.toDouble(),
               duration: const Duration(milliseconds: 300),

@@ -39,7 +39,9 @@ class WorkoutBanner extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
+                overflow: TextOverflow.ellipsis,
               ),
+              maxLines: 1,
             ),
             const SizedBox(
               height: 4,
@@ -50,7 +52,9 @@ class WorkoutBanner extends StatelessWidget {
                 color: LIGHT_GRAY_COLOR,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
+                overflow: TextOverflow.ellipsis,
               ),
+              maxLines: 1,
             ),
             const SizedBox(
               height: 20,

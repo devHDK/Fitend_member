@@ -439,7 +439,9 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
             color: Colors.white,
             fontWeight: FontWeight.w700,
             fontSize: 16,
+            overflow: TextOverflow.ellipsis,
           ),
+          maxLines: 1,
         ),
         const SizedBox(
           height: 6,

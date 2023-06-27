@@ -200,7 +200,9 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
             color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.w700,
+            overflow: TextOverflow.ellipsis,
           ),
+          maxLines: 1,
         ),
         const SizedBox(
           height: 10,

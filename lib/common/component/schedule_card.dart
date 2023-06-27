@@ -164,7 +164,9 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
+                          overflow: TextOverflow.ellipsis,
                         ),
+                        maxLines: 1,
                       ),
                       const SizedBox(
                         height: 10,
@@ -172,10 +174,11 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                       Text(
                         widget.subTitle != null ? widget.subTitle! : '',
                         style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            overflow: TextOverflow.ellipsis),
+                        maxLines: 1,
                       )
                     ],
                   ),

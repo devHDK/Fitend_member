@@ -50,9 +50,7 @@ class WorkoutScheduleStateNotifier
         state = WorkoutScheduleFetchingMore(
           data: pState.data,
         );
-      } else if (isRefetch) {
       } else {
-        // 데이터를 처음부터 가져오는 상황
         if (state is WorkoutScheduleModel) {
           final pState = state as WorkoutScheduleModel;
           state = WorkoutScheduleRefetching(data: pState.data);

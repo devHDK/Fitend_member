@@ -50,7 +50,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
         .paginate(startDate: DataUtils.getDate(fifteenDaysAgo))
         .then((value) {
-      Future.delayed(const Duration(milliseconds: 100), () {
+      Future.delayed(const Duration(milliseconds: 200), () {
         todayLocation += 130 * 14 + 130 * initListItemCount;
 
         if (controller.hasClients) {
@@ -74,7 +74,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     final provider = ref.read(
         workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier);
 
-    if (controller.offset < controller.position.minScrollExtent + 10) {
+    if (controller.offset < controller.position.minScrollExtent + 50) {
       //스크롤을 맨위로 올렸을때
       provider.paginate(
           startDate: minDate, fetchMore: true, isUpScrolling: true);
@@ -143,12 +143,38 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       child: Scaffold(
         backgroundColor: BACKGROUND_COLOR,
         appBar: LogoAppbar(
-          tapLogo: () {
-            controller.animateTo(
-              todayLocation.toDouble(),
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.ease,
-            );
+          tapLogo: () async {
+            setState(() {
+              todayLocation = 0;
+              initListItemCount = 0;
+            });
+            scheduleListGlobal.removeRange(0, scheduleListGlobal.length - 1);
+
+            await ref
+                .read(workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo))
+                    .notifier)
+                .paginate(
+                  startDate: DataUtils.getDate(fifteenDaysAgo),
+                )
+                .then((value) {
+              Future.delayed(const Duration(milliseconds: 200), () {
+                todayLocation += 130 * 14 + 130 * initListItemCount;
+
+                if (controller.hasClients) {
+                  controller.jumpTo(
+                    todayLocation.toDouble(),
+                    // duration: const Duration(milliseconds: 300),
+                    // curve: Curves.ease,
+                  );
+                }
+              });
+            });
+
+            // controller.animateTo(
+            //   todayLocation.toDouble(),
+            //   duration: const Duration(milliseconds: 300),
+            //   curve: Curves.ease,
+            // );
           },
           actions: [
             Padding(

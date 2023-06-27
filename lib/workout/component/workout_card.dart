@@ -157,18 +157,18 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
             ),
           ),
         ),
-        Positioned(
-          left: 42,
-          top: 98,
-          child: SizedBox(
-            width: 35,
-            height: 35,
-            child: ClipRRect(
-              child: CustomNetworkImage(
-                  imageUrl: '$s3Url$muscleImageUrl$muscleId.png'),
-            ),
-          ),
-        )
+        // Positioned(
+        //   left: 42,
+        //   top: 98,
+        //   child: SizedBox(
+        //     width: 35,
+        //     height: 35,
+        //     child: ClipRRect(
+        //       child: CustomNetworkImage(
+        //           imageUrl: '$s3Url$muscleImageUrl$muscleId.png'),
+        //     ),
+        //   ),
+        // )
       ],
     );
   }

@@ -76,6 +76,7 @@ dependencies:
   intl: ^0.18.1
   package_info_plus: ^4.0.2
   table_calendar: ^3.0.9
+  auto_size_text: ^3.0.0
 
 
 dev_dependencies:

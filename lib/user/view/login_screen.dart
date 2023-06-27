@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -73,7 +74,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(
                   height: 24,
                 ),
-                const Text(
+                const AutoSizeText(
                   '담당 트레이너님이 \n설정해주신 아이디로  바로 시작해보세요',
                   style: TextStyle(
                     fontSize: 20,
@@ -81,6 +82,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     color: Colors.white,
                     height: 1.5,
                   ),
+                  maxLines: 2,
                 ),
                 const SizedBox(
                   height: 36,

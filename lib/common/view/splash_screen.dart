@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
@@ -50,12 +51,14 @@ class _BottomView extends StatelessWidget {
           const SizedBox(
             height: 12,
           ),
-          const Text(
+          const AutoSizeText(
             'Routine for 4 Weeks!\n새로운 디지털 PT의 패러다임을 지금 바로 경험해보세요',
             style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: LIGHT_GRAY_COLOR),
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: LIGHT_GRAY_COLOR,
+            ),
+            maxLines: 2,
           ),
           const SizedBox(
             height: 40,

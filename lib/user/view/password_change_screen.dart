@@ -148,14 +148,46 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
                     int count = 0;
                     Navigator.of(context).popUntil((_) => count++ >= 2);
 
-                    showDialog(
-                      context: context,
-                      builder: (context) => DialogWidgets.errorDialog(
-                        message: '비밀번호가 변경되었습니다!',
-                        confirmText: '확인',
-                        confirmOnTap: () => context.pop(),
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        content: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 80),
+                          child: Container(
+                            width: 154,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: DARK_GRAY_COLOR,
+                            ),
+                            child: const Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 5),
+                                child: Text(
+                                  '비밀번호가 변경되었습니다',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     );
+
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (context) => DialogWidgets.errorDialog(
+                    //     message: '비밀번호가 변경되었습니다!',
+                    //     confirmText: '확인',
+                    //     confirmOnTap: () => context.pop(),
+                    //   ),
+                    // );
                   });
 
                   setState(() {

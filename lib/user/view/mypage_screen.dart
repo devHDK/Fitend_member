@@ -166,7 +166,10 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 name: '현재버전',
                 child: Text(
                   packageInfo != null ? 'v${packageInfo!.version}' : '',
-                  style: const TextStyle(color: POINT_COLOR, fontSize: 12),
+                  style: const TextStyle(
+                    color: POINT_COLOR,
+                    fontSize: 12,
+                  ),
                 )),
             const Divider(
               color: DARK_GRAY_COLOR,

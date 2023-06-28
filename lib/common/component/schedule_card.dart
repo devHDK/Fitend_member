@@ -5,6 +5,7 @@ import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:fitend_member/workout/view/workout_list_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -237,13 +238,20 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                                   });
                                 }
                               : () async {
-                                  var dateChanged = await context.pushNamed(
-                                      WorkoutListScreen.routeName,
-                                      pathParameters: {
-                                        'workoutScheduleId': widget
-                                            .workoutScheduleId!
-                                            .toString(),
-                                      });
+                                  // var dateChanged = await context.pushNamed(
+                                  //   WorkoutListScreen.routeName,
+                                  //   pathParameters: {
+                                  //     'workoutScheduleId':
+                                  //         widget.workoutScheduleId!.toString(),
+                                  //   },
+                                  // );
+
+                                  var dateChanged = await Navigator.of(context)
+                                      .push(CupertinoPageRoute(
+                                    builder: (context) => WorkoutListScreen(
+                                      id: widget.workoutScheduleId!,
+                                    ),
+                                  ));
 
                                   if (dateChanged == true &&
                                       widget.onNotifyParent != null) {

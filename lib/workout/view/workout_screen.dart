@@ -29,6 +29,7 @@ import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -730,6 +731,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       if (isSwipeUp)
                         _bottomButtons(
                           workoutBox,
+                          modifiedBox,
+                          timerWorkoutBox,
+                          timerXMoreBox,
                           recordRepository,
                         ),
                     ],
@@ -969,8 +973,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     );
   }
 
-  Column _bottomButtons(AsyncValue<Box<dynamic>> workoutBox,
-      WorkoutRecordsRepository recordRepository) {
+  Column _bottomButtons(
+    AsyncValue<Box<dynamic>> workoutBox,
+    AsyncValue<Box<dynamic>> modifiedBox,
+    AsyncValue<Box<dynamic>> timerWorkoutBox,
+    AsyncValue<Box<dynamic>> timerXMoreBox,
+    WorkoutRecordsRepository recordRepository,
+  ) {
     return Column(
       children: [
         const Divider(
@@ -988,29 +997,34 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               name: '운동 변경',
               onTap: () async {
                 Navigator.of(context)
-                    .push(
-                  PageRouteBuilder(
-                    transitionDuration: const Duration(milliseconds: 300),
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        WorkoutChangeScreen(
-                      exerciseIndex: exerciseIndex,
-                      workout: widget.workout,
-                    ),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) =>
-                            SlideTransition(
-                      position: animation.drive(
-                        Tween(
-                          begin: const Offset(1.0, 0),
-                          end: Offset.zero,
-                        ).chain(
-                          CurveTween(curve: Curves.linearToEaseOut),
-                        ),
-                      ),
-                      child: child,
-                    ),
+                    .push(CupertinoPageRoute(
+                  builder: (context) => WorkoutChangeScreen(
+                    exerciseIndex: exerciseIndex,
+                    workout: widget.workout,
                   ),
-                )
+
+                  // PageRouteBuilder(
+                  //   transitionDuration: const Duration(milliseconds: 300),
+                  //   pageBuilder: (context, animation, secondaryAnimation) =>
+                  //       WorkoutChangeScreen(
+                  //     exerciseIndex: exerciseIndex,
+                  //     workout: widget.workout,
+                  //   ),
+                  //   transitionsBuilder:
+                  //       (context, animation, secondaryAnimation, child) =>
+                  //           SlideTransition(
+                  //     position: animation.drive(
+                  //       Tween(
+                  //         begin: const Offset(1.0, 0),
+                  //         end: Offset.zero,
+                  //       ).chain(
+                  //         CurveTween(curve: Curves.linearToEaseOut),
+                  //       ),
+                  //     ),
+                  //     child: child,
+                  //   ),
+                  // ),
+                ))
                     .then(
                   (value) {
                     setState(() {
@@ -1030,27 +1044,31 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               img: 'asset/img/icon_guide.png',
               name: '운동 가이드',
               onTap: () {
-                Navigator.of(context).push(
-                  PageRouteBuilder(
-                    transitionDuration: const Duration(milliseconds: 300),
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        ExerciseScreen(
-                            exercise: widget.exercises[exerciseIndex]),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) =>
-                            SlideTransition(
-                      position: animation.drive(
-                        Tween(
-                          begin: const Offset(1.0, 0),
-                          end: Offset.zero,
-                        ).chain(
-                          CurveTween(curve: Curves.linearToEaseOut),
-                        ),
-                      ),
-                      child: child,
-                    ),
-                  ),
-                );
+                // Navigator.of(context).push(
+                //   PageRouteBuilder(
+                //     transitionDuration: const Duration(milliseconds: 300),
+                //     pageBuilder: (context, animation, secondaryAnimation) =>
+                //         ExerciseScreen(
+                //             exercise: widget.exercises[exerciseIndex]),
+                //     transitionsBuilder:
+                //         (context, animation, secondaryAnimation, child) =>
+                //             SlideTransition(
+                //       position: animation.drive(
+                //         Tween(
+                //           begin: const Offset(1.0, 0),
+                //           end: Offset.zero,
+                //         ).chain(
+                //           CurveTween(curve: Curves.linearToEaseOut),
+                //         ),
+                //       ),
+                //       child: child,
+                //     ),
+                //   ),
+                // );
+                Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) =>
+                      ExerciseScreen(exercise: widget.exercises[exerciseIndex]),
+                ));
               },
             ),
             _IconButton(
@@ -1151,18 +1169,81 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                           .format(widget.date),
                                     });
                           });
-                        } on DioError {
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (context) => DialogWidgets.errorDialog(
-                              message: '다시 시도해주세요',
-                              confirmText: '확인',
-                              confirmOnTap: () {
-                                context.pop();
+                        } on DioError catch (e) {
+                          if (e.response!.statusCode == 403) {
+                            workoutBox.whenData(
+                              (value) {
+                                for (var element in widget.exercises) {
+                                  value.delete(element.workoutPlanId);
+                                }
                               },
-                            ),
-                          );
+                            );
+
+                            modifiedBox.whenData(
+                              (value) async {
+                                for (var element in widget.exercises) {
+                                  await value.delete(element.workoutPlanId);
+                                }
+                              },
+                            );
+
+                            timerWorkoutBox.whenData(
+                              (value) {
+                                for (var element in widget.exercises) {
+                                  if ((element.trackingFieldId == 3 ||
+                                          element.trackingFieldId == 4) &&
+                                      element.setInfo.length == 1) {
+                                    value.delete(element.workoutPlanId);
+                                  }
+                                }
+                              },
+                            );
+
+                            timerXMoreBox.whenData(
+                              (value) {
+                                for (var element in widget.exercises) {
+                                  if ((element.trackingFieldId == 3 ||
+                                          element.trackingFieldId == 4) &&
+                                      element.setInfo.length > 1) {
+                                    value.delete(element.workoutPlanId);
+                                  }
+                                }
+                              },
+                            );
+
+                            workoutResultBox.whenData(
+                              (value) {
+                                for (var element in widget.exercises) {
+                                  value.delete(element.workoutPlanId);
+                                }
+                              },
+                            );
+
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) => DialogWidgets.errorDialog(
+                                message:
+                                    '운동 정보가 변경되었습니다.😂\n 앱을 종료후 다시 실행해 주세요.',
+                                confirmText: '확인',
+                                confirmOnTap: () {
+                                  context.pop();
+                                },
+                              ),
+                            );
+                          } else {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) => DialogWidgets.errorDialog(
+                                message: '다시 시도해주세요',
+                                confirmText: '확인',
+                                confirmOnTap: () {
+                                  context.pop();
+                                },
+                              ),
+                            );
+                          }
                         }
                         //완료!!!!!!!!!
                       },

@@ -13,7 +13,6 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
-import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -22,6 +21,7 @@ import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/provider/workout_records_provider.dart';
 import 'package:fitend_member/workout/view/workout_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -295,87 +295,87 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        actions: [
-          if (!model.isWorkoutComplete &&
-              DateTime.parse(model.startDate).compareTo(today) >= 0 &&
-              !hasLocal)
-            GestureDetector(
-              onTap: () async {
-                await showDialog(
-                    context: context,
-                    builder: (context) {
-                      return CalendarDialog(
-                        scheduleDate: DateTime.parse(workoutModel.startDate),
-                        workoutScheduleId: widget.id,
-                      );
-                    }).then(
-                  (changedDate) {
-                    if (changedDate == null) {
-                      return;
-                    }
-                    if (changedDate['changedDate'] != null) {
-                      setState(
-                        () {
-                          ref
-                              .read(workoutProvider(widget.id).notifier)
-                              .updateWorkoutStateDate(
-                                dateTime: DateFormat('yyyy-MM-dd').format(
-                                  DateTime.parse(
-                                    changedDate['changedDate'].toString(),
-                                  ),
-                                ),
-                              );
+        // actions: [
+        //   if (!model.isWorkoutComplete &&
+        //       DateTime.parse(model.startDate).compareTo(today) >= 0 &&
+        //       !hasLocal)
+        //     GestureDetector(
+        //       onTap: () async {
+        //         await showDialog(
+        //             context: context,
+        //             builder: (context) {
+        //               return CalendarDialog(
+        //                 scheduleDate: DateTime.parse(workoutModel.startDate),
+        //                 workoutScheduleId: widget.id,
+        //               );
+        //             }).then(
+        //           (changedDate) {
+        //             if (changedDate == null) {
+        //               return;
+        //             }
+        //             if (changedDate['changedDate'] != null) {
+        //               setState(
+        //                 () {
+        //                   ref
+        //                       .read(workoutProvider(widget.id).notifier)
+        //                       .updateWorkoutStateDate(
+        //                         dateTime: DateFormat('yyyy-MM-dd').format(
+        //                           DateTime.parse(
+        //                             changedDate['changedDate'].toString(),
+        //                           ),
+        //                         ),
+        //                       );
 
-                          //스케줄 업데이트
-                          ref
-                              .read(workoutScheduleProvider(
-                                DateTime.parse(
-                                  changedDate['changedDate'].toString(),
-                                ),
-                              ).notifier)
-                              .updateScheduleFromBuffer();
-                        },
-                      );
+        //                   //스케줄 업데이트
+        //                   ref
+        //                       .read(workoutScheduleProvider(
+        //                         DateTime.parse(
+        //                           changedDate['changedDate'].toString(),
+        //                         ),
+        //                       ).notifier)
+        //                       .updateScheduleFromBuffer();
+        //                 },
+        //               );
 
-                      workoutFeedbackBox.whenData(
-                        (value) async {
-                          final record = value.get(widget.id);
-                          if (record != null &&
-                              record is WorkoutFeedbackRecordModel) {
-                            hasLocal = false;
-                            await value.put(
-                              widget.id,
-                              record.copyWith(
-                                startDate: DateTime.parse(
-                                  DateFormat('yyyy-MM-dd').format(
-                                    DateTime.parse(
-                                      changedDate['changedDate'].toString(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      );
-                    }
-                  },
-                );
-              },
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 28,
-                    height: 28,
-                    child: Image.asset('asset/img/icon_daymove.png'),
-                  ),
-                  const SizedBox(
-                    width: 28,
-                  )
-                ],
-              ),
-            )
-        ],
+        //               workoutFeedbackBox.whenData(
+        //                 (value) async {
+        //                   final record = value.get(widget.id);
+        //                   if (record != null &&
+        //                       record is WorkoutFeedbackRecordModel) {
+        //                     hasLocal = false;
+        //                     await value.put(
+        //                       widget.id,
+        //                       record.copyWith(
+        //                         startDate: DateTime.parse(
+        //                           DateFormat('yyyy-MM-dd').format(
+        //                             DateTime.parse(
+        //                               changedDate['changedDate'].toString(),
+        //                             ),
+        //                           ),
+        //                         ),
+        //                       ),
+        //                     );
+        //                   }
+        //                 },
+        //               );
+        //             }
+        //           },
+        //         );
+        //       },
+        //       child: Row(
+        //         children: [
+        //           SizedBox(
+        //             width: 28,
+        //             height: 28,
+        //             child: Image.asset('asset/img/icon_daymove.png'),
+        //           ),
+        //           const SizedBox(
+        //             width: 28,
+        //           )
+        //         ],
+        //       ),
+        //     )
+        // ],
       ),
       body: CustomScrollView(
         slivers: [
@@ -420,14 +420,21 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
 
                   return GestureDetector(
                     onTap: () {
-                      GoRouter.of(context).pushNamed(
-                        ExerciseScreen.routeName,
-                        pathParameters: {
-                          'workoutScheduleId':
-                              model.workoutScheduleId.toString()
-                        },
-                        extra: exerciseModel,
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) =>
+                              ExerciseScreen(exercise: exerciseModel),
+                        ),
                       );
+
+                      // GoRouter.of(context).pushNamed(
+                      //   ExerciseScreen.routeName,
+                      //   pathParameters: {
+                      //     'workoutScheduleId':
+                      //         model.workoutScheduleId.toString()
+                      //   },
+                      //   extra: exerciseModel,
+                      // );
                     },
                     child: WorkoutCard(
                       exercise: exerciseModel,

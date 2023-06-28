@@ -4,6 +4,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/password_change_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -106,24 +107,9 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
                       )
                       .then((value) {
                     Navigator.of(context).push(
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 300),
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            PasswordChangeScreen(
+                      CupertinoPageRoute(
+                        builder: (context) => PasswordChangeScreen(
                           password: _passwordController.text,
-                        ),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) =>
-                                SlideTransition(
-                          position: animation.drive(
-                            Tween(
-                              begin: const Offset(1.0, 0),
-                              end: Offset.zero,
-                            ).chain(
-                              CurveTween(curve: Curves.linearToEaseOut),
-                            ),
-                          ),
-                          child: child,
                         ),
                       ),
                     );

@@ -362,9 +362,17 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                   },
                 );
               },
-              child: Padding(
-                padding: const EdgeInsets.only(right: 28),
-                child: Image.asset('asset/img/icon_daymove.png'),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: Image.asset('asset/img/icon_daymove.png'),
+                  ),
+                  const SizedBox(
+                    width: 28,
+                  )
+                ],
               ),
             )
         ],

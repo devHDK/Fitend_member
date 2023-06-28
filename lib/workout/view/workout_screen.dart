@@ -77,6 +77,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   void initState() {
     super.initState();
 
+    _initData();
+  }
+
+  void _initData() {
     setInfoCompleteList = List.generate(widget.exercises.length, (index) => 0);
     maxSetInfoList = List.generate(widget.exercises.length,
         (index) => widget.exercises[index].setInfo.length);
@@ -1228,7 +1232,6 @@ class _ShowTip extends StatelessWidget {
           const MyClipPath(),
           Container(
             width: size.width,
-            height: 100,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: Colors.black.withOpacity(0.8),

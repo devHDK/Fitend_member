@@ -82,12 +82,12 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
           videoController!.value.isPlaying
               ? VideoPlayer(videoController!)
               : SizedBox(
-                  height: 685,
+                  height: MediaQuery.of(context).size.height - 175,
                   child: CustomNetworkImage(
                     imageUrl: widget.video.thumbnail,
                     boxFit: BoxFit.fill,
                     width: MediaQuery.of(context).size.width,
-                    height: 685,
+                    // height: MediaQuery.of(context).size.height - 175,
                   ),
                 ),
 

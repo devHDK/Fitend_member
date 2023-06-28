@@ -297,9 +297,7 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
               () {
                 if (doubleSpeed == 1.0) {
                   doubleSpeed = 0.5;
-                } else if (doubleSpeed == 0.5) {
-                  doubleSpeed = 2.0;
-                } else if (doubleSpeed == 2.0) {
+                } else {
                   doubleSpeed = 1.0;
                 }
 

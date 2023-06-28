@@ -70,7 +70,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               fit: BoxFit.cover,
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
-                height: 660,
+                height: MediaQuery.of(context).size.height - 175,
                 child: GuideVideoPlayer(
                   videos: widget.exercise.videos
                       .map((e) => ExerciseVideo(

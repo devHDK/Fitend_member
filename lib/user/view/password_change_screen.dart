@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -153,26 +154,27 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
                         duration: const Duration(seconds: 2),
                         backgroundColor: Colors.transparent,
                         elevation: 0,
-                        content: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 80),
-                          child: Container(
-                            width: 154,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: DARK_GRAY_COLOR,
-                            ),
-                            child: const Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 5),
-                                child: Text(
-                                  '비밀번호가 변경되었습니다',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                  ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                (MediaQuery.sizeOf(context).width - 160) / 2),
+                        content: Container(
+                          width: 160,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: DARK_GRAY_COLOR,
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 5),
+                            child: Center(
+                              child: AutoSizeText(
+                                '비밀번호가 변경되었습니다',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
                                 ),
+                                maxLines: 1,
                               ),
                             ),
                           ),

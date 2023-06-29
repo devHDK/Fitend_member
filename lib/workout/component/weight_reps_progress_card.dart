@@ -60,10 +60,22 @@ class _WeightWrepsProgressCardState
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedContainer(
+                decoration: BoxDecoration(
+                  borderRadius: index == 0
+                      ? const BorderRadius.only(
+                          bottomLeft: Radius.circular(2),
+                          topLeft: Radius.circular(2))
+                      : index == widget.exercise.setInfo.length - 1
+                          ? const BorderRadius.only(
+                              bottomRight: Radius.circular(2),
+                              topRight: Radius.circular(2),
+                            )
+                          : null,
+                  color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
+                ),
                 width:
                     ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
-                color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
                 duration: const Duration(microseconds: 1000),
                 curve: Curves.linear,
               ),
@@ -76,9 +88,21 @@ class _WeightWrepsProgressCardState
           return Row(
             children: [
               Container(
+                decoration: BoxDecoration(
+                  borderRadius: index == 0
+                      ? const BorderRadius.only(
+                          bottomLeft: Radius.circular(2),
+                          topLeft: Radius.circular(2))
+                      : index == widget.exercise.setInfo.length - 1
+                          ? const BorderRadius.only(
+                              bottomRight: Radius.circular(2),
+                              topRight: Radius.circular(2),
+                            )
+                          : null,
+                  color: LIGHT_GRAY_COLOR,
+                ),
                 width:
                     ((size.width - 152) / widget.exercise.setInfo.length) - 1,
-                color: LIGHT_GRAY_COLOR,
                 height: 4,
               ),
               const SizedBox(
@@ -93,8 +117,18 @@ class _WeightWrepsProgressCardState
                 width:
                     ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: POINT_COLOR,
+                  borderRadius: index == 0
+                      ? const BorderRadius.only(
+                          bottomLeft: Radius.circular(2),
+                          topLeft: Radius.circular(2))
+                      : index == widget.exercise.setInfo.length - 1
+                          ? const BorderRadius.only(
+                              bottomRight: Radius.circular(2),
+                              topRight: Radius.circular(2),
+                            )
+                          : null,
                 ),
               ),
               const SizedBox(
@@ -144,11 +178,12 @@ class _WeightWrepsProgressCardState
             borderRadius: BorderRadius.circular(12),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
             child: Text(
               '${length + 1}세트 진행중',
               style: h6Headline.copyWith(
                 color: POINT_COLOR,
+                height: 1.2,
               ),
             ),
           ),

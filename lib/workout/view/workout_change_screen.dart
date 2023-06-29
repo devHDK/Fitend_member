@@ -130,12 +130,14 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
           height: 45,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
+            color: selectedIndex == widget.exerciseIndex
+                ? POINT_COLOR.withOpacity(0.4)
+                : POINT_COLOR,
           ),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: selectedIndex == widget.exerciseIndex
-                  ? POINT_COLOR.withOpacity(0.4)
-                  : POINT_COLOR,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
             ),
             onPressed: selectedIndex == widget.exerciseIndex
                 ? () {}

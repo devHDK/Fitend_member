@@ -307,10 +307,22 @@ class _WeightWrepsProgressCardState
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedContainer(
+                decoration: BoxDecoration(
+                  borderRadius: index == 0
+                      ? const BorderRadius.only(
+                          bottomLeft: Radius.circular(2),
+                          topLeft: Radius.circular(2))
+                      : index == widget.exercise.setInfo.length - 1
+                          ? const BorderRadius.only(
+                              bottomRight: Radius.circular(2),
+                              topRight: Radius.circular(2),
+                            )
+                          : null,
+                  color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
+                ),
                 width:
                     ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
-                color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
                 duration: const Duration(microseconds: 1000),
                 curve: Curves.linear,
               ),
@@ -323,9 +335,21 @@ class _WeightWrepsProgressCardState
           return Row(
             children: [
               Container(
+                decoration: BoxDecoration(
+                  borderRadius: index == 0
+                      ? const BorderRadius.only(
+                          bottomLeft: Radius.circular(2),
+                          topLeft: Radius.circular(2))
+                      : index == widget.exercise.setInfo.length - 1
+                          ? const BorderRadius.only(
+                              bottomRight: Radius.circular(2),
+                              topRight: Radius.circular(2),
+                            )
+                          : null,
+                  color: LIGHT_GRAY_COLOR,
+                ),
                 width:
                     ((size.width - 152) / widget.exercise.setInfo.length) - 1,
-                color: LIGHT_GRAY_COLOR,
                 height: 4,
               ),
               const SizedBox(
@@ -340,7 +364,17 @@ class _WeightWrepsProgressCardState
                 width:
                     ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
+                  borderRadius: index == 0
+                      ? const BorderRadius.only(
+                          bottomLeft: Radius.circular(2),
+                          topLeft: Radius.circular(2))
+                      : index == widget.exercise.setInfo.length - 1
+                          ? const BorderRadius.only(
+                              bottomRight: Radius.circular(2),
+                              topRight: Radius.circular(2),
+                            )
+                          : null,
                   color: POINT_COLOR,
                 ),
               ),
@@ -410,26 +444,29 @@ class _WeightWrepsProgressCardState
                 const SizedBox(
                   width: 8,
                 ),
-                Text(
-                  totalSeconds ==
-                              widget.exercise.setInfo[widget.setInfoIndex]
-                                  .seconds! ||
-                          totalSeconds < 0
-                      ? '운동 시작'
-                      : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
-                  style: s2SubTitle.copyWith(
-                    color: totalSeconds ==
+                Center(
+                  child: Text(
+                    totalSeconds ==
                                 widget.exercise.setInfo[widget.setInfoIndex]
                                     .seconds! ||
                             totalSeconds < 0
-                        ? Colors.white
-                        : POINT_COLOR,
-                    fontWeight: totalSeconds ==
-                                widget.exercise.setInfo[widget.setInfoIndex]
-                                    .seconds! ||
-                            totalSeconds < 0
-                        ? FontWeight.w700
-                        : FontWeight.w400,
+                        ? '운동 시작'
+                        : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
+                    style: s2SubTitle.copyWith(
+                      color: totalSeconds ==
+                                  widget.exercise.setInfo[widget.setInfoIndex]
+                                      .seconds! ||
+                              totalSeconds < 0
+                          ? Colors.white
+                          : POINT_COLOR,
+                      fontWeight: totalSeconds ==
+                                  widget.exercise.setInfo[widget.setInfoIndex]
+                                      .seconds! ||
+                              totalSeconds < 0
+                          ? FontWeight.w700
+                          : FontWeight.w400,
+                      height: 1.2,
+                    ),
                   ),
                 ),
                 const SizedBox(

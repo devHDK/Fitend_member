@@ -55,35 +55,35 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
   void initState() {
     super.initState();
 
-    focusNode.addListener(() {
-      if (focusNode.hasFocus) {
-        setState(() {
-          focusNode.requestFocus();
-          addKeyboardHeightListener();
-          // print('scrollController.offset :  ${scrollController.offset}');
-          // print('keyboardHeight :  $keyboardHeight');
-          scrollController.animateTo(
-            _scrollOffset + 345,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.ease,
-          );
-        });
-      } else {
-        setState(() {
-          focusNode.unfocus();
-          removeKeyboardHeightListener();
-        });
-      }
-    });
+    focusNode.addListener(_focusnodeListner);
 
     scrollController.addListener(_scrollListener);
   }
 
+  void _focusnodeListner() {
+    if (focusNode.hasFocus) {
+      setState(() {
+        focusNode.requestFocus();
+        addKeyboardHeightListener();
+        scrollController.animateTo(
+          325,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.ease,
+        );
+      });
+    } else {
+      setState(() {
+        focusNode.unfocus();
+        removeKeyboardHeightListener();
+      });
+    }
+  }
+
   @override
   void dispose() {
-    focusNode.removeListener(() {});
+    focusNode.removeListener(_focusnodeListner);
     focusNode.dispose();
-    scrollController.removeListener(() {});
+    scrollController.removeListener(_scrollListener);
     scrollController.dispose();
     contentsController.dispose();
 
@@ -91,7 +91,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
   }
 
   void addKeyboardHeightListener() {
-    final viewInsets = MediaQuery.of(context).viewInsets;
+    final viewInsets = MediaQuery.of(context).padding;
     final newKeyboardHeight = viewInsets.bottom;
     if (newKeyboardHeight > 0) {
       setState(() => keyboardHeight = newKeyboardHeight);
@@ -137,12 +137,13 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
           ),
           automaticallyImplyLeading: false,
           centerTitle: true,
+          elevation: 0,
         ),
         body: SingleChildScrollView(
           controller: scrollController,
           child: Padding(
             padding: EdgeInsets.only(
-              bottom: focusNode.hasFocus ? 345 : 0,
+              bottom: focusNode.hasFocus ? 325 : 0,
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -195,64 +196,74 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                           : contentsController.text,
                                     ),
                                   )
-                                      .then((value) {
-                                    workoutFeedbackBox.whenData(
-                                      (_) {
-                                        final record =
-                                            _.get(widget.workoutScheduleId);
+                                      .then(
+                                    (value) {
+                                      workoutFeedbackBox.whenData(
+                                        (_) {
+                                          final record =
+                                              _.get(widget.workoutScheduleId);
 
-                                        if (record != null &&
-                                            record
-                                                is WorkoutFeedbackRecordModel) {
-                                          _.put(
-                                            widget.workoutScheduleId,
-                                            record.copyWith(
-                                              strengthIndex: strengthIndex,
-                                              issueIndexes: issueIndexes,
-                                              contents: contentsController
-                                                      .text.isEmpty
-                                                  ? null
-                                                  : contentsController.text,
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    );
-
-                                    ref
-                                        .read(workoutScheduleProvider(
-                                                DataUtils.getDate(DateTime.now()
-                                                    .subtract(const Duration(
-                                                        days: 15))))
-                                            .notifier)
-                                        .updateScheduleState(
-                                          workoutScheduleId:
+                                          if (record != null &&
+                                              record
+                                                  is WorkoutFeedbackRecordModel) {
+                                            _.put(
                                               widget.workoutScheduleId,
-                                          startDate:
-                                              DateTime.parse(widget.startdate),
-                                        );
-                                    // 스케줄 업데이트
+                                              record.copyWith(
+                                                strengthIndex: strengthIndex,
+                                                issueIndexes: issueIndexes,
+                                                contents: contentsController
+                                                        .text.isEmpty
+                                                    ? null
+                                                    : contentsController.text,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      );
 
-                                    context.goNamed(
-                                      ScheduleResultScreen.routeName,
-                                      pathParameters: {
-                                        "workoutScheduleId":
-                                            widget.workoutScheduleId.toString(),
-                                      },
-                                      extra: widget.exercises,
-                                    );
-                                  });
+                                      ref
+                                          .read(workoutScheduleProvider(
+                                                  DataUtils.getDate(
+                                                      DateTime.now().subtract(
+                                                          const Duration(
+                                                              days: 15))))
+                                              .notifier)
+                                          .updateScheduleState(
+                                            workoutScheduleId:
+                                                widget.workoutScheduleId,
+                                            startDate: DateTime.parse(
+                                                widget.startdate),
+                                          );
+                                      // 스케줄 업데이트
+
+                                      context.goNamed(
+                                        ScheduleResultScreen.routeName,
+                                        pathParameters: {
+                                          'id': widget.workoutScheduleId
+                                              .toString(),
+                                        },
+                                        extra: widget.exercises,
+                                      );
+                                      // Navigator.of(context).pushReplacement(
+                                      //   CupertinoPageRoute(
+                                      //     builder: (context) =>
+                                      //         ScheduleResultScreen(
+                                      //       workoutScheduleId:
+                                      //           widget.workoutScheduleId,
+                                      //       exercises: widget.exercises,
+                                      //     ),
+                                      //   ),
+                                      // );
+                                    },
+                                  );
                                 } on DioError catch (e) {
-                                  // print(e.message);
-
+                                  print(e);
                                   showDialog(
                                     barrierDismissible: false,
                                     context: context,
                                     builder: (context) =>
                                         DialogWidgets.errorDialog(
-                                      message: e.error != null
-                                          ? e.error.toString()
-                                          : '',
+                                      message: '알수없는 오류',
                                       confirmText: '확인',
                                       confirmOnTap: () => context.pop(),
                                     ),
@@ -299,7 +310,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
           height: 12,
         ),
         TextFormField(
-          maxLines: 8,
+          maxLines: 9,
           style: const TextStyle(color: Colors.white),
           controller: contentsController,
           cursorColor: POINT_COLOR,
@@ -323,8 +334,8 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
               ),
             ),
             labelText: focusNode.hasFocus || contentsController.text.isNotEmpty
-                ? '자유롭게 입력해주세요'
-                : '운동관련 궁금증, 요청사항 등을 형식에 관계없이\n자유롭게 입력해주세요 :)',
+                ? ''
+                : '운동관련 궁금증, 요청사항 등을 형식에 관계없이\n자유롭게 입력해주세요 :) \n\n\n\n\n\n\n\n',
             labelStyle: s2SubTitle.copyWith(
               color: focusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
             ),
@@ -538,6 +549,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
           text,
           style: h6Headline.copyWith(
             color: isSelected ? POINT_COLOR : GRAY_COLOR,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
           ),
         ),
       ),

@@ -206,63 +206,74 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: 44,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            (widget.isRecord! && !widget.isComplete!)
-                                ? Colors.white
-                                : POINT_COLOR,
-                      ),
-                      onPressed: widget.workoutScheduleId == null
-                          ? null
-                          : (widget.isRecord! && !widget.isComplete!)
-                              ? () async {
-                                  await ref
-                                      .read(workoutScheduleRepositoryProvider)
-                                      .getWorkout(id: widget.workoutScheduleId!)
-                                      .then((value) {
-                                    GoRouter.of(context).goNamed(
-                                        WorkoutFeedbackScreen.routeName,
-                                        pathParameters: {
-                                          'workoutScheduleId': widget
-                                              .workoutScheduleId
-                                              .toString(),
-                                        },
-                                        extra: value.exercises,
-                                        queryParameters: {
-                                          'startDate': value.startDate
-                                        });
-                                  });
-                                }
-                              : () async {
-                                  // var dateChanged = await context.pushNamed(
-                                  //   WorkoutListScreen.routeName,
-                                  //   pathParameters: {
-                                  //     'workoutScheduleId':
-                                  //         widget.workoutScheduleId!.toString(),
-                                  //   },
-                                  // );
-
-                                  var dateChanged = await Navigator.of(context)
-                                      .push(CupertinoPageRoute(
-                                    builder: (context) => WorkoutListScreen(
-                                      id: widget.workoutScheduleId!,
-                                    ),
-                                  ));
-
-                                  if (dateChanged == true &&
-                                      widget.onNotifyParent != null) {
-                                    widget.onNotifyParent!();
-                                  }
-                                },
-                      child: Text(
-                        (widget.isRecord! && !widget.isComplete!)
-                            ? '운동 평가하기 📝'
-                            : '운동확인 하기🔍',
-                        style: h6Headline.copyWith(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
                           color: (widget.isRecord! && !widget.isComplete!)
-                              ? POINT_COLOR
-                              : Colors.white,
+                              ? Colors.white
+                              : POINT_COLOR,
+                          border: widget.isRecord! && !widget.isComplete!
+                              ? Border.all(
+                                  color: POINT_COLOR,
+                                  width: 1.0,
+                                )
+                              : null),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent, elevation: 0),
+                        onPressed: widget.workoutScheduleId == null
+                            ? null
+                            : (widget.isRecord! && !widget.isComplete!)
+                                ? () async {
+                                    await ref
+                                        .read(workoutScheduleRepositoryProvider)
+                                        .getWorkout(
+                                            id: widget.workoutScheduleId!)
+                                        .then((value) {
+                                      GoRouter.of(context).goNamed(
+                                          WorkoutFeedbackScreen.routeName,
+                                          pathParameters: {
+                                            'workoutScheduleId': widget
+                                                .workoutScheduleId
+                                                .toString(),
+                                          },
+                                          extra: value.exercises,
+                                          queryParameters: {
+                                            'startDate': value.startDate
+                                          });
+                                    });
+                                  }
+                                : () async {
+                                    // var dateChanged = await context.pushNamed(
+                                    //   WorkoutListScreen.routeName,
+                                    //   pathParameters: {
+                                    //     'workoutScheduleId':
+                                    //         widget.workoutScheduleId!.toString(),
+                                    //   },
+                                    // );
+
+                                    var dateChanged =
+                                        await Navigator.of(context)
+                                            .push(CupertinoPageRoute(
+                                      builder: (context) => WorkoutListScreen(
+                                        id: widget.workoutScheduleId!,
+                                      ),
+                                    ));
+
+                                    if (dateChanged == true &&
+                                        widget.onNotifyParent != null) {
+                                      widget.onNotifyParent!();
+                                    }
+                                  },
+                        child: Text(
+                          (widget.isRecord! && !widget.isComplete!)
+                              ? '운동 평가하기 📝'
+                              : '운동확인 하기🔍',
+                          style: h6Headline.copyWith(
+                            color: (widget.isRecord! && !widget.isComplete!)
+                                ? POINT_COLOR
+                                : Colors.white,
+                          ),
                         ),
                       ),
                     ),

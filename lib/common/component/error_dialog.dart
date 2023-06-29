@@ -36,13 +36,15 @@ class ErrorDialog extends StatelessWidget {
             height: 44,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
+              color: POINT_COLOR,
             ),
             child: ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: POINT_COLOR,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
               ),
               child: Text(
                 '확인',

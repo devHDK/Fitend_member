@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
@@ -95,7 +96,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
             );
           } else if (e.response!.statusCode! == 403) {
             state = UserModelError(
-              error: '이용중인 수강권이 없어요😭',
+              error: '이용중인 수강권이 없어요 😰',
               statusCode: e.response!.statusCode!,
             );
           } else {
@@ -113,6 +114,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
 
   Future<void> logout() async {
     state = null;
+    scheduleListGlobal.removeRange(0, scheduleListGlobal.length - 1);
 
     await Future.wait([
       storage.delete(key: REFRESH_TOKEN_KEY),

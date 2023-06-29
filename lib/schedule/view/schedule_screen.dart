@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/component/schedule_card.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
+import 'package:go_router/go_router.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
@@ -56,6 +58,26 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         if (controller.hasClients) {
           controller.jumpTo(
             todayLocation.toDouble(),
+          );
+        }
+
+        bool checkSchedule = false;
+
+        for (var workout in scheduleListGlobal) {
+          if (workout.workouts!.isNotEmpty) {
+            checkSchedule = true;
+            break;
+          }
+        }
+
+        if (!checkSchedule) {
+          showDialog(
+            context: context,
+            builder: (context) => DialogWidgets.errorDialog(
+              message: '회원님을 위한 플랜을 준비중이에요!\n플랜이 완성되면 알려드릴게요 😊',
+              confirmText: '확인',
+              confirmOnTap: () => context.pop(),
+            ),
           );
         }
       });

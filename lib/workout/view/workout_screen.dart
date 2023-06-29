@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_clipper.dart';
+import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
@@ -280,20 +280,21 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: GestureDetector(
-              onTap: () {
+            padding: const EdgeInsets.only(right: 18.0),
+            child: IconButton(
+              iconSize: 36,
+              onPressed: () {
                 onTooltipPressed();
               },
-              child: CircleAvatar(
-                radius: 18,
-                backgroundColor: BACKGROUND_COLOR,
-                foregroundImage: CachedNetworkImageProvider(
-                  '$s3Url${widget.exercises[exerciseIndex].trainerProfileImage}',
+              icon: ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: CustomNetworkImage(
+                  imageUrl:
+                      '$s3Url${widget.exercises[exerciseIndex].trainerProfileImage}',
+                  width: 36,
+                  height: 36,
+                  boxFit: BoxFit.none,
                 ),
-                onForegroundImageError: (exception, stackTrace) {
-                  Image.asset('asset/launcher/fitend_logo.png');
-                },
               ),
             ),
           ),
@@ -829,7 +830,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       )
                           .then(
                         (value) {
-                          GoRouter.of(context).pushNamed(
+                          GoRouter.of(context).goNamed(
                             WorkoutFeedbackScreen.routeName,
                             pathParameters: {
                               'workoutScheduleId':
@@ -913,6 +914,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             ),
           )
               .then((value) {
+            // context.pop();
+
             GoRouter.of(context).goNamed(
               WorkoutFeedbackScreen.routeName,
               pathParameters: {

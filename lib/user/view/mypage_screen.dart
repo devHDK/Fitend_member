@@ -147,7 +147,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               height: 1,
             ),
             _renderLabel(
-                name: '현재버전',
+                name: '현재 버전',
                 child: Text(
                   packageInfo != null ? 'v${packageInfo!.version}' : '',
                   style: s3SubTitle.copyWith(
@@ -219,7 +219,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               const Icon(
-                Icons.mail_outline,
+                Icons.mail_outline_outlined,
                 size: 20,
                 color: LIGHT_GRAY_COLOR,
               ),

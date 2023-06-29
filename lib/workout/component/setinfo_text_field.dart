@@ -59,20 +59,17 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
         filled: true,
         fillColor: LIGHT_GRAY_COLOR,
         hoverColor: POINT_COLOR,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-        border: UnderlineInputBorder(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 7,
+        ),
+        border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: Colors.transparent,
-            style: BorderStyle.none,
-          ),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: UnderlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: Colors.transparent,
-            style: BorderStyle.none,
-          ),
+          borderSide: BorderSide.none,
         ),
       ),
       keyboardType: widget.textInputType,

@@ -189,6 +189,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
           '${(widget.exercise.setInfo[0].seconds! / 60).floor().toString()}분 ${(widget.exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초',
           style: s1SubTitle.copyWith(
             color: GRAY_COLOR,
+            height: 1.2,
           ),
         ),
         const SizedBox(
@@ -235,19 +236,22 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                 const SizedBox(
                   width: 8,
                 ),
-                Text(
-                  totalSeconds == widget.exercise.setInfo[0].seconds! ||
-                          totalSeconds < 0
-                      ? '운동 시작'
-                      : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
-                  style: s2SubTitle.copyWith(
-                    color: totalSeconds == widget.exercise.setInfo[0].seconds!
-                        ? Colors.white
-                        : POINT_COLOR,
-                    fontWeight:
-                        totalSeconds == widget.exercise.setInfo[0].seconds!
-                            ? FontWeight.w700
-                            : FontWeight.w400,
+                Center(
+                  child: Text(
+                    totalSeconds == widget.exercise.setInfo[0].seconds! ||
+                            totalSeconds < 0
+                        ? '운동 시작'
+                        : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
+                    style: s2SubTitle.copyWith(
+                        color:
+                            totalSeconds == widget.exercise.setInfo[0].seconds!
+                                ? Colors.white
+                                : POINT_COLOR,
+                        fontWeight:
+                            totalSeconds == widget.exercise.setInfo[0].seconds!
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                        height: 1.2),
                   ),
                 ),
                 const SizedBox(
@@ -280,12 +284,17 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                   height: 4,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(2),
-                    child: LinearProgressIndicator(
-                      value:
-                          (widget.exercise.setInfo[0].seconds! - totalSeconds) /
-                              widget.exercise.setInfo[0].seconds!,
-                      backgroundColor: LIGHT_GRAY_COLOR,
-                      valueColor: const AlwaysStoppedAnimation(POINT_COLOR),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                      child: LinearProgressIndicator(
+                        value: (widget.exercise.setInfo[0].seconds! -
+                                totalSeconds) /
+                            widget.exercise.setInfo[0].seconds!,
+                        backgroundColor: LIGHT_GRAY_COLOR,
+                        valueColor: const AlwaysStoppedAnimation(POINT_COLOR),
+                      ),
                     ),
                   ),
                 )

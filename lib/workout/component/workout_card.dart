@@ -117,28 +117,32 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
       width: MediaQuery.of(context).size.width,
       height: 157,
       decoration: BoxDecoration(
-        color: BACKGROUND_COLOR,
-        border: widget.isSelected != null && widget.isSelected!
-            ? Border.all(
-                color: POINT_COLOR,
-                width: 1.0,
-              )
-            : null,
-      ),
+          color: BACKGROUND_COLOR,
+          border: Border.fromBorderSide(
+            BorderSide(
+              color: widget.isSelected != null && widget.isSelected!
+                  ? POINT_COLOR
+                  : Colors.transparent,
+              width: 1.0,
+            ),
+          )),
       child: Row(
         children: [
-          _renderImage(widget.exercise.videos[0].thumbnail,
-              widget.exercise.targetMuscles[0].id),
+          _renderImage(
+            widget.exercise.videos[0].thumbnail,
+            widget.exercise.targetMuscles[0].id,
+          ),
           const SizedBox(
             width: 23,
           ),
           Expanded(
             child: _RenderBody(
-                exerciseIndex: widget.exerciseIndex,
-                exercise: widget.exercise,
-                countList: countList,
-                firstList: firstList,
-                secondList: secondList),
+              exerciseIndex: widget.exerciseIndex,
+              exercise: widget.exercise,
+              countList: countList,
+              firstList: firstList,
+              secondList: secondList,
+            ),
           ),
         ],
       ),

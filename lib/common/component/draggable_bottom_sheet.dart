@@ -33,11 +33,15 @@ class _CustomDraggableBottomSheetState
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.only(top: 12),
+              padding: const EdgeInsets.only(
+                top: 12,
+              ),
               child: Container(
                 width: 44,
                 height: 4,
-                decoration: const BoxDecoration(color: LIGHT_GRAY_COLOR),
+                decoration: BoxDecoration(
+                    color: LIGHT_GRAY_COLOR,
+                    borderRadius: BorderRadius.circular(2)),
               ),
             ),
           ),

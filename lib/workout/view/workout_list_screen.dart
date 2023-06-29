@@ -241,7 +241,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               final record = value.get(exercise.workoutPlanId);
               if (record is Exercise && record.setInfo[0].seconds != null) {
                 exercise.setInfo[0] = record.setInfo[0];
-                print(exercise.setInfo[0]);
               }
             }
           }
@@ -415,6 +414,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final exerciseModel = model.exercises[index];
+
+                  print(exerciseModel);
+
                   int completeSetCount = 0;
                   workoutRecordBox.when(
                     data: (data) {
@@ -477,8 +479,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                       context.goNamed(
                         ScheduleResultScreen.routeName,
                         pathParameters: {
-                          "workoutScheduleId":
-                              model.workoutScheduleId.toString(),
+                          'id': model.workoutScheduleId.toString(),
                         },
                         extra: model.exercises,
                       );

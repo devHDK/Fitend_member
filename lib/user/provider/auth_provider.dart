@@ -109,20 +109,19 @@ class AuthProvider extends ChangeNotifier {
               ),
             ),
             GoRoute(
-              path: 'scheduleResult/:workoutScheduleId',
+              path: 'scheduleResult/:id',
               name: ScheduleResultScreen.routeName,
               pageBuilder: (context, state) {
                 return _botToTopTransiton(
                   state,
                   ScheduleResultScreen(
-                    workoutScheduleId:
-                        int.parse(state.pathParameters["workoutScheduleId"]!),
+                    workoutScheduleId: int.parse(state.pathParameters['id']!),
                     exercises: state.extra as List<Exercise>,
                     key: state.pageKey,
                   ),
                 );
               },
-            )
+            ),
           ],
         ),
         GoRoute(

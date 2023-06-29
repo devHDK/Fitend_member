@@ -25,6 +25,7 @@ class DialogWidgets {
         backgroundColor: Colors.transparent,
         insetPadding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
         child: Container(
+          width: 335,
           height: 204,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -100,16 +101,17 @@ class DialogWidgets {
     return DialogBackground(
       blur: 0.2,
       dialog: Dialog(
+        insetPadding: const EdgeInsets.symmetric(vertical: 20),
         backgroundColor: Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Container(
-            width: 319,
-            height: 135,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              color: Colors.white,
-            ),
+        child: Container(
+          width: 335,
+          height: 155,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            color: Colors.white,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
             child: Column(
               children: [
                 Text(

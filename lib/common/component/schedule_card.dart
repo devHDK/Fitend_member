@@ -107,7 +107,8 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                                   widget.date != null) ||
                               (widget.date != null &&
                                   widget.date!.compareTo(today) == 0 &&
-                                  widget.isDateVisible == true)
+                                  widget.isDateVisible == true) ||
+                              widget.selected
                           ? Colors.white
                           : Colors.transparent,
                     ),
@@ -127,7 +128,7 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                           Text(
                             weekday[widget.date!.weekday - 1],
                             style: s2SubTitle.copyWith(
-                              color: widget.isDateVisible!
+                              color: widget.isDateVisible! || widget.selected
                                   ? Colors.white
                                   : Colors.transparent,
                               letterSpacing: 0,
@@ -141,7 +142,7 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                           Text(
                             widget.date!.day.toString(),
                             style: TextStyle(
-                              color: widget.isDateVisible!
+                              color: widget.isDateVisible! || widget.selected
                                   ? Colors.white
                                   : Colors.transparent,
                             ),

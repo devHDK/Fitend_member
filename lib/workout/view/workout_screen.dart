@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_clipper.dart';
-import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
@@ -287,14 +287,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               },
               child: CircleAvatar(
                 radius: 18,
-                backgroundColor: POINT_COLOR,
-                child: CustomNetworkImage(
-                  imageUrl:
-                      '$s3Url${widget.exercises[exerciseIndex].trainerProfileImage}',
+                backgroundColor: BACKGROUND_COLOR,
+                foregroundImage: CachedNetworkImageProvider(
+                  '$s3Url${widget.exercises[exerciseIndex].trainerProfileImage}',
                 ),
+                onForegroundImageError: (exception, stackTrace) {
+                  Image.asset('asset/launcher/fitend_logo.png');
+                },
               ),
             ),
-          )
+          ),
         ],
       ),
       extendBodyBehindAppBar: true,

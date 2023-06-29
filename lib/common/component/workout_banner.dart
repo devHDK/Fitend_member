@@ -92,6 +92,7 @@ class WorkoutBanner extends StatelessWidget {
                 Image.asset(
                   'asset/img/timer.png',
                   width: 14,
+                  color: LIGHT_GRAY_COLOR,
                 ),
                 Text(
                   timeString[0] == '00'

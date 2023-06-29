@@ -23,15 +23,18 @@ class DialogWidgets {
       blur: 0.2,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
         child: Container(
-          width: 319,
           height: 204,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(20),
             color: Colors.white,
           ),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 28,
+              vertical: 20,
+            ),
             child: Column(
               children: [
                 Text(
@@ -45,7 +48,6 @@ class DialogWidgets {
                 GestureDetector(
                   onTap: confirmOnTap,
                   child: Container(
-                    width: 279,
                     height: 44,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -67,7 +69,6 @@ class DialogWidgets {
                 GestureDetector(
                   onTap: cancelOnTap,
                   child: Container(
-                    width: 279,
                     height: 44,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -100,15 +101,15 @@ class DialogWidgets {
       blur: 0.2,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
-        child: Container(
-          width: 319,
-          height: 135,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            color: Colors.white,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Container(
+            width: 319,
+            height: 135,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              color: Colors.white,
+            ),
             child: Column(
               children: [
                 Text(

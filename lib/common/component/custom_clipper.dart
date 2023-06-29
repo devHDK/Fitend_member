@@ -25,7 +25,7 @@ class MyClipPath extends StatelessWidget {
       clipper: TrianlgeCustomClipper(),
       child: Container(
         height: 13,
-        width: 35,
+        width: 38,
         color: Colors.black.withOpacity(0.8),
       ),
     );

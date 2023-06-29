@@ -105,7 +105,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   height: 24,
                 ),
                 AutoSizeText(
-                  '담당 트레이너님이 \n설정해주신 아이디로  바로 시작해보세요',
+                  '핏엔드와 함께\n지속가능한 운동습관을 경험해보세요! ',
                   style: h3Headline.copyWith(
                     color: Colors.white,
                   ),

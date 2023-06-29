@@ -173,14 +173,14 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                   ),
                 );
               },
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 40,
-                child: _renderLabel(
-                  name: '로그아웃',
-                ),
+              child: _renderLabel(
+                name: '로그아웃',
               ),
-            )
+            ),
+            const Divider(
+              color: DARK_GRAY_COLOR,
+              height: 1,
+            ),
           ],
         ),
       ),

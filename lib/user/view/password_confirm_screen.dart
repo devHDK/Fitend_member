@@ -121,7 +121,7 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
                   showDialog(
                     context: context,
                     builder: (context) => DialogWidgets.errorDialog(
-                      message: '비밀번호가 맞지 않아요 😂',
+                      message: '비밀번호가 맞지 않아요 😭',
                       confirmText: '확인',
                       confirmOnTap: () => context.pop(),
                     ),

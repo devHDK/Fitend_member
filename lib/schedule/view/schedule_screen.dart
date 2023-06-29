@@ -178,7 +178,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           },
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 28.0),
+              padding: const EdgeInsets.only(right: 18.0),
               child: GestureDetector(
                 onTap: () {
                   // context.goNamed(MyPageScreen.routeName);
@@ -189,9 +189,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                     ),
                   );
                 },
-                child: const Icon(
-                  Icons.person_outline_sharp,
-                  size: 30,
+                child: Image.asset(
+                  'asset/img/icon_my_page.png',
                 ),
               ),
             ),

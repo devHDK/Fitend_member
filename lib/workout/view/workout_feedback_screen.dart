@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -33,10 +34,8 @@ class WorkoutFeedbackScreen extends ConsumerStatefulWidget {
       _WorkoutFeedbackScreenState();
 }
 
-const TextStyle _titleStyle = TextStyle(
+final TextStyle _titleStyle = h5Headline.copyWith(
   color: Colors.white,
-  fontSize: 16,
-  fontWeight: FontWeight.w700,
 );
 
 class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
@@ -132,12 +131,9 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         backgroundColor: BACKGROUND_COLOR,
         appBar: AppBar(
           backgroundColor: BACKGROUND_COLOR,
-          title: const Text(
+          title: Text(
             '운동 평가',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
+            style: h4Headline,
           ),
           automaticallyImplyLeading: false,
           centerTitle: true,
@@ -295,7 +291,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '코치님께 전하고 싶은 내용을 적어주세요 📤',
           style: _titleStyle,
         ),
@@ -329,10 +325,8 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
             labelText: focusNode.hasFocus || contentsController.text.isNotEmpty
                 ? '자유롭게 입력해주세요'
                 : '운동관련 궁금증, 요청사항 등을 형식에 관계없이\n자유롭게 입력해주세요 :)',
-            labelStyle: TextStyle(
+            labelStyle: s2SubTitle.copyWith(
               color: focusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
             ),
           ),
         ),
@@ -344,7 +338,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '특이사항이 있다면 알려주세요 🙏',
           style: _titleStyle,
         ),
@@ -413,7 +407,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '운동의 강도는 어떠셨나요? 🔥',
           style: _titleStyle,
         ),
@@ -510,9 +504,8 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
               child: Center(
                 child: Text(
                   text,
-                  style: TextStyle(
+                  style: h6Headline.copyWith(
                     color: isSelected ? POINT_COLOR : GRAY_COLOR,
-                    fontSize: 14,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
                   ),
                 ),
@@ -543,9 +536,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Text(
           text,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
+          style: h6Headline.copyWith(
             color: isSelected ? POINT_COLOR : GRAY_COLOR,
           ),
         ),

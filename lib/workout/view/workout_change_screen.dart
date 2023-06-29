@@ -1,6 +1,9 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:flutter/material.dart';
@@ -36,8 +39,25 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
   @override
   Widget build(BuildContext context) {
     final AsyncValue<Box> box = ref.watch(hiveWorkoutRecordProvider);
+    final AsyncValue<Box> modifiedExerciseBox =
+        ref.read(hiveModifiedExerciseProvider);
 
-    final model = widget.workout;
+    var model = widget.workout;
+
+    modifiedExerciseBox.whenData(
+      (value) {
+        for (var exercise in model.exercises) {
+          if ((exercise.trackingFieldId == 3 ||
+                  exercise.trackingFieldId == 4) &&
+              exercise.setInfo.length == 1) {
+            final record = value.get(exercise.workoutPlanId);
+            if (record is Exercise && record.setInfo[0].seconds != null) {
+              exercise.setInfo[0] = record.setInfo[0];
+            }
+          }
+        }
+      },
+    );
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -51,12 +71,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
               icon: const Icon(Icons.arrow_back)),
         ),
         centerTitle: true,
-        title: const Text(
+        title: Text(
           '운동리스트',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          style: h4Headline,
         ),
       ),
       body: CustomScrollView(
@@ -145,12 +162,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
                       },
                     );
                   },
-            child: const Text(
+            child: Text(
               '선택한 운동으로 변경',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
+              style: h6Headline,
             ),
           ),
         ),

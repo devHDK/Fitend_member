@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
@@ -78,6 +79,7 @@ class _WeightWrepsProgressCardState
                 width:
                     ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 color: LIGHT_GRAY_COLOR,
+                height: 4,
               ),
               const SizedBox(
                 width: 1,
@@ -118,9 +120,8 @@ class _WeightWrepsProgressCardState
               : widget.exercise.trackingFieldId == 2
                   ? '${widget.exercise.setInfo[length].reps}회'
                   : '${(widget.exercise.setInfo[length].seconds! / 60).floor()}분 ${widget.exercise.setInfo[length].seconds! % 60}초',
-          style: const TextStyle(
+          style: s1SubTitle.copyWith(
             color: GRAY_COLOR,
-            fontSize: 16,
           ),
         ),
         const SizedBox(
@@ -128,10 +129,8 @@ class _WeightWrepsProgressCardState
         ),
         Text(
           widget.exercise.name,
-          style: const TextStyle(
+          style: h3Headline.copyWith(
             color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
             overflow: TextOverflow.ellipsis,
           ),
           maxLines: 1,
@@ -148,10 +147,8 @@ class _WeightWrepsProgressCardState
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               '${length + 1}세트 진행중',
-              style: const TextStyle(
+              style: h6Headline.copyWith(
                 color: POINT_COLOR,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
               ),
             ),
           ),

@@ -7,10 +7,10 @@ import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
-import 'package:go_router/go_router.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
@@ -181,8 +181,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
               padding: const EdgeInsets.only(right: 28.0),
               child: GestureDetector(
                 onTap: () {
-                  // ref.read(userMeProvider.notifier).logout();
-                  context.goNamed(MyPageScreen.routeName);
+                  // context.goNamed(MyPageScreen.routeName);
+
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (context) => const MyPageScreen(),
+                    ),
+                  );
                 },
                 child: const Icon(
                   Icons.person_outline_sharp,

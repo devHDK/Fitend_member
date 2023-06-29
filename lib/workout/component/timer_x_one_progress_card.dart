@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -186,9 +187,8 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
       children: [
         Text(
           '${(widget.exercise.setInfo[0].seconds! / 60).floor().toString()}분 ${(widget.exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초',
-          style: const TextStyle(
+          style: s1SubTitle.copyWith(
             color: GRAY_COLOR,
-            fontSize: 16,
           ),
         ),
         const SizedBox(
@@ -196,10 +196,8 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
         ),
         Text(
           widget.exercise.name,
-          style: const TextStyle(
+          style: h3Headline.copyWith(
             color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
             overflow: TextOverflow.ellipsis,
           ),
           maxLines: 1,
@@ -242,11 +240,10 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                           totalSeconds < 0
                       ? '운동 시작'
                       : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
-                  style: TextStyle(
+                  style: s2SubTitle.copyWith(
                     color: totalSeconds == widget.exercise.setInfo[0].seconds!
                         ? Colors.white
                         : POINT_COLOR,
-                    fontSize: 14,
                     fontWeight:
                         totalSeconds == widget.exercise.setInfo[0].seconds!
                             ? FontWeight.w700
@@ -266,11 +263,9 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
         Row(
           children: [
             InkWell(
-              onTap: isRunning
-                  ? null
-                  : () {
-                      widget.updateSeinfoTap();
-                    },
+              onTap: () {
+                widget.updateSeinfoTap();
+              },
               child: Image.asset(
                 'asset/img/icon_edit.png',
               ),
@@ -289,7 +284,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                       value:
                           (widget.exercise.setInfo[0].seconds! - totalSeconds) /
                               widget.exercise.setInfo[0].seconds!,
-                      backgroundColor: GRAY_COLOR,
+                      backgroundColor: LIGHT_GRAY_COLOR,
                       valueColor: const AlwaysStoppedAnimation(POINT_COLOR),
                     ),
                   ),

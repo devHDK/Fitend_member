@@ -2,6 +2,7 @@ import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/target_muscle_model.dart';
 import 'package:flutter/material.dart';
 
@@ -39,10 +40,8 @@ class _MuscleCardState extends State<MuscleCard> {
               children: [
                 Text(
                   '${muscleGroup[widget.muscle.muscleType]}',
-                  style: const TextStyle(
-                    fontSize: 12,
+                  style: s3SubTitle.copyWith(
                     color: LIGHT_GRAY_COLOR,
-                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 const SizedBox(
@@ -50,10 +49,8 @@ class _MuscleCardState extends State<MuscleCard> {
                 ),
                 Text(
                   widget.muscle.name,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: h5Headline.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
@@ -61,7 +58,7 @@ class _MuscleCardState extends State<MuscleCard> {
             const Expanded(child: SizedBox()),
             Text(
               widget.muscle.type == 'main' ? 'Primary' : 'Secondary',
-              style: const TextStyle(
+              style: s2SubTitle.copyWith(
                 fontSize: 14,
                 color: LIGHT_GRAY_COLOR,
                 fontWeight: FontWeight.w400,

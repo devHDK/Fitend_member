@@ -2,6 +2,7 @@ import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/guide_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/component/muscle_card.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
@@ -78,26 +79,6 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           index: e.index,
                           thumbnail: '$s3Url${e.thumbnail}'))
                       .toList(),
-                  //  [
-                  // ExerciseVideo(
-                  //     url:
-                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-                  //     index: 1,
-                  //     thumbnail:
-                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg'),
-                  // ExerciseVideo(
-                  //     url:
-                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-                  //     index: 2,
-                  //     thumbnail:
-                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg'),
-                  // ExerciseVideo(
-                  //     url:
-                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-                  //     index: 3,
-                  //     thumbnail:
-                  //         'https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg'),
-                  // ],
                 ),
               ),
             ),
@@ -117,10 +98,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ),
                       Text(
                         widget.exercise.name,
-                        style: const TextStyle(
-                          fontSize: 26,
+                        style: h1Headline.copyWith(
                           color: Colors.white,
-                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(
@@ -161,11 +140,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 '코칭 포인트',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
+                                style: h5Headline.copyWith(
                                   color: Colors.white,
                                 ),
                               ),
@@ -173,11 +150,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                 height: 4,
                               ),
                               Text(
-                                'by ${widget.exercise.trainerNickname} 트레이너',
-                                style: const TextStyle(
+                                'by ${widget.exercise.trainerNickname}',
+                                style: s3SubTitle.copyWith(
                                   color: LIGHT_GRAY_COLOR,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
                                 ),
                               )
                             ],
@@ -189,11 +164,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ),
                       Text(
                         widget.exercise.description,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
+                        style: s2SubTitle.copyWith(
                           color: Colors.white,
-                          height: 2,
                         ),
                       ),
                       const SizedBox(
@@ -205,21 +177,19 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ),
                     ],
                   ),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 24,
                       ),
                       Text(
                         '머슬포인트',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: h5Headline.copyWith(
                           color: Colors.white,
-                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 12,
                       ),
                     ],

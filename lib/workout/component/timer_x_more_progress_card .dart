@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -325,6 +326,7 @@ class _WeightWrepsProgressCardState
                 width:
                     ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 color: LIGHT_GRAY_COLOR,
+                height: 4,
               ),
               const SizedBox(
                 width: 1,
@@ -355,9 +357,8 @@ class _WeightWrepsProgressCardState
       children: [
         Text(
           '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분 ${(widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60).toString().padLeft(2, '0')}초',
-          style: const TextStyle(
+          style: s1SubTitle.copyWith(
             color: GRAY_COLOR,
-            fontSize: 16,
           ),
         ),
         const SizedBox(
@@ -365,10 +366,8 @@ class _WeightWrepsProgressCardState
         ),
         Text(
           widget.exercise.name,
-          style: const TextStyle(
+          style: h3Headline.copyWith(
             color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
             overflow: TextOverflow.ellipsis,
           ),
           maxLines: 1,
@@ -418,14 +417,13 @@ class _WeightWrepsProgressCardState
                           totalSeconds < 0
                       ? '운동 시작'
                       : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
-                  style: TextStyle(
+                  style: s2SubTitle.copyWith(
                     color: totalSeconds ==
                                 widget.exercise.setInfo[widget.setInfoIndex]
                                     .seconds! ||
                             totalSeconds < 0
                         ? Colors.white
                         : POINT_COLOR,
-                    fontSize: 14,
                     fontWeight: totalSeconds ==
                                 widget.exercise.setInfo[widget.setInfoIndex]
                                     .seconds! ||
@@ -447,11 +445,9 @@ class _WeightWrepsProgressCardState
         Row(
           children: [
             InkWell(
-              onTap: isRunning
-                  ? null
-                  : () {
-                      widget.updateSeinfoTap();
-                    },
+              onTap: () {
+                widget.updateSeinfoTap();
+              },
               child: Image.asset(
                 'asset/img/icon_edit.png',
               ),

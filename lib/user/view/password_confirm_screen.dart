@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/password_change_screen.dart';
@@ -39,12 +40,9 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
       appBar: AppBar(
         backgroundColor: BACKGROUND_COLOR,
         elevation: 0,
-        title: const Text(
+        title: Text(
           '비밀번호 변경',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          style: h4Headline,
         ),
         centerTitle: true,
         leading: IconButton(
@@ -65,13 +63,10 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
             const SizedBox(
               height: 24,
             ),
-            const Text(
+            Text(
               '안전한 변경을 위해\n현재 비밀번호를 입력해주세요',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
+              style: h3Headline.copyWith(
                 color: Colors.white,
-                height: 1.5,
               ),
             ),
             const SizedBox(
@@ -144,13 +139,11 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
                   : POINT_COLOR,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 '다음',
-                style: TextStyle(
+                style: h6Headline.copyWith(
                   color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),

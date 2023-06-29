@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -11,6 +13,7 @@ import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ndialog/ndialog.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -28,16 +31,43 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   String email = '';
   String password = '';
+  bool buttonEnable = false;
 
   @override
   void initState() {
     super.initState();
-    _loadEmailAndPassword();
-    _getDeviceInfo();
+    // _loadEmailAndPassword();
+    // _getDeviceInfo();
+    _idTextController.addListener(idTextListener);
+    _passwordTextController.addListener(passwordTextListener);
+  }
+
+  void idTextListener() {
+    // if (_idTextController.text.length < 8 ||
+    //     _passwordTextController.text.length < 8) {
+    //   buttonEnable = false;
+    // } else {
+    //   buttonEnable = true;
+    // }
+    // setState(() {});
+  }
+
+  void passwordTextListener() {
+    // if (_idTextController.text.length < 8 ||
+    //     _passwordTextController.text.length < 8) {
+    //   buttonEnable = false;
+    // } else {
+    //   buttonEnable = true;
+    // }
+
+    // setState(() {});
   }
 
   @override
   void dispose() {
+    _idTextController.removeListener(idTextListener);
+    _passwordTextController.removeListener(passwordTextListener);
+
     _idTextController.dispose();
     _passwordTextController.dispose();
     super.dispose();
@@ -74,13 +104,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(
                   height: 24,
                 ),
-                const AutoSizeText(
+                AutoSizeText(
                   '담당 트레이너님이 \n설정해주신 아이디로  바로 시작해보세요',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                  style: h3Headline.copyWith(
                     color: Colors.white,
-                    height: 1.5,
                   ),
                   maxLines: 2,
                 ),
@@ -107,7 +134,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     );
                   },
                 ),
-                _renderBottomView()
+                _renderBottomView(),
               ],
             ),
           ),
@@ -117,12 +144,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Column _renderMidView(
-      String email,
-      String password,
-      WidgetRef ref,
-      UserModelBase? state,
-      TextEditingController idTextcontroller,
-      TextEditingController passwordTextcontroller) {
+    String email,
+    String password,
+    WidgetRef ref,
+    UserModelBase? state,
+    TextEditingController idTextcontroller,
+    TextEditingController passwordTextcontroller,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -169,11 +197,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               onPressed: state is UserModelLoading
                   ? null
                   : () async {
-                      // context.goNamed(ScheduleScreen.routeName);
-
                       if (_idTextController.text.isNotEmpty &&
                           _passwordTextController.text.isNotEmpty) {
-                        _saveEmailAndPassword();
+                        // _saveEmailAndPassword();
+                      }
+
+                      if (_idTextController.text.isEmpty &&
+                          _passwordTextController.text.isEmpty) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => DialogWidgets.errorDialog(
+                            message: '이메일 또는 비밀번호를 입력해주세요',
+                            confirmText: '확인',
+                            confirmOnTap: () => context.pop(),
+                          ),
+                        );
+                        return;
                       }
 
                       final ret = await ref.read(getMeProvider.notifier).login(
@@ -184,16 +223,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           );
 
                       if (ret is UserModelError) {
-                        // print('state.error : ${ret.error}');
-                        // print('state.statusCode : ${ret.statusCode}');
-
                         if (!mounted) return;
                         //async 함수 내에서 context사용전 위젯이 마운트되지 않으면
                         errorDialog(ret).show(context);
                       }
                     },
               style: ElevatedButton.styleFrom(
-                backgroundColor: POINT_COLOR,
+                backgroundColor:
+                    state is UserModelLoading ? BACKGROUND_COLOR : POINT_COLOR,
               ),
               child: state is UserModelLoading
                   ? const SizedBox(
@@ -221,11 +258,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
         child: Center(
             child: Text(
-          '${ret.error}😂',
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-          ),
+          ret.error,
+          style: s2SubTitle,
         )),
       ),
       dialogStyle: DialogStyle(
@@ -248,12 +282,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: POINT_COLOR,
               ),
-              child: const Text(
+              child: Text(
                 '확인',
-                style: TextStyle(
-                  fontSize: 14,
+                style: h6Headline.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
@@ -267,11 +299,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        const Text(
+        Text(
           '로그인하시면 아래 내용에 동의하는 것으로 간주됩니다.',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
+          style: s3SubTitle.copyWith(
             color: Colors.white,
           ),
         ),
@@ -282,13 +312,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               onPressed: () => DataUtils.onWebViewTap(
                   uri:
                       "https://weareraid.notion.site/06b383e3c7aa4515a4637c2c11f3d908?pvs=4"),
-              child: const Text(
+              child: Text(
                 '개인정보처리방침',
-                style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400),
+                style: s3SubTitle.copyWith(
+                  decoration: TextDecoration.underline,
+                  color: Colors.white,
+                ),
               ),
             ),
             const SizedBox(
@@ -298,13 +327,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               onPressed: () => DataUtils.onWebViewTap(
                   uri:
                       "https://weareraid.notion.site/87468f88c99b427b81ae3e44aeb1f37b?pvs=4"),
-              child: const Text(
+              child: Text(
                 '이용약관',
-                style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400),
+                style: s3SubTitle.copyWith(
+                  decoration: TextDecoration.underline,
+                  color: Colors.white,
+                ),
               ),
             ),
           ],

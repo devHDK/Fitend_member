@@ -1,23 +1,36 @@
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/muscle_group.dart';
+import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:flutter/material.dart';
 
 class WorkoutBanner extends StatelessWidget {
   final String title;
   final String subTitle;
-  final int exerciseCount;
   final String time;
+  final List<Exercise> exercises;
 
   const WorkoutBanner({
     super.key,
     required this.title,
     required this.subTitle,
-    required this.exerciseCount,
     required this.time,
+    required this.exercises,
   });
 
   @override
   Widget build(BuildContext context) {
     List<String> timeString = time.split(':');
+    Set targetMuscles = {};
+    String muscleString = '';
+
+    for (var exercise in exercises) {
+      targetMuscles.add(exercise.targetMuscles[0].muscleType);
+    }
+
+    for (var muscle in targetMuscles) {
+      muscleString += ' ${muscleGroup[muscle]!} ∙';
+    }
 
     return Container(
       decoration: const BoxDecoration(
@@ -35,10 +48,8 @@ class WorkoutBanner extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
+              style: h4Headline.copyWith(
                 color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
                 overflow: TextOverflow.ellipsis,
               ),
               maxLines: 1,
@@ -48,10 +59,8 @@ class WorkoutBanner extends StatelessWidget {
             ),
             Text(
               subTitle,
-              style: const TextStyle(
+              style: s2SubTitle.copyWith(
                 color: LIGHT_GRAY_COLOR,
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
                 overflow: TextOverflow.ellipsis,
               ),
               maxLines: 1,
@@ -69,11 +78,12 @@ class WorkoutBanner extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  '총 $exerciseCount개의 운동',
-                  style: const TextStyle(
+                  muscleString.substring(
+                    1,
+                    muscleString.length - 1,
+                  ),
+                  style: h5Headline.copyWith(
                     color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const Expanded(
@@ -87,10 +97,8 @@ class WorkoutBanner extends StatelessWidget {
                   timeString[0] == '00'
                       ? ' ${timeString[1]}분'
                       : ' ${timeString[0]}시간 ${timeString[1]}분',
-                  style: const TextStyle(
+                  style: s2SubTitle.copyWith(
                     color: LIGHT_GRAY_COLOR,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],

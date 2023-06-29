@@ -1,4 +1,5 @@
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/workout/component/setinfo_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -94,7 +95,6 @@ class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
   Widget build(BuildContext context) {
     return DialogBackground(
       blur: 0.2,
-      dismissable: false,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
@@ -109,11 +109,10 @@ class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   '세트 수정',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                  style: h3Headline.copyWith(
+                    height: 1,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -131,12 +130,11 @@ class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
                     const SizedBox(
                       width: 8,
                     ),
-                    const Text(
+                    Text(
                       'min',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
+                      style: s1SubTitle.copyWith(
                         color: GRAY_COLOR,
+                        height: 1,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -151,12 +149,11 @@ class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
                     const SizedBox(
                       width: 8,
                     ),
-                    const Text(
+                    Text(
                       'sec',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
+                      style: s1SubTitle.copyWith(
                         color: GRAY_COLOR,
+                        height: 1,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -176,20 +173,20 @@ class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
                       : null,
                   child: Container(
                     width: 279,
-                    height: 44,
+                    height: 46,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: buttonEnable
                           ? POINT_COLOR
                           : POINT_COLOR.withOpacity(0.3),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text(
                         '확인',
-                        style: TextStyle(
-                          fontSize: 14,
+                        style: h6Headline.copyWith(
                           color: Colors.white,
-                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0,
+                          height: 1,
                         ),
                       ),
                     ),

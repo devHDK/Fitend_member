@@ -1,5 +1,6 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -72,12 +73,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
       appBar: AppBar(
         backgroundColor: BACKGROUND_COLOR,
         elevation: 0,
-        title: const Text(
+        title: Text(
           '마이페이지',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          style: h4Headline,
         ),
         centerTitle: true,
         leading: IconButton(
@@ -152,9 +150,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 name: '현재버전',
                 child: Text(
                   packageInfo != null ? 'v${packageInfo!.version}' : '',
-                  style: const TextStyle(
+                  style: s3SubTitle.copyWith(
                     color: POINT_COLOR,
-                    fontSize: 12,
                   ),
                 )),
             const Divider(
@@ -200,21 +197,17 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             children: [
               Text(
                 model.user.nickname,
-                style: const TextStyle(
+                style: h1Headline.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 26,
                 ),
               ),
               const SizedBox(
                 width: 8,
               ),
-              const Text(
+              Text(
                 '회원님',
-                style: TextStyle(
+                style: s2SubTitle.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
                 ),
               ),
             ],
@@ -235,10 +228,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               ),
               Text(
                 model.user.email,
-                style: const TextStyle(
+                style: s2SubTitle.copyWith(
                   color: LIGHT_GRAY_COLOR,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
                 ),
               ),
             ],
@@ -255,10 +246,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               ),
               Text(
                 formattedPhoneNumber,
-                style: const TextStyle(
+                style: s2SubTitle.copyWith(
                   color: LIGHT_GRAY_COLOR,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
                 ),
               ),
             ],
@@ -277,10 +266,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
         children: [
           Text(
             name,
-            style: const TextStyle(
+            style: s1SubTitle.copyWith(
               color: Colors.white,
-              fontWeight: FontWeight.w400,
-              fontSize: 16,
             ),
           ),
           if (child != null) child,

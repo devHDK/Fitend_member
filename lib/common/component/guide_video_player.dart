@@ -1,5 +1,6 @@
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -314,10 +315,7 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
           },
           child: Text(
             'X $doubleSpeed',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-            ),
+            style: s3SubTitle,
           ),
         ),
       ),

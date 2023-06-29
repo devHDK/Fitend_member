@@ -1,4 +1,5 @@
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
 
@@ -20,10 +21,7 @@ class ErrorDialog extends StatelessWidget {
         child: Center(
             child: Text(
           '$error😂',
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-          ),
+          style: s2SubTitle,
         )),
       ),
       dialogStyle: DialogStyle(
@@ -46,12 +44,11 @@ class ErrorDialog extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: POINT_COLOR,
               ),
-              child: const Text(
+              child: Text(
                 '확인',
-                style: TextStyle(
-                  fontSize: 14,
+                style: h6Headline.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.w700,
+                  height: 1,
                 ),
               ),
             ),

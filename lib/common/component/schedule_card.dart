@@ -1,5 +1,6 @@
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
@@ -125,12 +126,12 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                         if (widget.date != null)
                           Text(
                             weekday[widget.date!.weekday - 1],
-                            style: TextStyle(
+                            style: s2SubTitle.copyWith(
                               color: widget.isDateVisible!
                                   ? Colors.white
                                   : Colors.transparent,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
+                              letterSpacing: 0,
+                              height: 1,
                             ),
                           ),
                         const SizedBox(
@@ -143,8 +144,6 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                               color: widget.isDateVisible!
                                   ? Colors.white
                                   : Colors.transparent,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
                             ),
                           ),
                       ],
@@ -161,10 +160,8 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                     children: [
                       Text(
                         widget.title != null ? widget.title! : '',
-                        style: const TextStyle(
+                        style: h4Headline.copyWith(
                           color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
                           overflow: TextOverflow.ellipsis,
                         ),
                         maxLines: 1,
@@ -174,11 +171,10 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                       ),
                       Text(
                         widget.subTitle != null ? widget.subTitle! : '',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            overflow: TextOverflow.ellipsis),
+                        style: s2SubTitle.copyWith(
+                          color: Colors.white,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         maxLines: 1,
                       )
                     ],
@@ -262,12 +258,11 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                         (widget.isRecord! && !widget.isComplete!)
                             ? '운동 평가하기 📝'
                             : '운동확인 하기🔍',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: (widget.isRecord! && !widget.isComplete!)
-                                ? POINT_COLOR
-                                : Colors.white),
+                        style: h6Headline.copyWith(
+                          color: (widget.isRecord! && !widget.isComplete!)
+                              ? POINT_COLOR
+                              : Colors.white,
+                        ),
                       ),
                     ),
                   )

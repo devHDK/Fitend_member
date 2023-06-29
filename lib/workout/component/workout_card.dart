@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
@@ -202,10 +203,8 @@ class _RenderBody extends StatelessWidget {
           children: [
             Text(
               exercise.name,
-              style: const TextStyle(
+              style: h4Headline.copyWith(
                 color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
               ),
             ),
             if (exerciseIndex != null)
@@ -216,12 +215,10 @@ class _RenderBody extends StatelessWidget {
                   color: POINT_COLOR,
                   borderRadius: BorderRadius.circular(7),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     '진행중🏃',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
+                    style: s3SubTitle.copyWith(
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.center,
@@ -236,11 +233,9 @@ class _RenderBody extends StatelessWidget {
         Text(
           exercise.setInfo.length > 1
               ? '${exercise.setInfo.length} SET'
-              : '${(exercise.setInfo[0].seconds! / 60).floor()} 분',
-          style: const TextStyle(
+              : '${(exercise.setInfo[0].seconds! / 60).floor()}분 ${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초 ',
+          style: s2SubTitle.copyWith(
             color: LIGHT_GRAY_COLOR,
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
           ),
         ),
         const SizedBox(

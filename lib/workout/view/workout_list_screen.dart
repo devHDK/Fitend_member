@@ -3,6 +3,7 @@ import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
@@ -231,19 +232,21 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         }
       });
 
-      modifiedExerciseBox.whenData((value) {
-        for (var exercise in model.exercises) {
-          if ((exercise.trackingFieldId == 3 ||
-                  exercise.trackingFieldId == 4) &&
-              exercise.setInfo.length == 1) {
-            final record = value.get(exercise.workoutPlanId);
-
-            if (record is Exercise && record.setInfo[0].seconds != null) {
-              exercise.setInfo[0] = record.setInfo[0];
+      modifiedExerciseBox.whenData(
+        (value) {
+          for (var exercise in model.exercises) {
+            if ((exercise.trackingFieldId == 3 ||
+                    exercise.trackingFieldId == 4) &&
+                exercise.setInfo.length == 1) {
+              final record = value.get(exercise.workoutPlanId);
+              if (record is Exercise && record.setInfo[0].seconds != null) {
+                exercise.setInfo[0] = record.setInfo[0];
+                print(exercise.setInfo[0]);
+              }
             }
           }
-        }
-      });
+        },
+      );
     } else {
       workoutResultBox.whenData(
         (value) {
@@ -274,6 +277,21 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           }
         },
       );
+
+      modifiedExerciseBox.whenData(
+        (value) {
+          for (var exercise in model.exercises) {
+            if ((exercise.trackingFieldId == 3 ||
+                    exercise.trackingFieldId == 4) &&
+                exercise.setInfo.length == 1) {
+              final record = value.get(exercise.workoutPlanId);
+              if (record is Exercise && record.setInfo[0].seconds != null) {
+                exercise.setInfo[0] = record.setInfo[0];
+              }
+            }
+          }
+        },
+      );
     }
 
     return Scaffold(
@@ -289,11 +307,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         ),
         centerTitle: true,
         title: Text(
-          '${DateFormat('M월 dd일').format(DateTime.parse(workoutModel.startDate))} ${weekday[DateTime.parse(workoutModel.startDate).weekday - 1]}요일',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          '${DateFormat('M월 d일').format(DateTime.parse(workoutModel.startDate))} ${weekday[DateTime.parse(workoutModel.startDate).weekday - 1]}요일',
+          style: h4Headline,
         ),
         // actions: [
         //   if (!model.isWorkoutComplete &&
@@ -383,7 +398,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             child: WorkoutBanner(
               title: model.workoutTitle,
               subTitle: model.workoutSubTitle,
-              exerciseCount: model.exercises.length,
+              exercises: model.exercises,
               time: model.workoutTotalTime,
             ),
           ),
@@ -426,15 +441,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                               ExerciseScreen(exercise: exerciseModel),
                         ),
                       );
-
-                      // GoRouter.of(context).pushNamed(
-                      //   ExerciseScreen.routeName,
-                      //   pathParameters: {
-                      //     'workoutScheduleId':
-                      //         model.workoutScheduleId.toString()
-                      //   },
-                      //   extra: exerciseModel,
-                      // );
                     },
                     child: WorkoutCard(
                       exercise: exerciseModel,
@@ -583,10 +589,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                                   0
                               ? '운동 시작하기💪'
                               : '오늘의 운동만 수행할 수 있어요!',
-                      style: const TextStyle(
+                      style: h6Headline.copyWith(
                         color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),

@@ -1,4 +1,5 @@
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatefulWidget {
@@ -37,23 +38,24 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   void initState() {
     super.initState();
-    focusNode.addListener(() {
-      // print('${widget.labelText} ,${focusNode.hasFocus}');
-      if (focusNode.hasFocus) {
-        setState(() {
-          focusNode.requestFocus();
-        });
-      } else {
-        setState(() {
-          focusNode.unfocus();
-        });
-      }
-    });
+    focusNode.addListener(_onFocusChanged);
+  }
+
+  void _onFocusChanged() {
+    if (focusNode.hasFocus) {
+      setState(() {
+        // focusNode.requestFocus();
+      });
+    } else {
+      setState(() {
+        focusNode.unfocus();
+      });
+    }
   }
 
   @override
   void dispose() {
-    focusNode.removeListener(() {});
+    focusNode.removeListener(_onFocusChanged);
     focusNode.dispose();
 
     super.dispose();
@@ -71,7 +73,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
     return TextFormField(
       controller: widget.controller,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(
+        color: Colors.white,
+      ),
       cursorColor: POINT_COLOR,
       //비밀번호 입력할때
       obscureText: widget.obscureText,
@@ -88,10 +92,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
         hintText: widget.hintText,
         // errorText: errorText,
-        hintStyle: const TextStyle(
+        hintStyle: s2SubTitle.copyWith(
           color: GRAY_COLOR,
-          fontSize: 14.0,
-          fontWeight: FontWeight.w400,
         ),
         filled: true,
         fillColor: BACKGROUND_COLOR,
@@ -105,10 +107,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         labelText: focusNode.hasFocus || widget.controller.text.isEmpty
             ? widget.fullLabelText
             : widget.labelText,
-        labelStyle: TextStyle(
+        labelStyle: s2SubTitle.copyWith(
           color: focusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
         ),
       ),
     );

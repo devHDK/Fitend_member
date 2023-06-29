@@ -1,4 +1,5 @@
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -51,10 +52,8 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
       focusNode: focusNode,
       cursorColor: POINT_COLOR,
       textAlign: TextAlign.center,
-      style: const TextStyle(
+      style: h3Headline.copyWith(
         color: Colors.white,
-        fontWeight: FontWeight.w700,
-        fontSize: 20,
       ),
       decoration: InputDecoration(
         filled: true,

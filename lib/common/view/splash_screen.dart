@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -40,22 +41,18 @@ class _BottomView extends StatelessWidget {
           const Expanded(
             child: SizedBox(),
           ),
-          const Text(
+          Text(
             '운동 졸업은 핏엔드에서!\n핏엔드에 오신 것을 환영합니다!',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
+            style: h3Headline.copyWith(
               color: Colors.white,
             ),
           ),
           const SizedBox(
             height: 12,
           ),
-          const AutoSizeText(
+          AutoSizeText(
             'Routine for 4 Weeks!\n새로운 디지털 PT의 패러다임을 지금 바로 경험해보세요',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
+            style: s2SubTitle.copyWith(
               color: LIGHT_GRAY_COLOR,
             ),
             maxLines: 2,
@@ -74,12 +71,9 @@ class _BottomView extends StatelessWidget {
                 onPressed: () {
                   context.goNamed(LoginScreen.routeName);
                 },
-                child: const Text(
+                child: Text(
                   '시작하기',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: h6Headline,
                 ),
               ),
             ),

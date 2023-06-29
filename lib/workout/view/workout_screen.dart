@@ -8,6 +8,7 @@ import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
@@ -1278,10 +1279,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           ),
           Text(
             name,
-            style: TextStyle(
+            style: s2SubTitle.copyWith(
               color: textColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
+              height: 1,
             ),
           )
         ],
@@ -1322,12 +1322,10 @@ class _ShowTip extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Tip 📣',
-                    style: TextStyle(
+                    style: h5Headline.copyWith(
                       color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(

@@ -1,5 +1,6 @@
 import 'package:fitend_member/common/component/calendar.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/schedule/model/put_workout_schedule_date_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
@@ -20,7 +21,6 @@ class DialogWidgets {
   }) {
     return DialogBackground(
       blur: 0.2,
-      dismissable: false,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
@@ -36,10 +36,7 @@ class DialogWidgets {
               children: [
                 Text(
                   message,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                  ),
+                  style: s2SubTitle,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(
@@ -57,10 +54,8 @@ class DialogWidgets {
                     child: Center(
                       child: Text(
                         confirmText,
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: h6Headline.copyWith(
                           color: Colors.white,
-                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
@@ -81,10 +76,8 @@ class DialogWidgets {
                     child: Center(
                       child: Text(
                         cancelText,
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: h6Headline.copyWith(
                           color: POINT_COLOR,
-                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
@@ -105,7 +98,6 @@ class DialogWidgets {
   }) {
     return DialogBackground(
       blur: 0.2,
-      dismissable: false,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
         child: Container(
@@ -121,10 +113,7 @@ class DialogWidgets {
               children: [
                 Text(
                   message,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                  ),
+                  style: s2SubTitle,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(
@@ -142,10 +131,9 @@ class DialogWidgets {
                     child: Center(
                       child: Text(
                         confirmText,
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: h6Headline.copyWith(
                           color: Colors.white,
-                          fontWeight: FontWeight.w700,
+                          height: 1,
                         ),
                       ),
                     ),
@@ -288,7 +276,6 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
 
     return DialogBackground(
       blur: 0.2,
-      dismissable: false,
       dialog: Dialog(
         backgroundColor: Colors.transparent,
         child: SingleChildScrollView(

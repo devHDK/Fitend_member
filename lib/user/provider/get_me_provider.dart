@@ -82,14 +82,20 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     } on DioError catch (e) {
       if (e.response != null) {
         if (e.response!.statusCode != null) {
-          if (e.response!.statusCode! == 400) {
+          if (e.response!.statusCode! == 404 ||
+              e.response!.statusCode! == 400) {
             state = UserModelError(
-              error: '해당 이메일로 가입된 계정이 없어요 😅',
+              error: '해당 이메일로 가입된 계정이 없어요😅',
               statusCode: e.response!.statusCode!,
             );
-          } else if (e.response!.statusCode! == 404) {
+          } else if (e.response!.statusCode! == 409) {
             state = UserModelError(
-              error: '이메일 또는 비밀번호가 맞지않아요',
+              error: '이메일 또는 비밀번호가 맞지않아요😭',
+              statusCode: e.response!.statusCode!,
+            );
+          } else if (e.response!.statusCode! == 403) {
+            state = UserModelError(
+              error: '이용중인 수강권이 없어요😭',
               statusCode: e.response!.statusCode!,
             );
           } else {

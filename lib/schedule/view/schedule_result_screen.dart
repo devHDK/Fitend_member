@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
@@ -184,10 +185,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         backgroundColor: BACKGROUND_COLOR,
         title: Text(
           state.startDate,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          style: h4Headline,
         ),
         automaticallyImplyLeading: false,
         centerTitle: true,
@@ -272,25 +270,21 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   }
 
   Column _renderTitle() {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '오늘의 운동평가📝',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        SizedBox(
+        Text('오늘의 운동평가📝',
+            style: h4Headline.copyWith(
+              color: Colors.white,
+            )),
+        const SizedBox(
           height: 12,
         ),
-        Divider(
+        const Divider(
           color: GRAY_COLOR,
           height: 1,
         ),
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
       ],
@@ -301,12 +295,10 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '운동의 강도는 어떠셨나요? 🔥',
-          style: TextStyle(
+          style: h5Headline.copyWith(
             color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(
@@ -314,10 +306,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         ),
         Text(
           '  ∙  ${strengthResults[state.strengthIndex - 1]}',
-          style: const TextStyle(
+          style: s2SubTitle.copyWith(
             color: LIGHT_GRAY_COLOR,
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
           ),
         ),
       ],
@@ -328,14 +318,10 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          '특이사항이 있다면 알려주세요 🙏',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        Text('특이사항이 있다면 알려주세요 🙏',
+            style: h5Headline.copyWith(
+              color: Colors.white,
+            )),
         const SizedBox(
           height: 8,
         ),
@@ -345,10 +331,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
               children: [
                 Text(
                   '  ∙  ${issuedResults[e - 1]}',
-                  style: const TextStyle(
+                  style: s2SubTitle.copyWith(
                     color: LIGHT_GRAY_COLOR,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 const SizedBox(
@@ -369,12 +353,10 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '코치님께 전하고 싶은 내용을 적어주세요 📤',
-          style: TextStyle(
+          style: h5Headline.copyWith(
             color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(
@@ -382,10 +364,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         ),
         Text(
           state.contents!,
-          style: const TextStyle(
+          style: s2SubTitle.copyWith(
             color: LIGHT_GRAY_COLOR,
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
           ),
         ),
       ],
@@ -393,29 +373,27 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   }
 
   SliverToBoxAdapter _renderWorkoutResultTitle() {
-    return const SliverToBoxAdapter(
+    return SliverToBoxAdapter(
       child: Padding(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: 28,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 24,
             ),
             Text(
               '오늘의 운동결과🎯',
-              style: TextStyle(
+              style: h4Headline.copyWith(
                 color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 12,
             ),
-            Divider(
+            const Divider(
               color: GRAY_COLOR,
               height: 1,
             )
@@ -435,10 +413,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         ),
         Text(
           model.exerciseName,
-          style: const TextStyle(
+          style: h5Headline.copyWith(
             color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
             overflow: TextOverflow.ellipsis,
           ),
           maxLines: 1,
@@ -448,10 +424,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         ),
         Text(
           model.targetMuscles[0],
-          style: const TextStyle(
-            fontSize: 14,
+          style: s2SubTitle.copyWith(
             color: Colors.white,
-            fontWeight: FontWeight.w400,
           ),
         ),
         const SizedBox(
@@ -466,28 +440,22 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
               children: [
                 Text(
                   '${e.index} SET',
-                  style: const TextStyle(
+                  style: s2SubTitle.copyWith(
                     color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 if (model.trackingFieldId == 1)
                   Text(
                     e.weight != null ? '${e.weight}kg' : '-',
-                    style: const TextStyle(
+                    style: s2SubTitle.copyWith(
                       color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 if (model.trackingFieldId == 1 || model.trackingFieldId == 2)
                   Text(
                     e.reps != null ? '${e.reps}회' : '-',
-                    style: const TextStyle(
+                    style: s2SubTitle.copyWith(
                       color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 if (model.trackingFieldId == 3 || model.trackingFieldId == 4)
@@ -495,10 +463,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                     e.seconds != null
                         ? '${(e.seconds! / 3600).floor().toString().padLeft(2, '0')} : ${(e.seconds! / 60).floor().toString().padLeft(2, '0')} : ${(e.seconds! % 60).toString().padLeft(2, '0')}  '
                         : '-',
-                    style: const TextStyle(
+                    style: s2SubTitle.copyWith(
                       color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 Text(

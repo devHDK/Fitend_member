@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ndialog/ndialog.dart';
@@ -15,18 +16,16 @@ class ErrorScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       body: NAlertDialog(
-        title: const Padding(
-          padding: EdgeInsets.only(
+        title: Padding(
+          padding: const EdgeInsets.only(
             top: 20,
           ),
           child: Center(
-              child: Text(
-            '서버와 통신하는동안 문제가 생겼습니다.',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
+            child: Text(
+              '서버와 통신하는동안 문제가 생겼습니다.',
+              style: s2SubTitle,
             ),
-          )),
+          ),
         ),
         dialogStyle: DialogStyle(
           backgroundColor: Colors.white,
@@ -52,12 +51,10 @@ class ErrorScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: POINT_COLOR,
                 ),
-                child: const Text(
+                child: Text(
                   '확인',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: h6Headline.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),

@@ -42,192 +42,197 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
         backgroundColor: BACKGROUND_COLOR,
-        elevation: 0,
-        title: Text(
-          '비밀번호 변경',
-          style: h4Headline,
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context); //뒤로가기
-          },
-          icon: const Padding(
-            padding: EdgeInsets.only(left: 18),
-            child: Icon(Icons.arrow_back_sharp),
+        appBar: AppBar(
+          backgroundColor: BACKGROUND_COLOR,
+          elevation: 0,
+          title: Text(
+            '비밀번호 변경',
+            style: h4Headline,
+          ),
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: () {
+              int count = 0;
+              Navigator.of(context).popUntil((_) => count++ >= 2);
+            },
+            icon: const Padding(
+              padding: EdgeInsets.only(left: 18),
+              child: Icon(Icons.arrow_back_sharp),
+            ),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 24,
-            ),
-            Text(
-              '새로운 비밀번호를 입력해주세요',
-              style: h3Headline.copyWith(
-                color: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 24,
               ),
-            ),
-            const SizedBox(
-              height: 36,
-            ),
-            CustomTextFormField(
-              onChanged: (value) {
-                setState(() {});
-              },
-              controller: _nuPasswordController,
-              fullLabelText: '새로운 비밀번호',
-              labelText: '새로운 비밀번호 ',
-              hintText: '새로운 비밀번호(최소 8자)',
-              autoFocus: false,
-              textInputType: TextInputType.visiblePassword,
-              obscureText: true,
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            CustomTextFormField(
-              onChanged: (value) {
-                setState(() {});
-              },
-              controller: _newPasswordController,
-              fullLabelText: '한번 더 입력해주세요',
-              labelText: '한번 더 입력해주세요',
-              textInputType: TextInputType.visiblePassword,
-              obscureText: true,
-            )
-          ],
+              Text(
+                '새로운 비밀번호를 입력해주세요',
+                style: h3Headline.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(
+                height: 36,
+              ),
+              CustomTextFormField(
+                onChanged: (value) {
+                  setState(() {});
+                },
+                controller: _nuPasswordController,
+                fullLabelText: '새로운 비밀번호',
+                labelText: '새로운 비밀번호 ',
+                hintText: '새로운 비밀번호(최소 8자)',
+                autoFocus: false,
+                textInputType: TextInputType.visiblePassword,
+                obscureText: true,
+              ),
+              const SizedBox(
+                height: 12,
+              ),
+              CustomTextFormField(
+                onChanged: (value) {
+                  setState(() {});
+                },
+                controller: _newPasswordController,
+                fullLabelText: '한번 더 입력해주세요',
+                labelText: '한번 더 입력해주세요',
+                textInputType: TextInputType.visiblePassword,
+                obscureText: true,
+              )
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: TextButton(
-        onPressed: (_nuPasswordController.text.length < 8 ||
-                    _newPasswordController.text.length < 8) ||
-                !buttonOn
-            ? null
-            : () async {
-                setState(() {
-                  buttonOn = false;
-                });
-
-                if (_nuPasswordController.text != _newPasswordController.text) {
+        floatingActionButton: TextButton(
+          onPressed: (_nuPasswordController.text.length < 8 ||
+                      _newPasswordController.text.length < 8) ||
+                  !buttonOn
+              ? null
+              : () async {
                   setState(() {
-                    buttonOn = true;
+                    buttonOn = false;
                   });
 
-                  showDialog(
-                    context: context,
-                    builder: (context) => DialogWidgets.errorDialog(
-                      message: '입력하신 비밀번호가 일치하지 않아요 😭',
-                      confirmText: '확인',
-                      confirmOnTap: () => context.pop(),
-                    ),
-                  );
-                  return;
-                }
+                  if (_nuPasswordController.text !=
+                      _newPasswordController.text) {
+                    setState(() {
+                      buttonOn = true;
+                    });
 
-                try {
-                  await ref
-                      .read(getMeProvider.notifier)
-                      .changePassword(
-                        password: widget.password,
-                        newPassword: _newPasswordController.text,
-                      )
-                      .then((value) {
-                    int count = 0;
-                    Navigator.of(context).popUntil((_) => count++ >= 2);
+                    showDialog(
+                      context: context,
+                      builder: (context) => DialogWidgets.errorDialog(
+                        message: '입력하신 비밀번호가 일치하지 않아요 😭',
+                        confirmText: '확인',
+                        confirmOnTap: () => context.pop(),
+                      ),
+                    );
+                    return;
+                  }
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        duration: const Duration(seconds: 2),
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        padding: EdgeInsets.symmetric(
-                            horizontal:
-                                (MediaQuery.sizeOf(context).width - 160) / 2),
-                        content: Container(
-                          width: 160,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: DARK_GRAY_COLOR,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 5),
-                            child: Center(
-                              child: AutoSizeText(
-                                '비밀번호가 변경되었습니다',
-                                style: s3SubTitle.copyWith(
-                                  color: Colors.white,
+                  try {
+                    await ref
+                        .read(getMeProvider.notifier)
+                        .changePassword(
+                          password: widget.password,
+                          newPassword: _newPasswordController.text,
+                        )
+                        .then((value) {
+                      int count = 0;
+                      Navigator.of(context).popUntil((_) => count++ >= 2);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          duration: const Duration(seconds: 2),
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  (MediaQuery.sizeOf(context).width - 160) / 2),
+                          content: Container(
+                            width: 160,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: DARK_GRAY_COLOR,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 5),
+                              child: Center(
+                                child: AutoSizeText(
+                                  '비밀번호가 변경되었습니다',
+                                  style: s3SubTitle.copyWith(
+                                    color: Colors.white,
+                                  ),
+                                  maxLines: 1,
                                 ),
-                                maxLines: 1,
                               ),
                             ),
                           ),
                         ),
+                      );
+
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (context) => DialogWidgets.errorDialog(
+                      //     message: '비밀번호가 변경되었습니다!',
+                      //     confirmText: '확인',
+                      //     confirmOnTap: () => context.pop(),
+                      //   ),
+                      // );
+                    });
+
+                    setState(() {
+                      buttonOn = true;
+                    });
+                  } catch (e) {
+                    setState(() {
+                      buttonOn = true;
+                    });
+
+                    showDialog(
+                      context: context,
+                      builder: (context) => DialogWidgets.errorDialog(
+                        message: '오류가 발생하였습니다.😂',
+                        confirmText: '확인',
+                        confirmOnTap: () => context.pop(),
                       ),
                     );
-
-                    // showDialog(
-                    //   context: context,
-                    //   builder: (context) => DialogWidgets.errorDialog(
-                    //     message: '비밀번호가 변경되었습니다!',
-                    //     confirmText: '확인',
-                    //     confirmOnTap: () => context.pop(),
-                    //   ),
-                    // );
-                  });
-
-                  setState(() {
-                    buttonOn = true;
-                  });
-                } catch (e) {
-                  setState(() {
-                    buttonOn = true;
-                  });
-
-                  showDialog(
-                    context: context,
-                    builder: (context) => DialogWidgets.errorDialog(
-                      message: '오류가 발생하였습니다.😂',
-                      confirmText: '확인',
-                      confirmOnTap: () => context.pop(),
-                    ),
-                  );
-                }
-              },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Container(
-            height: 44,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              color: (_nuPasswordController.text.length < 8 ||
-                          _newPasswordController.text.length < 8) ||
-                      !buttonOn
-                  ? POINT_COLOR.withOpacity(0.5)
-                  : POINT_COLOR,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: Text(
-                '변경 완료',
-                style: h6Headline.copyWith(
-                  color: Colors.white,
+                  }
+                },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28),
+            child: Container(
+              height: 44,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: (_nuPasswordController.text.length < 8 ||
+                            _newPasswordController.text.length < 8) ||
+                        !buttonOn
+                    ? POINT_COLOR.withOpacity(0.5)
+                    : POINT_COLOR,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: Text(
+                  '변경 완료',
+                  style: h6Headline.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
           ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

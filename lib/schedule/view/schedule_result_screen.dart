@@ -9,9 +9,7 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
-import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/provider/workout_records_provider.dart';
-import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -121,12 +119,34 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         );
       }
 
+      workoutRecordBox.whenData(
+        (value) {
+          workoutRecords = [];
+
+          for (var i = 0; i < widget.exercises.length; i++) {
+            final record = value.get(widget.exercises[i].workoutPlanId);
+            if (record != null && record is WorkoutRecordModel) {
+              workoutRecords.add(record);
+            } else {
+              hasLocal = false;
+            }
+          }
+        },
+      );
+
+      for (var i = 0; i < workoutResults.length; i++) {
+        for (var j = 0; j < workoutResults[i].setInfo.length; j++) {
+          workoutResults[i].setInfo[j] = workoutRecords[i].setInfo[j];
+        }
+      }
+
       if (pstate is WorkoutResultModel) {
         startDate = DateTime.parse(pstate.startDate);
-        state = pstate;
-        state = state.copyWith(
-            startDate:
-                '${DateFormat('M월 dd일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday - 1]}요일');
+        // state = pstate;
+        state = pstate.copyWith(
+          startDate:
+              '${DateFormat('M월 dd일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday - 1]}요일',
+        );
       }
     } else {
       hasLocal = true;
@@ -194,17 +214,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
             padding: const EdgeInsets.only(right: 20),
             child: IconButton(
               onPressed: () {
-                ref
-                    .read(workoutProvider(widget.workoutScheduleId).notifier)
-                    .updateWorkoutStateIsComplete(); //workout list 업데이트
-
-                context.goNamed(
-                  WorkoutListScreen.routeName,
-                  pathParameters: {
-                    "workoutScheduleId": widget.workoutScheduleId.toString(),
-                  },
-                  extra: true,
-                );
+                context.pop();
               },
               icon: const Icon(
                 Icons.close_sharp,

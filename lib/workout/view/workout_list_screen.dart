@@ -4,6 +4,7 @@ import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/provider/hive_exercies_index_provider%20copy.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
@@ -127,6 +128,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         ref.read(hiveWorkoutFeedbackProvider);
     final AsyncValue<Box> modifiedExerciseBox =
         ref.read(hiveModifiedExerciseProvider);
+    final AsyncValue<Box> processingExerciseIndexBox =
+        ref.read(hiveExerciseIndexProvider);
 
     if (state is WorkoutModelLoading) {
       return const Scaffold(
@@ -143,7 +146,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       return ErrorDialog(error: state.message);
     }
 
-    final model = state as WorkoutModel;
+    var model = state as WorkoutModel;
     workoutModel = model;
 
     workoutBox = workoutRecordBox;
@@ -276,6 +279,13 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           }
         },
       );
+
+      processingExerciseIndexBox.whenData((value) {
+        final record = value.get(widget.id);
+        if (record != null) {
+          isProcessing = true;
+        }
+      });
 
       modifiedExerciseBox.whenData(
         (value) {
@@ -415,8 +425,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 (context, index) {
                   final exerciseModel = model.exercises[index];
 
-                  print(exerciseModel);
-
                   int completeSetCount = 0;
                   workoutRecordBox.when(
                     data: (data) {
@@ -476,7 +484,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           : TextButton(
               onPressed: model.isWorkoutComplete
                   ? () {
-                      context.goNamed(
+                      context.pushNamed(
                         ScheduleResultScreen.routeName,
                         pathParameters: {
                           'id': model.workoutScheduleId.toString(),

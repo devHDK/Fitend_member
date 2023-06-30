@@ -9,6 +9,7 @@ import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/provider/hive_exercies_index_provider%20copy.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
@@ -60,6 +61,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   late AsyncValue<Box> workoutRecordBox;
   late AsyncValue<Box> workoutResultBox;
   late AsyncValue<Box> modifiedExerciseBox;
+  late AsyncValue<Box> exerciseIndexBox;
   bool isSwipeUp = false;
   bool initial = true;
   late int exerciseIndex = 0;
@@ -119,15 +121,25 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         });
 
         if (!isPoped) {
-          for (int i = 0; i < widget.exercises.length; i++) {
-            if (setInfoCompleteList[i] < maxSetInfoList[i]) {
-              setState(() {
-                exerciseIndex = i;
-              });
+          // for (int i = 0; i < widget.exercises.length; i++) {
+          //   if (setInfoCompleteList[i] < maxSetInfoList[i]) {
+          //     setState(() {
+          //       exerciseIndex = i;
+          //     });
 
-              break;
+          //     break;
+          //   }
+          // }
+
+          exerciseIndexBox.whenData((value) {
+            final record = value.get(widget.workoutScheduleId);
+
+            if (record != null) {
+              exerciseIndex = record;
+            } else {
+              exerciseIndex = 0;
             }
-          }
+          });
         }
 
         onTooltipPressed();
@@ -192,10 +204,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     final recordRepository = ref.read(workoutRecordsRepositoryProvider);
 
     final AsyncValue<Box> workoutResult = ref.read(hiveWorkoutResultProvider);
+    final AsyncValue<Box> processingExerciseIndexBox =
+        ref.read(hiveExerciseIndexProvider);
 
     workoutRecordBox = workoutBox;
     workoutResultBox = workoutResult;
     modifiedExerciseBox = modifiedBox;
+    exerciseIndexBox = processingExerciseIndexBox;
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -213,6 +228,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   confirmText: '네, 저장할게요',
                   cancelText: '아니요, 리셋할래요',
                   confirmOnTap: () {
+                    processingExerciseIndexBox.whenData(
+                      (value) {
+                        value.put(widget.workoutScheduleId, exerciseIndex);
+                      },
+                    );
+
                     int count = 0;
                     if (mounted) {
                       Navigator.of(context).popUntil((_) => count++ >= 2);
@@ -266,6 +287,15 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         }
                       },
                     );
+
+                    processingExerciseIndexBox.whenData(
+                      (value) {
+                        value.delete(
+                          widget.workoutScheduleId,
+                        );
+                      },
+                    );
+
                     int count = 0;
                     if (mounted) {
                       Navigator.of(context).popUntil((_) => count++ >= 2);
@@ -830,7 +860,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       )
                           .then(
                         (value) {
-                          GoRouter.of(context).goNamed(
+                          context.pop();
+                          GoRouter.of(context).pushNamed(
                             WorkoutFeedbackScreen.routeName,
                             pathParameters: {
                               'workoutScheduleId':
@@ -914,9 +945,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             ),
           )
               .then((value) {
-            // context.pop();
+            context.pop();
 
-            GoRouter.of(context).goNamed(
+            GoRouter.of(context).pushNamed(
               WorkoutFeedbackScreen.routeName,
               pathParameters: {
                 'workoutScheduleId': widget.workoutScheduleId.toString(),
@@ -1163,8 +1194,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             ),
                           )
                               .then((value) {
+                            context.pop();
                             GoRouter.of(context)
-                                .goNamed(WorkoutFeedbackScreen.routeName,
+                                .pushNamed(WorkoutFeedbackScreen.routeName,
                                     pathParameters: {
                                       'workoutScheduleId':
                                           widget.workoutScheduleId.toString(),

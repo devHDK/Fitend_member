@@ -390,7 +390,19 @@ class _WeightWrepsProgressCardState
     return Column(
       children: [
         Text(
-          '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분 ${(widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60).toString().padLeft(2, '0')}초',
+          (widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor() >
+                      0 &&
+                  (widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60) >
+                      0
+              ? '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분 ${(widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60).toString().padLeft(2, '0')}초'
+              : (widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60)
+                              .floor() >
+                          0 &&
+                      (widget.exercise.setInfo[widget.setInfoIndex].seconds! %
+                              60) ==
+                          0
+                  ? '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분'
+                  : '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60).toString().padLeft(2, '0')}초',
           style: s1SubTitle.copyWith(
             color: GRAY_COLOR,
           ),

@@ -30,17 +30,13 @@ class WorkoutCard extends ConsumerStatefulWidget {
 class _WorkoutCardState extends ConsumerState<WorkoutCard> {
   @override
   Widget build(BuildContext context) {
-    // final AsyncValue<Box> workoutRecordBox =
-    //     ref.watch(hiveWorkoutRecordProvider);
     final AsyncValue<Box> timerRecordBox = ref.watch(hiveTimerRecordProvider);
-    // final AsyncValue<Box> modifiedExerciseBox =
-    //     ref.watch(hiveModifiedExerciseProvider);
 
     List<Widget> countList = [];
     List<Widget> firstList = [];
     List<Widget> secondList = [];
 
-    late SetInfo timerSetInfo = SetInfo(index: 1, seconds: 0);
+    SetInfo timerSetInfo = SetInfo(index: 1, seconds: 0);
 
     if ((widget.exercise.trackingFieldId == 3 ||
             widget.exercise.trackingFieldId == 4) &&
@@ -91,7 +87,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                       borderRadius: BorderRadius.circular(5),
                       child: LinearProgressIndicator(
                         value: timerSetInfo.seconds == null
-                            ? (0 / widget.exercise.setInfo[0].seconds!)
+                            ? 0.0
                             : (timerSetInfo.seconds! /
                                 widget.exercise.setInfo[0].seconds!),
                         backgroundColor: LIGHT_GRAY_COLOR,
@@ -117,15 +113,16 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
       width: MediaQuery.of(context).size.width,
       height: 157,
       decoration: BoxDecoration(
-          color: BACKGROUND_COLOR,
-          border: Border.fromBorderSide(
-            BorderSide(
-              color: widget.isSelected != null && widget.isSelected!
-                  ? POINT_COLOR
-                  : Colors.transparent,
-              width: 1.0,
-            ),
-          )),
+        color: BACKGROUND_COLOR,
+        border: Border.fromBorderSide(
+          BorderSide(
+            color: widget.isSelected != null && widget.isSelected!
+                ? POINT_COLOR
+                : Colors.transparent,
+            width: 1.0,
+          ),
+        ),
+      ),
       child: Row(
         children: [
           _renderImage(

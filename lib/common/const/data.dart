@@ -43,3 +43,4 @@ String timerXMoreRecordBox = 'timerXMoreRecords';
 String workoutResult = 'workoutResult';
 String modifiedExercise = 'modifiedExercise';
 String workoutFeedback = 'WorkoutFeedback';
+String processingExerciseIndex = 'processExerciseIndex';

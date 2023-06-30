@@ -504,6 +504,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 isTooltipVisible = false;
                                 tooltipCount = 0;
                                 onTooltipPressed();
+
+                                processingExerciseIndexBox.whenData(
+                                  (value) {
+                                    value.put(widget.workoutScheduleId,
+                                        exerciseIndex);
+                                  },
+                                );
                               });
 
                               while (setInfoCompleteList[exerciseIndex] ==
@@ -515,6 +522,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
                                 setState(() {
                                   exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                  processingExerciseIndexBox.whenData(
+                                    (value) {
+                                      value.put(widget.workoutScheduleId,
+                                          exerciseIndex);
+                                    },
+                                  );
                                 });
                               }
                             }
@@ -611,6 +624,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       isTooltipVisible = false;
                                       tooltipCount = 0;
                                       onTooltipPressed();
+
+                                      processingExerciseIndexBox.whenData(
+                                        (value) {
+                                          value.put(widget.workoutScheduleId,
+                                              exerciseIndex);
+                                        },
+                                      );
                                     });
 
                                     while (setInfoCompleteList[exerciseIndex] ==
@@ -621,6 +641,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       }
                                       setState(() {
                                         exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                        processingExerciseIndexBox.whenData(
+                                          (value) {
+                                            value.put(widget.workoutScheduleId,
+                                                exerciseIndex);
+                                          },
+                                        );
                                       });
                                     }
                                   }
@@ -732,6 +758,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 tooltipCount = 0;
                                 onTooltipPressed();
                                 // 운동 변경
+                                processingExerciseIndexBox.whenData(
+                                  (value) {
+                                    value.put(widget.workoutScheduleId,
+                                        exerciseIndex);
+                                  },
+                                );
                               });
 
                               while (setInfoCompleteList[exerciseIndex] ==
@@ -742,6 +774,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 }
                                 setState(() {
                                   exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                  processingExerciseIndexBox.whenData(
+                                    (value) {
+                                      value.put(widget.workoutScheduleId,
+                                          exerciseIndex);
+                                    },
+                                  );
                                 });
                               }
                             }
@@ -768,6 +806,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                           modifiedBox,
                           timerWorkoutBox,
                           timerXMoreBox,
+                          processingExerciseIndexBox,
                           recordRepository,
                         ),
                     ],
@@ -1015,6 +1054,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     AsyncValue<Box<dynamic>> modifiedBox,
     AsyncValue<Box<dynamic>> timerWorkoutBox,
     AsyncValue<Box<dynamic>> timerXMoreBox,
+    AsyncValue<Box<dynamic>> processingExerciseIndexBox,
     WorkoutRecordsRepository recordRepository,
   ) {
     return Column(
@@ -1070,6 +1110,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         isTooltipVisible = false;
                         tooltipCount = 0;
                         onTooltipPressed();
+
+                        processingExerciseIndexBox.whenData(
+                          (value) {
+                            value.put(widget.workoutScheduleId, exerciseIndex);
+                          },
+                        );
                       }
                       isPoped = true;
                     });

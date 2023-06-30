@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ndialog/ndialog.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   static String get routeName => 'login';
@@ -229,7 +228,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           if (ret is UserModelError) {
                             if (!mounted) return;
                             //async 함수 내에서 context사용전 위젯이 마운트되지 않으면
-                            errorDialog(ret).show(context);
+                            // errorDialog(ret).show(context);
+                            showDialog(
+                              context: context,
+                              builder: (context) => DialogWidgets.errorDialog(
+                                message: ret.error,
+                                confirmText: '확인',
+                                confirmOnTap: () => context.pop(),
+                              ),
+                            );
                           }
                         },
               style: ElevatedButton.styleFrom(
@@ -252,53 +259,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
           ),
         ),
-      ],
-    );
-  }
-
-  NAlertDialog errorDialog(UserModelError ret) {
-    return NAlertDialog(
-      title: Padding(
-        padding: const EdgeInsets.only(
-          top: 20,
-        ),
-        child: Center(
-            child: Text(
-          ret.error,
-          style: s2SubTitle,
-        )),
-      ),
-      dialogStyle: DialogStyle(
-        backgroundColor: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          child: Container(
-            width: 279,
-            height: 44,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: POINT_COLOR,
-            ),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-              ),
-              child: Text(
-                '확인',
-                style: h6Headline.copyWith(
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        )
       ],
     );
   }

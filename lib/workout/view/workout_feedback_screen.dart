@@ -50,8 +50,6 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
   List<int> issueIndexes = [];
   String contents = '';
 
-  bool initKeyboardVisible = true;
-
   @override
   void initState() {
     super.initState();
@@ -67,7 +65,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         focusNode.requestFocus();
         addKeyboardHeightListener();
         scrollController.animateTo(
-          325,
+          _scrollOffset + 325,
           duration: const Duration(milliseconds: 200),
           curve: Curves.ease,
         );
@@ -235,16 +233,17 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                             startDate: DateTime.parse(
                                                 widget.startdate),
                                           );
-                                      // 스케줄 업데이트
+                                      // 스케줄 상태 업데이트
 
                                       ref
                                           .read(workoutProvider(
                                                   widget.workoutScheduleId)
                                               .notifier)
                                           .updateWorkoutStateIsComplete();
-                                      //운동 업데이트
+                                      //워크아웃 상태 업데이트
 
                                       context.pop();
+
                                       context.pushNamed(
                                         ScheduleResultScreen.routeName,
                                         pathParameters: {

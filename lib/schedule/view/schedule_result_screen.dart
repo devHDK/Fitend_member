@@ -2,7 +2,6 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -48,7 +47,7 @@ class ScheduleResultScreen extends ConsumerStatefulWidget {
 }
 
 class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
-  late WorkoutResultModel state;
+  //  WorkoutResultModel state;
   WorkoutFeedbackRecordModel? feedback;
   List<WorkoutRecordResult> workoutResults = [];
   List<WorkoutRecordModel> workoutRecords = [];
@@ -87,7 +86,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   Widget build(BuildContext context) {
     final pstate = ref.watch(workoutRecordsProvider(widget.workoutScheduleId));
     final workoutFeedbackBox = ref.watch(hiveWorkoutFeedbackProvider);
-    final workoutResultBox = ref.watch(hiveWorkoutResultProvider);
+    // final workoutResultBox = ref.watch(hiveWorkoutResultProvider);
     final workoutRecordBox = ref.watch(hiveWorkoutRecordProvider);
 
     workoutFeedbackBox.whenData(
@@ -96,7 +95,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       },
     );
 
-    if (feedback == null) {
+    // if (feedback == null)
+    {
       if (pstate is WorkoutResultModelLoading) {
         return const Scaffold(
           backgroundColor: BACKGROUND_COLOR,
@@ -142,69 +142,72 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
 
       if (pstate is WorkoutResultModel) {
         startDate = DateTime.parse(pstate.startDate);
-        // state = pstate;
-        state = pstate.copyWith(
-          startDate:
-              '${DateFormat('M월 dd일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday - 1]}요일',
-        );
+        // pstate.copyWith(
+        //   startDate:
+        //       '${DateFormat('M월 dd일').format(DateTime.parse(pstate.startDate))} ${weekday[DateTime.parse(pstate.startDate).weekday - 1]}요일',
+        // );
       }
-    } else {
-      hasLocal = true;
-
-      startDate = feedback!.startDate;
-      workoutResultBox.whenData(
-        (value) {
-          workoutResults = [];
-
-          for (var i = 0; i < widget.exercises.length; i++) {
-            final record = value.get(widget.exercises[i].workoutPlanId);
-            if (record != null && record is WorkoutRecordResult) {
-              workoutResults.add(record);
-            } else {
-              hasLocal = false;
-            }
-          }
-        },
-      );
-
-      workoutRecordBox.whenData(
-        (value) {
-          workoutRecords = [];
-
-          for (var i = 0; i < widget.exercises.length; i++) {
-            final record = value.get(widget.exercises[i].workoutPlanId);
-            if (record != null && record is WorkoutRecordModel) {
-              workoutRecords.add(record);
-            } else {
-              hasLocal = false;
-            }
-          }
-        },
-      );
-
-      for (var i = 0; i < workoutResults.length; i++) {
-        for (var j = 0; j < workoutResults[i].setInfo.length; j++) {
-          workoutResults[i].setInfo[j] = workoutRecords[i].setInfo[j];
-        }
-      }
-
-      state = WorkoutResultModel(
-        startDate:
-            '${DateFormat('M월 dd일').format(feedback!.startDate)} ${weekday[feedback!.startDate.weekday - 1]}요일',
-        strengthIndex: feedback!.strengthIndex!,
-        issueIndexes:
-            feedback!.issueIndexes != null ? feedback!.issueIndexes! : [],
-        contents: feedback!.contents != null ? feedback!.contents! : '',
-        workoutRecords: workoutResults,
-      );
     }
+
+    var state = pstate as WorkoutResultModel;
+
+    // else {
+    //   hasLocal = true;
+
+    //   startDate = feedback!.startDate;
+    //   workoutResultBox.whenData(
+    //     (value) {
+    //       workoutResults = [];
+
+    //       for (var i = 0; i < widget.exercises.length; i++) {
+    //         final record = value.get(widget.exercises[i].workoutPlanId);
+    //         if (record != null && record is WorkoutRecordResult) {
+    //           workoutResults.add(record);
+    //         } else {
+    //           hasLocal = false;
+    //         }
+    //       }
+    //     },
+    //   );
+
+    //   workoutRecordBox.whenData(
+    //     (value) {
+    //       workoutRecords = [];
+
+    //       for (var i = 0; i < widget.exercises.length; i++) {
+    //         final record = value.get(widget.exercises[i].workoutPlanId);
+    //         if (record != null && record is WorkoutRecordModel) {
+    //           workoutRecords.add(record);
+    //         } else {
+    //           hasLocal = false;
+    //         }
+    //       }
+    //     },
+    //   );
+
+    //   for (var i = 0; i < workoutResults.length; i++) {
+    //     for (var j = 0; j < workoutResults[i].setInfo.length; j++) {
+    //       workoutResults[i].setInfo[j] = workoutRecords[i].setInfo[j];
+    //     }
+    //   }
+
+    //   state = WorkoutResultModel(
+    //     startDate:
+    //         '${DateFormat('M월 dd일').format(feedback!.startDate)} ${weekday[feedback!.startDate.weekday - 1]}요일',
+    //     strengthIndex: feedback!.strengthIndex!,
+    //     issueIndexes:
+    //         feedback!.issueIndexes != null ? feedback!.issueIndexes! : [],
+    //     contents: feedback!.contents != null ? feedback!.contents! : '',
+    //     workoutRecords: workoutResults,
+    //   );
+    // }
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
         backgroundColor: BACKGROUND_COLOR,
         title: Text(
-          state.startDate,
+          '${DateFormat('M월 dd일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday - 1]}요일',
           style: h4Headline,
         ),
         automaticallyImplyLeading: false,

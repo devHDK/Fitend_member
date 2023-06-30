@@ -4,7 +4,7 @@ import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/provider/hive_exercies_index_provider%20copy.dart';
+import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
@@ -50,6 +50,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   late AsyncValue<Box> timerXoneBox;
   late AsyncValue<Box> modifiedExercise;
   late AsyncValue<Box> workoutResult;
+  late AsyncValue<Box> processingExerciseIndex;
   bool isProcessing = false;
   bool isPoped = false;
   bool isWorkoutComplete = false;
@@ -154,6 +155,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     timerXmoreBox = timerXMoreRecordBox;
     modifiedExercise = modifiedExerciseBox;
     workoutResult = workoutResultBox;
+    processingExerciseIndex = processingExerciseIndexBox;
 
     isWorkoutComplete = model.isWorkoutComplete;
     isRecorded = model.isRecord;
@@ -302,6 +304,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         },
       );
     }
+
+    print('workoutModel : ${workoutModel.exercises[0].setInfo[0].seconds}');
+    print('Model : ${model.exercises[0].setInfo[0].seconds}');
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -707,6 +712,12 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 for (var element in workoutModel.exercises) {
                   await value.put(element.workoutPlanId, element);
                 }
+              },
+            );
+
+            processingExerciseIndex.whenData(
+              (value) {
+                value.delete(widget.id);
               },
             );
 

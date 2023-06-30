@@ -305,9 +305,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       );
     }
 
-    print('workoutModel : ${workoutModel.exercises[0].setInfo[0].seconds}');
-    print('Model : ${model.exercises[0].setInfo[0].seconds}');
-
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(

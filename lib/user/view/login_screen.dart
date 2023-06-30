@@ -43,24 +43,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   void idTextListener() {
-    // if (_idTextController.text.length < 8 ||
-    //     _passwordTextController.text.length < 8) {
-    //   buttonEnable = false;
-    // } else {
-    //   buttonEnable = true;
-    // }
-    // setState(() {});
+    if (_idTextController.text.length < 8 ||
+        _passwordTextController.text.length < 8) {
+      buttonEnable = false;
+    } else {
+      buttonEnable = true;
+    }
+    setState(() {});
   }
 
   void passwordTextListener() {
-    // if (_idTextController.text.length < 8 ||
-    //     _passwordTextController.text.length < 8) {
-    //   buttonEnable = false;
-    // } else {
-    //   buttonEnable = true;
-    // }
-
-    // setState(() {});
+    if (_idTextController.text.length < 8 ||
+        _passwordTextController.text.length < 8) {
+      buttonEnable = false;
+    } else {
+      buttonEnable = true;
+    }
+    setState(() {});
   }
 
   @override
@@ -76,7 +75,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(getMeProvider);
-    final formKey = GlobalKey<FormState>();
+    // final formKey = GlobalKey<FormState>();
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -97,7 +96,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Form(
-            key: formKey,
+            // key: formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -196,41 +195,48 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: ElevatedButton(
               onPressed: state is UserModelLoading
                   ? null
-                  : () async {
-                      if (_idTextController.text.isNotEmpty &&
-                          _passwordTextController.text.isNotEmpty) {
-                        // _saveEmailAndPassword();
-                      }
+                  : idTextcontroller.text.isEmpty ||
+                          passwordTextcontroller.text.isEmpty
+                      ? () {}
+                      : () async {
+                          if (_idTextController.text.isNotEmpty &&
+                              _passwordTextController.text.isNotEmpty) {
+                            // _saveEmailAndPassword();
+                          }
 
-                      if (_idTextController.text.isEmpty &&
-                          _passwordTextController.text.isEmpty) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => DialogWidgets.errorDialog(
-                            message: '이메일 또는 비밀번호를 입력해주세요',
-                            confirmText: '확인',
-                            confirmOnTap: () => context.pop(),
-                          ),
-                        );
-                        return;
-                      }
+                          if (_idTextController.text.isEmpty &&
+                              _passwordTextController.text.isEmpty) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => DialogWidgets.errorDialog(
+                                message: '이메일 또는 비밀번호를 입력해주세요',
+                                confirmText: '확인',
+                                confirmOnTap: () => context.pop(),
+                              ),
+                            );
+                            return;
+                          }
 
-                      final ret = await ref.read(getMeProvider.notifier).login(
-                            email: idTextcontroller.text,
-                            password: passwordTextcontroller.text,
-                            platform: Platform.isIOS ? 'ios' : 'android',
-                            token: 'string',
-                          );
+                          final ret = await ref
+                              .read(getMeProvider.notifier)
+                              .login(
+                                email: idTextcontroller.text,
+                                password: passwordTextcontroller.text,
+                                platform: Platform.isIOS ? 'ios' : 'android',
+                                token: 'string',
+                              );
 
-                      if (ret is UserModelError) {
-                        if (!mounted) return;
-                        //async 함수 내에서 context사용전 위젯이 마운트되지 않으면
-                        errorDialog(ret).show(context);
-                      }
-                    },
+                          if (ret is UserModelError) {
+                            if (!mounted) return;
+                            //async 함수 내에서 context사용전 위젯이 마운트되지 않으면
+                            errorDialog(ret).show(context);
+                          }
+                        },
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    state is UserModelLoading ? BACKGROUND_COLOR : POINT_COLOR,
+                backgroundColor: idTextcontroller.text.isEmpty ||
+                        passwordTextcontroller.text.isEmpty
+                    ? POINT_COLOR.withOpacity(0.2)
+                    : POINT_COLOR,
               ),
               child: state is UserModelLoading
                   ? const SizedBox(

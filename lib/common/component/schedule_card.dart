@@ -9,6 +9,7 @@ import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 class ScheduleCard extends ConsumerStatefulWidget {
@@ -194,7 +195,10 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                     widget.date!.isBefore(today)) // 어제 스케줄이 미완료
                   Image.asset('asset/img/round_fail.png')
                 else if (widget.isComplete! && !widget.selected)
-                  Image.asset('asset/img/round_success.png') // 스케줄이 완료 일때
+                  // Image.asset('asset/img/round_success.png'),
+                  SvgPicture.asset(
+                    'asset/img/icon_check_complete.svg',
+                  ) // 스케줄이 완료 일때
               ],
             ),
             if (widget.selected)

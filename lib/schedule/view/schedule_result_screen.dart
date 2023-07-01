@@ -207,7 +207,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       appBar: AppBar(
         backgroundColor: BACKGROUND_COLOR,
         title: Text(
-          '${DateFormat('M월 dd일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday - 1]}요일',
+          '${DateFormat('M월 d일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday - 1]}요일',
           style: h4Headline,
         ),
         automaticallyImplyLeading: false,

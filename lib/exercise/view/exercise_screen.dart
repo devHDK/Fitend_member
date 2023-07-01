@@ -184,7 +184,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                         height: 24,
                       ),
                       Text(
-                        '머슬포인트',
+                        '머슬 포인트',
                         style: h5Headline.copyWith(
                           color: Colors.white,
                         ),

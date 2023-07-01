@@ -42,7 +42,7 @@ class _BottomView extends StatelessWidget {
             child: SizedBox(),
           ),
           Text(
-            '운동 졸업은 핏엔드에서!\n핏엔드에 오신 것을 환영합니다!',
+            '운동이 숙제가 아닌,\n일상의 즐거움이 될 수 있도록!',
             style: h3Headline.copyWith(
               color: Colors.white,
             ),

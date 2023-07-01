@@ -32,7 +32,9 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
 
   @override
   void dispose() {
-    videoController!.dispose();
+    if (mounted) {
+      videoController!.dispose();
+    }
     super.dispose();
   }
 

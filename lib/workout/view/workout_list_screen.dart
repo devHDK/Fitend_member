@@ -705,9 +705,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             );
 
             modifiedExercise.whenData(
-              (value) async {
+              (value) {
                 for (var element in workoutModel.exercises) {
-                  await value.put(element.workoutPlanId, element);
+                  value.put(element.workoutPlanId, element);
                 }
               },
             );

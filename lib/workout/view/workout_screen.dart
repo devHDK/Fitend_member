@@ -249,9 +249,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     );
 
                     modifiedBox.whenData(
-                      (value) async {
+                      (value) {
                         for (var element in widget.exercises) {
-                          await value.delete(element.workoutPlanId);
+                          value.delete(element.workoutPlanId);
                         }
                       },
                     );

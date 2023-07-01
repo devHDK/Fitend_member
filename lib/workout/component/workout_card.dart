@@ -234,7 +234,13 @@ class _RenderBody extends StatelessWidget {
         Text(
           exercise.setInfo.length > 1
               ? '${exercise.setInfo.length} SET'
-              : '${(exercise.setInfo[0].seconds! / 60).floor()}분 ${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초 ',
+              : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
+                      (exercise.setInfo[0].seconds! % 60) > 0
+                  ? '${(exercise.setInfo[0].seconds! / 60).floor()}분 ${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초'
+                  : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
+                          (exercise.setInfo[0].seconds! % 60) == 0
+                      ? '${(exercise.setInfo[0].seconds! / 60).floor()}분'
+                      : '${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초',
           style: s2SubTitle.copyWith(
             color: LIGHT_GRAY_COLOR,
           ),

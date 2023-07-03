@@ -87,7 +87,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                     .getWorkoutResults(workoutScheduleId: widget.id);
               }
 
-              if (isProcessing && !isPoped && !isRecorded) {
+              if (isProcessing &&
+                  !isPoped &&
+                  !isRecorded &&
+                  today.compareTo(DateTime.parse(workoutModel.startDate)) ==
+                      0) {
                 _showConfirmDialog();
                 isProcessing = false;
               }

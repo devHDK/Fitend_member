@@ -848,74 +848,70 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 cancelOnTap: () async {
                   //완료!!!
                   try {
-                    if (mounted) {
-                      context.pop();
+                    context.pop();
 
-                      List<WorkoutRecordModel> tempRecordList = [];
+                    List<WorkoutRecordModel> tempRecordList = [];
 
-                      workoutBox.whenData(
-                        (value) {
-                          for (int i = 0; i < widget.exercises.length; i++) {
-                            final record =
-                                value.get(widget.exercises[i].workoutPlanId);
+                    workoutBox.whenData(
+                      (value) {
+                        for (int i = 0; i < widget.exercises.length; i++) {
+                          final record =
+                              value.get(widget.exercises[i].workoutPlanId);
 
-                            if (record != null &&
-                                record is WorkoutRecordModel) {
-                              if (record.setInfo.length < maxSetInfoList[i]) {
-                                for (int j = 0;
-                                    j <
-                                        maxSetInfoList[i] -
-                                            setInfoCompleteList[i];
-                                    j++) {
-                                  record.setInfo.add(
-                                    SetInfo(index: record.setInfo.length + 1),
-                                  );
-                                }
+                          if (record != null && record is WorkoutRecordModel) {
+                            if (record.setInfo.length < maxSetInfoList[i]) {
+                              for (int j = 0;
+                                  j <
+                                      maxSetInfoList[i] -
+                                          setInfoCompleteList[i];
+                                  j++) {
+                                record.setInfo.add(
+                                  SetInfo(index: record.setInfo.length + 1),
+                                );
                               }
-                              value.put(
-                                  widget.exercises[i].workoutPlanId, record);
-                              tempRecordList.add(record);
-                            } else {
-                              var tempRecord = WorkoutRecordModel(
-                                workoutPlanId:
-                                    widget.exercises[i].workoutPlanId,
-                                setInfo: [],
-                              );
-                              for (int j = 0; j < maxSetInfoList[i]; j++) {
-                                tempRecord.setInfo.add(SetInfo(index: j + 1));
-                              }
-                              value.put(widget.exercises[i].workoutPlanId,
-                                  tempRecord);
-                              tempRecordList.add(tempRecord);
                             }
+                            value.put(
+                                widget.exercises[i].workoutPlanId, record);
+                            tempRecordList.add(record);
+                          } else {
+                            var tempRecord = WorkoutRecordModel(
+                              workoutPlanId: widget.exercises[i].workoutPlanId,
+                              setInfo: [],
+                            );
+                            for (int j = 0; j < maxSetInfoList[i]; j++) {
+                              tempRecord.setInfo.add(SetInfo(index: j + 1));
+                            }
+                            value.put(
+                                widget.exercises[i].workoutPlanId, tempRecord);
+                            tempRecordList.add(tempRecord);
                           }
-                        },
-                      );
+                        }
+                      },
+                    );
 
-                      await recordRepository
-                          .postWorkoutRecords(
-                        body: PostWorkoutRecordModel(
-                          records: tempRecordList,
-                        ),
-                      )
-                          .then(
-                        (value) {
-                          context.pop();
-                          GoRouter.of(context).pushNamed(
-                            WorkoutFeedbackScreen.routeName,
-                            pathParameters: {
-                              'workoutScheduleId':
-                                  widget.workoutScheduleId.toString(),
-                            },
-                            extra: widget.exercises,
-                            queryParameters: {
-                              'startDate':
-                                  DateFormat('yyyy-MM-dd').format(widget.date),
-                            },
-                          );
-                        },
-                      );
-                    }
+                    await recordRepository
+                        .postWorkoutRecords(
+                      body: PostWorkoutRecordModel(
+                        records: tempRecordList,
+                      ),
+                    )
+                        .then(
+                      (value) {
+                        context.pop();
+                        GoRouter.of(context).pushNamed(
+                          WorkoutFeedbackScreen.routeName,
+                          pathParameters: {
+                            'workoutScheduleId':
+                                widget.workoutScheduleId.toString(),
+                          },
+                          extra: widget.exercises,
+                          queryParameters: {
+                            'startDate':
+                                DateFormat('yyyy-MM-dd').format(widget.date),
+                          },
+                        );
+                      },
+                    );
                   } on DioError {
                     showDialog(
                       barrierDismissible: false,

@@ -93,6 +93,10 @@ class WorkoutBanner extends StatelessWidget {
                 ),
                 SvgPicture.asset(
                   'asset/img/icon_timer.svg',
+                  width: 20,
+                ),
+                const SizedBox(
+                  width: 4,
                 ),
                 Text(
                   timeString[0] == '00'
@@ -100,7 +104,7 @@ class WorkoutBanner extends StatelessWidget {
                       : ' ${timeString[0]}시간 ${timeString[1]}분',
                   style: s2SubTitle.copyWith(
                     color: LIGHT_GRAY_COLOR,
-                    height: 1.7,
+                    height: 1.2,
                   ),
                 ),
               ],

@@ -7,6 +7,7 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 class WeightWrepsProgressCard extends ConsumerStatefulWidget {
@@ -197,8 +198,8 @@ class _WeightWrepsProgressCardState
               onTap: () {
                 widget.updateSeinfoTap();
               },
-              child: Image.asset(
-                'asset/img/icon_edit.png',
+              child: SvgPicture.asset(
+                'asset/img/icon_edit.svg',
               ),
             ),
             const SizedBox(
@@ -234,8 +235,8 @@ class _WeightWrepsProgressCardState
                         ),
                       );
                     },
-              child: Image.asset(
-                'asset/img/icon_foward.png',
+              child: SvgPicture.asset(
+                'asset/img/icon_forward.svg',
               ),
             ),
           ],

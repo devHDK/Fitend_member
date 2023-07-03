@@ -34,6 +34,7 @@ import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -1070,7 +1071,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _IconButton(
-              img: 'asset/img/icon_change.png',
+              img: 'asset/img/icon_change.svg',
               name: '운동 변경',
               onTap: () async {
                 Navigator.of(context)
@@ -1124,7 +1125,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               },
             ),
             _IconButton(
-              img: 'asset/img/icon_guide.png',
+              img: 'asset/img/icon_guide.svg',
               name: '운동 가이드',
               onTap: () {
                 // Navigator.of(context).push(
@@ -1155,7 +1156,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               },
             ),
             _IconButton(
-              img: 'asset/img/icon_record.png',
+              img: 'asset/img/icon_record.svg',
               name: '영상 녹화',
               textColor: LIGHT_GRAY_COLOR,
               onTap: () {
@@ -1167,7 +1168,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               },
             ),
             _IconButton(
-              img: 'asset/img/icon_stop.png',
+              img: 'asset/img/icon_stop.svg',
               name: '운동 종료',
               onTap: () {
                 showDialog(
@@ -1355,7 +1356,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           SizedBox(
             height: 44,
             width: 44,
-            child: Image.asset(img),
+            child: SvgPicture.asset(img),
           ),
           const SizedBox(
             height: 12,

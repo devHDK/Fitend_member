@@ -8,6 +8,7 @@ import 'package:fitend_member/user/view/password_confirm_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -107,8 +108,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               },
               child: _renderLabel(
                 name: '비밀번호 변경',
-                child: Image.asset(
-                  'asset/img/icon_next.png',
+                child: SvgPicture.asset(
+                  'asset/img/icon_next.svg',
                 ),
               ),
             ),
@@ -122,8 +123,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                       "https://weareraid.notion.site/87468f88c99b427b81ae3e44aeb1f37b?pvs=4"),
               child: _renderLabel(
                 name: '서비스 이용 약관',
-                child: Image.asset(
-                  'asset/img/icon_next.png',
+                child: SvgPicture.asset(
+                  'asset/img/icon_next.svg',
                 ),
               ),
             ),
@@ -137,8 +138,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                       "https://weareraid.notion.site/06b383e3c7aa4515a4637c2c11f3d908?pvs=4"),
               child: _renderLabel(
                 name: '개인정보 처리방침',
-                child: Image.asset(
-                  'asset/img/icon_next.png',
+                child: SvgPicture.asset(
+                  'asset/img/icon_next.svg',
                 ),
               ),
             ),
@@ -217,12 +218,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Icon(
-                Icons.mail_outline_outlined,
-                size: 20,
-                color: LIGHT_GRAY_COLOR,
-              ),
+              SvgPicture.asset('asset/img/icon_email.svg'),
               const SizedBox(
                 width: 8,
               ),
@@ -239,8 +237,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Image.asset('asset/img/icon_phone.png'),
+              SvgPicture.asset('asset/img/icon_phone.svg'),
               const SizedBox(
                 width: 8,
               ),

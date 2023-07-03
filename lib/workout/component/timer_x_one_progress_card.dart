@@ -9,6 +9,7 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -232,13 +233,13 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 isRunning
-                    ? Image.asset('asset/img/icon_pause_small.png')
+                    ? SvgPicture.asset('asset/img/icon_pause_small.svg')
                     : totalSeconds > 0 &&
                             totalSeconds < widget.exercise.setInfo[0].seconds!
-                        ? Image.asset('asset/img/icon_replay_small.png')
+                        ? SvgPicture.asset('asset/img/icon_replay_small.svg')
                         : totalSeconds == 0
-                            ? Image.asset('asset/img/icon_reset_small.png')
-                            : Image.asset('asset/img/icon_play_small.png'),
+                            ? SvgPicture.asset('asset/img/icon_reset_small.svg')
+                            : SvgPicture.asset('asset/img/icon_play_small.svg'),
                 const SizedBox(
                   width: 8,
                 ),
@@ -261,7 +262,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                   ),
                 ),
                 const SizedBox(
-                  width: 16,
+                  width: 8,
                 ),
               ],
             ),
@@ -276,8 +277,8 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
               onTap: () {
                 widget.updateSeinfoTap();
               },
-              child: Image.asset(
-                'asset/img/icon_edit.png',
+              child: SvgPicture.asset(
+                'asset/img/icon_edit.svg',
               ),
             ),
             const SizedBox(
@@ -333,8 +334,8 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
 
                       widget.proccessOnTap();
                     },
-              child: Image.asset(
-                'asset/img/icon_foward.png',
+              child: SvgPicture.asset(
+                'asset/img/icon_forward.svg',
               ),
             ),
           ],

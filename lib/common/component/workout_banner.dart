@@ -3,6 +3,7 @@ import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class WorkoutBanner extends StatelessWidget {
   final String title;
@@ -76,6 +77,7 @@ class WorkoutBanner extends StatelessWidget {
               height: 19,
             ),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   muscleString.substring(
@@ -89,10 +91,8 @@ class WorkoutBanner extends StatelessWidget {
                 const Expanded(
                   child: SizedBox(),
                 ),
-                Image.asset(
-                  'asset/img/timer.png',
-                  width: 14,
-                  color: LIGHT_GRAY_COLOR,
+                SvgPicture.asset(
+                  'asset/img/icon_timer.svg',
                 ),
                 Text(
                   timeString[0] == '00'
@@ -100,6 +100,7 @@ class WorkoutBanner extends StatelessWidget {
                       : ' ${timeString[0]}시간 ${timeString[1]}분',
                   style: s2SubTitle.copyWith(
                     color: LIGHT_GRAY_COLOR,
+                    height: 1.7,
                   ),
                 ),
               ],

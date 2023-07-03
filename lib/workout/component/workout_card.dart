@@ -124,10 +124,12 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _renderImage(
             widget.exercise.videos[0].thumbnail,
             widget.exercise.targetMuscles[0].id,
+            widget.exerciseIndex,
           ),
           const SizedBox(
             width: 23,
@@ -146,7 +148,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
     );
   }
 
-  Stack _renderImage(String thumnail, int muscleId) {
+  Stack _renderImage(String thumnail, int muscleId, int? exerciseIndex) {
     return Stack(
       children: [
         SizedBox(
@@ -159,6 +161,28 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
             ),
           ),
         ),
+        if (exerciseIndex != null)
+          Positioned(
+            left: 0,
+            bottom: 0,
+            child: Container(
+              width: 72,
+              height: 24,
+              decoration: BoxDecoration(
+                color: POINT_COLOR,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: Text(
+                  '진행중🏃',
+                  style: s3SubTitle.copyWith(
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
         // Positioned(
         //   left: 42,
         //   top: 98,
@@ -195,10 +219,8 @@ class _RenderBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(
-          height: 52,
-        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -208,28 +230,10 @@ class _RenderBody extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-            if (exerciseIndex != null)
-              Container(
-                width: 64,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: POINT_COLOR,
-                  borderRadius: BorderRadius.circular(7),
-                ),
-                child: Center(
-                  child: Text(
-                    '진행중🏃',
-                    style: s3SubTitle.copyWith(
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
           ],
         ),
         const SizedBox(
-          height: 4,
+          height: 8,
         ),
         Text(
           exercise.setInfo.length > 1

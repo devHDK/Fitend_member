@@ -68,8 +68,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   void initState() {
     super.initState();
 
-    // ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
-
     Future.delayed(
       const Duration(
         milliseconds: 300,

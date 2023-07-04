@@ -11,6 +11,7 @@ import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -444,15 +445,15 @@ class _WeightWrepsProgressCardState
               mainAxisSize: MainAxisSize.min,
               children: [
                 isRunning
-                    ? Image.asset('asset/img/icon_pause_small.png')
+                    ? SvgPicture.asset('asset/img/icon_pause_small.svg')
                     : totalSeconds > 0 &&
                             totalSeconds <
                                 widget.exercise.setInfo[widget.setInfoIndex]
                                     .seconds!
-                        ? Image.asset('asset/img/icon_replay_small.png')
+                        ? SvgPicture.asset('asset/img/icon_replay_small.svg')
                         : totalSeconds == 0
-                            ? Image.asset('asset/img/icon_reset_small.png')
-                            : Image.asset('asset/img/icon_play_small.png'),
+                            ? SvgPicture.asset('asset/img/icon_reset_small.svg')
+                            : SvgPicture.asset('asset/img/icon_play_small.svg'),
                 const SizedBox(
                   width: 8,
                 ),
@@ -497,8 +498,8 @@ class _WeightWrepsProgressCardState
               onTap: () {
                 widget.updateSeinfoTap();
               },
-              child: Image.asset(
-                'asset/img/icon_edit.png',
+              child: SvgPicture.asset(
+                'asset/img/icon_edit.svg',
               ),
             ),
             const SizedBox(
@@ -529,8 +530,8 @@ class _WeightWrepsProgressCardState
                       );
                     }
                   : widget.proccessOnTap,
-              child: Image.asset(
-                'asset/img/icon_foward.png',
+              child: SvgPicture.asset(
+                'asset/img/icon_forward.svg',
               ),
             ),
           ],

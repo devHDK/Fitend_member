@@ -28,12 +28,14 @@ import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
+import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -80,7 +82,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   @override
   void initState() {
     super.initState();
-
     _initData();
   }
 
@@ -113,9 +114,27 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         modifiedExerciseBox.whenData((value) async {
           for (int i = 0; i < widget.exercises.length; i++) {
             final record = await value.get(widget.exercises[i].workoutPlanId);
-
             if (record != null && record is Exercise) {
-              modifiedExercises.add(record);
+              modifiedExercises.add(
+                Exercise(
+                  workoutPlanId: record.workoutPlanId,
+                  name: record.name,
+                  description: record.description,
+                  trackingFieldId: record.trackingFieldId,
+                  trainerNickname: record.trainerNickname,
+                  trainerProfileImage: record.trainerProfileImage,
+                  targetMuscles: record.targetMuscles,
+                  videos: record.videos,
+                  setInfo: record.setInfo.map((e) {
+                    return SetInfo(
+                      index: e.index,
+                      weight: e.weight,
+                      reps: e.reps,
+                      seconds: e.seconds,
+                    );
+                  }).toList(),
+                ),
+              );
             }
           }
         });
@@ -131,8 +150,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           //   }
           // }
 
-          exerciseIndexBox.whenData((value) {
-            final record = value.get(widget.workoutScheduleId);
+          exerciseIndexBox.whenData((value) async {
+            final record = await value.get(widget.workoutScheduleId);
 
             if (record != null) {
               exerciseIndex = record;
@@ -151,8 +170,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
   @override
   void dispose() {
-    // modifiedExercises = [];
-
     if (timer.isActive) {
       timer.cancel();
     }
@@ -196,16 +213,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final AsyncValue<Box> workoutBox = ref.read(hiveWorkoutRecordProvider);
-    final AsyncValue<Box> timerWorkoutBox = ref.read(hiveTimerRecordProvider);
-    final AsyncValue<Box> timerXMoreBox =
-        ref.read(hiveTimerXMoreRecordProvider);
-    final AsyncValue<Box> modifiedBox = ref.read(hiveModifiedExerciseProvider);
+    final workoutBox = ref.read(hiveWorkoutRecordProvider);
+    final timerWorkoutBox = ref.read(hiveTimerRecordProvider);
+    final timerXMoreBox = ref.read(hiveTimerXMoreRecordProvider);
+    final modifiedBox = ref.read(hiveModifiedExerciseProvider);
     final recordRepository = ref.read(workoutRecordsRepositoryProvider);
 
-    final AsyncValue<Box> workoutResult = ref.read(hiveWorkoutResultProvider);
-    final AsyncValue<Box> processingExerciseIndexBox =
-        ref.read(hiveExerciseIndexProvider);
+    final workoutResult = ref.read(hiveWorkoutResultProvider);
+    final processingExerciseIndexBox = ref.read(hiveExerciseIndexProvider);
 
     workoutRecordBox = workoutBox;
     workoutResultBox = workoutResult;
@@ -240,7 +255,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     }
                   },
                   cancelOnTap: () {
-                    workoutBox.whenData(
+                    modifiedBox.whenData(
                       (value) {
                         for (var element in widget.exercises) {
                           value.delete(element.workoutPlanId);
@@ -248,7 +263,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       },
                     );
 
-                    modifiedBox.whenData(
+                    workoutBox.whenData(
                       (value) {
                         for (var element in widget.exercises) {
                           value.delete(element.workoutPlanId);
@@ -406,32 +421,40 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     ),
                                   ).then(
                                     (value) {
+                                      SetInfo tempSetInfo = SetInfo(
+                                        index: modifiedExercises[exerciseIndex]
+                                            .setInfo[setInfoCompleteList[
+                                                exerciseIndex]]
+                                            .index,
+                                        reps: int.parse(value['reps']),
+                                        weight: double.parse(value['weight']),
+                                      );
+
                                       if (mounted) {
                                         setState(() {
                                           modifiedExercises[exerciseIndex]
-                                                      .setInfo[
-                                                  setInfoCompleteList[
-                                                      exerciseIndex]] =
-                                              modifiedExercises[exerciseIndex]
-                                                  .setInfo[setInfoCompleteList[
-                                                      exerciseIndex]]
-                                                  .copyWith(
-                                                      reps: int.parse(
-                                                          value['reps']),
-                                                      weight: double.parse(
-                                                          value['weight']));
+                                                  .setInfo[
+                                              setInfoCompleteList[
+                                                  exerciseIndex]] = tempSetInfo;
+                                          //     modifiedExercises[exerciseIndex]
+                                          //         .setInfo[setInfoCompleteList[
+                                          //             exerciseIndex]]
+                                          //         .copyWith(
+                                          //             reps: int.parse(
+                                          //                 value['reps']),
+                                          //             weight: double.parse(
+                                          //                 value['weight']));
                                         });
-
-                                        modifiedBox.whenData(
-                                          (value) async {
-                                            await value.put(
-                                                modifiedExercises[exerciseIndex]
-                                                    .workoutPlanId,
-                                                modifiedExercises[
-                                                    exerciseIndex]);
-                                          },
-                                        );
                                       }
+
+                                      modifiedBox.whenData(
+                                        (_) async {
+                                          await _.put(
+                                              modifiedExercises[exerciseIndex]
+                                                  .workoutPlanId,
+                                              modifiedExercises[exerciseIndex]);
+                                        },
+                                      );
                                     },
                                   );
                                 }
@@ -449,25 +472,27 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       ),
                                     ).then(
                                       (value) {
+                                        SetInfo tempSetInfo = SetInfo(
+                                          index:
+                                              modifiedExercises[exerciseIndex]
+                                                  .setInfo[setInfoCompleteList[
+                                                      exerciseIndex]]
+                                                  .index,
+                                          reps: int.parse(value['reps']),
+                                        );
+
                                         if (mounted) {
                                           setState(() {
                                             modifiedExercises[exerciseIndex]
                                                         .setInfo[
                                                     setInfoCompleteList[
                                                         exerciseIndex]] =
-                                                modifiedExercises[exerciseIndex]
-                                                    .setInfo[
-                                                        setInfoCompleteList[
-                                                            exerciseIndex]]
-                                                    .copyWith(
-                                                      reps: int.parse(
-                                                          value['reps']),
-                                                    );
+                                                tempSetInfo;
                                           });
 
                                           modifiedBox.whenData(
-                                            (value) async {
-                                              await value.put(
+                                            (_) {
+                                              _.put(
                                                   modifiedExercises[
                                                           exerciseIndex]
                                                       .workoutPlanId,
@@ -561,28 +586,36 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       .seconds!,
                                 ),
                               ).then((value) {
+                                SetInfo tempSetInfo = SetInfo(
+                                  index: modifiedExercises[exerciseIndex]
+                                      .setInfo[
+                                          setInfoCompleteList[exerciseIndex]]
+                                      .index,
+                                  seconds: int.parse(
+                                            value['min'],
+                                          ) *
+                                          60 +
+                                      int.parse(value['sec']),
+                                );
+
                                 if (mounted) {
                                   setState(
                                     () {
                                       modifiedExercises[exerciseIndex].setInfo[
-                                              setInfoCompleteList[
-                                                  exerciseIndex]] =
-                                          modifiedExercises[exerciseIndex]
-                                              .setInfo[setInfoCompleteList[
-                                                  exerciseIndex]]
-                                              .copyWith(
-                                                seconds: int.parse(
-                                                          value['min'],
-                                                        ) *
-                                                        60 +
-                                                    int.parse(value['sec']),
-                                              );
+                                          setInfoCompleteList[
+                                              exerciseIndex]] = tempSetInfo;
                                     },
                                   );
 
+                                  ref
+                                      .read(workoutProvider(
+                                              widget.workoutScheduleId)
+                                          .notifier)
+                                      .printWorkout();
+
                                   modifiedBox.whenData(
-                                    (value) async {
-                                      await value.put(
+                                    (_) async {
+                                      await _.put(
                                           modifiedExercises[exerciseIndex]
                                               .workoutPlanId,
                                           modifiedExercises[exerciseIndex]);
@@ -626,8 +659,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       onTooltipPressed();
 
                                       processingExerciseIndexBox.whenData(
-                                        (value) {
-                                          value.put(widget.workoutScheduleId,
+                                        (_) {
+                                          _.put(widget.workoutScheduleId,
                                               exerciseIndex);
                                         },
                                       );
@@ -642,8 +675,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       setState(() {
                                         exerciseIndex += 1; // 완료된 세트라면 건너뛰기
                                         processingExerciseIndexBox.whenData(
-                                          (value) {
-                                            value.put(widget.workoutScheduleId,
+                                          (_) {
+                                            _.put(widget.workoutScheduleId,
                                                 exerciseIndex);
                                           },
                                         );
@@ -704,8 +737,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   );
 
                                   modifiedBox.whenData(
-                                    (value) async {
-                                      await value.put(
+                                    (_) async {
+                                      await _.put(
                                           modifiedExercises[exerciseIndex]
                                               .workoutPlanId,
                                           modifiedExercises[exerciseIndex]);
@@ -847,74 +880,70 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 cancelOnTap: () async {
                   //완료!!!
                   try {
-                    if (mounted) {
-                      context.pop();
+                    context.pop();
 
-                      List<WorkoutRecordModel> tempRecordList = [];
+                    List<WorkoutRecordModel> tempRecordList = [];
 
-                      workoutBox.whenData(
-                        (value) {
-                          for (int i = 0; i < widget.exercises.length; i++) {
-                            final record =
-                                value.get(widget.exercises[i].workoutPlanId);
+                    workoutBox.whenData(
+                      (value) {
+                        for (int i = 0; i < widget.exercises.length; i++) {
+                          final record =
+                              value.get(widget.exercises[i].workoutPlanId);
 
-                            if (record != null &&
-                                record is WorkoutRecordModel) {
-                              if (record.setInfo.length < maxSetInfoList[i]) {
-                                for (int j = 0;
-                                    j <
-                                        maxSetInfoList[i] -
-                                            setInfoCompleteList[i];
-                                    j++) {
-                                  record.setInfo.add(
-                                    SetInfo(index: record.setInfo.length + 1),
-                                  );
-                                }
+                          if (record != null && record is WorkoutRecordModel) {
+                            if (record.setInfo.length < maxSetInfoList[i]) {
+                              for (int j = 0;
+                                  j <
+                                      maxSetInfoList[i] -
+                                          setInfoCompleteList[i];
+                                  j++) {
+                                record.setInfo.add(
+                                  SetInfo(index: record.setInfo.length + 1),
+                                );
                               }
-                              value.put(
-                                  widget.exercises[i].workoutPlanId, record);
-                              tempRecordList.add(record);
-                            } else {
-                              var tempRecord = WorkoutRecordModel(
-                                workoutPlanId:
-                                    widget.exercises[i].workoutPlanId,
-                                setInfo: [],
-                              );
-                              for (int j = 0; j < maxSetInfoList[i]; j++) {
-                                tempRecord.setInfo.add(SetInfo(index: j + 1));
-                              }
-                              value.put(widget.exercises[i].workoutPlanId,
-                                  tempRecord);
-                              tempRecordList.add(tempRecord);
                             }
+                            value.put(
+                                widget.exercises[i].workoutPlanId, record);
+                            tempRecordList.add(record);
+                          } else {
+                            var tempRecord = WorkoutRecordModel(
+                              workoutPlanId: widget.exercises[i].workoutPlanId,
+                              setInfo: [],
+                            );
+                            for (int j = 0; j < maxSetInfoList[i]; j++) {
+                              tempRecord.setInfo.add(SetInfo(index: j + 1));
+                            }
+                            value.put(
+                                widget.exercises[i].workoutPlanId, tempRecord);
+                            tempRecordList.add(tempRecord);
                           }
-                        },
-                      );
+                        }
+                      },
+                    );
 
-                      await recordRepository
-                          .postWorkoutRecords(
-                        body: PostWorkoutRecordModel(
-                          records: tempRecordList,
-                        ),
-                      )
-                          .then(
-                        (value) {
-                          context.pop();
-                          GoRouter.of(context).pushNamed(
-                            WorkoutFeedbackScreen.routeName,
-                            pathParameters: {
-                              'workoutScheduleId':
-                                  widget.workoutScheduleId.toString(),
-                            },
-                            extra: widget.exercises,
-                            queryParameters: {
-                              'startDate':
-                                  DateFormat('yyyy-MM-dd').format(widget.date),
-                            },
-                          );
-                        },
-                      );
-                    }
+                    await recordRepository
+                        .postWorkoutRecords(
+                      body: PostWorkoutRecordModel(
+                        records: tempRecordList,
+                      ),
+                    )
+                        .then(
+                      (value) {
+                        context.pop();
+                        GoRouter.of(context).pushNamed(
+                          WorkoutFeedbackScreen.routeName,
+                          pathParameters: {
+                            'workoutScheduleId':
+                                widget.workoutScheduleId.toString(),
+                          },
+                          extra: widget.exercises,
+                          queryParameters: {
+                            'startDate':
+                                DateFormat('yyyy-MM-dd').format(widget.date),
+                          },
+                        );
+                      },
+                    );
                   } on DioError {
                     showDialog(
                       barrierDismissible: false,
@@ -1070,7 +1099,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _IconButton(
-              img: 'asset/img/icon_change.png',
+              img: 'asset/img/icon_change.svg',
               name: '운동 변경',
               onTap: () async {
                 Navigator.of(context)
@@ -1124,7 +1153,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               },
             ),
             _IconButton(
-              img: 'asset/img/icon_guide.png',
+              img: 'asset/img/icon_guide.svg',
               name: '운동 가이드',
               onTap: () {
                 // Navigator.of(context).push(
@@ -1155,7 +1184,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               },
             ),
             _IconButton(
-              img: 'asset/img/icon_record.png',
+              img: 'asset/img/icon_record.svg',
               name: '영상 녹화',
               textColor: LIGHT_GRAY_COLOR,
               onTap: () {
@@ -1167,7 +1196,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               },
             ),
             _IconButton(
-              img: 'asset/img/icon_stop.png',
+              img: 'asset/img/icon_stop.svg',
               name: '운동 종료',
               onTap: () {
                 showDialog(
@@ -1355,7 +1384,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           SizedBox(
             height: 44,
             width: 44,
-            child: Image.asset(img),
+            child: SvgPicture.asset(img),
           ),
           const SizedBox(
             height: 12,

@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
@@ -200,7 +201,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           },
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 18.0),
+              padding: const EdgeInsets.only(right: 28.0),
               child: GestureDetector(
                 onTap: () {
                   // context.goNamed(MyPageScreen.routeName);
@@ -211,8 +212,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                     ),
                   );
                 },
-                child: Image.asset(
-                  'asset/img/icon_my_page.png',
+                child: SvgPicture.asset(
+                  'asset/img/icon_my_page.svg',
                 ),
               ),
             ),

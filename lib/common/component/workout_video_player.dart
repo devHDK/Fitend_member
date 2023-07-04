@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:video_player/video_player.dart';
 
 class WorkoutVideoPlayer extends StatefulWidget {
@@ -181,7 +182,7 @@ class _Controls extends StatelessWidget {
           // ),
           GestureDetector(
             onTap: onPlayPressed,
-            child: Image.asset('asset/img/icon_play.png'),
+            child: SvgPicture.asset('asset/img/icon_play.svg'),
           )
           // renderIconButton(
           //   onPressed: onForwarPressed,

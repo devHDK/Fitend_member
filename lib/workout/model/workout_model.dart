@@ -59,6 +59,20 @@ class WorkoutModel extends WorkoutModelBase {
         exercises: exercises ?? this.exercises,
       );
 
+  static WorkoutModel clone({required WorkoutModel model}) {
+    return WorkoutModel(
+      workoutScheduleId: model.workoutScheduleId,
+      startDate: model.startDate,
+      workoutTitle: model.workoutTitle,
+      workoutSubTitle: model.workoutSubTitle,
+      targetMuscleTypes: model.targetMuscleTypes,
+      workoutTotalTime: model.workoutTotalTime,
+      isWorkoutComplete: model.isWorkoutComplete,
+      exercises: model.exercises,
+      isRecord: model.isRecord,
+    );
+  }
+
   factory WorkoutModel.fromJson(Map<String, dynamic> json) =>
       _$WorkoutModelFromJson(json);
 }

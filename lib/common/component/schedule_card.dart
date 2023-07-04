@@ -189,16 +189,15 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                 else if (!widget.isComplete! &&
                     !widget.selected &&
                     widget.date!.isAfter(today)) //오늘, 오늘 이후 스케줄이 미완료
-                  Image.asset('asset/img/round_checked.png')
+                  SvgPicture.asset('asset/img/icon_check.svg')
                 else if (!widget.isComplete! &&
                     !widget.selected &&
                     widget.date!.isBefore(today)) // 어제 스케줄이 미완료
-                  Image.asset('asset/img/round_fail.png')
+                  SvgPicture.asset('asset/img/icon_failed.svg')
                 else if (widget.isComplete! && !widget.selected)
                   // Image.asset('asset/img/round_success.png'),
                   SvgPicture.asset(
-                    'asset/img/icon_check_complete.svg',
-                  ) // 스케줄이 완료 일때
+                      'asset/img/icon_check_complete.svg') // 스케줄이 완료 일때
               ],
             ),
             if (widget.selected)

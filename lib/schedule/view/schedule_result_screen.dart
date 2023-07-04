@@ -211,6 +211,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           style: h4Headline,
         ),
         automaticallyImplyLeading: false,
+        elevation: 0,
         centerTitle: true,
         actions: [
           Padding(

@@ -63,6 +63,20 @@ class Exercise {
         setInfo: setInfo ?? this.setInfo,
       );
 
+  static Exercise clone({required Exercise exercise}) {
+    return Exercise(
+      workoutPlanId: exercise.workoutPlanId,
+      name: exercise.name,
+      description: exercise.description,
+      trackingFieldId: exercise.trackingFieldId,
+      trainerNickname: exercise.trainerNickname,
+      trainerProfileImage: exercise.trainerProfileImage,
+      targetMuscles: exercise.targetMuscles,
+      videos: exercise.videos,
+      setInfo: exercise.setInfo,
+    );
+  }
+
   factory Exercise.fromJson(Map<String, dynamic> json) =>
       _$ExerciseFromJson(json);
 

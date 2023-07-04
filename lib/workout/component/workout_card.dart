@@ -256,7 +256,9 @@ class _RenderBody extends StatelessWidget {
         ),
         if (modifiedSetInfo!.seconds == 0 || modifiedSetInfo!.seconds == null)
           Text(
-            exercise.setInfo.length > 1
+            exercise.setInfo.length > 1 ||
+                    exercise.trackingFieldId == 1 ||
+                    exercise.trackingFieldId == 2
                 ? '${exercise.setInfo.length} SET'
                 : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
                         (exercise.setInfo[0].seconds! % 60) > 0

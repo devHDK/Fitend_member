@@ -252,17 +252,18 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                         ? '운동 시작'
                         : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
                     style: s2SubTitle.copyWith(
-                        color: totalSeconds ==
-                                    widget.exercise.setInfo[0].seconds! &&
-                                !isRunning
-                            ? Colors.white
-                            : POINT_COLOR,
-                        fontWeight: totalSeconds ==
-                                    widget.exercise.setInfo[0].seconds! &&
-                                !isRunning
-                            ? FontWeight.w700
-                            : FontWeight.w400,
-                        height: 1.2),
+                      color:
+                          totalSeconds == widget.exercise.setInfo[0].seconds! &&
+                                  !isRunning
+                              ? Colors.white
+                              : POINT_COLOR,
+                      fontWeight:
+                          totalSeconds == widget.exercise.setInfo[0].seconds! &&
+                                  !isRunning
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                      height: 1.2,
+                    ),
                   ),
                 ),
                 const SizedBox(

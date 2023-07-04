@@ -484,7 +484,7 @@ class _WeightWrepsProgressCardState
                   ),
                 ),
                 const SizedBox(
-                  width: 16,
+                  width: 8,
                 ),
               ],
             ),

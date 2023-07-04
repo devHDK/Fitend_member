@@ -154,7 +154,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
       );
     }
 
-    WorkoutModel model = WorkoutModel.clone(model: state as WorkoutModel);
+    final model = WorkoutModel.clone(model: state as WorkoutModel);
     workoutModel = WorkoutModel.clone(model: model);
 
     workoutBox = workoutRecordBox;
@@ -252,7 +252,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 exercise.setInfo.length == 1) {
               final record = value.get(exercise.workoutPlanId);
               if (record is Exercise && record.setInfo[0].seconds != null) {
-                exercise.setInfo[0] = record.setInfo[0];
+                exercise.setInfo[0] = SetInfo(
+                    index: record.setInfo[0].index,
+                    seconds: record.setInfo[0].seconds);
               }
             }
           }
@@ -295,21 +297,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           isProcessing = true;
         }
       });
-
-      modifiedBox.whenData(
-        (value) {
-          for (var exercise in model.exercises) {
-            if ((exercise.trackingFieldId == 3 ||
-                    exercise.trackingFieldId == 4) &&
-                exercise.setInfo.length == 1) {
-              final record = value.get(exercise.workoutPlanId);
-              if (record is Exercise && record.setInfo[0].seconds != null) {
-                exercise.setInfo[0] = record.setInfo[0];
-              }
-            }
-          }
-        },
-      );
     }
 
     return Scaffold(
@@ -672,14 +659,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             });
           },
           cancelOnTap: () async {
-            modifiedExercise.whenData(
-              (value) {
-                for (var element in workoutModel.exercises) {
-                  value.put(element.workoutPlanId, element);
-                }
-              },
-            );
-
             workoutBox.whenData(
               (value) {
                 for (var element in workoutModel.exercises) {
@@ -707,7 +686,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 }
               }
             });
-
             workoutResult.whenData(
               (value) {
                 for (var element in workoutModel.exercises) {
@@ -715,10 +693,18 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                 }
               },
             );
-
             processingExerciseIndex.whenData(
               (value) {
                 value.delete(widget.id);
+              },
+            );
+
+            modifiedExercise.whenData(
+              (value) async {
+                for (var element in workoutModel.exercises) {
+                  //  await value.delete(element.workoutPlanId);
+                  await value.put(element.workoutPlanId, element);
+                }
               },
             );
 

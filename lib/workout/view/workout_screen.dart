@@ -447,12 +447,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                         });
                                       }
 
-                                      ref
-                                          .read(workoutProvider(
-                                                  widget.workoutScheduleId)
-                                              .notifier)
-                                          .printWorkout();
-
                                       modifiedBox.whenData(
                                         (_) async {
                                           await _.put(
@@ -478,20 +472,22 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       ),
                                     ).then(
                                       (value) {
+                                        SetInfo tempSetInfo = SetInfo(
+                                          index:
+                                              modifiedExercises[exerciseIndex]
+                                                  .setInfo[setInfoCompleteList[
+                                                      exerciseIndex]]
+                                                  .index,
+                                          reps: int.parse(value['reps']),
+                                        );
+
                                         if (mounted) {
                                           setState(() {
                                             modifiedExercises[exerciseIndex]
                                                         .setInfo[
                                                     setInfoCompleteList[
                                                         exerciseIndex]] =
-                                                modifiedExercises[exerciseIndex]
-                                                    .setInfo[
-                                                        setInfoCompleteList[
-                                                            exerciseIndex]]
-                                                    .copyWith(
-                                                      reps: int.parse(
-                                                          value['reps']),
-                                                    );
+                                                tempSetInfo;
                                           });
 
                                           modifiedBox.whenData(
@@ -590,24 +586,32 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       .seconds!,
                                 ),
                               ).then((value) {
+                                SetInfo tempSetInfo = SetInfo(
+                                  index: modifiedExercises[exerciseIndex]
+                                      .setInfo[
+                                          setInfoCompleteList[exerciseIndex]]
+                                      .index,
+                                  seconds: int.parse(
+                                            value['min'],
+                                          ) *
+                                          60 +
+                                      int.parse(value['sec']),
+                                );
+
                                 if (mounted) {
                                   setState(
                                     () {
                                       modifiedExercises[exerciseIndex].setInfo[
-                                              setInfoCompleteList[
-                                                  exerciseIndex]] =
-                                          modifiedExercises[exerciseIndex]
-                                              .setInfo[setInfoCompleteList[
-                                                  exerciseIndex]]
-                                              .copyWith(
-                                                seconds: int.parse(
-                                                          value['min'],
-                                                        ) *
-                                                        60 +
-                                                    int.parse(value['sec']),
-                                              );
+                                          setInfoCompleteList[
+                                              exerciseIndex]] = tempSetInfo;
                                     },
                                   );
+
+                                  ref
+                                      .read(workoutProvider(
+                                              widget.workoutScheduleId)
+                                          .notifier)
+                                      .printWorkout();
 
                                   modifiedBox.whenData(
                                     (_) async {

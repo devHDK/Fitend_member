@@ -2,6 +2,7 @@ import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
@@ -31,12 +32,14 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
   @override
   Widget build(BuildContext context) {
     final AsyncValue<Box> timerRecordBox = ref.watch(hiveTimerRecordProvider);
+    final AsyncValue<Box> modifiedBox = ref.watch(hiveModifiedExerciseProvider);
 
     List<Widget> countList = [];
     List<Widget> firstList = [];
     List<Widget> secondList = [];
 
     SetInfo timerSetInfo = SetInfo(index: 1, seconds: 0);
+    SetInfo modifiedSetInfo = SetInfo(index: 1, seconds: 0);
 
     if ((widget.exercise.trackingFieldId == 3 ||
             widget.exercise.trackingFieldId == 4) &&
@@ -51,6 +54,19 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
           }
         },
       );
+
+      modifiedBox.whenData((value) {
+        if ((widget.exercise.trackingFieldId == 3 ||
+                widget.exercise.trackingFieldId == 4) &&
+            widget.exercise.setInfo.length == 1) {
+          final record = value.get(widget.exercise.workoutPlanId);
+          if (record is Exercise && record.setInfo[0].seconds != null) {
+            modifiedSetInfo = SetInfo(
+                index: record.setInfo[0].index,
+                seconds: record.setInfo[0].seconds);
+          }
+        }
+      });
     }
 
     List.generate(
@@ -141,6 +157,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
               countList: countList,
               firstList: firstList,
               secondList: secondList,
+              modifiedSetInfo: modifiedSetInfo,
             ),
           ),
         ],
@@ -206,6 +223,7 @@ class _RenderBody extends StatelessWidget {
   final List<Widget> firstList;
   final List<Widget> secondList;
   final int? exerciseIndex;
+  final SetInfo? modifiedSetInfo;
 
   const _RenderBody({
     required this.exercise,
@@ -213,6 +231,7 @@ class _RenderBody extends StatelessWidget {
     required this.firstList,
     required this.secondList,
     this.exerciseIndex,
+    this.modifiedSetInfo,
   });
 
   @override
@@ -235,20 +254,34 @@ class _RenderBody extends StatelessWidget {
         const SizedBox(
           height: 8,
         ),
-        Text(
-          exercise.setInfo.length > 1
-              ? '${exercise.setInfo.length} SET'
-              : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
-                      (exercise.setInfo[0].seconds! % 60) > 0
-                  ? '${(exercise.setInfo[0].seconds! / 60).floor()}분 ${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초'
-                  : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
-                          (exercise.setInfo[0].seconds! % 60) == 0
-                      ? '${(exercise.setInfo[0].seconds! / 60).floor()}분'
-                      : '${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초',
-          style: s2SubTitle.copyWith(
-            color: LIGHT_GRAY_COLOR,
+        if (modifiedSetInfo!.seconds == 0 || modifiedSetInfo!.seconds == null)
+          Text(
+            exercise.setInfo.length > 1
+                ? '${exercise.setInfo.length} SET'
+                : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
+                        (exercise.setInfo[0].seconds! % 60) > 0
+                    ? '${(exercise.setInfo[0].seconds! / 60).floor()}분 ${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초'
+                    : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
+                            (exercise.setInfo[0].seconds! % 60) == 0
+                        ? '${(exercise.setInfo[0].seconds! / 60).floor()}분'
+                        : '${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초',
+            style: s2SubTitle.copyWith(
+              color: LIGHT_GRAY_COLOR,
+            ),
           ),
-        ),
+        if (modifiedSetInfo!.seconds != null && modifiedSetInfo!.seconds! > 0)
+          Text(
+            (modifiedSetInfo!.seconds! / 60).floor() > 0 &&
+                    (modifiedSetInfo!.seconds! % 60) > 0
+                ? '${(modifiedSetInfo!.seconds! / 60).floor()}분 ${(modifiedSetInfo!.seconds! % 60).toString().padLeft(2, '0')}초'
+                : (modifiedSetInfo!.seconds! / 60).floor() > 0 &&
+                        (modifiedSetInfo!.seconds! % 60) == 0
+                    ? '${(modifiedSetInfo!.seconds! / 60).floor()}분'
+                    : '${(modifiedSetInfo!.seconds! % 60).toString().padLeft(2, '0')}초',
+            style: s2SubTitle.copyWith(
+              color: LIGHT_GRAY_COLOR,
+            ),
+          ),
         const SizedBox(
           height: 12,
         ),

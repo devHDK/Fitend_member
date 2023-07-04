@@ -48,6 +48,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
 
   void printWorkout() {
     final pstate = state as WorkoutModel;
-    print('printWorkout - weight  : ${pstate.exercises[0].setInfo[0].weight}');
+    print('printWorkout - weight  : ${pstate.exercises[2].setInfo[0].seconds}');
   }
 }

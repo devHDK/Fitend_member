@@ -228,6 +228,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 model.user.email,
                 style: s2SubTitle.copyWith(
                   color: LIGHT_GRAY_COLOR,
+                  height: 1.6,
                 ),
               ),
             ],

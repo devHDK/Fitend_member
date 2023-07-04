@@ -28,6 +28,7 @@ import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
+import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
@@ -81,7 +82,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   @override
   void initState() {
     super.initState();
-
     _initData();
   }
 
@@ -114,9 +114,27 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         modifiedExerciseBox.whenData((value) async {
           for (int i = 0; i < widget.exercises.length; i++) {
             final record = await value.get(widget.exercises[i].workoutPlanId);
-
             if (record != null && record is Exercise) {
-              modifiedExercises.add(record);
+              modifiedExercises.add(
+                Exercise(
+                  workoutPlanId: record.workoutPlanId,
+                  name: record.name,
+                  description: record.description,
+                  trackingFieldId: record.trackingFieldId,
+                  trainerNickname: record.trainerNickname,
+                  trainerProfileImage: record.trainerProfileImage,
+                  targetMuscles: record.targetMuscles,
+                  videos: record.videos,
+                  setInfo: record.setInfo.map((e) {
+                    return SetInfo(
+                      index: e.index,
+                      weight: e.weight,
+                      reps: e.reps,
+                      seconds: e.seconds,
+                    );
+                  }).toList(),
+                ),
+              );
             }
           }
         });
@@ -132,8 +150,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           //   }
           // }
 
-          exerciseIndexBox.whenData((value) {
-            final record = value.get(widget.workoutScheduleId);
+          exerciseIndexBox.whenData((value) async {
+            final record = await value.get(widget.workoutScheduleId);
 
             if (record != null) {
               exerciseIndex = record;
@@ -152,8 +170,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
   @override
   void dispose() {
-    // modifiedExercises = [];
-
     if (timer.isActive) {
       timer.cancel();
     }
@@ -197,16 +213,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final AsyncValue<Box> workoutBox = ref.read(hiveWorkoutRecordProvider);
-    final AsyncValue<Box> timerWorkoutBox = ref.read(hiveTimerRecordProvider);
-    final AsyncValue<Box> timerXMoreBox =
-        ref.read(hiveTimerXMoreRecordProvider);
-    final AsyncValue<Box> modifiedBox = ref.read(hiveModifiedExerciseProvider);
+    final workoutBox = ref.read(hiveWorkoutRecordProvider);
+    final timerWorkoutBox = ref.read(hiveTimerRecordProvider);
+    final timerXMoreBox = ref.read(hiveTimerXMoreRecordProvider);
+    final modifiedBox = ref.read(hiveModifiedExerciseProvider);
     final recordRepository = ref.read(workoutRecordsRepositoryProvider);
 
-    final AsyncValue<Box> workoutResult = ref.read(hiveWorkoutResultProvider);
-    final AsyncValue<Box> processingExerciseIndexBox =
-        ref.read(hiveExerciseIndexProvider);
+    final workoutResult = ref.read(hiveWorkoutResultProvider);
+    final processingExerciseIndexBox = ref.read(hiveExerciseIndexProvider);
 
     workoutRecordBox = workoutBox;
     workoutResultBox = workoutResult;
@@ -241,7 +255,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     }
                   },
                   cancelOnTap: () {
-                    workoutBox.whenData(
+                    modifiedBox.whenData(
                       (value) {
                         for (var element in widget.exercises) {
                           value.delete(element.workoutPlanId);
@@ -249,7 +263,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       },
                     );
 
-                    modifiedBox.whenData(
+                    workoutBox.whenData(
                       (value) {
                         for (var element in widget.exercises) {
                           value.delete(element.workoutPlanId);
@@ -407,32 +421,46 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     ),
                                   ).then(
                                     (value) {
+                                      SetInfo tempSetInfo = SetInfo(
+                                        index: modifiedExercises[exerciseIndex]
+                                            .setInfo[setInfoCompleteList[
+                                                exerciseIndex]]
+                                            .index,
+                                        reps: int.parse(value['reps']),
+                                        weight: double.parse(value['weight']),
+                                      );
+
                                       if (mounted) {
                                         setState(() {
                                           modifiedExercises[exerciseIndex]
-                                                      .setInfo[
-                                                  setInfoCompleteList[
-                                                      exerciseIndex]] =
-                                              modifiedExercises[exerciseIndex]
-                                                  .setInfo[setInfoCompleteList[
-                                                      exerciseIndex]]
-                                                  .copyWith(
-                                                      reps: int.parse(
-                                                          value['reps']),
-                                                      weight: double.parse(
-                                                          value['weight']));
+                                                  .setInfo[
+                                              setInfoCompleteList[
+                                                  exerciseIndex]] = tempSetInfo;
+                                          //     modifiedExercises[exerciseIndex]
+                                          //         .setInfo[setInfoCompleteList[
+                                          //             exerciseIndex]]
+                                          //         .copyWith(
+                                          //             reps: int.parse(
+                                          //                 value['reps']),
+                                          //             weight: double.parse(
+                                          //                 value['weight']));
                                         });
-
-                                        modifiedBox.whenData(
-                                          (value) async {
-                                            await value.put(
-                                                modifiedExercises[exerciseIndex]
-                                                    .workoutPlanId,
-                                                modifiedExercises[
-                                                    exerciseIndex]);
-                                          },
-                                        );
                                       }
+
+                                      ref
+                                          .read(workoutProvider(
+                                                  widget.workoutScheduleId)
+                                              .notifier)
+                                          .printWorkout();
+
+                                      modifiedBox.whenData(
+                                        (_) async {
+                                          await _.put(
+                                              modifiedExercises[exerciseIndex]
+                                                  .workoutPlanId,
+                                              modifiedExercises[exerciseIndex]);
+                                        },
+                                      );
                                     },
                                   );
                                 }
@@ -467,8 +495,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                           });
 
                                           modifiedBox.whenData(
-                                            (value) async {
-                                              await value.put(
+                                            (_) {
+                                              _.put(
                                                   modifiedExercises[
                                                           exerciseIndex]
                                                       .workoutPlanId,
@@ -582,8 +610,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   );
 
                                   modifiedBox.whenData(
-                                    (value) async {
-                                      await value.put(
+                                    (_) async {
+                                      await _.put(
                                           modifiedExercises[exerciseIndex]
                                               .workoutPlanId,
                                           modifiedExercises[exerciseIndex]);
@@ -627,8 +655,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       onTooltipPressed();
 
                                       processingExerciseIndexBox.whenData(
-                                        (value) {
-                                          value.put(widget.workoutScheduleId,
+                                        (_) {
+                                          _.put(widget.workoutScheduleId,
                                               exerciseIndex);
                                         },
                                       );
@@ -643,8 +671,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       setState(() {
                                         exerciseIndex += 1; // 완료된 세트라면 건너뛰기
                                         processingExerciseIndexBox.whenData(
-                                          (value) {
-                                            value.put(widget.workoutScheduleId,
+                                          (_) {
+                                            _.put(widget.workoutScheduleId,
                                                 exerciseIndex);
                                           },
                                         );
@@ -705,8 +733,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   );
 
                                   modifiedBox.whenData(
-                                    (value) async {
-                                      await value.put(
+                                    (_) async {
+                                      await _.put(
                                           modifiedExercises[exerciseIndex]
                                               .workoutPlanId,
                                           modifiedExercises[exerciseIndex]);

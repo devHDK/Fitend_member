@@ -21,78 +21,75 @@ class DialogWidgets {
   }) {
     return DialogBackground(
       blur: 0.2,
-      dialog: Container(
-        child: SimpleDialog(
-          backgroundColor: Colors.black,
-          insetPadding:
-              const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
-          children: [
-            Container(
-              width: 335,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.white,
+      dialog: SimpleDialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+        children: [
+          Container(
+            width: 335,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 28,
+                vertical: 20,
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28,
-                  vertical: 20,
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      message,
-                      style: s2SubTitle,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    GestureDetector(
-                      onTap: confirmOnTap,
-                      child: Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: POINT_COLOR,
-                        ),
-                        child: Center(
-                          child: Text(
-                            confirmText,
-                            style: h6Headline.copyWith(
-                              color: Colors.white,
-                            ),
+              child: Column(
+                children: [
+                  Text(
+                    message,
+                    style: s2SubTitle,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  GestureDetector(
+                    onTap: confirmOnTap,
+                    child: Container(
+                      height: 44,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: POINT_COLOR,
+                      ),
+                      child: Center(
+                        child: Text(
+                          confirmText,
+                          style: h6Headline.copyWith(
+                            color: Colors.white,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    GestureDetector(
-                      onTap: cancelOnTap,
-                      child: Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: POINT_COLOR),
-                        ),
-                        child: Center(
-                          child: Text(
-                            cancelText,
-                            style: h6Headline.copyWith(
-                              color: POINT_COLOR,
-                            ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  GestureDetector(
+                    onTap: cancelOnTap,
+                    child: Container(
+                      height: 44,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: POINT_COLOR),
+                      ),
+                      child: Center(
+                        child: Text(
+                          cancelText,
+                          style: h6Headline.copyWith(
+                            color: POINT_COLOR,
                           ),
                         ),
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -105,7 +102,10 @@ class DialogWidgets {
     return DialogBackground(
       blur: 0.2,
       dialog: SimpleDialog(
-        insetPadding: const EdgeInsets.symmetric(vertical: 20),
+        insetPadding: const EdgeInsets.symmetric(
+          vertical: 20,
+          horizontal: 28,
+        ),
         backgroundColor: Colors.transparent,
         children: [
           Container(

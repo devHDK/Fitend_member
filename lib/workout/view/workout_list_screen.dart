@@ -1,5 +1,4 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
@@ -69,6 +68,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   void initState() {
     super.initState();
 
+    // ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
+
     Future.delayed(
       const Duration(
         milliseconds: 300,
@@ -77,10 +78,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         WidgetsBinding.instance.addPostFrameCallback(
           (timeStamp) {
             if (initial) {
-              // ref
-              //     .read(workoutProvider(widget.id).notifier)
-              //     .getWorkout(id: widget.id);
-
               if ((isWorkoutComplete || isRecorded) && !hasLocal) {
                 ref
                     .read(workoutRecordsProvider(widget.id).notifier)
@@ -131,8 +128,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         ref.read(hiveWorkoutResultProvider);
     final AsyncValue<Box> workoutFeedbackBox =
         ref.read(hiveWorkoutFeedbackProvider);
-    final AsyncValue<Box> modifiedExerciseBox =
-        ref.read(hiveModifiedExerciseProvider);
+    final AsyncValue<Box> modifiedBox = ref.watch(hiveModifiedExerciseProvider);
     final AsyncValue<Box> processingExerciseIndexBox =
         ref.read(hiveExerciseIndexProvider);
 
@@ -148,16 +144,23 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
     }
 
     if (state is WorkoutModelError) {
-      return ErrorDialog(error: state.message);
+      showDialog(
+        context: context,
+        builder: (context) => DialogWidgets.errorDialog(
+          message: state.message,
+          confirmText: '확인',
+          confirmOnTap: () => context.pop(),
+        ),
+      );
     }
 
-    var model = state as WorkoutModel;
-    workoutModel = model;
+    WorkoutModel model = WorkoutModel.clone(model: state as WorkoutModel);
+    workoutModel = WorkoutModel.clone(model: model);
 
     workoutBox = workoutRecordBox;
     timerXoneBox = timerXoneRecordBox;
     timerXmoreBox = timerXMoreRecordBox;
-    modifiedExercise = modifiedExerciseBox;
+    modifiedExercise = modifiedBox;
     workoutResult = workoutResultBox;
     processingExerciseIndex = processingExerciseIndexBox;
 
@@ -241,7 +244,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         }
       });
 
-      modifiedExerciseBox.whenData(
+      modifiedBox.whenData(
         (value) {
           for (var exercise in model.exercises) {
             if ((exercise.trackingFieldId == 3 ||
@@ -293,7 +296,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         }
       });
 
-      modifiedExerciseBox.whenData(
+      modifiedBox.whenData(
         (value) {
           for (var exercise in model.exercises) {
             if ((exercise.trackingFieldId == 3 ||
@@ -322,7 +325,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         ),
         centerTitle: true,
         title: Text(
-          '${DateFormat('M월 d일').format(DateTime.parse(workoutModel.startDate))} ${weekday[DateTime.parse(workoutModel.startDate).weekday - 1]}요일',
+          '${DateFormat('M월 d일').format(DateTime.parse(model.startDate))} ${weekday[DateTime.parse(model.startDate).weekday - 1]}요일',
           style: h4Headline,
         ),
         // actions: [
@@ -335,7 +338,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         //             context: context,
         //             builder: (context) {
         //               return CalendarDialog(
-        //                 scheduleDate: DateTime.parse(workoutModel.startDate),
+        //                 scheduleDate: DateTime.parse(model.startDate),
         //                 workoutScheduleId: widget.id,
         //               );
         //             }).then(
@@ -482,8 +485,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
           ),
         ],
       ),
-      floatingActionButton: today
-                      .compareTo(DateTime.parse(workoutModel.startDate)) !=
+      floatingActionButton: today.compareTo(DateTime.parse(model.startDate)) !=
                   0 &&
               !model.isWorkoutComplete
           ? null
@@ -498,7 +500,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                         extra: model.exercises,
                       );
                     }
-                  : today.compareTo(DateTime.parse(workoutModel.startDate)) == 0
+                  : today.compareTo(DateTime.parse(model.startDate)) == 0
                       ? () async {
                           workoutResultBox.whenData(
                             (value) {
@@ -535,15 +537,16 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                             },
                           );
 
-                          modifiedExerciseBox.whenData(
+                          modifiedBox.whenData(
                             (value) {
                               for (int i = 0; i < model.exercises.length; i++) {
                                 final exercise =
                                     value.get(model.exercises[i].workoutPlanId);
                                 if (exercise == null) {
                                   //저장된게 없으면 저장
-                                  value.put(model.exercises[i].workoutPlanId,
-                                      model.exercises[i]);
+                                  value.put(
+                                      workoutModel.exercises[i].workoutPlanId,
+                                      workoutModel.exercises[i]);
                                 }
                               }
                             },
@@ -580,7 +583,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                               .then((value) {
                             setState(() {
                               isPoped = true;
-
                               // ref
                               //     .read(workoutProvider(widget.id).notifier)
                               //     .getWorkout(id: widget.id);
@@ -595,8 +597,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                     color: model.isWorkoutComplete ||
-                            today.compareTo(
-                                    DateTime.parse(workoutModel.startDate)) ==
+                            today.compareTo(DateTime.parse(model.startDate)) ==
                                 0
                         ? POINT_COLOR
                         : POINT_COLOR.withOpacity(0.3),
@@ -606,8 +607,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                     child: Text(
                       model.isWorkoutComplete
                           ? '결과보기📝'
-                          : today.compareTo(
-                                      DateTime.parse(workoutModel.startDate)) ==
+                          : today.compareTo(DateTime.parse(model.startDate)) ==
                                   0
                               ? '운동 시작하기💪'
                               : '오늘의 운동만 수행할 수 있어요!',
@@ -672,6 +672,14 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
             });
           },
           cancelOnTap: () async {
+            modifiedExercise.whenData(
+              (value) {
+                for (var element in workoutModel.exercises) {
+                  value.put(element.workoutPlanId, element);
+                }
+              },
+            );
+
             workoutBox.whenData(
               (value) {
                 for (var element in workoutModel.exercises) {
@@ -704,14 +712,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
               (value) {
                 for (var element in workoutModel.exercises) {
                   value.delete(element.workoutPlanId);
-                }
-              },
-            );
-
-            modifiedExercise.whenData(
-              (value) {
-                for (var element in workoutModel.exercises) {
-                  value.put(element.workoutPlanId, element);
                 }
               },
             );

@@ -95,7 +95,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       if (initial) {
         workoutRecordBox.whenData(
           (value) async {
-            for (int i = 0; i < maxExcerciseIndex; i++) {
+            for (int i = 0; i <= maxExcerciseIndex; i++) {
               final tempRecord =
                   await value.get(widget.exercises[i].workoutPlanId);
 

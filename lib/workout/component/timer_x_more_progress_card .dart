@@ -459,10 +459,11 @@ class _WeightWrepsProgressCardState
                 ),
                 Center(
                   child: Text(
-                    totalSeconds ==
-                                widget.exercise.setInfo[widget.setInfoIndex]
-                                    .seconds! ||
-                            totalSeconds < 0
+                    (totalSeconds ==
+                                    widget.exercise.setInfo[widget.setInfoIndex]
+                                        .seconds! ||
+                                totalSeconds < 0) &&
+                            !isRunning
                         ? '운동 시작'
                         : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
                     style: s2SubTitle.copyWith(
@@ -523,7 +524,7 @@ class _WeightWrepsProgressCardState
                         barrierDismissible: false,
                         context: context,
                         builder: (context) => DialogWidgets.errorDialog(
-                          message: '먼저 운동을 진행해 주세요 🏋🏻',
+                          message: '먼저 운동을 진행해주세요 🏋🏻',
                           confirmText: '확인',
                           confirmOnTap: () => context.pop(),
                         ),

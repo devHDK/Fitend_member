@@ -23,7 +23,10 @@ class DialogWidgets {
       blur: 0.2,
       dialog: SimpleDialog(
         backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 20,
+        ),
         children: [
           Container(
             width: 335,
@@ -33,7 +36,7 @@ class DialogWidgets {
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: 28,
+                horizontal: 20,
                 vertical: 20,
               ),
               child: Column(
@@ -104,7 +107,7 @@ class DialogWidgets {
       dialog: SimpleDialog(
         insetPadding: const EdgeInsets.symmetric(
           vertical: 20,
-          horizontal: 28,
+          horizontal: 20,
         ),
         backgroundColor: Colors.transparent,
         children: [
@@ -115,7 +118,10 @@ class DialogWidgets {
               color: Colors.white,
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 20,
+              ),
               child: Column(
                 children: [
                   Text(

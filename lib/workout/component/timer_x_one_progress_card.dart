@@ -225,7 +225,8 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
             decoration: BoxDecoration(
               border: Border.all(color: POINT_COLOR),
               borderRadius: BorderRadius.circular(12),
-              color: totalSeconds == widget.exercise.setInfo[0].seconds!
+              color: totalSeconds == widget.exercise.setInfo[0].seconds! &&
+                      !isRunning
                   ? POINT_COLOR
                   : Colors.white,
             ),
@@ -245,19 +246,22 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                 ),
                 Center(
                   child: Text(
-                    totalSeconds == widget.exercise.setInfo[0].seconds! ||
-                            totalSeconds < 0
+                    (totalSeconds == widget.exercise.setInfo[0].seconds! ||
+                                totalSeconds < 0) &&
+                            !isRunning
                         ? '운동 시작'
                         : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
                     style: s2SubTitle.copyWith(
-                        color:
-                            totalSeconds == widget.exercise.setInfo[0].seconds!
-                                ? Colors.white
-                                : POINT_COLOR,
-                        fontWeight:
-                            totalSeconds == widget.exercise.setInfo[0].seconds!
-                                ? FontWeight.w700
-                                : FontWeight.w400,
+                        color: totalSeconds ==
+                                    widget.exercise.setInfo[0].seconds! &&
+                                !isRunning
+                            ? Colors.white
+                            : POINT_COLOR,
+                        fontWeight: totalSeconds ==
+                                    widget.exercise.setInfo[0].seconds! &&
+                                !isRunning
+                            ? FontWeight.w700
+                            : FontWeight.w400,
                         height: 1.2),
                   ),
                 ),
@@ -318,7 +322,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
                         barrierDismissible: false,
                         context: context,
                         builder: (context) => DialogWidgets.errorDialog(
-                          message: '먼저 운동을 진행해 주세요 🏋🏻',
+                          message: '먼저 운동을 진행해주세요 🏋🏻',
                           confirmText: '확인',
                           confirmOnTap: () => context.pop(),
                         ),

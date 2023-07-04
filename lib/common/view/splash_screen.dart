@@ -51,7 +51,7 @@ class _BottomView extends StatelessWidget {
             height: 12,
           ),
           AutoSizeText(
-            'Routine for 4 Weeks!\n새로운 디지털 PT의 패러다임을 지금 바로 경험해보세요',
+            'Routine for 4 Weeks!\n새로운 디지털 PT의 패러다임을 지금 바로 경험해보세요!',
             style: s2SubTitle.copyWith(
               color: LIGHT_GRAY_COLOR,
             ),

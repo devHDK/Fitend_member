@@ -103,7 +103,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   height: 24,
                 ),
                 AutoSizeText(
-                  '핏엔드와 함께\n지속가능한 운동습관을 경험해보세요! ',
+                  '핏엔드와 함께\n지속가능한 운동습관을 경험해보세요!',
                   style: h3Headline.copyWith(
                     color: Colors.white,
                   ),
@@ -189,8 +189,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
         SizedBox(
           height: 44,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: idTextcontroller.text.isEmpty ||
+                      passwordTextcontroller.text.isEmpty
+                  ? POINT_COLOR.withOpacity(0.4)
+                  : POINT_COLOR,
+            ),
             child: ElevatedButton(
               onPressed: state is UserModelLoading
                   ? null
@@ -240,10 +246,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           }
                         },
               style: ElevatedButton.styleFrom(
-                backgroundColor: idTextcontroller.text.isEmpty ||
-                        passwordTextcontroller.text.isEmpty
-                    ? POINT_COLOR.withOpacity(0.2)
-                    : POINT_COLOR,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
               ),
               child: state is UserModelLoading
                   ? const SizedBox(
@@ -253,8 +257,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         color: POINT_COLOR,
                       ),
                     )
-                  : const Text(
+                  : Text(
                       '로그인',
+                      style: TextStyle(
+                        color: idTextcontroller.text.isEmpty ||
+                                passwordTextcontroller.text.isEmpty
+                            ? Colors.white.withOpacity(0.4)
+                            : Colors.white,
+                      ),
                     ),
             ),
           ),

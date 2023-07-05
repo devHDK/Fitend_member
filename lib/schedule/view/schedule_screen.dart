@@ -75,7 +75,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           showDialog(
             context: context,
             builder: (context) => DialogWidgets.errorDialog(
-              message: '회원님을 위한 플랜을 준비중이에요!\n플랜이 완성되면 알려드릴게요 😊',
+              message: '회원님을 위한 플랜을 준비 중이에요!/ 플랜이 완성되면 알려드릴게요 😊',
               confirmText: '확인',
               confirmOnTap: () => context.pop(),
             ),

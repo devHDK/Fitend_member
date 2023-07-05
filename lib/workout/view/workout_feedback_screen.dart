@@ -49,6 +49,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
   int strengthIndex = 0;
   List<int> issueIndexes = [];
   String contents = '';
+  bool buttonEnable = true;
 
   @override
   void initState() {
@@ -182,102 +183,116 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                   ),
                                 );
                               }
-                            : () async {
-                                try {
-                                  await repository
-                                      .postWorkoutRecordsFeedback(
-                                    id: widget.workoutScheduleId,
-                                    body: PostWorkoutRecordFeedbackModel(
-                                      strengthIndex: strengthIndex,
-                                      issueIndexes: issueIndexes,
-                                      contents: contentsController.text.isEmpty
-                                          ? null
-                                          : contentsController.text,
-                                    ),
-                                  )
-                                      .then(
-                                    (value) {
-                                      workoutFeedbackBox.whenData(
-                                        (_) {
-                                          final record =
-                                              _.get(widget.workoutScheduleId);
+                            : buttonEnable
+                                ? () async {
+                                    try {
+                                      setState(() {
+                                        buttonEnable = false;
+                                      });
 
-                                          if (record != null &&
-                                              record
-                                                  is WorkoutFeedbackRecordModel) {
-                                            _.put(
-                                              widget.workoutScheduleId,
-                                              record.copyWith(
-                                                strengthIndex: strengthIndex,
-                                                issueIndexes: issueIndexes,
-                                                contents: contentsController
-                                                        .text.isEmpty
-                                                    ? null
-                                                    : contentsController.text,
-                                              ),
-                                            );
-                                          }
-                                        },
-                                      );
+                                      await repository
+                                          .postWorkoutRecordsFeedback(
+                                        id: widget.workoutScheduleId,
+                                        body: PostWorkoutRecordFeedbackModel(
+                                          strengthIndex: strengthIndex,
+                                          issueIndexes: issueIndexes,
+                                          contents:
+                                              contentsController.text.isEmpty
+                                                  ? null
+                                                  : contentsController.text,
+                                        ),
+                                      )
+                                          .then(
+                                        (value) {
+                                          workoutFeedbackBox.whenData(
+                                            (_) {
+                                              final record = _.get(
+                                                  widget.workoutScheduleId);
 
-                                      ref
-                                          .read(workoutScheduleProvider(
-                                                  DataUtils.getDate(
-                                                      DateTime.now().subtract(
-                                                          const Duration(
-                                                              days: 15))))
-                                              .notifier)
-                                          .updateScheduleState(
-                                            workoutScheduleId:
-                                                widget.workoutScheduleId,
-                                            startDate: DateTime.parse(
-                                                widget.startdate),
+                                              if (record != null &&
+                                                  record
+                                                      is WorkoutFeedbackRecordModel) {
+                                                _.put(
+                                                  widget.workoutScheduleId,
+                                                  record.copyWith(
+                                                    strengthIndex:
+                                                        strengthIndex,
+                                                    issueIndexes: issueIndexes,
+                                                    contents: contentsController
+                                                            .text.isEmpty
+                                                        ? null
+                                                        : contentsController
+                                                            .text,
+                                                  ),
+                                                );
+                                              }
+                                            },
                                           );
-                                      // 스케줄 상태 업데이트
 
-                                      ref
-                                          .read(workoutProvider(
-                                                  widget.workoutScheduleId)
-                                              .notifier)
-                                          .updateWorkoutStateIsComplete();
-                                      //워크아웃 상태 업데이트
+                                          ref
+                                              .read(workoutScheduleProvider(
+                                                      DataUtils.getDate(DateTime
+                                                              .now()
+                                                          .subtract(
+                                                              const Duration(
+                                                                  days: 15))))
+                                                  .notifier)
+                                              .updateScheduleState(
+                                                workoutScheduleId:
+                                                    widget.workoutScheduleId,
+                                                startDate: DateTime.parse(
+                                                    widget.startdate),
+                                              );
+                                          // 스케줄 상태 업데이트
 
-                                      context.pop();
+                                          ref
+                                              .read(workoutProvider(
+                                                      widget.workoutScheduleId)
+                                                  .notifier)
+                                              .updateWorkoutStateIsComplete();
+                                          //워크아웃 상태 업데이트
 
-                                      context.pushNamed(
-                                        ScheduleResultScreen.routeName,
-                                        pathParameters: {
-                                          'id': widget.workoutScheduleId
-                                              .toString(),
+                                          // context.pop();
+
+                                          context.goNamed(
+                                            ScheduleResultScreen.routeName,
+                                            pathParameters: {
+                                              'id': widget.workoutScheduleId
+                                                  .toString(),
+                                            },
+                                            extra: widget.exercises,
+                                          );
+                                          // Navigator.of(context).pushReplacement(
+                                          //   CupertinoPageRoute(
+                                          //     builder: (context) =>
+                                          //         ScheduleResultScreen(
+                                          //       workoutScheduleId:
+                                          //           widget.workoutScheduleId,
+                                          //       exercises: widget.exercises,
+                                          //     ),
+                                          //   ),
+                                          // );
                                         },
-                                        extra: widget.exercises,
                                       );
-                                      // Navigator.of(context).pushReplacement(
-                                      //   CupertinoPageRoute(
-                                      //     builder: (context) =>
-                                      //         ScheduleResultScreen(
-                                      //       workoutScheduleId:
-                                      //           widget.workoutScheduleId,
-                                      //       exercises: widget.exercises,
-                                      //     ),
-                                      //   ),
-                                      // );
-                                    },
-                                  );
-                                } on DioError catch (e) {
-                                  print(e);
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (context) =>
-                                        DialogWidgets.errorDialog(
-                                      message: '알수없는 오류',
-                                      confirmText: '확인',
-                                      confirmOnTap: () => context.pop(),
-                                    ),
-                                  );
-                                }
-                              },
+                                    } on DioError catch (e) {
+                                      setState(() {
+                                        buttonEnable = true;
+                                      });
+
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context) =>
+                                            DialogWidgets.errorDialog(
+                                          message:
+                                              e.response!.statusCode.toString(),
+                                          confirmText: '확인',
+                                          confirmOnTap: () => context.pop(),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                : null,
                         child: Container(
                           width: size.width,
                           height: 44,
@@ -285,13 +300,21 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                             borderRadius: BorderRadius.circular(10),
                             color: POINT_COLOR,
                           ),
-                          child: const Center(
-                            child: Text(
-                              '평가 저장하기',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
+                          child: Center(
+                            child: buttonEnable
+                                ? const Text(
+                                    '평가 저장하기',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const SizedBox(
+                                    width: 15,
+                                    height: 15,
+                                    child: CircularProgressIndicator(
+                                      color: POINT_COLOR,
+                                    ),
+                                  ),
                           ),
                         ),
                       )
@@ -343,7 +366,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
             ),
             labelText: focusNode.hasFocus || contentsController.text.isNotEmpty
                 ? ''
-                : '운동관련 궁금증, 요청사항 등을 형식에 관계없이\n자유롭게 입력해주세요 :) \n\n\n\n\n\n\n\n',
+                : '운동관련 궁금증, 요청사항 등을 형식에 관계없이/자유롭게 입력해주세요 😁 \n\n\n\n\n\n\n\n\n',
             labelStyle: s2SubTitle.copyWith(
               color: focusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
             ),

@@ -28,7 +28,6 @@ import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
-import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
@@ -95,7 +94,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       if (initial) {
         workoutRecordBox.whenData(
           (value) async {
-            for (int i = 0; i < maxExcerciseIndex; i++) {
+            for (int i = 0; i <= maxExcerciseIndex; i++) {
               final tempRecord =
                   await value.get(widget.exercises[i].workoutPlanId);
 
@@ -228,7 +227,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     exerciseIndexBox = processingExerciseIndexBox;
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: GRAY_COLOR,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
@@ -349,9 +348,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       body: Stack(
         children: [
           Positioned(
-            left: 0.0,
+            // left: 0.0,
+            right: MediaQuery.of(context).size.width > 600 //테블릿이면
+                ? (MediaQuery.of(context).size.width -
+                        (MediaQuery.of(context).size.height) * 9 / 16) /
+                    2
+                : 0,
             child: SizedBox(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery.of(context).size.width > 600 //테블릿이면
+                  ? (MediaQuery.of(context).size.height) * 9 / 16
+                  : MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height - 175,
               child: WorkoutVideoPlayer(
                 video: ExerciseVideo(
@@ -606,12 +612,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                               exerciseIndex]] = tempSetInfo;
                                     },
                                   );
-
-                                  ref
-                                      .read(workoutProvider(
-                                              widget.workoutScheduleId)
-                                          .notifier)
-                                      .printWorkout();
 
                                   modifiedBox.whenData(
                                     (_) async {
@@ -1204,8 +1204,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   context: context,
                   builder: (_) {
                     return DialogWidgets.confirmDialog(
-                      message: '오늘의 운동을 종료할까요?\n 종료 후에는 다시 진행할 수 없어요 🙉',
-                      confirmText: '아니요, 계속할게요',
+                      message: '오늘의 운동을 종료할까요?\n종료 후에는 다시 진행할 수 없어요 🙉',
+                      confirmText: '아니요, 계속 할게요',
                       cancelText: '네, 종료할게요',
                       confirmOnTap: () {
                         context.pop();

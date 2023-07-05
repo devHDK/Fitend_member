@@ -64,6 +64,9 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
     currentPosition = const Duration();
     firstVideoController = VideoPlayerController.network(
       widget.videos[0].url,
+      videoPlayerOptions: VideoPlayerOptions(
+        mixWithOthers: true,
+      ),
     );
     await Future.wait([
       firstVideoController!.initialize(),
@@ -89,6 +92,9 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
     //2번째 영상
     secondVideoController = VideoPlayerController.network(
       widget.videos[1].url,
+      videoPlayerOptions: VideoPlayerOptions(
+        mixWithOthers: true,
+      ),
     );
 
     await Future.wait([
@@ -103,6 +109,9 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
     //3번째 영상
     thirdVideoController = VideoPlayerController.network(
       widget.videos[2].url,
+      videoPlayerOptions: VideoPlayerOptions(
+        mixWithOthers: true,
+      ),
     );
 
     await Future.wait([

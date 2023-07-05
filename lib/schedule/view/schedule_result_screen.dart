@@ -287,7 +287,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('오늘의 운동평가📝',
+        Text('오늘의 운동평가 📝',
             style: h4Headline.copyWith(
               color: Colors.white,
             )),
@@ -399,7 +399,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
               height: 24,
             ),
             Text(
-              '오늘의 운동결과🎯',
+              '오늘의 운동결과 🎯',
               style: h4Headline.copyWith(
                 color: Colors.white,
               ),

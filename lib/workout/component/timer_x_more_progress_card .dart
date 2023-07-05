@@ -434,10 +434,11 @@ class _WeightWrepsProgressCardState
             decoration: BoxDecoration(
               border: Border.all(color: POINT_COLOR),
               borderRadius: BorderRadius.circular(12),
-              color: totalSeconds ==
-                          widget
-                              .exercise.setInfo[widget.setInfoIndex].seconds! ||
-                      totalSeconds < 0
+              color: (totalSeconds ==
+                              widget.exercise.setInfo[widget.setInfoIndex]
+                                  .seconds! ||
+                          totalSeconds < 0) &&
+                      !isRunning
                   ? POINT_COLOR
                   : Colors.white,
             ),
@@ -459,23 +460,30 @@ class _WeightWrepsProgressCardState
                 ),
                 Center(
                   child: Text(
-                    totalSeconds ==
-                                widget.exercise.setInfo[widget.setInfoIndex]
-                                    .seconds! ||
-                            totalSeconds < 0
+                    (totalSeconds ==
+                                    widget.exercise.setInfo[widget.setInfoIndex]
+                                        .seconds! ||
+                                totalSeconds < 0) &&
+                            !isRunning
                         ? '운동 시작'
                         : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
                     style: s2SubTitle.copyWith(
-                      color: totalSeconds ==
-                                  widget.exercise.setInfo[widget.setInfoIndex]
-                                      .seconds! ||
-                              totalSeconds < 0
+                      color: (totalSeconds ==
+                                      widget
+                                          .exercise
+                                          .setInfo[widget.setInfoIndex]
+                                          .seconds! ||
+                                  totalSeconds < 0) &&
+                              !isRunning
                           ? Colors.white
                           : POINT_COLOR,
-                      fontWeight: totalSeconds ==
-                                  widget.exercise.setInfo[widget.setInfoIndex]
-                                      .seconds! ||
-                              totalSeconds < 0
+                      fontWeight: (totalSeconds ==
+                                      widget
+                                          .exercise
+                                          .setInfo[widget.setInfoIndex]
+                                          .seconds! ||
+                                  totalSeconds < 0) &&
+                              !isRunning
                           ? FontWeight.w700
                           : FontWeight.w400,
                       height: 1.2,
@@ -483,7 +491,7 @@ class _WeightWrepsProgressCardState
                   ),
                 ),
                 const SizedBox(
-                  width: 16,
+                  width: 8,
                 ),
               ],
             ),

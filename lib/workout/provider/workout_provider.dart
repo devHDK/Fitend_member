@@ -41,13 +41,12 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
   }
 
   void updateWorkoutStateIsComplete() {
+    if (state is WorkoutModelLoading) {
+      return;
+    }
+
     final pstate = state as WorkoutModel;
 
     state = pstate.copyWith(isWorkoutComplete: true);
-  }
-
-  void printWorkout() {
-    final pstate = state as WorkoutModel;
-    print('printWorkout - weight  : ${pstate.exercises[2].setInfo[0].seconds}');
   }
 }

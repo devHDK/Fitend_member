@@ -133,7 +133,7 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                                   ? Colors.white
                                   : Colors.transparent,
                               letterSpacing: 0,
-                              height: 1,
+                              height: 1.2,
                             ),
                           ),
                         const SizedBox(
@@ -142,10 +142,12 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                         if (widget.date != null)
                           Text(
                             widget.date!.day.toString(),
-                            style: TextStyle(
+                            style: s2SubTitle.copyWith(
                               color: widget.isDateVisible! || widget.selected
                                   ? Colors.white
                                   : Colors.transparent,
+                              letterSpacing: 0,
+                              height: 1.2,
                             ),
                           ),
                       ],
@@ -271,7 +273,7 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                         child: Text(
                           (widget.isRecord! && !widget.isComplete!)
                               ? '운동 평가하기 📝'
-                              : '운동확인 하기🔍',
+                              : '운동 확인하기 🔍',
                           style: h6Headline.copyWith(
                             color: (widget.isRecord! && !widget.isComplete!)
                                 ? POINT_COLOR

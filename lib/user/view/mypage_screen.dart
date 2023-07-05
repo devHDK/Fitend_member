@@ -122,7 +122,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                   uri:
                       "https://weareraid.notion.site/87468f88c99b427b81ae3e44aeb1f37b?pvs=4"),
               child: _renderLabel(
-                name: '서비스 이용 약관',
+                name: '서비스 이용약관',
                 child: SvgPicture.asset(
                   'asset/img/icon_next.svg',
                 ),

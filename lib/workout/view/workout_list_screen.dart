@@ -591,10 +591,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
                   child: Center(
                     child: Text(
                       model.isWorkoutComplete
-                          ? '결과보기📝'
+                          ? '결과보기 📝'
                           : today.compareTo(DateTime.parse(model.startDate)) ==
                                   0
-                              ? '운동 시작하기💪'
+                              ? '운동 시작하기 💪'
                               : '오늘의 운동만 수행할 수 있어요!',
                       style: h6Headline.copyWith(
                         color: Colors.white,

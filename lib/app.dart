@@ -12,6 +12,12 @@ class App extends ConsumerWidget {
     final route = ref.watch(routerProvider);
 
     return MaterialApp.router(
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+          child: child!,
+        );
+      },
       title: F.title,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

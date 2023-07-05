@@ -56,7 +56,8 @@ class _WeightWrepsProgressCardState
 
     List<Widget> progressList = widget.exercise.setInfo.mapIndexed(
       (index, element) {
-        if (index == widget.setInfoIndex) {
+        if (index == widget.setInfoIndex &&
+            widget.exercise.setInfo.length > 1) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -72,6 +73,27 @@ class _WeightWrepsProgressCardState
                               topRight: Radius.circular(2),
                             )
                           : null,
+                  color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
+                ),
+                width:
+                    ((size.width - 152) / widget.exercise.setInfo.length) - 1,
+                height: 4,
+                duration: const Duration(microseconds: 1000),
+                curve: Curves.linear,
+              ),
+              const SizedBox(
+                width: 1,
+              )
+            ],
+          );
+        } else if (index == widget.setInfoIndex &&
+            widget.exercise.setInfo.length == 1) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(2),
                   color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
                 ),
                 width:

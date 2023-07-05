@@ -54,6 +54,9 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
     currentPosition = const Duration();
     videoController = VideoPlayerController.network(
       widget.video.url,
+      videoPlayerOptions: VideoPlayerOptions(
+        mixWithOthers: true,
+      ),
     );
     await Future.wait([
       videoController!.initialize(),

@@ -291,7 +291,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   uri:
                       "https://weareraid.notion.site/06b383e3c7aa4515a4637c2c11f3d908?pvs=4"),
               child: Text(
-                '개인정보처리방침',
+                '개인정보 처리방침',
                 style: s3SubTitle.copyWith(
                   decoration: TextDecoration.underline,
                   color: Colors.white,

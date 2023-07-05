@@ -1204,8 +1204,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   context: context,
                   builder: (_) {
                     return DialogWidgets.confirmDialog(
-                      message: '오늘의 운동을 종료할까요?\n 종료 후에는 다시 진행할 수 없어요 🙉',
-                      confirmText: '아니요, 계속할게요',
+                      message: '오늘의 운동을 종료할까요?\n종료 후에는 다시 진행할 수 없어요 🙉',
+                      confirmText: '아니요, 계속 할게요',
                       cancelText: '네, 종료할게요',
                       confirmOnTap: () {
                         context.pop();

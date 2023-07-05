@@ -273,7 +273,7 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                         child: Text(
                           (widget.isRecord! && !widget.isComplete!)
                               ? '운동 평가하기 📝'
-                              : '운동확인 하기🔍',
+                              : '운동 확인하기🔍',
                           style: h6Headline.copyWith(
                             color: (widget.isRecord! && !widget.isComplete!)
                                 ? POINT_COLOR

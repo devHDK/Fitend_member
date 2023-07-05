@@ -64,86 +64,91 @@ class _RepsSetinfoDialogState extends State<RepsSetinfoDialog> {
   Widget build(BuildContext context) {
     return DialogBackground(
       blur: 0.2,
-      dialog: Dialog(
+      dialog: SimpleDialog(
         backgroundColor: Colors.transparent,
-        child: Container(
-          width: 319,
-          height: 200,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            color: Colors.white,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '세트 수정',
-                  style: h3Headline.copyWith(
-                    height: 1,
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 20,
+        ),
+        children: [
+          Container(
+            width: 319,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '세트 수정',
+                    style: h3Headline.copyWith(
+                      height: 1,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: SetInfoTextField(
-                        controller: repsController,
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: SetInfoTextField(
+                          controller: repsController,
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      '회',
-                      style: s1SubTitle.copyWith(
-                        color: GRAY_COLOR,
-                        height: 1,
+                      const SizedBox(
+                        width: 8,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                GestureDetector(
-                  onTap: buttonEnable
-                      ? () {
-                          context.pop({
-                            'reps': repsController.text,
-                          });
-                        }
-                      : null,
-                  child: Container(
-                    width: 279,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: buttonEnable
-                          ? POINT_COLOR
-                          : POINT_COLOR.withOpacity(0.3),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '확인',
-                        style: h6Headline.copyWith(
-                          color: Colors.white,
+                      Text(
+                        '회',
+                        style: s1SubTitle.copyWith(
+                          color: GRAY_COLOR,
                           height: 1,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  GestureDetector(
+                    onTap: buttonEnable
+                        ? () {
+                            context.pop({
+                              'reps': repsController.text,
+                            });
+                          }
+                        : null,
+                    child: Container(
+                      width: 300,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: buttonEnable
+                            ? POINT_COLOR
+                            : POINT_COLOR.withOpacity(0.3),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '확인',
+                          style: h6Headline.copyWith(
+                            color: Colors.white,
+                            height: 1,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

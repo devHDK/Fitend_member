@@ -28,7 +28,6 @@ import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
-import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
@@ -228,7 +227,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     exerciseIndexBox = processingExerciseIndexBox;
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: GRAY_COLOR,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
@@ -349,9 +348,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       body: Stack(
         children: [
           Positioned(
-            left: 0.0,
+            // left: 0.0,
+            right: MediaQuery.of(context).size.width > 600 //테블릿이면
+                ? (MediaQuery.of(context).size.width -
+                        (MediaQuery.of(context).size.height) * 9 / 16) /
+                    2
+                : 0,
             child: SizedBox(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery.of(context).size.width > 600 //테블릿이면
+                  ? (MediaQuery.of(context).size.height) * 9 / 16
+                  : MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height - 175,
               child: WorkoutVideoPlayer(
                 video: ExerciseVideo(
@@ -606,12 +612,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                               exerciseIndex]] = tempSetInfo;
                                     },
                                   );
-
-                                  ref
-                                      .read(workoutProvider(
-                                              widget.workoutScheduleId)
-                                          .notifier)
-                                      .printWorkout();
 
                                   modifiedBox.whenData(
                                     (_) async {

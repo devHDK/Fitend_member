@@ -95,107 +95,113 @@ class _TimerSetinfoDialogState extends State<TimerSetinfoDialog> {
   Widget build(BuildContext context) {
     return DialogBackground(
       blur: 0.2,
-      dialog: Dialog(
+      dialog: SimpleDialog(
         backgroundColor: Colors.transparent,
-        child: Container(
-          width: 319,
-          height: 200,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            color: Colors.white,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  '세트 수정',
-                  style: h3Headline.copyWith(
-                    height: 1,
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 20,
+        ),
+        children: [
+          Container(
+            width: 319,
+            height: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    '세트 수정',
+                    style: h3Headline.copyWith(
+                      height: 1,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: SetInfoTextField(
-                        controller: minController,
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: SetInfoTextField(
+                          controller: minController,
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      'min',
-                      style: s1SubTitle.copyWith(
-                        color: GRAY_COLOR,
-                        height: 1,
+                      const SizedBox(
+                        width: 8,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      width: 24,
-                    ),
-                    Expanded(
-                      child: SetInfoTextField(
-                        controller: secController,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      'sec',
-                      style: s1SubTitle.copyWith(
-                        color: GRAY_COLOR,
-                        height: 1,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                GestureDetector(
-                  onTap: buttonEnable
-                      ? () {
-                          context.pop({
-                            'min': minController.text,
-                            'sec': secController.text,
-                          });
-                        }
-                      : null,
-                  child: Container(
-                    width: 279,
-                    height: 46,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: buttonEnable
-                          ? POINT_COLOR
-                          : POINT_COLOR.withOpacity(0.3),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '확인',
-                        style: h6Headline.copyWith(
-                          color: Colors.white,
-                          letterSpacing: 0,
+                      Text(
+                        'min',
+                        style: s1SubTitle.copyWith(
+                          color: GRAY_COLOR,
                           height: 1,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(
+                        width: 24,
+                      ),
+                      Expanded(
+                        child: SetInfoTextField(
+                          controller: secController,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        'sec',
+                        style: s1SubTitle.copyWith(
+                          color: GRAY_COLOR,
+                          height: 1,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  GestureDetector(
+                    onTap: buttonEnable
+                        ? () {
+                            context.pop({
+                              'min': minController.text,
+                              'sec': secController.text,
+                            });
+                          }
+                        : null,
+                    child: Container(
+                      width: 300,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: buttonEnable
+                            ? POINT_COLOR
+                            : POINT_COLOR.withOpacity(0.3),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '확인',
+                          style: h6Headline.copyWith(
+                            color: Colors.white,
+                            letterSpacing: 0,
+                            height: 1,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -57,7 +57,7 @@ class _WeightWrepsProgressCardState
     List<Widget> progressList = widget.exercise.setInfo.mapIndexed(
       (index, element) {
         if (index == widget.setInfoIndex &&
-            widget.exercise.setInfo.length != 1) {
+            widget.exercise.setInfo.length > 1) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

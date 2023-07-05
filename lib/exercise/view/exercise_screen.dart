@@ -67,18 +67,22 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         controller: _scrollController,
         slivers: [
           SliverToBoxAdapter(
-            child: FittedBox(
-              fit: BoxFit.cover,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height - 175,
-                child: GuideVideoPlayer(
-                  videos: widget.exercise.videos
-                      .map((e) => ExerciseVideo(
-                          url: '$s3Url${e.url}',
-                          index: e.index,
-                          thumbnail: '$s3Url${e.thumbnail}'))
-                      .toList(),
+            child: Container(
+              color: GRAY_COLOR,
+              child: Center(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width > 600 //테블릿이면
+                      ? (MediaQuery.of(context).size.height - 175) * 9 / 16
+                      : MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height - 175,
+                  child: GuideVideoPlayer(
+                    videos: widget.exercise.videos
+                        .map((e) => ExerciseVideo(
+                            url: '$s3Url${e.url}',
+                            index: e.index,
+                            thumbnail: '$s3Url${e.thumbnail}'))
+                        .toList(),
+                  ),
                 ),
               ),
             ),

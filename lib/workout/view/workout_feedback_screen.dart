@@ -254,12 +254,6 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
 
                                           // context.pop();
 
-                                          if (widget.exercises != null) {
-                                            print(widget.exercises);
-                                          } else {
-                                            print(widget.exercises);
-                                          }
-
                                           context.goNamed(
                                             ScheduleResultScreen.routeName,
                                             pathParameters: {

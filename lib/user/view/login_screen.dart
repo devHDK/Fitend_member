@@ -222,6 +222,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             return;
                           }
 
+                          RegExp emailRegExp = RegExp(
+                              r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
+                          bool isMatch =
+                              emailRegExp.hasMatch(_idTextController.text);
+
+                          if (!isMatch ||
+                              _passwordTextController.text.length < 8) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => DialogWidgets.errorDialog(
+                                message: '이메일 또는 비밀번호를 확인해주세요 😭',
+                                confirmText: '확인',
+                                confirmOnTap: () => context.pop(),
+                              ),
+                            );
+                            return;
+                          }
+
                           final ret = await ref
                               .read(getMeProvider.notifier)
                               .login(
@@ -259,7 +277,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     )
                   : Text(
                       '로그인',
-                      style: TextStyle(
+                      style: h6Headline.copyWith(
                         color: idTextcontroller.text.isEmpty ||
                                 passwordTextcontroller.text.isEmpty
                             ? Colors.white.withOpacity(0.4)
@@ -306,7 +324,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   uri:
                       "https://weareraid.notion.site/87468f88c99b427b81ae3e44aeb1f37b?pvs=4"),
               child: Text(
-                '이용약관',
+                '서비스 이용약관',
                 style: s3SubTitle.copyWith(
                   decoration: TextDecoration.underline,
                   color: Colors.white,

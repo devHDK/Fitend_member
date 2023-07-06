@@ -366,7 +366,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
             ),
             labelText: focusNode.hasFocus || contentsController.text.isNotEmpty
                 ? ''
-                : '운동관련 궁금증, 요청사항 등을 형식에 관계없이/자유롭게 입력해주세요 😁 \n\n\n\n\n\n\n\n\n',
+                : '운동관련 궁금증, 요청사항 등을 형식에 관계없이\n\n자유롭게 입력해주세요 😁\n\n\n\n\n\n\n\n\n',
             labelStyle: s2SubTitle.copyWith(
               color: focusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
             ),

@@ -3,6 +3,7 @@ import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/component/schedule_card.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
@@ -31,6 +33,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   DateTime minDate = DateTime(DateTime.now().year);
   DateTime maxDate = DateTime(DateTime.now().year);
   int initListItemCount = 0;
+  int monthCount = 0;
   // int refetchItemCount = 0;
   int todayLocation = 0;
   bool initial = true;
@@ -54,7 +57,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         .paginate(startDate: DataUtils.getDate(fifteenDaysAgo))
         .then((value) {
       Future.delayed(const Duration(milliseconds: 200), () {
-        todayLocation += 130 * 14 + 130 * initListItemCount;
+        todayLocation +=
+            130 * 14 + (130 * initListItemCount) + (monthCount * 34);
 
         if (controller.hasClients) {
           controller.jumpTo(
@@ -103,16 +107,27 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           startDate: minDate, fetchMore: true, isUpScrolling: true);
 
       double previousOffset = controller.offset;
-      int temp = 0;
+      int tempListCount = 0;
+      int tempMonthCount = 0;
 
       scheduleListGlobal.map((element) {
         if (element.workouts!.length > 1) {
-          temp += element.workouts!.length - 1;
+          tempListCount += element.workouts!.length - 1;
+        }
+
+        if (element.startDate.day == 1) {
+          tempMonthCount += 1;
         }
       });
-      controller.jumpTo(previousOffset + (130.0 * 31 + 130 * temp));
+      controller.jumpTo(
+        previousOffset +
+            (130.0 * 31 + 130 * tempListCount) +
+            (34 * tempMonthCount),
+      );
 
-      todayLocation += (130 * 31) + (130 * temp); //기존 위치로 이동
+      todayLocation += (130 * 31) +
+          (130 * tempListCount) +
+          (34 * tempMonthCount); //기존 위치로 이동
     } else if (controller.offset > controller.position.maxScrollExtent - 300) {
       //스크롤을 아래로 내렸을때
       provider.paginate(
@@ -159,6 +174,10 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       if (schedules.data![i].workouts!.length >= 2) {
         initListItemCount += schedules.data![i].workouts!.length - 1;
       }
+
+      if (schedules.data![i].startDate.day == 1) {
+        monthCount += 1;
+      }
     }
 
     return WillPopScope(
@@ -170,6 +189,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             setState(() {
               todayLocation = 0;
               initListItemCount = 0;
+              monthCount = 0;
             });
             scheduleListGlobal.removeRange(0, scheduleListGlobal.length - 1);
 
@@ -235,43 +255,79 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             final model = schedules.data![index].workouts;
 
             if (model!.isEmpty) {
-              return ScheduleCard(
-                date: schedules.data![index].startDate,
-                selected: false,
-                isComplete: null,
+              return Column(
+                children: [
+                  if (schedules.data![index].startDate.day == 1)
+                    Container(
+                      height: 34,
+                      color: DARK_GRAY_COLOR,
+                      child: Center(
+                        child: Text(
+                          DateFormat('yyyy년 M월')
+                              .format(schedules.data![index].startDate),
+                          style: h3Headline.copyWith(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ScheduleCard(
+                    date: schedules.data![index].startDate,
+                    selected: false,
+                    isComplete: null,
+                  ),
+                ],
               );
             }
 
             if (model.isNotEmpty) {
               return Column(
-                children: model.mapIndexed(
-                  (seq, e) {
-                    return InkWell(
-                      onTap: () {
-                        if (model[seq].selected!) {
-                          return;
-                        }
-
-                        setState(
-                          () {
-                            for (var e in schedules.data!) {
-                              for (var element in e.workouts!) {
-                                element.selected = false;
-                              }
-                            }
-                            model![seq].selected = true;
-                          },
-                        );
-                      },
-                      child: ScheduleCard.fromModel(
-                        model: e,
-                        date: schedules.data![index].startDate,
-                        isDateVisible: seq == 0 ? true : false,
-                        onNotifyParent: _onChildEvent,
+                children: [
+                  if (schedules.data![index].startDate.day == 1)
+                    Container(
+                      height: 34,
+                      color: DARK_GRAY_COLOR,
+                      child: Center(
+                        child: Text(
+                          DateFormat('yyyy년 M월')
+                              .format(schedules.data![index].startDate),
+                          style: h3Headline.copyWith(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                ).toList(),
+                    ),
+                  ...model.mapIndexed(
+                    (seq, e) {
+                      return InkWell(
+                        onTap: () {
+                          if (model[seq].selected!) {
+                            return;
+                          }
+
+                          setState(
+                            () {
+                              for (var e in schedules.data!) {
+                                for (var element in e.workouts!) {
+                                  element.selected = false;
+                                }
+                              }
+                              model![seq].selected = true;
+                            },
+                          );
+                        },
+                        child: ScheduleCard.fromModel(
+                          model: e,
+                          date: schedules.data![index].startDate,
+                          isDateVisible: seq == 0 ? true : false,
+                          onNotifyParent: _onChildEvent,
+                        ),
+                      );
+                    },
+                  ).toList()
+                ],
               );
             }
           },

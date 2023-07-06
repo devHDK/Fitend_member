@@ -337,7 +337,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       '$s3Url${widget.exercises[exerciseIndex].trainerProfileImage}',
                   width: 36,
                   height: 36,
-                  boxFit: BoxFit.none,
+                  boxFit: BoxFit.cover,
                 ),
               ),
             ),
@@ -358,7 +358,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               width: MediaQuery.of(context).size.width > 600 //테블릿이면
                   ? (MediaQuery.of(context).size.height) * 9 / 16
                   : MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height - 175,
+              height: MediaQuery.of(context).size.width * 16 / 9,
               child: WorkoutVideoPlayer(
                 video: ExerciseVideo(
                     url:

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:fitend_member/common/component/custom_network_image.dart';
+import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -34,6 +37,7 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
   @override
   void dispose() {
     if (mounted) {
+      videoController!.removeListener(() {});
       videoController!.dispose();
     }
     super.dispose();
@@ -47,13 +51,16 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
       videoInit();
       videoController!.setVolume(0);
       videoController!.play();
+      videoController!.setLooping(false);
     }
   }
 
   void videoInit() async {
+    Uri videoPath = Uri.parse(widget.video.url);
+
     currentPosition = const Duration();
-    videoController = VideoPlayerController.network(
-      widget.video.url,
+    videoController = VideoPlayerController.networkUrl(
+      videoPath,
       videoPlayerOptions: VideoPlayerOptions(
         mixWithOthers: true,
       ),
@@ -81,23 +88,45 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
       return const CircularProgressIndicator();
     }
 
+    if (Platform.isAndroid &&
+        videoController!.value.duration > const Duration(seconds: 1) &&
+        videoController!.value.position >
+            (videoController!.value.duration -
+                const Duration(milliseconds: 500)) &&
+        videoController!.value.isPlaying) {
+      videoController!.seekTo(const Duration(milliseconds: 100));
+      videoController!.pause();
+    }
+
     return AspectRatio(
       aspectRatio: videoController!.value.aspectRatio,
       child: Stack(
         children: [
           videoController!.value.isPlaying
               ? VideoPlayer(videoController!)
-              : SizedBox(
-                  height: MediaQuery.of(context).size.height - 175,
-                  child: CustomNetworkImage(
-                    imageUrl: widget.video.thumbnail,
-                    boxFit: BoxFit.fill,
-                    width: MediaQuery.of(context).size.width,
-                    // height: MediaQuery.of(context).size.height - 175,
-                  ),
-                ),
+              : videoController!.value.isPlaying ||
+                      !videoController!.value.isInitialized
+                  ? Container(
+                      color: BACKGROUND_COLOR,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: POINT_COLOR,
+                          backgroundColor: BACKGROUND_COLOR,
+                        ),
+                      ),
+                    )
+                  : SizedBox(
+                      // height: MediaQuery.of(context).size.height - 175,
+                      child: CustomNetworkImage(
+                        imageUrl: widget.video.thumbnail,
+                        boxFit: BoxFit.fill,
+                        width: MediaQuery.of(context).size.width,
+                        // height: MediaQuery.of(context).size.height - 175,
+                      ),
+                    ),
 
-          if (!videoController!.value.isPlaying)
+          if (!videoController!.value.isPlaying &&
+              videoController!.value.isInitialized)
             _Controls(
               onForwarPressed: onForwarPressed,
               onPlayPressed: onPlayPressed,

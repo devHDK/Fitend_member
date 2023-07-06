@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -45,9 +47,16 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
 
   @override
   void dispose() {
+    firstVideoController!.removeListener(firstVideoListener);
     firstVideoController!.dispose();
-    if (widget.videos.length > 1) secondVideoController!.dispose();
-    if (widget.videos.length > 2) thirdVideoController!.dispose();
+    if (widget.videos.length > 1) {
+      secondVideoController!.removeListener(secondVideoListener);
+      secondVideoController!.dispose();
+    }
+    if (widget.videos.length > 2) {
+      thirdVideoController!.removeListener(thirdVideoListener);
+      thirdVideoController!.dispose();
+    }
     super.dispose();
   }
 
@@ -62,8 +71,8 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
 
   void firstVideoInit() async {
     currentPosition = const Duration();
-    firstVideoController = VideoPlayerController.network(
-      widget.videos[0].url,
+    firstVideoController = VideoPlayerController.networkUrl(
+      Uri.parse(widget.videos[0].url),
       videoPlayerOptions: VideoPlayerOptions(
         mixWithOthers: true,
       ),
@@ -76,22 +85,27 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
     firstVideoController!.setVolume(0.0);
 
     // slider 변경
-    firstVideoController!.addListener(
-      () {
-        final currentPosition = firstVideoController!.value.position;
-        setState(() {
-          this.currentPosition = currentPosition;
-        });
-      },
-    );
+
+    firstVideoController!.addListener(firstVideoListener);
 
     setState(() {});
   }
 
+  void firstVideoListener() {
+    if (Platform.isAndroid &&
+        firstVideoController!.value.duration > const Duration(seconds: 1) &&
+        firstVideoController!.value.position >
+            (firstVideoController!.value.duration -
+                const Duration(milliseconds: 500)) &&
+        firstVideoController!.value.isPlaying) {
+      firstVideoController!.seekTo(const Duration(milliseconds: 100));
+    }
+  }
+
   Future<void> secondVideoInit() async {
     //2번째 영상
-    secondVideoController = VideoPlayerController.network(
-      widget.videos[1].url,
+    secondVideoController = VideoPlayerController.networkUrl(
+      Uri.parse(widget.videos[1].url),
       videoPlayerOptions: VideoPlayerOptions(
         mixWithOthers: true,
       ),
@@ -103,12 +117,25 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
 
     secondVideoController!.setLooping(true);
     secondVideoController!.setVolume(0.0);
+
+    secondVideoController!.addListener(secondVideoListener);
+  }
+
+  void secondVideoListener() {
+    if (Platform.isAndroid &&
+        secondVideoController!.value.duration > const Duration(seconds: 1) &&
+        secondVideoController!.value.position >
+            (secondVideoController!.value.duration -
+                const Duration(milliseconds: 500)) &&
+        secondVideoController!.value.isPlaying) {
+      secondVideoController!.seekTo(const Duration(milliseconds: 100));
+    }
   }
 
   Future<void> thirdVideoInit() async {
     //3번째 영상
-    thirdVideoController = VideoPlayerController.network(
-      widget.videos[2].url,
+    thirdVideoController = VideoPlayerController.networkUrl(
+      Uri.parse(widget.videos[2].url),
       videoPlayerOptions: VideoPlayerOptions(
         mixWithOthers: true,
       ),
@@ -120,6 +147,19 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
 
     thirdVideoController!.setLooping(true);
     thirdVideoController!.setVolume(0.0);
+
+    secondVideoController!.addListener(thirdVideoListener);
+  }
+
+  void thirdVideoListener() {
+    if (Platform.isAndroid &&
+        thirdVideoController!.value.duration > const Duration(seconds: 1) &&
+        thirdVideoController!.value.position >
+            (thirdVideoController!.value.duration -
+                const Duration(milliseconds: 500)) &&
+        thirdVideoController!.value.isPlaying) {
+      thirdVideoController!.seekTo(const Duration(milliseconds: 100));
+    }
   }
 
   @override
@@ -141,21 +181,49 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
             AnimatedOpacity(
               opacity: isPlaying[0] ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 500),
-              child: VideoPlayer(firstVideoController!),
+              child: !firstVideoController!.value.isInitialized
+                  ? Container(
+                      color: BACKGROUND_COLOR,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: POINT_COLOR,
+                          backgroundColor: BACKGROUND_COLOR,
+                        ),
+                      ),
+                    )
+                  : VideoPlayer(firstVideoController!),
             ),
             AnimatedOpacity(
               opacity: isPlaying[1] ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 500),
-              child: widget.videos.length > 1
+              child: widget.videos.length > 1 &&
+                      secondVideoController!.value.isInitialized
                   ? VideoPlayer(secondVideoController!)
-                  : const SizedBox(),
+                  : Container(
+                      color: BACKGROUND_COLOR,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: POINT_COLOR,
+                          backgroundColor: BACKGROUND_COLOR,
+                        ),
+                      ),
+                    ),
             ),
             AnimatedOpacity(
               opacity: isPlaying[2] ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 500),
-              child: widget.videos.length > 2
+              child: widget.videos.length > 2 &&
+                      thirdVideoController!.value.isInitialized
                   ? VideoPlayer(thirdVideoController!)
-                  : const SizedBox(),
+                  : Container(
+                      color: BACKGROUND_COLOR,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: POINT_COLOR,
+                          backgroundColor: BACKGROUND_COLOR,
+                        ),
+                      ),
+                    ),
             ),
 
             if (isShowControlls)

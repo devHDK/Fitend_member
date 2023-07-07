@@ -868,6 +868,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             context: context,
             builder: (context) {
               return DialogWidgets.confirmDialog(
+                dismissable: false,
                 message: '완료하지 않은 운동이 있어요🤓\n 마저 진행할까요?',
                 confirmText: '네, 마저할게요',
                 cancelText: '아니요, 그만할래요',

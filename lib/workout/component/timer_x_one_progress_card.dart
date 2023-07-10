@@ -32,12 +32,27 @@ class TimerXOneProgressCard extends ConsumerStatefulWidget {
       _TimerXOneProgressCardState();
 }
 
-class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
+class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
+    with WidgetsBindingObserver {
   late Timer timer;
   late int totalSeconds = -1;
   bool initial = true;
   bool isRunning = false;
   int count = 0;
+
+  DateTime resumedTime = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  DateTime pausedTime = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  bool isBackground = false;
 
   late AsyncValue<Box> timerBox;
   late AsyncValue<Box> workoutBox;
@@ -45,6 +60,8 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (initial) {
@@ -73,7 +90,54 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard> {
     if (timer.isActive) {
       timer.cancel();
     }
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (isBackground) {
+          resumedTime = DateTime.now();
+          print(
+              "time substraction  ${resumedTime.difference(pausedTime).inSeconds}");
+
+          if (totalSeconds <= resumedTime.difference(pausedTime).inSeconds) {
+            setState(() {
+              totalSeconds = 0;
+              timer.cancel();
+              isRunning = false;
+              isBackground = false;
+            });
+          } else {
+            setState(() {
+              totalSeconds -= resumedTime.difference(pausedTime).inSeconds;
+
+              isBackground = false;
+            });
+
+            onStartPressed();
+          }
+        }
+
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        if (isRunning) {
+          pausedTime = DateTime.now();
+          isBackground = true;
+
+          timer.cancel();
+          isRunning = false;
+        }
+
+        break;
+      case AppLifecycleState.detached:
+        // print("app in detached");
+        break;
+    }
   }
 
   void onStartPressed() {

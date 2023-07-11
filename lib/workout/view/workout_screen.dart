@@ -139,16 +139,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         });
 
         if (!isPoped) {
-          // for (int i = 0; i < widget.exercises.length; i++) {
-          //   if (setInfoCompleteList[i] < maxSetInfoList[i]) {
-          //     setState(() {
-          //       exerciseIndex = i;
-          //     });
-
-          //     break;
-          //   }
-          // }
-
           exerciseIndexBox.whenData((value) async {
             final record = await value.get(widget.workoutScheduleId);
 
@@ -226,255 +216,135 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     modifiedExerciseBox = modifiedBox;
     exerciseIndexBox = processingExerciseIndexBox;
 
-    return Scaffold(
-      backgroundColor: GRAY_COLOR,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 18),
-          child: IconButton(
-            // onPressed: () => GoRouter.of(context).pop('result'),
-            onPressed: () {
-              if (mounted) {
-                DialogWidgets.confirmDialog(
-                  message: '아직 운동이 끝나지 않았어요 😮\n저장 후 뒤로 갈까요?',
-                  confirmText: '네, 저장할게요',
-                  cancelText: '아니요, 리셋할래요',
-                  confirmOnTap: () {
-                    processingExerciseIndexBox.whenData(
-                      (value) {
-                        value.put(widget.workoutScheduleId, exerciseIndex);
-                      },
-                    );
+    return WillPopScope(
+      onWillPop: () async {
+        _screenPop(processingExerciseIndexBox, context, modifiedBox, workoutBox,
+            timerWorkoutBox, timerXMoreBox);
 
-                    int count = 0;
-                    if (mounted) {
-                      Navigator.of(context).popUntil((_) => count++ >= 2);
-                    }
-                  },
-                  cancelOnTap: () {
-                    modifiedBox.whenData(
-                      (value) {
-                        for (var element in widget.exercises) {
-                          value.delete(element.workoutPlanId);
-                        }
-                      },
-                    );
-
-                    workoutBox.whenData(
-                      (value) {
-                        for (var element in widget.exercises) {
-                          value.delete(element.workoutPlanId);
-                        }
-                      },
-                    );
-
-                    timerWorkoutBox.whenData(
-                      (value) {
-                        for (var element in widget.exercises) {
-                          if ((element.trackingFieldId == 3 ||
-                                  element.trackingFieldId == 4) &&
-                              element.setInfo.length == 1) {
-                            value.delete(element.workoutPlanId);
-                          }
-                        }
-                      },
-                    );
-
-                    timerXMoreBox.whenData(
-                      (value) {
-                        for (var element in widget.exercises) {
-                          if ((element.trackingFieldId == 3 ||
-                                  element.trackingFieldId == 4) &&
-                              element.setInfo.length > 1) {
-                            value.delete(element.workoutPlanId);
-                          }
-                        }
-                      },
-                    );
-
-                    workoutResultBox.whenData(
-                      (value) {
-                        for (var element in widget.exercises) {
-                          value.delete(element.workoutPlanId);
-                        }
-                      },
-                    );
-
-                    processingExerciseIndexBox.whenData(
-                      (value) {
-                        value.delete(
-                          widget.workoutScheduleId,
-                        );
-                      },
-                    );
-
-                    int count = 0;
-                    if (mounted) {
-                      Navigator.of(context).popUntil((_) => count++ >= 2);
-                    }
-                  },
-                ).show(context);
-              }
-            },
-            icon: const Icon(Icons.arrow_back),
-            color: Colors.black,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 18.0),
+        return Future.value(true);
+      },
+      child: Scaffold(
+        backgroundColor: GRAY_COLOR,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 18),
             child: IconButton(
-              iconSize: 36,
+              // onPressed: () => GoRouter.of(context).pop('result'),
               onPressed: () {
-                onTooltipPressed();
+                if (mounted) {
+                  _screenPop(processingExerciseIndexBox, context, modifiedBox,
+                      workoutBox, timerWorkoutBox, timerXMoreBox);
+                }
               },
-              icon: ClipRRect(
-                borderRadius: BorderRadius.circular(18),
-                child: CustomNetworkImage(
-                  imageUrl:
-                      '$s3Url${widget.exercises[exerciseIndex].trainerProfileImage}',
-                  width: 36,
-                  height: 36,
-                  boxFit: BoxFit.cover,
+              icon: const Icon(Icons.arrow_back),
+              color: Colors.black,
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 18.0),
+              child: IconButton(
+                iconSize: 36,
+                onPressed: () {
+                  onTooltipPressed();
+                },
+                icon: ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: CustomNetworkImage(
+                    imageUrl:
+                        '$s3Url${widget.exercises[exerciseIndex].trainerProfileImage}',
+                    width: 36,
+                    height: 36,
+                    boxFit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-      extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          Positioned(
-            // left: 0.0,
-            right: MediaQuery.of(context).size.width > 600 //테블릿이면
-                ? (MediaQuery.of(context).size.width -
-                        (MediaQuery.of(context).size.height) * 9 / 16) /
-                    2
-                : 0,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width > 600 //테블릿이면
-                  ? (MediaQuery.of(context).size.height) * 9 / 16
-                  : MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width * 16 / 9,
-              child: WorkoutVideoPlayer(
-                video: ExerciseVideo(
-                    url:
-                        '$s3Url${widget.exercises[exerciseIndex].videos.first.url}',
-                    index: widget.exercises[exerciseIndex].videos.first.index,
-                    thumbnail:
-                        '$s3Url${widget.exercises[exerciseIndex].videos.first.thumbnail}'),
+          ],
+        ),
+        extendBodyBehindAppBar: true,
+        body: Stack(
+          children: [
+            Positioned(
+              // left: 0.0,
+              right: MediaQuery.of(context).size.width > 600 //테블릿이면
+                  ? (MediaQuery.of(context).size.width -
+                          (MediaQuery.of(context).size.height) * 9 / 16) /
+                      2
+                  : 0,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width > 600 //테블릿이면
+                    ? (MediaQuery.of(context).size.height) * 9 / 16
+                    : MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.width * 16 / 9,
+                child: WorkoutVideoPlayer(
+                  video: ExerciseVideo(
+                      url:
+                          '$s3Url${widget.exercises[exerciseIndex].videos.first.url}',
+                      index: widget.exercises[exerciseIndex].videos.first.index,
+                      thumbnail:
+                          '$s3Url${widget.exercises[exerciseIndex].videos.first.thumbnail}'),
+                ),
               ),
             ),
-          ),
-          if (isTooltipVisible)
-            _ShowTip(
-              size: size,
-              widget: widget,
-              exerciseIndex: exerciseIndex,
-            ),
-          AnimatedPositioned(
-            bottom: 0.0,
-            curve: Curves.ease,
-            duration: const Duration(milliseconds: 300),
-            top: isSwipeUp ? size.height - 315 : size.height - 195,
-            child: GestureDetector(
-              onVerticalDragEnd: (details) {
-                if (details.velocity.pixelsPerSecond.direction < 0) {
-                  setState(() {
-                    isSwipeUp = true;
-                  });
-                } else {
-                  setState(() {
-                    isSwipeUp = false;
-                  });
-                }
-              },
-              child: CustomDraggableBottomSheet(
-                isSwipeUp: isSwipeUp,
-                content: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 28),
-                  child: Column(
-                    children: [
-                      if (modifiedExercises[exerciseIndex].trackingFieldId ==
-                              1 ||
-                          modifiedExercises[exerciseIndex].trackingFieldId == 2)
-                        WeightWrepsProgressCard(
-                          exercise: modifiedExercises[exerciseIndex],
-                          setInfoIndex: setInfoCompleteList[exerciseIndex],
-                          updateSeinfoTap: modifiedExercises[exerciseIndex]
-                                      .trackingFieldId ==
-                                  1
-                              ? () {
-                                  // weight X reps
+            if (isTooltipVisible)
+              _ShowTip(
+                size: size,
+                widget: widget,
+                exerciseIndex: exerciseIndex,
+              ),
+            AnimatedPositioned(
+              bottom: 0.0,
+              curve: Curves.ease,
+              duration: const Duration(milliseconds: 300),
+              top: isSwipeUp ? size.height - 315 : size.height - 195,
+              child: GestureDetector(
+                onVerticalDragEnd: (details) {
+                  if (details.velocity.pixelsPerSecond.direction < 0) {
+                    setState(() {
+                      isSwipeUp = true;
+                    });
+                  } else {
+                    setState(() {
+                      isSwipeUp = false;
+                    });
+                  }
+                },
+                child: CustomDraggableBottomSheet(
+                  isSwipeUp: isSwipeUp,
+                  content: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 28),
+                    child: Column(
+                      children: [
+                        if (modifiedExercises[exerciseIndex].trackingFieldId ==
+                                1 ||
+                            modifiedExercises[exerciseIndex].trackingFieldId ==
+                                2)
+                          WeightWrepsProgressCard(
+                            exercise: modifiedExercises[exerciseIndex],
+                            setInfoIndex: setInfoCompleteList[exerciseIndex],
+                            updateSeinfoTap: modifiedExercises[exerciseIndex]
+                                        .trackingFieldId ==
+                                    1
+                                ? () {
+                                    // weight X reps
 
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) =>
-                                        RepsXWeightSetinfoDialog(
-                                      initialReps:
-                                          modifiedExercises[exerciseIndex]
-                                              .setInfo[setInfoCompleteList[
-                                                  exerciseIndex]]
-                                              .reps!,
-                                      initialWeight:
-                                          modifiedExercises[exerciseIndex]
-                                              .setInfo[setInfoCompleteList[
-                                                  exerciseIndex]]
-                                              .weight!,
-                                    ),
-                                  ).then(
-                                    (value) {
-                                      SetInfo tempSetInfo = SetInfo(
-                                        index: modifiedExercises[exerciseIndex]
-                                            .setInfo[setInfoCompleteList[
-                                                exerciseIndex]]
-                                            .index,
-                                        reps: int.parse(value['reps']),
-                                        weight: double.parse(value['weight']),
-                                      );
-
-                                      if (mounted) {
-                                        setState(() {
-                                          modifiedExercises[exerciseIndex]
-                                                  .setInfo[
-                                              setInfoCompleteList[
-                                                  exerciseIndex]] = tempSetInfo;
-                                          //     modifiedExercises[exerciseIndex]
-                                          //         .setInfo[setInfoCompleteList[
-                                          //             exerciseIndex]]
-                                          //         .copyWith(
-                                          //             reps: int.parse(
-                                          //                 value['reps']),
-                                          //             weight: double.parse(
-                                          //                 value['weight']));
-                                        });
-                                      }
-
-                                      modifiedBox.whenData(
-                                        (_) async {
-                                          await _.put(
-                                              modifiedExercises[exerciseIndex]
-                                                  .workoutPlanId,
-                                              modifiedExercises[exerciseIndex]);
-                                        },
-                                      );
-                                    },
-                                  );
-                                }
-                              : () {
-                                  // reps
-                                  if (mounted) {
                                     showDialog(
                                       context: context,
-                                      builder: (context) => RepsSetinfoDialog(
+                                      builder: (context) =>
+                                          RepsXWeightSetinfoDialog(
                                         initialReps:
                                             modifiedExercises[exerciseIndex]
                                                 .setInfo[setInfoCompleteList[
                                                     exerciseIndex]]
                                                 .reps!,
+                                        initialWeight:
+                                            modifiedExercises[exerciseIndex]
+                                                .setInfo[setInfoCompleteList[
+                                                    exerciseIndex]]
+                                                .weight!,
                                       ),
                                     ).then(
                                       (value) {
@@ -485,6 +355,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                                       exerciseIndex]]
                                                   .index,
                                           reps: int.parse(value['reps']),
+                                          weight: double.parse(value['weight']),
                                         );
 
                                         if (mounted) {
@@ -494,65 +365,102 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                                     setInfoCompleteList[
                                                         exerciseIndex]] =
                                                 tempSetInfo;
+                                            //     modifiedExercises[exerciseIndex]
+                                            //         .setInfo[setInfoCompleteList[
+                                            //             exerciseIndex]]
+                                            //         .copyWith(
+                                            //             reps: int.parse(
+                                            //                 value['reps']),
+                                            //             weight: double.parse(
+                                            //                 value['weight']));
                                           });
-
-                                          modifiedBox.whenData(
-                                            (_) {
-                                              _.put(
-                                                  modifiedExercises[
-                                                          exerciseIndex]
-                                                      .workoutPlanId,
-                                                  modifiedExercises[
-                                                      exerciseIndex]);
-                                            },
-                                          );
                                         }
+
+                                        modifiedBox.whenData(
+                                          (_) async {
+                                            await _.put(
+                                                modifiedExercises[exerciseIndex]
+                                                    .workoutPlanId,
+                                                modifiedExercises[
+                                                    exerciseIndex]);
+                                          },
+                                        );
                                       },
                                     );
                                   }
-                                },
-                          proccessOnTap: () {
-                            if (exerciseIndex <= maxExcerciseIndex &&
-                                setInfoCompleteList[exerciseIndex] <
-                                    maxSetInfoList[exerciseIndex]) {
-                              _hiveDataControl(workoutBox);
-                            }
+                                : () {
+                                    // reps
+                                    if (mounted) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => RepsSetinfoDialog(
+                                          initialReps:
+                                              modifiedExercises[exerciseIndex]
+                                                  .setInfo[setInfoCompleteList[
+                                                      exerciseIndex]]
+                                                  .reps!,
+                                        ),
+                                      ).then(
+                                        (value) {
+                                          SetInfo tempSetInfo = SetInfo(
+                                            index:
+                                                modifiedExercises[exerciseIndex]
+                                                    .setInfo[
+                                                        setInfoCompleteList[
+                                                            exerciseIndex]]
+                                                    .index,
+                                            reps: int.parse(value['reps']),
+                                          );
 
-                            if (setInfoCompleteList[exerciseIndex] <
-                                maxSetInfoList[exerciseIndex]) {
-                              setState(() {
-                                setInfoCompleteList[exerciseIndex] += 1;
-                              });
-                            }
+                                          if (mounted) {
+                                            setState(() {
+                                              modifiedExercises[exerciseIndex]
+                                                          .setInfo[
+                                                      setInfoCompleteList[
+                                                          exerciseIndex]] =
+                                                  tempSetInfo;
+                                            });
 
-                            //운동 변경
-                            if (setInfoCompleteList[exerciseIndex] ==
-                                    maxSetInfoList[exerciseIndex] &&
-                                exerciseIndex < maxExcerciseIndex) {
-                              //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
-                              setState(() {
-                                exerciseIndex += 1; // 운동 변경
-                                isTooltipVisible = false;
-                                tooltipCount = 0;
-                                onTooltipPressed();
-
-                                processingExerciseIndexBox.whenData(
-                                  (value) {
-                                    value.put(widget.workoutScheduleId,
-                                        exerciseIndex);
+                                            modifiedBox.whenData(
+                                              (_) {
+                                                _.put(
+                                                    modifiedExercises[
+                                                            exerciseIndex]
+                                                        .workoutPlanId,
+                                                    modifiedExercises[
+                                                        exerciseIndex]);
+                                              },
+                                            );
+                                          }
+                                        },
+                                      );
+                                    }
                                   },
-                                );
-                              });
+                            proccessOnTap: () {
+                              if (exerciseIndex <= maxExcerciseIndex &&
+                                  setInfoCompleteList[exerciseIndex] <
+                                      maxSetInfoList[exerciseIndex]) {
+                                _hiveDataControl(workoutBox);
+                              }
 
-                              while (setInfoCompleteList[exerciseIndex] ==
+                              if (setInfoCompleteList[exerciseIndex] <
+                                  maxSetInfoList[exerciseIndex]) {
+                                setState(() {
+                                  setInfoCompleteList[exerciseIndex] += 1;
+                                });
+                              }
+
+                              //운동 변경
+                              if (setInfoCompleteList[exerciseIndex] ==
                                       maxSetInfoList[exerciseIndex] &&
                                   exerciseIndex < maxExcerciseIndex) {
-                                if (exerciseIndex == maxExcerciseIndex) {
-                                  break;
-                                }
-
+                                //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                                 setState(() {
-                                  exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                  exerciseIndex += 1; // 운동 변경
+                                  isTooltipVisible = false;
+                                  tooltipCount = 0;
+                                  onTooltipPressed();
+
                                   processingExerciseIndexBox.whenData(
                                     (value) {
                                       value.put(widget.workoutScheduleId,
@@ -560,120 +468,124 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     },
                                   );
                                 });
-                              }
-                            }
 
-                            if (!workoutFinish) {
-                              _checkLastExercise(
-                                recordRepository: recordRepository,
-                                workoutBox: workoutBox,
-                              ); //끝났는지 체크!
-                            }
-                          },
-                        ),
-                      // Timer X 1set
-                      if ((modifiedExercises[exerciseIndex].trackingFieldId ==
-                                  3 ||
-                              modifiedExercises[exerciseIndex]
-                                      .trackingFieldId ==
-                                  4) &&
-                          modifiedExercises[exerciseIndex].setInfo.length == 1)
-                        TimerXOneProgressCard(
-                          exercise: modifiedExercises[exerciseIndex],
-                          setInfoIndex: setInfoCompleteList[exerciseIndex],
-                          updateSeinfoTap: () {
-                            if (mounted) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => TimerSetinfoDialog(
-                                  initialTime: modifiedExercises[exerciseIndex]
-                                      .setInfo[
-                                          setInfoCompleteList[exerciseIndex]]
-                                      .seconds!,
-                                ),
-                              ).then((value) {
-                                SetInfo tempSetInfo = SetInfo(
-                                  index: modifiedExercises[exerciseIndex]
-                                      .setInfo[
-                                          setInfoCompleteList[exerciseIndex]]
-                                      .index,
-                                  seconds: int.parse(
-                                            value['min'],
-                                          ) *
-                                          60 +
-                                      int.parse(value['sec']),
-                                );
-
-                                if (mounted) {
-                                  setState(
-                                    () {
-                                      modifiedExercises[exerciseIndex].setInfo[
-                                          setInfoCompleteList[
-                                              exerciseIndex]] = tempSetInfo;
-                                    },
-                                  );
-
-                                  modifiedBox.whenData(
-                                    (_) async {
-                                      await _.put(
-                                          modifiedExercises[exerciseIndex]
-                                              .workoutPlanId,
-                                          modifiedExercises[exerciseIndex]);
-                                    },
-                                  );
-                                }
-                              });
-                            }
-                          },
-                          proccessOnTap: () {
-                            timerWorkoutBox.whenData(
-                              (value) {
-                                final record = value.get(widget
-                                    .exercises[exerciseIndex].workoutPlanId);
-                                if (record is SetInfo) {
-                                  workoutBox.whenData((_) {
-                                    _.put(
-                                      modifiedExercises[exerciseIndex]
-                                          .workoutPlanId,
-                                      WorkoutRecordModel(
-                                        workoutPlanId:
-                                            modifiedExercises[exerciseIndex]
-                                                .workoutPlanId,
-                                        setInfo: [record],
-                                      ),
-                                    );
-                                  });
+                                while (setInfoCompleteList[exerciseIndex] ==
+                                        maxSetInfoList[exerciseIndex] &&
+                                    exerciseIndex < maxExcerciseIndex) {
+                                  if (exerciseIndex == maxExcerciseIndex) {
+                                    break;
+                                  }
 
                                   setState(() {
-                                    setInfoCompleteList[exerciseIndex] = 1;
+                                    exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                    processingExerciseIndexBox.whenData(
+                                      (value) {
+                                        value.put(widget.workoutScheduleId,
+                                            exerciseIndex);
+                                      },
+                                    );
                                   });
+                                }
+                              }
 
-                                  if (setInfoCompleteList[exerciseIndex] ==
-                                          maxSetInfoList[exerciseIndex] &&
-                                      exerciseIndex < maxExcerciseIndex) {
-                                    //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
-                                    setState(() {
-                                      exerciseIndex += 1;
-                                      isTooltipVisible = false;
-                                      tooltipCount = 0;
-                                      onTooltipPressed();
+                              if (!workoutFinish) {
+                                _checkLastExercise(
+                                  recordRepository: recordRepository,
+                                  workoutBox: workoutBox,
+                                ); //끝났는지 체크!
+                              }
+                            },
+                          ),
+                        // Timer X 1set
+                        if ((modifiedExercises[exerciseIndex].trackingFieldId ==
+                                    3 ||
+                                modifiedExercises[exerciseIndex]
+                                        .trackingFieldId ==
+                                    4) &&
+                            modifiedExercises[exerciseIndex].setInfo.length ==
+                                1)
+                          TimerXOneProgressCard(
+                            exercise: modifiedExercises[exerciseIndex],
+                            setInfoIndex: setInfoCompleteList[exerciseIndex],
+                            updateSeinfoTap: () {
+                              if (mounted) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => TimerSetinfoDialog(
+                                    initialTime: modifiedExercises[
+                                            exerciseIndex]
+                                        .setInfo[
+                                            setInfoCompleteList[exerciseIndex]]
+                                        .seconds!,
+                                  ),
+                                ).then((value) {
+                                  SetInfo tempSetInfo = SetInfo(
+                                    index: modifiedExercises[exerciseIndex]
+                                        .setInfo[
+                                            setInfoCompleteList[exerciseIndex]]
+                                        .index,
+                                    seconds: int.parse(
+                                              value['min'],
+                                            ) *
+                                            60 +
+                                        int.parse(value['sec']),
+                                  );
 
-                                      processingExerciseIndexBox.whenData(
-                                        (_) {
-                                          _.put(widget.workoutScheduleId,
-                                              exerciseIndex);
-                                        },
+                                  if (mounted) {
+                                    setState(
+                                      () {
+                                        modifiedExercises[exerciseIndex]
+                                                .setInfo[
+                                            setInfoCompleteList[
+                                                exerciseIndex]] = tempSetInfo;
+                                      },
+                                    );
+
+                                    modifiedBox.whenData(
+                                      (_) async {
+                                        await _.put(
+                                            modifiedExercises[exerciseIndex]
+                                                .workoutPlanId,
+                                            modifiedExercises[exerciseIndex]);
+                                      },
+                                    );
+                                  }
+                                });
+                              }
+                            },
+                            proccessOnTap: () {
+                              timerWorkoutBox.whenData(
+                                (value) {
+                                  final record = value.get(widget
+                                      .exercises[exerciseIndex].workoutPlanId);
+                                  if (record is SetInfo) {
+                                    workoutBox.whenData((_) {
+                                      _.put(
+                                        modifiedExercises[exerciseIndex]
+                                            .workoutPlanId,
+                                        WorkoutRecordModel(
+                                          workoutPlanId:
+                                              modifiedExercises[exerciseIndex]
+                                                  .workoutPlanId,
+                                          setInfo: [record],
+                                        ),
                                       );
                                     });
 
-                                    while (setInfoCompleteList[exerciseIndex] ==
+                                    setState(() {
+                                      setInfoCompleteList[exerciseIndex] = 1;
+                                    });
+
+                                    if (setInfoCompleteList[exerciseIndex] ==
                                             maxSetInfoList[exerciseIndex] &&
                                         exerciseIndex < maxExcerciseIndex) {
-                                      if (exerciseIndex == maxExcerciseIndex) {
-                                        break;
-                                      }
+                                      //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                                       setState(() {
-                                        exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                        exerciseIndex += 1;
+                                        isTooltipVisible = false;
+                                        tooltipCount = 0;
+                                        onTooltipPressed();
+
                                         processingExerciseIndexBox.whenData(
                                           (_) {
                                             _.put(widget.workoutScheduleId,
@@ -681,132 +593,137 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                           },
                                         );
                                       });
+
+                                      while (setInfoCompleteList[
+                                                  exerciseIndex] ==
+                                              maxSetInfoList[exerciseIndex] &&
+                                          exerciseIndex < maxExcerciseIndex) {
+                                        if (exerciseIndex ==
+                                            maxExcerciseIndex) {
+                                          break;
+                                        }
+                                        setState(() {
+                                          exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                          processingExerciseIndexBox.whenData(
+                                            (_) {
+                                              _.put(widget.workoutScheduleId,
+                                                  exerciseIndex);
+                                            },
+                                          );
+                                        });
+                                      }
                                     }
-                                  }
 
-                                  if (!workoutFinish) {
-                                    _checkLastExercise(
-                                      recordRepository: recordRepository,
-                                      workoutBox: workoutBox,
-                                    ); //끝났는지 체크!
-                                  }
-                                }
-                              },
-                            );
-                          },
-                        ),
-
-                      // Timer X more
-                      if ((modifiedExercises[exerciseIndex].trackingFieldId ==
-                                  3 ||
-                              modifiedExercises[exerciseIndex]
-                                      .trackingFieldId ==
-                                  4) &&
-                          modifiedExercises[exerciseIndex].setInfo.length > 1)
-                        TimerXMoreProgressCard(
-                          exercise: modifiedExercises[exerciseIndex],
-                          setInfoIndex: setInfoCompleteList[exerciseIndex],
-                          updateSeinfoTap: () {
-                            if (mounted) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => TimerSetinfoDialog(
-                                  initialTime: modifiedExercises[exerciseIndex]
-                                      .setInfo[
-                                          setInfoCompleteList[exerciseIndex]]
-                                      .seconds!,
-                                ),
-                              ).then((value) {
-                                if (mounted) {
-                                  setState(
-                                    () {
-                                      modifiedExercises[exerciseIndex].setInfo[
-                                              setInfoCompleteList[
-                                                  exerciseIndex]] =
-                                          modifiedExercises[exerciseIndex]
-                                              .setInfo[setInfoCompleteList[
-                                                  exerciseIndex]]
-                                              .copyWith(
-                                                seconds: int.parse(
-                                                          value['min'],
-                                                        ) *
-                                                        60 +
-                                                    int.parse(value['sec']),
-                                              );
-                                    },
-                                  );
-
-                                  modifiedBox.whenData(
-                                    (_) async {
-                                      await _.put(
-                                          modifiedExercises[exerciseIndex]
-                                              .workoutPlanId,
-                                          modifiedExercises[exerciseIndex]);
-                                    },
-                                  );
-                                }
-                              });
-                            }
-                          },
-                          proccessOnTap: () {
-                            if (exerciseIndex <= maxExcerciseIndex &&
-                                setInfoCompleteList[exerciseIndex] <
-                                    maxSetInfoList[exerciseIndex]) {
-                              timerXMoreBox.whenData(
-                                (value) {
-                                  final record = value.get(widget
-                                      .exercises[exerciseIndex].workoutPlanId);
-
-                                  if (record != null &&
-                                      record.setInfo.length > 0) {
-                                    workoutRecordBox.whenData(
-                                      (_) {
-                                        _.put(
-                                          modifiedExercises[exerciseIndex]
-                                              .workoutPlanId,
-                                          record,
-                                        );
-                                      },
-                                    );
+                                    if (!workoutFinish) {
+                                      _checkLastExercise(
+                                        recordRepository: recordRepository,
+                                        workoutBox: workoutBox,
+                                      ); //끝났는지 체크!
+                                    }
                                   }
                                 },
                               );
-                            }
+                            },
+                          ),
 
-                            if (setInfoCompleteList[exerciseIndex] <
-                                maxSetInfoList[exerciseIndex]) {
-                              setState(() {
-                                setInfoCompleteList[exerciseIndex] += 1;
-                              });
-                            }
+                        // Timer X more
+                        if ((modifiedExercises[exerciseIndex].trackingFieldId ==
+                                    3 ||
+                                modifiedExercises[exerciseIndex]
+                                        .trackingFieldId ==
+                                    4) &&
+                            modifiedExercises[exerciseIndex].setInfo.length > 1)
+                          TimerXMoreProgressCard(
+                            exercise: modifiedExercises[exerciseIndex],
+                            setInfoIndex: setInfoCompleteList[exerciseIndex],
+                            updateSeinfoTap: () {
+                              if (mounted) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => TimerSetinfoDialog(
+                                    initialTime: modifiedExercises[
+                                            exerciseIndex]
+                                        .setInfo[
+                                            setInfoCompleteList[exerciseIndex]]
+                                        .seconds!,
+                                  ),
+                                ).then((value) {
+                                  if (mounted) {
+                                    setState(
+                                      () {
+                                        modifiedExercises[exerciseIndex]
+                                                    .setInfo[
+                                                setInfoCompleteList[
+                                                    exerciseIndex]] =
+                                            modifiedExercises[exerciseIndex]
+                                                .setInfo[setInfoCompleteList[
+                                                    exerciseIndex]]
+                                                .copyWith(
+                                                  seconds: int.parse(
+                                                            value['min'],
+                                                          ) *
+                                                          60 +
+                                                      int.parse(value['sec']),
+                                                );
+                                      },
+                                    );
 
-                            //운동 변경
-                            if (setInfoCompleteList[exerciseIndex] ==
-                                    maxSetInfoList[exerciseIndex] &&
-                                exerciseIndex < maxExcerciseIndex) {
-                              //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
-                              setState(() {
-                                exerciseIndex += 1;
-                                isTooltipVisible = false;
-                                tooltipCount = 0;
-                                onTooltipPressed();
-                                // 운동 변경
-                                processingExerciseIndexBox.whenData(
+                                    modifiedBox.whenData(
+                                      (_) async {
+                                        await _.put(
+                                            modifiedExercises[exerciseIndex]
+                                                .workoutPlanId,
+                                            modifiedExercises[exerciseIndex]);
+                                      },
+                                    );
+                                  }
+                                });
+                              }
+                            },
+                            proccessOnTap: () {
+                              if (exerciseIndex <= maxExcerciseIndex &&
+                                  setInfoCompleteList[exerciseIndex] <
+                                      maxSetInfoList[exerciseIndex]) {
+                                timerXMoreBox.whenData(
                                   (value) {
-                                    value.put(widget.workoutScheduleId,
-                                        exerciseIndex);
+                                    final record = value.get(widget
+                                        .exercises[exerciseIndex]
+                                        .workoutPlanId);
+
+                                    if (record != null &&
+                                        record.setInfo.length > 0) {
+                                      workoutRecordBox.whenData(
+                                        (_) {
+                                          _.put(
+                                            modifiedExercises[exerciseIndex]
+                                                .workoutPlanId,
+                                            record,
+                                          );
+                                        },
+                                      );
+                                    }
                                   },
                                 );
-                              });
+                              }
 
-                              while (setInfoCompleteList[exerciseIndex] ==
+                              if (setInfoCompleteList[exerciseIndex] <
+                                  maxSetInfoList[exerciseIndex]) {
+                                setState(() {
+                                  setInfoCompleteList[exerciseIndex] += 1;
+                                });
+                              }
+
+                              //운동 변경
+                              if (setInfoCompleteList[exerciseIndex] ==
                                       maxSetInfoList[exerciseIndex] &&
                                   exerciseIndex < maxExcerciseIndex) {
-                                if (exerciseIndex == maxExcerciseIndex) {
-                                  break;
-                                }
+                                //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                                 setState(() {
-                                  exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                  exerciseIndex += 1;
+                                  isTooltipVisible = false;
+                                  tooltipCount = 0;
+                                  onTooltipPressed();
+                                  // 운동 변경
                                   processingExerciseIndexBox.whenData(
                                     (value) {
                                       value.put(widget.workoutScheduleId,
@@ -814,43 +731,148 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     },
                                   );
                                 });
-                              }
-                            }
 
-                            if (!workoutFinish) {
-                              _checkLastExercise(
-                                recordRepository: recordRepository,
-                                workoutBox: workoutBox,
-                              ); //끝났는지 체크!
-                            }
-                          },
-                          resetSet: () {
-                            setState(() {
-                              setInfoCompleteList[exerciseIndex] = 0;
-                            });
-                          },
+                                while (setInfoCompleteList[exerciseIndex] ==
+                                        maxSetInfoList[exerciseIndex] &&
+                                    exerciseIndex < maxExcerciseIndex) {
+                                  if (exerciseIndex == maxExcerciseIndex) {
+                                    break;
+                                  }
+                                  setState(() {
+                                    exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+                                    processingExerciseIndexBox.whenData(
+                                      (value) {
+                                        value.put(widget.workoutScheduleId,
+                                            exerciseIndex);
+                                      },
+                                    );
+                                  });
+                                }
+                              }
+
+                              if (!workoutFinish) {
+                                _checkLastExercise(
+                                  recordRepository: recordRepository,
+                                  workoutBox: workoutBox,
+                                ); //끝났는지 체크!
+                              }
+                            },
+                            resetSet: () {
+                              setState(() {
+                                setInfoCompleteList[exerciseIndex] = 0;
+                              });
+                            },
+                          ),
+                        const SizedBox(
+                          height: 18,
                         ),
-                      const SizedBox(
-                        height: 18,
-                      ),
-                      if (isSwipeUp)
-                        _bottomButtons(
-                          workoutBox,
-                          modifiedBox,
-                          timerWorkoutBox,
-                          timerXMoreBox,
-                          processingExerciseIndexBox,
-                          recordRepository,
-                        ),
-                    ],
+                        if (isSwipeUp)
+                          _bottomButtons(
+                            workoutBox,
+                            modifiedBox,
+                            timerWorkoutBox,
+                            timerXMoreBox,
+                            processingExerciseIndexBox,
+                            recordRepository,
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  void _screenPop(
+      AsyncValue<Box<dynamic>> processingExerciseIndexBox,
+      BuildContext context,
+      AsyncValue<Box<dynamic>> modifiedBox,
+      AsyncValue<Box<dynamic>> workoutBox,
+      AsyncValue<Box<dynamic>> timerWorkoutBox,
+      AsyncValue<Box<dynamic>> timerXMoreBox) {
+    DialogWidgets.confirmDialog(
+      message: '아직 운동이 끝나지 않았어요 😮\n저장 후 뒤로 갈까요?',
+      confirmText: '네, 저장할게요',
+      cancelText: '아니요, 리셋할래요',
+      confirmOnTap: () {
+        processingExerciseIndexBox.whenData(
+          (value) {
+            value.put(widget.workoutScheduleId, exerciseIndex);
+          },
+        );
+
+        int count = 0;
+        if (mounted) {
+          Navigator.of(context).popUntil((_) => count++ >= 2);
+        }
+      },
+      cancelOnTap: () {
+        modifiedBox.whenData(
+          (value) {
+            for (var element in widget.exercises) {
+              value.delete(element.workoutPlanId);
+            }
+          },
+        );
+
+        workoutBox.whenData(
+          (value) {
+            for (var element in widget.exercises) {
+              value.delete(element.workoutPlanId);
+            }
+          },
+        );
+
+        timerWorkoutBox.whenData(
+          (value) {
+            for (var element in widget.exercises) {
+              if ((element.trackingFieldId == 3 ||
+                      element.trackingFieldId == 4) &&
+                  element.setInfo.length == 1) {
+                value.delete(element.workoutPlanId);
+              }
+            }
+          },
+        );
+
+        timerXMoreBox.whenData(
+          (value) {
+            for (var element in widget.exercises) {
+              if ((element.trackingFieldId == 3 ||
+                      element.trackingFieldId == 4) &&
+                  element.setInfo.length > 1) {
+                value.delete(element.workoutPlanId);
+              }
+            }
+          },
+        );
+
+        workoutResultBox.whenData(
+          (value) {
+            for (var element in widget.exercises) {
+              value.delete(element.workoutPlanId);
+            }
+          },
+        );
+
+        processingExerciseIndexBox.whenData(
+          (value) {
+            value.delete(
+              widget.workoutScheduleId,
+            );
+          },
+        );
+
+        int count = 0;
+        if (mounted) {
+          Navigator.of(context).popUntil((_) => count++ >= 2);
+        }
+      },
+    ).show(context);
   }
 
   void _checkLastExercise({
@@ -1109,28 +1131,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     exerciseIndex: exerciseIndex,
                     workout: widget.workout,
                   ),
-
-                  // PageRouteBuilder(
-                  //   transitionDuration: const Duration(milliseconds: 300),
-                  //   pageBuilder: (context, animation, secondaryAnimation) =>
-                  //       WorkoutChangeScreen(
-                  //     exerciseIndex: exerciseIndex,
-                  //     workout: widget.workout,
-                  //   ),
-                  //   transitionsBuilder:
-                  //       (context, animation, secondaryAnimation, child) =>
-                  //           SlideTransition(
-                  //     position: animation.drive(
-                  //       Tween(
-                  //         begin: const Offset(1.0, 0),
-                  //         end: Offset.zero,
-                  //       ).chain(
-                  //         CurveTween(curve: Curves.linearToEaseOut),
-                  //       ),
-                  //     ),
-                  //     child: child,
-                  //   ),
-                  // ),
                 ))
                     .then(
                   (value) {
@@ -1157,27 +1157,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               img: 'asset/img/icon_guide.svg',
               name: '운동 가이드',
               onTap: () {
-                // Navigator.of(context).push(
-                //   PageRouteBuilder(
-                //     transitionDuration: const Duration(milliseconds: 300),
-                //     pageBuilder: (context, animation, secondaryAnimation) =>
-                //         ExerciseScreen(
-                //             exercise: widget.exercises[exerciseIndex]),
-                //     transitionsBuilder:
-                //         (context, animation, secondaryAnimation, child) =>
-                //             SlideTransition(
-                //       position: animation.drive(
-                //         Tween(
-                //           begin: const Offset(1.0, 0),
-                //           end: Offset.zero,
-                //         ).chain(
-                //           CurveTween(curve: Curves.linearToEaseOut),
-                //         ),
-                //       ),
-                //       child: child,
-                //     ),
-                //   ),
-                // );
                 Navigator.of(context).push(CupertinoPageRoute(
                   builder: (context) =>
                       ExerciseScreen(exercise: widget.exercises[exerciseIndex]),

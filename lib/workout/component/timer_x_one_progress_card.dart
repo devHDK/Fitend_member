@@ -119,6 +119,14 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
 
             onStartPressed();
           }
+
+          if (count + resumedTime.difference(pausedTime).inSeconds >= 11) {
+            count = 11;
+          } else {
+            count += resumedTime.difference(pausedTime).inSeconds;
+          }
+
+          setState(() {});
         }
 
         break;

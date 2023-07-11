@@ -37,14 +37,28 @@ class TimerXMoreProgressCard extends ConsumerStatefulWidget {
 }
 
 class _WeightWrepsProgressCardState
-    extends ConsumerState<TimerXMoreProgressCard> {
+    extends ConsumerState<TimerXMoreProgressCard> with WidgetsBindingObserver {
   bool colorChanged = false;
 
-  Timer? timer;
+  late Timer timer;
   late int totalSeconds = -1;
   bool initial = true;
   bool isRunning = false;
   int count = 0;
+
+  DateTime resumedTime = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  DateTime pausedTime = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  bool isBackground = false;
 
   late AsyncValue<Box> workoutBox;
   late AsyncValue<Box> timerXmoreBox;
@@ -53,6 +67,7 @@ class _WeightWrepsProgressCardState
   void initState() {
     super.initState();
 
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
         if (initial) {
@@ -98,11 +113,68 @@ class _WeightWrepsProgressCardState
 
   @override
   void dispose() {
-    if (timer!.isActive) {
-      timer!.cancel();
+    if (timer.isActive) {
+      timer.cancel();
     }
 
+    WidgetsBinding.instance.removeObserver(this);
+
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (isBackground) {
+          resumedTime = DateTime.now();
+          debugPrint(
+              "time substraction ${resumedTime.difference(pausedTime).inSeconds}");
+
+          if (totalSeconds <= resumedTime.difference(pausedTime).inSeconds) {
+            setState(() {
+              totalSeconds = 0;
+              timer.cancel();
+              isRunning = false;
+              isBackground = false;
+            });
+          } else {
+            setState(() {
+              totalSeconds -= resumedTime.difference(pausedTime).inSeconds;
+              isBackground = false;
+            });
+
+            onStartPressed();
+          }
+
+          if (count + resumedTime.difference(pausedTime).inSeconds >= 11) {
+            count = 11;
+          } else {
+            count += resumedTime.difference(pausedTime).inSeconds;
+          }
+
+          setState(() {});
+        }
+
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        if (isRunning) {
+          debugPrint("paused $pausedTime");
+
+          pausedTime = DateTime.now();
+          isBackground = true;
+
+          timer.cancel();
+          isRunning = false;
+        }
+
+        break;
+      case AppLifecycleState.detached:
+        // print("app in detached");
+        break;
+    }
   }
 
   @override
@@ -110,8 +182,8 @@ class _WeightWrepsProgressCardState
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.setInfoIndex != widget.setInfoIndex) {
-      if (timer!.isActive) {
-        timer!.cancel();
+      if (timer.isActive) {
+        timer.cancel();
         isRunning = false;
         count = 0;
       }
@@ -141,8 +213,8 @@ class _WeightWrepsProgressCardState
               totalSeconds = 0;
             });
 
-            if (timer!.isActive) {
-              timer!.cancel();
+            if (timer.isActive) {
+              timer.cancel();
             }
 
             record.setInfo[widget.setInfoIndex] =
@@ -184,7 +256,7 @@ class _WeightWrepsProgressCardState
   }
 
   void onPausePressed() {
-    timer!.cancel();
+    timer.cancel();
     setState(() {
       isRunning = false;
     });

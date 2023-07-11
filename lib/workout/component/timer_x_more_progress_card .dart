@@ -161,8 +161,6 @@ class _WeightWrepsProgressCardState
         break;
       case AppLifecycleState.paused:
         if (isRunning) {
-          debugPrint("paused $pausedTime");
-
           pausedTime = DateTime.now();
           isBackground = true;
 

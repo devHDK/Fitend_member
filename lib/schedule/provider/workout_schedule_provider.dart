@@ -97,7 +97,7 @@ class WorkoutScheduleStateNotifier
       }
 
       if (state is WorkoutScheduleFetchingMore) {
-        final pState = state as WorkoutScheduleFetchingMore;
+        final pState = state as WorkoutScheduleModel;
         if (isUpScrolling) {
           state = WorkoutScheduleModel(data: <WorkoutData>[
             ...tempWorkoutList,

@@ -25,8 +25,6 @@ final getMeProvider =
 });
 
 Future<Map<String, dynamic>> getStoreVersionInfo() async {
-  print('version Check');
-
   final packageInfo = await PackageInfo.fromPlatform();
   final version = packageInfo.version;
   final storeVersion = await checkUpdatable(version);

@@ -128,10 +128,12 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       todayLocation += (130 * 31) +
           (130 * tempListCount) +
           (34 * tempMonthCount); //기존 위치로 이동
-    } else if (controller.offset > controller.position.maxScrollExtent - 300) {
+    } else if (controller.offset > controller.position.maxScrollExtent - 100) {
       //스크롤을 아래로 내렸을때
-      provider.paginate(
-          startDate: maxDate, fetchMore: true, isDownScrolling: true);
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        provider.paginate(
+            startDate: maxDate, fetchMore: true, isDownScrolling: true);
+      });
     }
   }
 
@@ -157,14 +159,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     }
 
     var schedules = state as WorkoutScheduleModel;
+    minDate =
+        schedules.data!.first.startDate.subtract(const Duration(days: 31));
+    maxDate = schedules.data!.last.startDate.add(const Duration(days: 1));
+    print('maxDate : $maxDate');
 
-    if (scheduleListGlobal.length < schedules.data!.length) {
-      scheduleListGlobal = schedules.data!;
-    }
-
-    minDate = schedules.data![0].startDate.subtract(const Duration(days: 31));
-    maxDate = schedules.data![schedules.data!.length - 1].startDate
-        .add(const Duration(days: 1));
+    // if (scheduleListGlobal.length < schedules.data!.length) {
+    scheduleListGlobal = schedules.data!;
+    // }
 
     for (int i = 0; i < schedules.data!.length; i++) {
       if (i > 13) {

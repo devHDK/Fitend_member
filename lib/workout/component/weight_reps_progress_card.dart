@@ -251,7 +251,7 @@ class _WeightWrepsProgressCardState
                         barrierDismissible: false,
                         context: context,
                         builder: (context) => DialogWidgets.errorDialog(
-                          message: '먼저 운동을 진행해 주세요 🏋🏻',
+                          message: '먼저 운동을 진행해주세요 🏋🏻',
                           confirmText: '확인',
                           confirmOnTap: () => context.pop(),
                         ),

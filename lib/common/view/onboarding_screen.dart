@@ -3,6 +3,7 @@ import 'package:fitend_member/common/layout/default_layout.dart';
 import 'package:fitend_member/flavors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   static String get routeName => 'onboard';
@@ -13,10 +14,25 @@ class OnBoardingScreen extends StatefulWidget {
 }
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
+  PackageInfo? packageInfo;
+  String? version;
+
   @override
   void initState() {
     super.initState();
+    // getStoreVersionInfo();
   }
+
+  // void getStoreVersionInfo() async {
+  //   packageInfo = await PackageInfo.fromPlatform();
+  //   version = packageInfo!.version;
+  //   await Future.wait([
+  //     checkUpdatable(version!).then((value) {
+  //       print('result $value');
+  //       return Future.value(true);
+  //     })
+  //   ]);
+  // }
 
   @override
   Widget build(BuildContext context) {

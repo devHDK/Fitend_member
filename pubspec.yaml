@@ -78,6 +78,10 @@ dependencies:
   table_calendar: ^3.0.9
   auto_size_text: ^3.0.0
   flutter_svg: ^2.0.7
+  pub_semver: ^2.1.4
+  html: ^0.15.4
+  
+
 
 
 dev_dependencies:

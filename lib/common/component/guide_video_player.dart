@@ -35,14 +35,14 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
 
     firstVideoInit();
 
+    firstVideoController!.play();
+
     if (widget.videos.length > 1) {
       secondVideoInit();
     }
     if (widget.videos.length > 2) {
       thirdVideoInit();
     }
-
-    firstVideoController!.play();
   }
 
   @override

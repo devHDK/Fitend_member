@@ -162,7 +162,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     minDate =
         schedules.data!.first.startDate.subtract(const Duration(days: 31));
     maxDate = schedules.data!.last.startDate.add(const Duration(days: 1));
-    print('maxDate : $maxDate');
 
     // if (scheduleListGlobal.length < schedules.data!.length) {
     scheduleListGlobal = schedules.data!;

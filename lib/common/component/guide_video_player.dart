@@ -191,14 +191,20 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                         ),
                       ),
                     )
-                  : VideoPlayer(firstVideoController!),
+                  : Container(
+                      color: BACKGROUND_COLOR,
+                      child: VideoPlayer(firstVideoController!),
+                    ),
             ),
             AnimatedOpacity(
               opacity: isPlaying[1] ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 500),
               child: widget.videos.length > 1 &&
                       secondVideoController!.value.isInitialized
-                  ? VideoPlayer(secondVideoController!)
+                  ? Container(
+                      color: BACKGROUND_COLOR,
+                      child: VideoPlayer(secondVideoController!),
+                    )
                   : Container(
                       color: BACKGROUND_COLOR,
                       child: const Center(

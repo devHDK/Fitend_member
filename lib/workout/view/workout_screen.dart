@@ -358,7 +358,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               width: MediaQuery.of(context).size.width > 600 //테블릿이면
                   ? (MediaQuery.of(context).size.height) * 9 / 16
                   : MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width * 16 / 9,
+              height: MediaQuery.of(context).size.width > 600
+                  ? MediaQuery.of(context).size.height
+                  : MediaQuery.of(context).size.width * 16 / 9,
               child: WorkoutVideoPlayer(
                 video: ExerciseVideo(
                     url:

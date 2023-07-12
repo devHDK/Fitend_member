@@ -138,6 +138,25 @@ class _WeightWrepsProgressCardState
               isRunning = false;
               isBackground = false;
             });
+
+            timerXmoreBox.whenData(
+              (value) {
+                var record = value.get(widget.exercise.workoutPlanId);
+
+                if (record is WorkoutRecordModel) {
+                  record.setInfo.removeLast();
+                  record.setInfo.add(
+                    SetInfo(
+                      index: record.setInfo.length + 1,
+                      seconds: widget
+                          .exercise.setInfo[record.setInfo.length].seconds,
+                    ),
+                  );
+
+                  value.put(widget.exercise.workoutPlanId, record);
+                }
+              },
+            );
           } else {
             setState(() {
               totalSeconds -= resumedTime.difference(pausedTime).inSeconds;

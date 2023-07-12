@@ -110,10 +110,19 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
               isRunning = false;
               isBackground = false;
             });
+
+            timerBox.whenData((value) {
+              value.put(
+                widget.exercise.workoutPlanId,
+                SetInfo(
+                  index: 1,
+                  seconds: widget.exercise.setInfo[0].seconds!,
+                ),
+              );
+            });
           } else {
             setState(() {
               totalSeconds -= resumedTime.difference(pausedTime).inSeconds;
-
               isBackground = false;
             });
 

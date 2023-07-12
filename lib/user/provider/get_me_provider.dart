@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
+import 'package:fitend_member/common/utils/update_checker.dart';
 import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -9,6 +10,7 @@ import 'package:fitend_member/user/repository/auth_repository.dart';
 import 'package:fitend_member/user/repository/get_me_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 final getMeProvider =
     StateNotifierProvider<GetMeStateNotifier, UserModelBase?>((ref) {
@@ -22,6 +24,21 @@ final getMeProvider =
       storage: storage);
 });
 
+Future<Map<String, dynamic>> getStoreVersionInfo() async {
+  final packageInfo = await PackageInfo.fromPlatform();
+  final version = packageInfo.version;
+  final storeVersion = await checkUpdatable(version);
+
+  return storeVersion;
+
+  // return Future.value(storeVersion);
+}
+
+Future<Map<String, dynamic>?> checkStoreVersion() async {
+  final storeVersion = await getStoreVersionInfo();
+  return storeVersion;
+}
+
 class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   final AuthRepository authRepository;
   final GetMeRepository repository;
@@ -32,8 +49,12 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     required this.repository,
     required this.storage,
   }) : super(UserModelLoading()) {
-    Future.delayed(const Duration(milliseconds: 700), () {
-      getMe();
+    checkStoreVersion().then((storeVersion) {
+      if (storeVersion != null && !storeVersion['needUpdate']) {
+        Future.delayed(const Duration(milliseconds: 700), () {
+          getMe();
+        });
+      } else {}
     });
   }
 

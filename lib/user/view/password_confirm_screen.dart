@@ -143,7 +143,9 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
               child: Text(
                 '다음',
                 style: h6Headline.copyWith(
-                  color: Colors.white,
+                  color: _passwordController.text.length < 8
+                      ? Colors.white.withOpacity(0.5)
+                      : Colors.white,
                 ),
               ),
             ),

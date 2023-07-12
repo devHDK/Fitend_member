@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/guide_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -100,11 +101,12 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       const SizedBox(
                         height: 32,
                       ),
-                      Text(
+                      AutoSizeText(
                         widget.exercise.name,
                         style: h1Headline.copyWith(
                           color: Colors.white,
                         ),
+                        maxLines: 1,
                       ),
                       const SizedBox(
                         height: 32,

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
@@ -51,9 +52,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   }) : super(UserModelLoading()) {
     checkStoreVersion().then((storeVersion) {
       if (storeVersion != null && !storeVersion['needUpdate']) {
-        Future.delayed(const Duration(milliseconds: 700), () {
-          getMe();
-        });
+        getMe();
       } else {}
     });
   }
@@ -69,6 +68,10 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
 
     try {
       final response = await repository.getMe();
+
+      await FirebaseMessaging.instance
+          .subscribeToTopic('user_${response.user.id}');
+
       state = response;
     } on DioError catch (e) {
       if (e.type == DioErrorType.unknown) {
@@ -134,6 +137,12 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   }
 
   Future<void> logout() async {
+    if (state is UserModel) {
+      final pState = state as UserModel;
+      int userId = pState.user.id;
+      await FirebaseMessaging.instance.unsubscribeFromTopic('user_$userId');
+    }
+
     state = null;
     scheduleListGlobal.removeRange(0, scheduleListGlobal.length - 1);
 
@@ -167,7 +176,10 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
         newPassword: newPassword,
       ));
     } on DioError catch (e) {
-      throw DioError(requestOptions: e.requestOptions, response: e.response);
+      throw DioError(
+        requestOptions: e.requestOptions,
+        response: e.response,
+      );
     }
   }
 }

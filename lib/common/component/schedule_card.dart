@@ -176,7 +176,7 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                       Text(
                         widget.subTitle != null ? widget.subTitle! : '',
                         style: s2SubTitle.copyWith(
-                          color: Colors.white,
+                          color: LIGHT_GRAY_COLOR,
                           overflow: TextOverflow.ellipsis,
                         ),
                         maxLines: 1,

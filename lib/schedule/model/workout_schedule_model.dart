@@ -78,14 +78,15 @@ class Workout {
   final int workoutScheduleId;
   bool? selected;
 
-  Workout(
-      {required this.seq,
-      required this.title,
-      required this.subTitle,
-      required this.isComplete,
-      required this.isRecord,
-      required this.workoutScheduleId,
-      this.selected = false});
+  Workout({
+    required this.seq,
+    required this.title,
+    required this.subTitle,
+    required this.isComplete,
+    required this.isRecord,
+    required this.workoutScheduleId,
+    this.selected = false,
+  });
 
   Workout copyWith({
     int? seq,

@@ -86,7 +86,7 @@ class Reservation {
     required this.trainer,
     required this.seq,
     required this.totalSession,
-    this.selected,
+    this.selected = false,
   });
 
   Reservation copyWith({

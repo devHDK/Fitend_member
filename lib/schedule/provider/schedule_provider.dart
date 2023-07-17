@@ -1,4 +1,5 @@
 import 'package:fitend_member/common/data/global_varialbles.dart';
+import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_pagenate_params.dart';
@@ -101,11 +102,12 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
                   reservationResponse.data![index].startDate.day) {
             e.schedule!.addAll(reservationResponse.data![index].reservations);
 
-            // if (e.startDate.year == DateTime.now().year &&
-            //     e.startDate.month == DateTime.now().month &&
-            //     e.startDate.day == DateTime.now().day) {
-            //   e.schedule![0].selected = true;
-            // }
+            if (e.startDate.year == DateTime.now().year &&
+                e.startDate.month == DateTime.now().month &&
+                e.startDate.day == DateTime.now().day &&
+                e.schedule![0] is Reservation) {
+              e.schedule![0].selected = true;
+            }
             index++;
           }
         }
@@ -127,7 +129,8 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
 
             if (e.startDate.year == DateTime.now().year &&
                 e.startDate.month == DateTime.now().month &&
-                e.startDate.day == DateTime.now().day) {
+                e.startDate.day == DateTime.now().day &&
+                e.schedule![0] is Workout) {
               e.schedule![0].selected = true;
             }
             index++;

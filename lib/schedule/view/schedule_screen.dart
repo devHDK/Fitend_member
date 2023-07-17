@@ -1,11 +1,13 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
-import 'package:fitend_member/common/component/schedule_card.dart';
+import 'package:fitend_member/common/component/reservation_schedule_card.dart';
+import 'package:fitend_member/common/component/workout_schedule_card.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
@@ -272,7 +274,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                         ),
                       ),
                     ),
-                  ScheduleCard(
+                  WorkoutScheduleCard(
                     date: schedules.data![index].startDate,
                     selected: false,
                     isComplete: null,
@@ -319,16 +321,16 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                           );
                         },
                         child: e is Workout
-                            ? ScheduleCard.fromModel(
+                            ? WorkoutScheduleCard.fromWorkoutModel(
                                 model: e,
                                 date: schedules.data![index].startDate,
                                 isDateVisible: seq == 0 ? true : false,
                                 onNotifyParent: _onChildEvent,
                               )
-                            : ScheduleCard(
+                            : ReservationScheduleCard.fromReservationModel(
                                 date: schedules.data![index].startDate,
-                                selected: false,
-                                isComplete: null,
+                                isDateVisible: seq == 0 ? true : false,
+                                model: e as Reservation,
                               ), //여기에 reservationCard 추가
                       );
                     },

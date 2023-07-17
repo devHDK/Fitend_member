@@ -12,7 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
-class ScheduleCard extends ConsumerStatefulWidget {
+class WorkoutScheduleCard extends ConsumerStatefulWidget {
   final DateTime? date;
   final String? title;
   final String? subTitle;
@@ -26,7 +26,7 @@ class ScheduleCard extends ConsumerStatefulWidget {
   final Function? onNotifyParent;
   final List<Exercise>? exercises;
 
-  const ScheduleCard({
+  const WorkoutScheduleCard({
     super.key,
     this.date,
     this.title,
@@ -42,14 +42,14 @@ class ScheduleCard extends ConsumerStatefulWidget {
     this.exercises,
   });
 
-  factory ScheduleCard.fromModel({
+  factory WorkoutScheduleCard.fromWorkoutModel({
     DateTime? date,
     required Workout model,
     bool? isDateVisible,
     VoidCallback? onNotifyParent,
     List<Exercise>? exercises,
   }) {
-    return ScheduleCard(
+    return WorkoutScheduleCard(
       date: date,
       title: model.title,
       subTitle: model.subTitle,
@@ -65,10 +65,10 @@ class ScheduleCard extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<ScheduleCard> createState() => _ScheduleCardState();
+  ConsumerState<WorkoutScheduleCard> createState() => _ScheduleCardState();
 }
 
-class _ScheduleCardState extends ConsumerState<ScheduleCard> {
+class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
   DateTime today = DateTime(
     DateTime.now().year,
     DateTime.now().month,
@@ -188,15 +188,9 @@ class _ScheduleCardState extends ConsumerState<ScheduleCard> {
                   const SizedBox(
                     width: 24,
                   )
-                else if (!widget.isComplete! &&
-                    !widget.selected &&
-                    widget.date!.isAfter(today)) //오늘, 오늘 이후 스케줄이 미완료
+                else if (!widget.isComplete!) //오늘, 오늘 이후 스케줄이 미완료
                   SvgPicture.asset('asset/img/icon_check.svg')
-                else if (!widget.isComplete! &&
-                    !widget.selected &&
-                    widget.date!.isBefore(today)) // 어제 스케줄이 미완료
-                  SvgPicture.asset('asset/img/icon_failed.svg')
-                else if (widget.isComplete! && !widget.selected)
+                else if (widget.isComplete!)
                   // Image.asset('asset/img/round_success.png'),
                   SvgPicture.asset(
                       'asset/img/icon_check_complete.svg') // 스케줄이 완료 일때

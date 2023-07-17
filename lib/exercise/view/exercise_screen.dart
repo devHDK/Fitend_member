@@ -75,7 +75,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   width: MediaQuery.of(context).size.width > 600 //테블릿이면
                       ? (MediaQuery.of(context).size.height - 175) * 9 / 16
                       : MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width * 16 / 9,
+                  height: MediaQuery.of(context).size.width > 600
+                      ? MediaQuery.of(context).size.height - 175
+                      : MediaQuery.of(context).size.width * 16 / 9,
                   child: GuideVideoPlayer(
                     videos: widget.exercise.videos
                         .map((e) => ExerciseVideo(

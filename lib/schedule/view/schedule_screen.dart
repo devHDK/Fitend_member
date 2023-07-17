@@ -7,6 +7,9 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/notifications/model/notification_confirm_model.dart';
+import 'package:fitend_member/notifications/repository/notifications_repository.dart';
+import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
@@ -30,6 +33,8 @@ class ScheduleScreen extends ConsumerStatefulWidget {
 
 class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   final ScrollController controller = ScrollController();
+  NotificationConfirmResponse notificationConfirmResponse =
+      NotificationConfirmResponse(isConfirm: false);
 
   DateTime today = DateTime.now();
   DateTime fifteenDaysAgo = DateTime.now().subtract(const Duration(days: 15));
@@ -46,11 +51,19 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     super.initState();
     controller.addListener(listener);
 
+    // _getNotificationState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (initial) {
         _getScheduleInitial();
       }
     });
+  }
+
+  void _getNotificationState() async {
+    notificationConfirmResponse = await ref
+        .read(notificationRepositoryProvider)
+        .getNotificationsConfirm();
   }
 
   void _getScheduleInitial() async {
@@ -182,6 +195,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       }
     }
 
+    _getNotificationState();
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -222,6 +237,21 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             // );
           },
           actions: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) => const NotificationScreen(),
+                    ));
+              },
+              child: !notificationConfirmResponse.isConfirm
+                  ? SvgPicture.asset('asset/img/icon_alarm_on.svg')
+                  : SvgPicture.asset('asset/img/icon_alarm_off.svg'),
+            ),
+            const SizedBox(
+              width: 12,
+            ),
             Padding(
               padding: const EdgeInsets.only(right: 28.0),
               child: GestureDetector(

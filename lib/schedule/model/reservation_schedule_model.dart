@@ -72,6 +72,7 @@ class Reservation {
   final Trainer trainer;
   final int seq;
   final int totalSession;
+  bool? selected;
 
   Reservation({
     required this.id,
@@ -85,6 +86,7 @@ class Reservation {
     required this.trainer,
     required this.seq,
     required this.totalSession,
+    this.selected,
   });
 
   Reservation copyWith({
@@ -99,6 +101,7 @@ class Reservation {
     Trainer? trainer,
     int? seq,
     int? totalSession,
+    bool? selected,
   }) =>
       Reservation(
         id: id ?? this.id,
@@ -112,6 +115,7 @@ class Reservation {
         trainer: trainer ?? this.trainer,
         seq: seq ?? this.seq,
         totalSession: totalSession ?? this.totalSession,
+        selected: selected ?? this.selected,
       );
 
   factory Reservation.fromJson(Map<String, dynamic> json) =>

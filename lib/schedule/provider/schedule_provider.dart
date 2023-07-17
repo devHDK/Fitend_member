@@ -62,15 +62,15 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
         }
       }
 
-      final workoutResponse = await workoutRepository.getWorkoutSchedule(
+      final reservationResponse =
+          await reservationRepository.getReservationSchedule(
         params: SchedulePagenateParams(
           startDate: startDate,
           interval: 30,
         ),
       );
 
-      final reservationResponse =
-          await reservationRepository.getReservationSchedule(
+      final workoutResponse = await workoutRepository.getWorkoutSchedule(
         params: SchedulePagenateParams(
           startDate: startDate,
           interval: 30,
@@ -89,21 +89,23 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
 
       if (reservationResponse.data!.isNotEmpty) {
         for (var e in tempScheduleList) {
-          if (index >= workoutResponse.data!.length) {
+          if (index >= reservationResponse.data!.length) {
             break;
           }
 
-          if (e.startDate.year == workoutResponse.data![index].startDate.year &&
+          if (e.startDate.year ==
+                  reservationResponse.data![index].startDate.year &&
               e.startDate.month ==
-                  workoutResponse.data![index].startDate.month &&
-              e.startDate.day == workoutResponse.data![index].startDate.day) {
+                  reservationResponse.data![index].startDate.month &&
+              e.startDate.day ==
+                  reservationResponse.data![index].startDate.day) {
             e.schedule!.addAll(reservationResponse.data![index].reservations);
 
-            if (e.startDate.year == DateTime.now().year &&
-                e.startDate.month == DateTime.now().month &&
-                e.startDate.day == DateTime.now().day) {
-              e.schedule![0].selected = true;
-            }
+            // if (e.startDate.year == DateTime.now().year &&
+            //     e.startDate.month == DateTime.now().month &&
+            //     e.startDate.day == DateTime.now().day) {
+            //   e.schedule![0].selected = true;
+            // }
             index++;
           }
         }

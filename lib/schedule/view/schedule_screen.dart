@@ -7,6 +7,7 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
+import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -317,12 +318,18 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                             },
                           );
                         },
-                        child: ScheduleCard.fromModel(
-                          model: e,
-                          date: schedules.data![index].startDate,
-                          isDateVisible: seq == 0 ? true : false,
-                          onNotifyParent: _onChildEvent,
-                        ),
+                        child: e is Workout
+                            ? ScheduleCard.fromModel(
+                                model: e,
+                                date: schedules.data![index].startDate,
+                                isDateVisible: seq == 0 ? true : false,
+                                onNotifyParent: _onChildEvent,
+                              )
+                            : ScheduleCard(
+                                date: schedules.data![index].startDate,
+                                selected: false,
+                                isComplete: null,
+                              ), //여기에 reservationCard 추가
                       );
                     },
                   ).toList()

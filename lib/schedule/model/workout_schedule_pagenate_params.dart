@@ -2,26 +2,26 @@ import 'package:json_annotation/json_annotation.dart';
 part 'workout_schedule_pagenate_params.g.dart';
 
 @JsonSerializable()
-class WorkoutSchedulePagenateParams {
+class SchedulePagenateParams {
   final DateTime startDate;
   final int interval;
 
-  WorkoutSchedulePagenateParams({
+  SchedulePagenateParams({
     required this.startDate,
     required this.interval,
   });
 
-  WorkoutSchedulePagenateParams copyWith({
+  SchedulePagenateParams copyWith({
     DateTime? startDate,
     int? interval,
   }) =>
-      WorkoutSchedulePagenateParams(
+      SchedulePagenateParams(
         startDate: startDate ?? this.startDate,
         interval: interval ?? this.interval,
       );
 
-  factory WorkoutSchedulePagenateParams.fromJson(Map<String, dynamic> json) =>
-      _$WorkoutSchedulePagenateParamsFromJson(json);
+  factory SchedulePagenateParams.fromJson(Map<String, dynamic> json) =>
+      _$SchedulePagenateParamsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$WorkoutSchedulePagenateParamsToJson(this);
+  Map<String, dynamic> toJson() => _$SchedulePagenateParamsToJson(this);
 }

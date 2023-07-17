@@ -6,15 +6,15 @@ part of 'workout_schedule_pagenate_params.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-WorkoutSchedulePagenateParams _$WorkoutSchedulePagenateParamsFromJson(
+SchedulePagenateParams _$SchedulePagenateParamsFromJson(
         Map<String, dynamic> json) =>
-    WorkoutSchedulePagenateParams(
+    SchedulePagenateParams(
       startDate: DateTime.parse(json['startDate'] as String),
       interval: json['interval'] as int,
     );
 
-Map<String, dynamic> _$WorkoutSchedulePagenateParamsToJson(
-        WorkoutSchedulePagenateParams instance) =>
+Map<String, dynamic> _$SchedulePagenateParamsToJson(
+        SchedulePagenateParams instance) =>
     <String, dynamic>{
       'startDate': instance.startDate.toIso8601String(),
       'interval': instance.interval,

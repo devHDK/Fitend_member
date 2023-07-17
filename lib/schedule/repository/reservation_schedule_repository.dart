@@ -7,7 +7,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'reservation_schedule_repository.g.dart';
 
-final workoutScheduleRepositoryProvider =
+final reservaionScheduleRepositoryProvider =
     Provider<ReservationScheduleRepository>((ref) {
   final dio = ref.watch(dioProvider);
 

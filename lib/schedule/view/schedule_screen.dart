@@ -6,16 +6,16 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
-import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
-import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
+import 'package:fitend_member/schedule/model/schedule_model.dart';
+import 'package:fitend_member/schedule/provider/schedule_provider.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
@@ -52,8 +52,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
 
   void _getScheduleInitial() async {
     await ref
-        .read(
-            workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
+        .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
         .paginate(startDate: DataUtils.getDate(fifteenDaysAgo))
         .then((value) {
       Future.delayed(const Duration(milliseconds: 200), () {
@@ -68,8 +67,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
 
         bool checkSchedule = false;
 
-        for (var workout in scheduleListGlobal) {
-          if (workout.workouts!.isNotEmpty) {
+        for (var schedule in scheduleListGlobal) {
+          if (schedule.schedule!.isNotEmpty) {
             checkSchedule = true;
             break;
           }
@@ -98,8 +97,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   }
 
   void listener() {
-    final provider = ref.read(
-        workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier);
+    final provider =
+        ref.read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier);
 
     if (controller.offset < controller.position.minScrollExtent + 50) {
       //스크롤을 맨위로 올렸을때
@@ -111,8 +110,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       int tempMonthCount = 0;
 
       scheduleListGlobal.map((element) {
-        if (element.workouts!.length > 1) {
-          tempListCount += element.workouts!.length - 1;
+        if (element.schedule!.length > 1) {
+          tempListCount += element.schedule!.length - 1;
         }
 
         if (element.startDate.day == 1) {
@@ -144,9 +143,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     final state =
-        ref.watch(workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo)));
+        ref.watch(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)));
 
-    if (state is WorkoutScheduleModelLoading) {
+    if (state is ScheduleModelLoading) {
       return const Center(
         child: CircularProgressIndicator(
           color: POINT_COLOR,
@@ -154,29 +153,28 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       );
     }
 
-    if (state is WorkoutScheduleModelError) {
+    if (state is ScheduleModelError) {
       return ErrorDialog(error: state.message);
     }
 
-    var schedules = state as WorkoutScheduleModel;
-    minDate =
-        schedules.data!.first.startDate.subtract(const Duration(days: 31));
-    maxDate = schedules.data!.last.startDate.add(const Duration(days: 1));
+    var schedules = state as ScheduleModel;
+    minDate = schedules.data.first.startDate.subtract(const Duration(days: 31));
+    maxDate = schedules.data.last.startDate.add(const Duration(days: 1));
 
     // if (scheduleListGlobal.length < schedules.data!.length) {
-    scheduleListGlobal = schedules.data!;
+    scheduleListGlobal = schedules.data;
     // }
 
-    for (int i = 0; i < schedules.data!.length; i++) {
+    for (int i = 0; i < schedules.data.length; i++) {
       if (i > 13) {
         break;
       }
 
-      if (schedules.data![i].workouts!.length >= 2) {
-        initListItemCount += schedules.data![i].workouts!.length - 1;
+      if (schedules.data[i].schedule!.length >= 2) {
+        initListItemCount += schedules.data[i].schedule!.length - 1;
       }
 
-      if (schedules.data![i].startDate.day == 1) {
+      if (schedules.data[i].startDate.day == 1) {
         monthCount += 1;
       }
     }
@@ -195,7 +193,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             scheduleListGlobal.removeRange(0, scheduleListGlobal.length - 1);
 
             await ref
-                .read(workoutScheduleProvider(DataUtils.getDate(fifteenDaysAgo))
+                .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo))
                     .notifier)
                 .paginate(
                   startDate: DataUtils.getDate(fifteenDaysAgo),
@@ -242,7 +240,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
         ),
         body: ListView.builder(
           controller: controller,
-          itemCount: schedules.data!.length + 1,
+          itemCount: schedules.data.length + 1,
           itemBuilder: <WorkoutScheduleModel>(context, index) {
             if (index == schedules.data!.length) {
               return const SizedBox(
@@ -253,7 +251,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
               );
             }
 
-            final model = schedules.data![index].workouts;
+            final model = schedules.data![index].schedule;
 
             if (model!.isEmpty) {
               return Column(
@@ -311,7 +309,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                           setState(
                             () {
                               for (var e in schedules.data!) {
-                                for (var element in e.workouts!) {
+                                for (var element in e.schedule!) {
                                   element.selected = false;
                                 }
                               }

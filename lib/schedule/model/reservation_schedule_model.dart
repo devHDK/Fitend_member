@@ -1,8 +1,20 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'reservation_schedule_model.g.dart';
 
+abstract class ReservationScheduleModelBase {}
+
+class ReservationScheduleModelError extends ReservationScheduleModelBase {
+  final String message;
+
+  ReservationScheduleModelError({
+    required this.message,
+  });
+}
+
+class ReservationScheduleModelLoading extends ReservationScheduleModelBase {}
+
 @JsonSerializable()
-class ReservationScheduleModel {
+class ReservationScheduleModel extends ReservationScheduleModelBase {
   final List<ReservationData>? data;
 
   ReservationScheduleModel({

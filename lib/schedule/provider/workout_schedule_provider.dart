@@ -62,6 +62,7 @@ class WorkoutScheduleStateNotifier
       final response = await repository.getWorkoutSchedule(
         params: WorkoutSchedulePagenateParams(
           startDate: startDate,
+          interval: 30,
         ),
       );
 

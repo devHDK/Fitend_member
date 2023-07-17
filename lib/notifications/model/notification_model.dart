@@ -2,8 +2,20 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'notification_model.g.dart';
 
+abstract class NotificationModelBase {}
+
+class NotificationModelError extends NotificationModelBase {
+  final String message;
+
+  NotificationModelError({
+    required this.message,
+  });
+}
+
+class NotificationModelLoading extends NotificationModelBase {}
+
 @JsonSerializable()
-class NotificationModel {
+class NotificationModel extends NotificationModelBase {
   final List<NotificationData> data;
   final int total;
 
@@ -25,6 +37,13 @@ class NotificationModel {
       _$NotificationModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$NotificationModelToJson(this);
+}
+
+class NotificationModelFetchingMore extends NotificationModel {
+  NotificationModelFetchingMore({
+    required super.data,
+    required super.total,
+  });
 }
 
 @JsonSerializable()

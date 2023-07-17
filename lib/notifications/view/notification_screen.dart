@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/notifications/component/notification_cell.dart';
 import 'package:fitend_member/notifications/model/notification_model.dart';
 import 'package:fitend_member/notifications/provider/notification_provider.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,14 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
     controller.addListener(listener);
   }
 
+  @override
+  void dispose() {
+    controller.removeListener(listener);
+    super.dispose();
+  }
+
   void listener() {
+    print(controller.offset);
     final provider = ref.read(notificationProvider.notifier);
 
     if (controller.offset > controller.position.maxScrollExtent - 100 &&
@@ -86,31 +94,9 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: ListView.builder(
+          controller: controller,
           itemBuilder: (context, index) {
-            final tempContents = state.data[index].contents.split('\n');
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 12,
-                ),
-                Text(
-                  tempContents.first,
-                  style: h4Headline.copyWith(color: Colors.white),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  tempContents.last,
-                  style: s2SubTitle.copyWith(color: Colors.white),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-              ],
-            );
+            return NotificationCell(notificationData: state.data[index]);
           },
           itemCount: state.data.length,
         ),

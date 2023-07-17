@@ -46,6 +46,7 @@ Reservation _$ReservationFromJson(Map<String, dynamic> json) => Reservation(
       trainer: Trainer.fromJson(json['trainer'] as Map<String, dynamic>),
       seq: json['seq'] as int,
       totalSession: json['totalSession'] as int,
+      selected: json['selected'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$ReservationToJson(Reservation instance) =>
@@ -61,6 +62,7 @@ Map<String, dynamic> _$ReservationToJson(Reservation instance) =>
       'trainer': instance.trainer,
       'seq': instance.seq,
       'totalSession': instance.totalSession,
+      'selected': instance.selected,
     };
 
 Trainer _$TrainerFromJson(Map<String, dynamic> json) => Trainer(

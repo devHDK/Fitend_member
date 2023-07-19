@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
@@ -69,8 +68,8 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     try {
       final response = await repository.getMe();
 
-      await FirebaseMessaging.instance
-          .subscribeToTopic('user_${response.user.id}');
+      // await FirebaseMessaging.instance
+      //     .subscribeToTopic('user_${response.user.id}');
 
       state = response;
     } on DioError catch (e) {
@@ -140,7 +139,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     if (state is UserModel) {
       final pState = state as UserModel;
       int userId = pState.user.id;
-      await FirebaseMessaging.instance.unsubscribeFromTopic('user_$userId');
+      // await FirebaseMessaging.instance.unsubscribeFromTopic('user_$userId');
     }
 
     state = null;

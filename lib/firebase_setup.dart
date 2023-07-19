@@ -56,7 +56,7 @@ Future<void> getToken() async {
   String? token;
   if (defaultTargetPlatform == TargetPlatform.iOS ||
       defaultTargetPlatform == TargetPlatform.macOS) {
-    token = await FirebaseMessaging.instance.getAPNSToken();
+    token = await FirebaseMessaging.instance.getToken();
   }
   // aos
   else {

@@ -16,6 +16,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'app.dart';
 import 'flavors.dart';
 
@@ -25,9 +26,26 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await setupFlutterNotifications(); // 셋팅 메소드
-  showFlutterNotification(message);
-  // print('Handling a background message ${message.messageId}');
+  test();
+
+  debugPrint('background message ${message.messageId}');
+  debugPrint('background message contentAvailable ${message.contentAvailable}');
+
+  // await setupFlutterNotifications(); // 셋팅 메소드
+  // showFlutterNotification(message);
+}
+
+void test() async {
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  final needUpdateList = pref.getStringList('updateList');
+  if (needUpdateList != null) {
+    needUpdateList.add('Test!!!');
+    debugPrint('needUpdateList background ===>  $needUpdateList');
+    pref.setStringList('updateList', needUpdateList);
+  } else {
+    pref.setStringList('updateList', []);
+    debugPrint('needUpdateList create!!!');
+  }
 }
 
 void showFlutterNotification(RemoteMessage message) async {
@@ -36,11 +54,8 @@ void showFlutterNotification(RemoteMessage message) async {
   AppleNotification? ios = message.notification?.apple;
 
   if (notification != null && (android != null || ios != null) && !kIsWeb) {
-    print(notification.toMap());
-
-    // await ref.read(notificationProvider.notifier).paginate(
-    //       start: 0,
-    //     );
+    test();
+    print(message.toMap());
 
     await flutterLocalNotificationsPlugin.show(
       notification.hashCode,
@@ -79,15 +94,14 @@ void main() async {
   );
 
   await setupFlutterNotifications();
-
   // foreground 수신처리
   FirebaseMessaging.onMessage.listen(showFlutterNotification);
+
   // background 수신처리
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   //hive 세팅
   final appDocumentDirectory = await getApplicationDocumentsDirectory();
-
   await Hive.initFlutter(appDocumentDirectory.path);
 
   Hive.registerAdapter<WorkoutRecordModel>(WorkoutRecordModelAdapter());

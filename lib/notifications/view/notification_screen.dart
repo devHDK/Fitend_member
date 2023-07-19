@@ -7,6 +7,7 @@ import 'package:fitend_member/notifications/provider/notification_provider.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationScreen extends ConsumerStatefulWidget {
   static String get routeName => 'notification';
@@ -20,11 +21,24 @@ class NotificationScreen extends ConsumerStatefulWidget {
 class _NotificationScreenState extends ConsumerState<NotificationScreen> {
   final ScrollController controller = ScrollController();
   late NotificationModel notification;
+  late SharedPreferences prefs;
 
   @override
   void initState() {
     super.initState();
     controller.addListener(listener);
+    initPrefs();
+  }
+
+  void initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+    final needUpdateList = prefs.getStringList('updateList');
+    if (needUpdateList != null) {
+      print('needUpdateList foreground ===>  $needUpdateList');
+      prefs.setStringList('updateList', []);
+    } else {
+      prefs.setStringList('updateList', []);
+    }
   }
 
   @override

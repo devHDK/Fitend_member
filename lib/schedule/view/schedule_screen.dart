@@ -195,7 +195,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       }
     }
 
-    _getNotificationState();
+    // _getNotificationState();
 
     return WillPopScope(
       onWillPop: () async => false,

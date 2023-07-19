@@ -34,16 +34,15 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
   }
 
   void listener() {
-    print(controller.offset);
     final provider = ref.read(notificationProvider.notifier);
 
-    if (controller.offset > controller.position.maxScrollExtent - 100 &&
-        notification.data.length < notification.total) {
-      //스크롤을 아래로 내렸을때
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        provider.paginate(start: notification.data.length - 1, fetchMore: true);
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (controller.offset > controller.position.maxScrollExtent - 100 &&
+          notification.data.length < notification.total) {
+        //스크롤을 아래로 내렸을때
+        provider.paginate(start: notification.data.length, fetchMore: true);
+      }
+    });
   }
 
   @override

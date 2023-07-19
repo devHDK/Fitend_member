@@ -23,9 +23,10 @@ class NotificationStateNotifier extends StateNotifier<NotificationModelBase> {
   Future<void> paginate({
     int? start = 0,
     bool fetchMore = false,
-    bool isRefetch = false,
   }) async {
     try {
+      print('message ====>  pagenate()');
+
       final isLoading = state is NotificationModelLoading;
       final isFetchMore = state is NotificationModelFetchingMore;
 

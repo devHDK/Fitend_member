@@ -332,7 +332,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     1
                                 ? () {
                                     // weight X reps
-
                                     showDialog(
                                       context: context,
                                       builder: (context) =>

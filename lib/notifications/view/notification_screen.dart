@@ -27,7 +27,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
   void initState() {
     super.initState();
     controller.addListener(listener);
-    initPrefs();
+    // initPrefs();
   }
 
   void initPrefs() async {
@@ -72,14 +72,15 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
     }
 
     if (state is NotificationModelError) {
-      showDialog(
-        context: context,
-        builder: (context) => DialogWidgets.errorDialog(
-          message: '데이터를 불러올수 없습니다.',
-          confirmText: '확인',
-          confirmOnTap: () => context.pop(),
-        ),
-      );
+      return Scaffold(
+          backgroundColor: BACKGROUND_COLOR,
+          body: Center(
+            child: DialogWidgets.errorDialog(
+              message: state.message,
+              confirmText: '확인',
+              confirmOnTap: () => context.pop(),
+            ),
+          ));
     }
 
     notification = state as NotificationModel;
@@ -91,7 +92,12 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
         centerTitle: true,
         backgroundColor: BACKGROUND_COLOR,
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () async {
+            await ref
+                .read(notificationProvider.notifier)
+                .putNotification()
+                .then((value) => context.pop());
+          },
           icon: const Padding(
             padding: EdgeInsets.only(left: 10),
             child: Icon(Icons.arrow_back),
@@ -104,15 +110,21 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: ListView.builder(
-          controller: controller,
-          itemBuilder: (context, index) {
-            return NotificationCell(notificationData: state.data[index]);
-          },
-          itemCount: state.data.length,
-        ),
+      body: ListView.builder(
+        controller: controller,
+        itemBuilder: (context, index) {
+          return Container(
+            color: notification.data[index].isConfirm
+                ? BACKGROUND_COLOR
+                : DARK_GRAY_COLOR,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child:
+                  NotificationCell(notificationData: notification.data[index]),
+            ),
+          );
+        },
+        itemCount: state.data.length,
       ),
     );
   }

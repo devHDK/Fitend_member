@@ -11,6 +11,7 @@ import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -161,7 +162,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 labelText: '이메일',
                 autoFocus: false,
                 textInputType: TextInputType.emailAddress,
-                autoFillHint: const [AutofillHints.email],
+                autoFillHint: const [
+                  AutofillHints.username,
+                  AutofillHints.email
+                ],
                 onChanged: (value) {
                   email = value;
                 },
@@ -176,7 +180,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 autoFocus: false,
                 obscureText: true,
                 textInputType: TextInputType.visiblePassword,
-                autoFillHint: const [AutofillHints.password],
+                autoFillHint: const [
+                  AutofillHints.password,
+                ],
                 onChanged: (value) {
                   password = value;
                 },
@@ -204,6 +210,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           passwordTextcontroller.text.isEmpty
                       ? () {}
                       : () async {
+                          TextInput.finishAutofillContext(shouldSave: true);
+
                           if (_idTextController.text.isNotEmpty &&
                               _passwordTextController.text.isNotEmpty) {
                             // _saveEmailAndPassword();

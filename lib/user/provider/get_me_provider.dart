@@ -76,6 +76,13 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
       if (e.type == DioErrorType.unknown) {
         state = UserModelError(error: 'connection error', statusCode: 504);
       }
+
+      if (e.response!.statusCode == 500) {
+        await storage.delete(key: REFRESH_TOKEN_KEY);
+        await storage.delete(key: ACCESS_TOKEN_KEY);
+
+        state = UserModelError(error: 'token error', statusCode: 500);
+      }
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -54,9 +56,6 @@ void showFlutterNotification(RemoteMessage message) async {
   AppleNotification? ios = message.notification?.apple;
 
   if (notification != null && (android != null || ios != null) && !kIsWeb) {
-    test();
-    print(message.toMap());
-
     await flutterLocalNotificationsPlugin.show(
       notification.hashCode,
       notification.title,
@@ -95,8 +94,12 @@ void main() async {
 
   await setupFlutterNotifications();
   // foreground 수신처리
-  FirebaseMessaging.onMessage.listen(showFlutterNotification);
-
+  FirebaseMessaging.onMessage.listen(
+    (message) {
+      if (Platform.isAndroid) showFlutterNotification(message);
+    },
+  );
+  // FirebaseMessaging.onMessage.listen(showFlutterNotification);
   // background 수신처리
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 

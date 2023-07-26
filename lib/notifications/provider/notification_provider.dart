@@ -25,8 +25,6 @@ class NotificationStateNotifier extends StateNotifier<NotificationModelBase> {
     bool fetchMore = false,
   }) async {
     try {
-      print('message ====>  pagenate()');
-
       final isLoading = state is NotificationModelLoading;
       final isFetchMore = state is NotificationModelFetchingMore;
 
@@ -61,6 +59,25 @@ class NotificationStateNotifier extends StateNotifier<NotificationModelBase> {
       }
     } catch (e) {
       state = NotificationModelError(message: '데이터를 불러오지 못했습니다.');
+    }
+  }
+
+  Future<void> putNotification() async {
+    try {
+      await repository.putNotificationsConfirm();
+
+      NotificationModel pstate = state as NotificationModel;
+
+      state = pstate.copyWith(
+        data: pstate.data.map((e) {
+          e = e.copyWith(
+            isConfirm: true,
+          );
+          return e;
+        }).toList(),
+      );
+    } catch (e) {
+      print('putNotification error : $e');
     }
   }
 }

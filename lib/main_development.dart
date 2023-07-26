@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
@@ -39,24 +40,27 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void processPushMessage(RemoteMessage message) async {
   final type = message.data['type'].toString();
   SharedPreferences pref = await SharedPreferences.getInstance();
-
   print(message.data);
   print(message.data['type']);
   print(message.data['type'].toString().contains('workoutSchedule'));
 
   if (type.contains('reservation')) {
-    pref.setBool(needScheduleUpdate, true);
+    await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
   } else {
     switch (DataUtils.getWorkoutPushType(type)) {
       case WorkoutPushType.workoutScheduleCreate:
-        print('workoutScheduleCreate!!!');
+        await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
         break;
       case WorkoutPushType.workoutScheduleDelete:
-        print('workoutScheduleDelete!!!');
+        await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
         break;
       case WorkoutPushType.workoutScheduleChange:
-        print('workoutScheduleChange!!!');
+        String workoutScheduleId = message.data['workoutScheduleId'].toString();
+        await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
+        await SharedPrefUtils.addOneNeedUpdateWorkoutList(
+            pref, workoutScheduleId);
         break;
+
       default:
         break;
     }

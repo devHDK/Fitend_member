@@ -77,9 +77,10 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
         state = UserModelError(error: 'connection error', statusCode: 504);
       }
 
-      if (e.response!.statusCode == 500) {
-        await storage.delete(key: REFRESH_TOKEN_KEY);
-        await storage.delete(key: ACCESS_TOKEN_KEY);
+      if (e.response != null && e.response!.statusCode == 500) {
+        state = null;
+
+        await logout();
 
         state = UserModelError(error: 'token error', statusCode: 500);
       }
@@ -145,14 +146,17 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   }
 
   Future<void> logout() async {
-    if (state is UserModel) {
-      final pState = state as UserModel;
-      int userId = pState.user.id;
-      // await FirebaseMessaging.instance.unsubscribeFromTopic('user_$userId');
-    }
+    // if (state is UserModel) {
+    //   final pState = state as UserModel;
+    //   int userId = pState.user.id;
+    //   await FirebaseMessaging.instance.unsubscribeFromTopic('user_$userId');
+    // }
 
     state = null;
-    scheduleListGlobal.removeRange(0, scheduleListGlobal.length - 1);
+
+    if (scheduleListGlobal.isNotEmpty) {
+      scheduleListGlobal.removeRange(0, scheduleListGlobal.length - 1);
+    }
 
     await Future.wait([
       storage.delete(key: REFRESH_TOKEN_KEY),

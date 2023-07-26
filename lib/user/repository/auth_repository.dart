@@ -22,6 +22,7 @@ class AuthRepository {
     required String password,
     required String platform,
     required String token,
+    required String deviceId,
   }) async {
     final response = await dio.post(
       '/auth/login',
@@ -30,6 +31,7 @@ class AuthRepository {
         'password': password,
         'platform': platform,
         'token': token,
+        'deviceId': deviceId
       },
     );
 

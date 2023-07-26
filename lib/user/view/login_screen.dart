@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -248,13 +249,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             return;
                           }
 
+                          final token =
+                              await FirebaseMessaging.instance.getToken();
+
+                          final deviceId = await _getDeviceInfo();
+
                           final ret = await ref
                               .read(getMeProvider.notifier)
                               .login(
                                 email: idTextcontroller.text,
                                 password: passwordTextcontroller.text,
                                 platform: Platform.isIOS ? 'ios' : 'android',
-                                token: 'string',
+                                token: token!,
+                                deviceId: deviceId,
                               );
 
                           if (ret is UserModelError) {
@@ -362,16 +369,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  void _getDeviceInfo() async {
+  Future<String> _getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo? androidInfo;
+    IosDeviceInfo? iosInfo;
     if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      androidInfo = await deviceInfo.androidInfo;
+
       debugPrint(androidInfo.version.incremental);
       debugPrint(androidInfo.version.sdkInt.toString());
+      debugPrint(androidInfo.serialNumber);
     } else if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      iosInfo = await deviceInfo.iosInfo;
       debugPrint(iosInfo.utsname.machine);
       debugPrint(iosInfo.systemVersion);
+      debugPrint(iosInfo.identifierForVendor!);
     }
+
+    return Platform.isAndroid
+        ? androidInfo!.serialNumber
+        : iosInfo!.identifierForVendor!;
   }
 }

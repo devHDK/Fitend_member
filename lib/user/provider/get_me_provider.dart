@@ -91,6 +91,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     required String password,
     required String platform,
     required String token,
+    required String deviceId,
   }) async {
     try {
       state = UserModelLoading();
@@ -100,6 +101,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
         password: password,
         platform: platform,
         token: token,
+        deviceId: deviceId,
       );
 
       await storage.write(key: REFRESH_TOKEN_KEY, value: resp.refreshToken);

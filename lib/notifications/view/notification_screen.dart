@@ -85,46 +85,56 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
 
     notification = state as NotificationModel;
 
-    return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
+    return WillPopScope(
+      onWillPop: () async {
+        await ref
+            .read(notificationProvider.notifier)
+            .putNotification()
+            .then((value) => context.pop());
+
+        return Future.value(true);
+      },
+      child: Scaffold(
         backgroundColor: BACKGROUND_COLOR,
-        leading: IconButton(
-          onPressed: () async {
-            await ref
-                .read(notificationProvider.notifier)
-                .putNotification()
-                .then((value) => context.pop());
-          },
-          icon: const Padding(
-            padding: EdgeInsets.only(left: 10),
-            child: Icon(Icons.arrow_back),
-          ),
-        ),
-        title: Text(
-          '알림',
-          style: h4Headline.copyWith(
-            color: Colors.white,
-          ),
-        ),
-      ),
-      body: ListView.builder(
-        controller: controller,
-        itemBuilder: (context, index) {
-          return Container(
-            color: notification.data[index].isConfirm
-                ? BACKGROUND_COLOR
-                : DARK_GRAY_COLOR,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28),
-              child:
-                  NotificationCell(notificationData: notification.data[index]),
+        appBar: AppBar(
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: BACKGROUND_COLOR,
+          leading: IconButton(
+            onPressed: () async {
+              await ref
+                  .read(notificationProvider.notifier)
+                  .putNotification()
+                  .then((value) => context.pop());
+            },
+            icon: const Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Icon(Icons.arrow_back),
             ),
-          );
-        },
-        itemCount: state.data.length,
+          ),
+          title: Text(
+            '알림',
+            style: h4Headline.copyWith(
+              color: Colors.white,
+            ),
+          ),
+        ),
+        body: ListView.builder(
+          controller: controller,
+          itemBuilder: (context, index) {
+            return Container(
+              color: notification.data[index].isConfirm
+                  ? BACKGROUND_COLOR
+                  : DARK_GRAY_COLOR,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: NotificationCell(
+                    notificationData: notification.data[index]),
+              ),
+            );
+          },
+          itemCount: state.data.length,
+        ),
       ),
     );
   }

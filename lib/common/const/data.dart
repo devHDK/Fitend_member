@@ -11,6 +11,15 @@ const List<String> weekday = [
   '일',
 ];
 
+enum WorkoutPushType {
+  workoutScheduleCreate,
+  workoutScheduleDelete,
+  workoutScheduleChange,
+}
+
+const needScheduleUpdate = 'scheduleUpdate';
+const needWorkoutUpdateList = 'needWorkoutUpdateList';
+
 const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';
 const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN';
 const DEVICEID = 'DEVICEID';

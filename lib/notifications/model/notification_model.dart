@@ -89,7 +89,12 @@ class NotificationData {
 
 @JsonSerializable()
 class Info {
-  Info();
+  int? workoutScheduleId;
+  int? reservationId;
+  Info({
+    this.workoutScheduleId,
+    this.reservationId,
+  });
 
   factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);
 

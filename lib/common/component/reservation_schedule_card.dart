@@ -44,7 +44,7 @@ class ReservationScheduleCard extends ConsumerStatefulWidget {
       date: date,
       title: '오프라인 레슨이 있어요  💪',
       subTitle:
-          '${DateFormat('HH:mm').format(model.startTime)} ~ ${DateFormat('HH:mm').format(model.endTime)} (${model.endTime.difference(model.startTime).inMinutes}분)',
+          '${DateFormat('HH:mm').format(model.startTime.toUtc().toLocal())} ~ ${DateFormat('HH:mm').format(model.endTime.toUtc().toLocal())} (${model.endTime.difference(model.startTime.toUtc().toLocal()).inMinutes}분)',
       selected: model.selected!,
       isComplete: model.status == 'attendance' ? true : false,
       seq: model.seq,

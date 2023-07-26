@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
@@ -28,25 +30,36 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  test();
-
-  debugPrint('background message ${message.messageId}');
-  debugPrint('background message contentAvailable ${message.contentAvailable}');
+  processPushMessage(message);
 
   // await setupFlutterNotifications(); // 셋팅 메소드
   // showFlutterNotification(message);
 }
 
-void test() async {
+void processPushMessage(RemoteMessage message) async {
+  final type = message.data['type'].toString();
   SharedPreferences pref = await SharedPreferences.getInstance();
-  final needUpdateList = pref.getStringList('updateList');
-  if (needUpdateList != null) {
-    needUpdateList.add('Test!!!');
-    debugPrint('needUpdateList background ===>  $needUpdateList');
-    pref.setStringList('updateList', needUpdateList);
+
+  print(message.data);
+  print(message.data['type']);
+  print(message.data['type'].toString().contains('workoutSchedule'));
+
+  if (type.contains('reservation')) {
+    pref.setBool(needScheduleUpdate, true);
   } else {
-    pref.setStringList('updateList', []);
-    debugPrint('needUpdateList create!!!');
+    switch (DataUtils.getWorkoutPushType(type)) {
+      case WorkoutPushType.workoutScheduleCreate:
+        print('workoutScheduleCreate!!!');
+        break;
+      case WorkoutPushType.workoutScheduleDelete:
+        print('workoutScheduleDelete!!!');
+        break;
+      case WorkoutPushType.workoutScheduleChange:
+        print('workoutScheduleChange!!!');
+        break;
+      default:
+        break;
+    }
   }
 }
 
@@ -96,6 +109,8 @@ void main() async {
   // foreground 수신처리
   FirebaseMessaging.onMessage.listen(
     (message) {
+      processPushMessage(message);
+
       if (Platform.isAndroid) showFlutterNotification(message);
     },
   );

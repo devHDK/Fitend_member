@@ -42,6 +42,12 @@ Map<String, dynamic> _$NotificationDataToJson(NotificationData instance) =>
       'createdAt': instance.createdAt,
     };
 
-Info _$InfoFromJson(Map<String, dynamic> json) => Info();
+Info _$InfoFromJson(Map<String, dynamic> json) => Info(
+      workoutScheduleId: json['workoutScheduleId'] as int?,
+      reservationId: json['reservationId'] as int?,
+    );
 
-Map<String, dynamic> _$InfoToJson(Info instance) => <String, dynamic>{};
+Map<String, dynamic> _$InfoToJson(Info instance) => <String, dynamic>{
+      'workoutScheduleId': instance.workoutScheduleId,
+      'reservationId': instance.reservationId,
+    };

@@ -51,7 +51,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     super.initState();
     controller.addListener(listener);
 
-    // _getNotificationState();
+    _getNotificationState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (initial) {

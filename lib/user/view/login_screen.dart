@@ -388,11 +388,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       } else {
         androidUuid = savedUuid;
       }
+
+      debugPrint('deviceId : $androidUuid');
     } else if (Platform.isIOS) {
       iosInfo = await deviceInfo.iosInfo;
-      debugPrint(iosInfo.utsname.machine);
-      debugPrint(iosInfo.systemVersion);
-      debugPrint(iosInfo.identifierForVendor!);
+      debugPrint('deviceId : ${iosInfo.identifierForVendor!}');
     }
 
     return Platform.isAndroid ? androidUuid! : iosInfo!.identifierForVendor!;

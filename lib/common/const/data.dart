@@ -13,6 +13,7 @@ const List<String> weekday = [
 
 const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';
 const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN';
+const DEVICEID = 'DEVICEID';
 
 final buildEnv = F.appFlavor == Flavor.local
     ? Flavor.local.name

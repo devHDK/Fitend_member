@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   static String get routeName => 'login';
@@ -371,14 +373,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<String> _getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    AndroidDeviceInfo? androidInfo;
     IosDeviceInfo? iosInfo;
-    if (Platform.isAndroid) {
-      androidInfo = await deviceInfo.androidInfo;
+    String? androidUuid;
 
-      debugPrint(androidInfo.version.incremental);
-      debugPrint(androidInfo.version.sdkInt.toString());
-      debugPrint(androidInfo.serialNumber);
+    if (Platform.isAndroid) {
+      final savedUuid =
+          await ref.read(secureStorageProvider).read(key: DEVICEID);
+      if (savedUuid == null) {
+        var uuid = const Uuid();
+        androidUuid = uuid.v1();
+        await ref
+            .read(secureStorageProvider)
+            .write(key: DEVICEID, value: androidUuid);
+      } else {
+        androidUuid = savedUuid;
+      }
     } else if (Platform.isIOS) {
       iosInfo = await deviceInfo.iosInfo;
       debugPrint(iosInfo.utsname.machine);
@@ -386,8 +395,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       debugPrint(iosInfo.identifierForVendor!);
     }
 
-    return Platform.isAndroid
-        ? androidInfo!.serialNumber
-        : iosInfo!.identifierForVendor!;
+    return Platform.isAndroid ? androidUuid! : iosInfo!.identifierForVendor!;
   }
 }

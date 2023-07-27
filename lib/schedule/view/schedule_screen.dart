@@ -14,6 +14,7 @@ import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
+import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class ScheduleScreen extends ConsumerStatefulWidget {
 }
 
 class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
-    with RouteAware {
+    with WidgetsBindingObserver, RouteAware {
   final ScrollController controller = ScrollController();
   NotificationConfirmResponse notificationConfirmResponse =
       NotificationConfirmResponse(isConfirm: false);
@@ -107,14 +108,40 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   @override
-  void didPopNext() {
-    print(didPopNext);
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print('resumed');
+        break;
+      case AppLifecycleState.inactive:
+        print('inactive');
+        break;
+      case AppLifecycleState.paused:
+        print('paused');
+        break;
+      case AppLifecycleState.detached:
+        print('detached');
+        break;
+    }
   }
 
-  void pushNotificationUpdate() async {}
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    print('scheduleScreen didPopNext');
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ref
+        .read(routeObserver)
+        .subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
 
   @override
   void dispose() {
+    ref.read(routeObserver).unsubscribe(this);
     controller.removeListener(listener);
     controller.dispose();
     super.dispose();

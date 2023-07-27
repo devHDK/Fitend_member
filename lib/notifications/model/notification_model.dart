@@ -16,7 +16,7 @@ class NotificationModelLoading extends NotificationModelBase {}
 
 @JsonSerializable()
 class NotificationModel extends NotificationModelBase {
-  final List<NotificationData> data;
+  final List<NotificationData>? data;
   final int total;
 
   NotificationModel({

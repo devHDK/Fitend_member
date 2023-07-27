@@ -63,10 +63,11 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
     final provider = ref.read(notificationProvider.notifier);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (controller.offset > controller.position.maxScrollExtent - 100 &&
-          notification.data.length < notification.total) {
+      if (notification.data != null &&
+          controller.offset > controller.position.maxScrollExtent - 100 &&
+          notification.data!.length < notification.total) {
         //스크롤을 아래로 내렸을때
-        provider.paginate(start: notification.data.length, fetchMore: true);
+        provider.paginate(start: notification.data!.length, fetchMore: true);
       }
     });
   }
@@ -85,14 +86,15 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
 
     if (state is NotificationModelError) {
       return Scaffold(
-          backgroundColor: BACKGROUND_COLOR,
-          body: Center(
-            child: DialogWidgets.errorDialog(
-              message: state.message,
-              confirmText: '확인',
-              confirmOnTap: () => context.pop(),
-            ),
-          ));
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+          child: DialogWidgets.errorDialog(
+            message: state.message,
+            confirmText: '확인',
+            confirmOnTap: () => context.pop(),
+          ),
+        ),
+      );
     }
 
     notification = state as NotificationModel;
@@ -119,10 +121,25 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
       ),
       body: ListView.builder(
         controller: controller,
+        itemCount: state.data!.length + 1,
         itemBuilder: (context, index) {
-          return NotificationCell(notificationData: notification.data[index]);
+          if (index == notification.data!.length &&
+              state.data!.length < state.total) {
+            return const SizedBox(
+              height: 100,
+              child: Center(
+                child: CircularProgressIndicator(color: POINT_COLOR),
+              ),
+            );
+          }
+
+          if (index == notification.data!.length &&
+              state.data!.length == state.total) {
+            return const SizedBox();
+          }
+
+          return NotificationCell(notificationData: notification.data![index]);
         },
-        itemCount: state.data.length,
       ),
     );
   }

@@ -50,8 +50,8 @@ class NotificationStateNotifier extends StateNotifier<NotificationModelBase> {
 
         state = pState.copyWith(
           data: <NotificationData>[
-            ...pState.data,
-            ...response.data,
+            ...pState.data!,
+            ...response.data!,
           ],
         );
       } else {
@@ -64,18 +64,19 @@ class NotificationStateNotifier extends StateNotifier<NotificationModelBase> {
 
   Future<void> putNotification() async {
     try {
-      await repository.putNotificationsConfirm();
-
       NotificationModel pstate = state as NotificationModel;
 
-      state = pstate.copyWith(
-        data: pstate.data.map((e) {
-          e = e.copyWith(
-            isConfirm: true,
-          );
-          return e;
-        }).toList(),
-      );
+      if (pstate.data != null && pstate.data!.isNotEmpty) {
+        await repository.putNotificationsConfirm();
+        state = pstate.copyWith(
+          data: pstate.data!.map((e) {
+            e = e.copyWith(
+              isConfirm: true,
+            );
+            return e;
+          }).toList(),
+        );
+      }
     } catch (e) {
       print('putNotification error : $e');
     }

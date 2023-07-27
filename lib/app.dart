@@ -23,8 +23,8 @@ class _AppState extends ConsumerState<App> {
   void initSharedPref() async {
     //sharedPreferences 세팅
     SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setBool(needScheduleUpdate, false);
-    pref.setStringList(needWorkoutUpdateList, []);
+    await pref.setBool(needScheduleUpdate, false);
+    await pref.setStringList(needWorkoutUpdateList, []);
   }
 
   @override

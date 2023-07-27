@@ -3,7 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefUtils {
   static bool getIsNeedUpdateSchedule(SharedPreferences pref) {
-    final isNeedUpdateSchedule = pref.getBool(needScheduleUpdate);
+    final bool isNeedUpdateSchedule = pref.getBool(needScheduleUpdate) as bool;
+
+    print('isNeedUpdateSchedule :$isNeedUpdateSchedule');
 
     if (isNeedUpdateSchedule == null) return false;
 
@@ -21,6 +23,10 @@ class SharedPrefUtils {
   static Future<void> updateIsNeedUpdateSchedule(
       SharedPreferences pref, bool isNeedUpdate) async {
     await pref.setBool(needScheduleUpdate, isNeedUpdate);
+    final bool? temp = pref.getBool(needScheduleUpdate);
+
+    print('temp :$temp');
+    print('temp type :${temp.runtimeType}');
   }
 
   static Future<void> addOneNeedUpdateWorkoutList(

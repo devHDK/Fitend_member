@@ -144,28 +144,38 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
           ),
         ),
       ),
-      body: ListView.builder(
-        controller: controller,
-        itemCount: state.data!.length + 1,
-        itemBuilder: (context, index) {
-          if (index == notification.data!.length &&
-              state.data!.length < state.total) {
-            return const SizedBox(
-              height: 100,
-              child: Center(
-                child: CircularProgressIndicator(color: POINT_COLOR),
+      body: state.total == 0
+          ? Center(
+              child: Text(
+                '새로운 알림이 없어요 😅',
+                style: s1SubTitle.copyWith(
+                  color: LIGHT_GRAY_COLOR,
+                ),
               ),
-            );
-          }
+            )
+          : ListView.builder(
+              controller: controller,
+              itemCount: state.data!.length + 1,
+              itemBuilder: (context, index) {
+                if (index == notification.data!.length &&
+                    state.data!.length < state.total) {
+                  return const SizedBox(
+                    height: 100,
+                    child: Center(
+                      child: CircularProgressIndicator(color: POINT_COLOR),
+                    ),
+                  );
+                }
 
-          if (index == notification.data!.length &&
-              state.data!.length == state.total) {
-            return const SizedBox();
-          }
+                if (index == notification.data!.length &&
+                    state.data!.length == state.total) {
+                  return const SizedBox();
+                }
 
-          return NotificationCell(notificationData: notification.data![index]);
-        },
-      ),
+                return NotificationCell(
+                    notificationData: notification.data![index]);
+              },
+            ),
     );
   }
 }

@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/firebase_setup.dart';
+import 'package:fitend_member/notifications/model/notification_setting_model.dart';
+import 'package:fitend_member/notifications/repository/notifications_repository.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/password_confirm_screen.dart';
@@ -115,6 +118,41 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 ),
               ),
             ),
+            const Divider(
+              color: DARK_GRAY_COLOR,
+              height: 1,
+            ),
+            _renderLabel(
+                name: '알림 설정',
+                child: SizedBox(
+                  width: 42,
+                  height: 24,
+                  child: Transform.scale(
+                    scale: 0.7,
+                    child: CupertinoSwitch(
+                      activeColor: POINT_COLOR,
+                      trackColor: GRAY_COLOR,
+                      value: state.user.isNotification,
+                      onChanged: (value) async {
+                        try {
+                          ref.read(getMeProvider.notifier).changeIsNotification(
+                              isNotification: !state.user.isNotification);
+
+                          await ref
+                              .read(notificationRepositoryProvider)
+                              .putNotificationsSetting(
+                                  body: NotificationSettingParams(
+                                      isNotification:
+                                          !state.user.isNotification));
+                        } on DioError catch (e) {
+                          debugPrint('$e');
+                          ref.read(getMeProvider.notifier).changeIsNotification(
+                              isNotification: !state.user.isNotification);
+                        }
+                      },
+                    ),
+                  ),
+                )),
             const Divider(
               color: DARK_GRAY_COLOR,
               height: 1,

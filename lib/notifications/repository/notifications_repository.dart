@@ -2,6 +2,7 @@ import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
 import 'package:fitend_member/notifications/model/notification_confirm_model.dart';
 import 'package:fitend_member/notifications/model/notification_model.dart';
+import 'package:fitend_member/notifications/model/notification_setting_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -37,4 +38,12 @@ abstract class NotificationsRepository {
     'accessToken': 'true',
   })
   Future<void> putNotificationsConfirm();
+
+  @PUT('/notifications/settings')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<void> putNotificationsSetting({
+    @Body() required NotificationSettingParams body,
+  });
 }

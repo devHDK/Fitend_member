@@ -194,4 +194,14 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
       );
     }
   }
+
+  changeIsNotification({
+    required bool isNotification,
+  }) {
+    final pstate = state as UserModel;
+
+    state = pstate.copyWith(
+      user: pstate.user.copyWith(isNotification: isNotification),
+    );
+  }
 }

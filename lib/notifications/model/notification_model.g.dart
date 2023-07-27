@@ -8,8 +8,8 @@ part of 'notification_model.dart';
 
 NotificationModel _$NotificationModelFromJson(Map<String, dynamic> json) =>
     NotificationModel(
-      data: (json['data'] as List<dynamic>)
-          .map((e) => NotificationData.fromJson(e as Map<String, dynamic>))
+      data: (json['data'] as List<dynamic>?)
+          ?.map((e) => NotificationData.fromJson(e as Map<String, dynamic>))
           .toList(),
       total: json['total'] as int,
     );

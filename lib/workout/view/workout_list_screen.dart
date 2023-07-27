@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -143,29 +141,14 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     final pref = await ref.read(sharedPrefsProvider);
     final needUpdateList = SharedPrefUtils.getNeedUpdateWorkoutList(pref);
 
-    print('needUpdateList : $needUpdateList');
-    print('workoutScheduleId : ${widget.id}');
-
     if (needUpdateList.contains(widget.id.toString()) &&
-        !workoutModel.isUndefinedOrNull) {
+        workoutModel.exercises.isNotEmpty) {
       ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
       needUpdateList.remove(widget.id.toString());
 
       SharedPrefUtils.updateNeedUpdateWorkoutList(pref, needUpdateList);
     }
   }
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-
-  //   // ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
-  // }
-
-  // @override
-  // void didUpdateWidget(covariant WorkoutListScreen oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  // }
 
   @override
   Widget build(BuildContext context) {

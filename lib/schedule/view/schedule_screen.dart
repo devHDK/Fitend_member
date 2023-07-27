@@ -31,7 +31,8 @@ class ScheduleScreen extends ConsumerStatefulWidget {
   ConsumerState<ScheduleScreen> createState() => _ScheduleScreenState();
 }
 
-class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
+class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
+    with RouteAware {
   final ScrollController controller = ScrollController();
   NotificationConfirmResponse notificationConfirmResponse =
       NotificationConfirmResponse(isConfirm: false);
@@ -104,6 +105,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     });
     initial = false;
   }
+
+  @override
+  void didPopNext() {
+    print(didPopNext);
+  }
+
+  void pushNotificationUpdate() async {}
 
   @override
   void dispose() {
@@ -237,7 +245,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             // );
           },
           actions: [
-            GestureDetector(
+            InkWell(
+              hoverColor: Colors.transparent,
               onTap: () {
                 Navigator.push(
                     context,
@@ -254,7 +263,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 28.0),
-              child: GestureDetector(
+              child: InkWell(
+                hoverColor: Colors.transparent,
                 onTap: () {
                   // context.goNamed(MyPageScreen.routeName);
 

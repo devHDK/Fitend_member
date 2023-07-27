@@ -16,31 +16,34 @@ class NotificationCell extends StatelessWidget {
     var tempContents = notificationData.contents.split('\n');
     final temp = tempContents.last.replaceAll("|", '∙');
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(
-          height: 12,
-        ),
-        Text(
-          tempContents.first,
-          style: h4Headline.copyWith(
-            color: Colors.white,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            height: 12,
           ),
-        ),
-        const SizedBox(
-          height: 4,
-        ),
-        Text(
-          temp,
-          style: s2SubTitle.copyWith(
-            color: LIGHT_GRAY_COLOR,
+          Text(
+            tempContents.first,
+            style: h4Headline.copyWith(
+              color: Colors.white,
+            ),
           ),
-        ),
-        const SizedBox(
-          height: 12,
-        ),
-      ],
+          const SizedBox(
+            height: 4,
+          ),
+          Text(
+            temp,
+            style: s2SubTitle.copyWith(
+              color: LIGHT_GRAY_COLOR,
+            ),
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+        ],
+      ),
     );
   }
 }

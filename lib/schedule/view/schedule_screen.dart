@@ -1,4 +1,3 @@
-import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/component/reservation_schedule_card.dart';
@@ -22,9 +21,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
@@ -36,7 +35,9 @@ class ScheduleScreen extends ConsumerStatefulWidget {
 
 class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     with WidgetsBindingObserver, RouteAware {
-  final ScrollController controller = ScrollController();
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
   NotificationConfirmResponse notificationConfirmResponse =
       NotificationConfirmResponse(isConfirm: false);
 
@@ -44,25 +45,66 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   DateTime fifteenDaysAgo = DateTime.now().subtract(const Duration(days: 15));
   DateTime minDate = DateTime(DateTime.now().year);
   DateTime maxDate = DateTime(DateTime.now().year);
-  int initListItemCount = 0;
-  int monthCount = 0;
-  // int refetchItemCount = 0;
-  int todayLocation = 0;
   bool initial = true;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    controller.addListener(listener);
     WidgetsBinding.instance.addObserver(this);
 
     _getNotificationState();
+    itemPositionsListener.itemPositions.addListener(_handleItemPositionChange);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (initial) {
         _getScheduleInitial();
       }
     });
+  }
+
+  void _handleItemPositionChange() {
+    int maxIndex = itemPositionsListener.itemPositions.value
+        .where((position) => position.itemLeadingEdge > 0)
+        .reduce((maxPosition, currPosition) =>
+            currPosition.itemLeadingEdge > maxPosition.itemLeadingEdge
+                ? currPosition
+                : maxPosition)
+        .index;
+    int minIndex = itemPositionsListener.itemPositions.value
+        .where((position) => position.itemTrailingEdge < 1)
+        .reduce((minPosition, currPosition) =>
+            currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
+                ? currPosition
+                : minPosition)
+        .index;
+
+    int itemCount = scheduleListGlobal.length;
+
+    print('minIndex : $minIndex');
+    print('itemCount : $itemCount');
+    print('maxIndex : $maxIndex');
+
+    if (maxIndex == itemCount - 1) {
+      //스크롤을 아래로 내렸을때
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        ref
+            .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
+            .paginate(
+                startDate: maxDate, fetchMore: true, isDownScrolling: true);
+      });
+    } else if (minIndex == 0 && !isLoading) {
+      isLoading = true;
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        ref
+            .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
+            .paginate(startDate: minDate, fetchMore: true, isUpScrolling: true)
+            .then((value) {
+          itemScrollController.jumpTo(index: 31);
+          isLoading = false;
+        });
+      });
+    }
   }
 
   void _getNotificationState() async {
@@ -76,41 +118,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   void _getScheduleInitial() async {
     await ref
         .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
-        .paginate(startDate: DataUtils.getDate(fifteenDaysAgo))
-        .then((value) {
-      Future.delayed(const Duration(milliseconds: 200), () {
-        todayLocation +=
-            130 * 14 + (130 * initListItemCount) + (monthCount * 34);
+        .paginate(startDate: DataUtils.getDate(fifteenDaysAgo));
 
-        if (controller.hasClients) {
-          controller.jumpTo(
-            todayLocation.toDouble(),
-          );
-        }
-
-        bool checkSchedule = false;
-
-        for (var schedule in scheduleListGlobal) {
-          if (schedule.schedule!.isNotEmpty) {
-            checkSchedule = true;
-            break;
-          }
-        }
-
-        if (!checkSchedule) {
-          showDialog(
-            context: context,
-            builder: (context) => DialogWidgets.errorDialog(
-              message: '회원님을 위한 플랜을 준비 중이에요!\n플랜이 완성되면 알려드릴게요 😊',
-              confirmText: '확인',
-              confirmOnTap: () => context.pop(),
-            ),
-          );
-        }
-
-        initListItemCount = 0;
-      });
-    });
     initial = false;
   }
 
@@ -158,50 +167,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     ref.read(routeObserverProvider).unsubscribe(this);
-    controller.removeListener(listener);
-    controller.dispose();
+    itemPositionsListener.itemPositions
+        .removeListener(_handleItemPositionChange);
     super.dispose();
-  }
-
-  void listener() {
-    final provider =
-        ref.read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier);
-
-    if (controller.offset < controller.position.minScrollExtent + 50) {
-      //스크롤을 맨위로 올렸을때
-      provider.paginate(
-          startDate: minDate, fetchMore: true, isUpScrolling: true);
-
-      double previousOffset = controller.offset;
-      int tempListCount = 0;
-      int tempMonthCount = 0;
-
-      scheduleListGlobal.map((element) {
-        if (element.schedule!.length > 1) {
-          tempListCount += element.schedule!.length - 1;
-        }
-
-        if (element.startDate.day == 1) {
-          tempMonthCount += 1;
-        }
-      });
-
-      controller.jumpTo(
-        previousOffset +
-            (130.0 * 31 + 130 * tempListCount) +
-            (34 * tempMonthCount),
-      );
-
-      todayLocation += (130 * 31) +
-          (130 * tempListCount) +
-          (34 * tempMonthCount); //기존 위치로 이동
-    } else if (controller.offset > controller.position.maxScrollExtent - 100) {
-      //스크롤을 아래로 내렸을때
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        provider.paginate(
-            startDate: maxDate, fetchMore: true, isDownScrolling: true);
-      });
-    }
   }
 
   void _onChildEvent() {
@@ -229,26 +197,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     minDate = schedules.data.first.startDate.subtract(const Duration(days: 31));
     maxDate = schedules.data.last.startDate.add(const Duration(days: 1));
 
-    // if (scheduleListGlobal.length < schedules.data!.length) {
     scheduleListGlobal = schedules.data;
-    // }
-
-    for (int i = 0; i < schedules.data.length; i++) {
-      if (i > 13) {
-        break;
-      }
-
-      if (schedules.data[i].schedule!.length >= 2) {
-        initListItemCount += scheduleListGlobal[i].schedule!.length - 1;
-      }
-      print(initListItemCount);
-
-      if (schedules.data[i].startDate.day == 1) {
-        monthCount += 1;
-      }
-    }
-
-    // _getNotificationState();
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -257,12 +206,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         appBar: LogoAppbar(
           tapLogo: () async {
             await _resetScheduleList();
-
-            // controller.animateTo(
-            //   todayLocation.toDouble(),
-            //   duration: const Duration(milliseconds: 300),
-            //   curve: Curves.ease,
-            // );
           },
           actions: [
             InkWell(
@@ -286,8 +229,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
               child: InkWell(
                 hoverColor: Colors.transparent,
                 onTap: () {
-                  // context.goNamed(MyPageScreen.routeName);
-
                   Navigator.of(context).push(
                     CupertinoPageRoute(
                       builder: (context) => const MyPageScreen(),
@@ -301,11 +242,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
             ),
           ],
         ),
-        body: ListView.builder(
-          controller: controller,
+        body: ScrollablePositionedList.builder(
+          itemScrollController: itemScrollController,
+          itemPositionsListener: itemPositionsListener,
+          initialScrollIndex: 14,
           itemCount: schedules.data.length + 1,
-          itemBuilder: <WorkoutScheduleModel>(context, index) {
-            if (index == schedules.data!.length) {
+          itemBuilder: (context, index) {
+            if (index == schedules.data.length) {
               return const SizedBox(
                 height: 100,
                 child: Center(
@@ -314,19 +257,19 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
               );
             }
 
-            final model = schedules.data![index].schedule;
+            final model = schedules.data[index].schedule;
 
             if (model!.isEmpty) {
               return Column(
                 children: [
-                  if (schedules.data![index].startDate.day == 1)
+                  if (schedules.data[index].startDate.day == 1)
                     Container(
                       height: 34,
                       color: DARK_GRAY_COLOR,
                       child: Center(
                         child: Text(
                           DateFormat('yyyy년 M월')
-                              .format(schedules.data![index].startDate),
+                              .format(schedules.data[index].startDate),
                           style: h3Headline.copyWith(
                             fontSize: 14,
                             color: Colors.white,
@@ -335,7 +278,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                       ),
                     ),
                   WorkoutScheduleCard(
-                    date: schedules.data![index].startDate,
+                    date: schedules.data[index].startDate,
                     selected: false,
                     isComplete: null,
                   ),
@@ -346,14 +289,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
             if (model.isNotEmpty) {
               return Column(
                 children: [
-                  if (schedules.data![index].startDate.day == 1)
+                  if (schedules.data[index].startDate.day == 1)
                     Container(
                       height: 34,
                       color: DARK_GRAY_COLOR,
                       child: Center(
                         child: Text(
                           DateFormat('yyyy년 M월')
-                              .format(schedules.data![index].startDate),
+                              .format(schedules.data[index].startDate),
                           style: h3Headline.copyWith(
                             fontSize: 14,
                             color: Colors.white,
@@ -371,33 +314,34 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
                           setState(
                             () {
-                              for (var e in schedules.data!) {
+                              for (var e in schedules.data) {
                                 for (var element in e.schedule!) {
                                   element.selected = false;
                                 }
                               }
-                              model![seq].selected = true;
+                              model[seq].selected = true;
                             },
                           );
                         },
                         child: e is Workout
                             ? WorkoutScheduleCard.fromWorkoutModel(
                                 model: e,
-                                date: schedules.data![index].startDate,
+                                date: schedules.data[index].startDate,
                                 isDateVisible: seq == 0 ? true : false,
                                 onNotifyParent: _onChildEvent,
                               )
                             : ReservationScheduleCard.fromReservationModel(
-                                date: schedules.data![index].startDate,
+                                date: schedules.data[index].startDate,
                                 isDateVisible: seq == 0 ? true : false,
                                 model: e as Reservation,
-                              ), //여기에 reservationCard 추가
+                              ),
                       );
                     },
                   ).toList()
                 ],
               );
             }
+            return const SizedBox();
           },
         ),
       ),
@@ -405,30 +349,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   Future<void> _resetScheduleList() async {
-    print('initListItemCount $initListItemCount');
-
-    scheduleListGlobal.removeRange(0, scheduleListGlobal.length - 1);
-    todayLocation = 0;
-    initListItemCount = 0;
-    monthCount = 0;
-
     await ref
         .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
         .paginate(
           startDate: DataUtils.getDate(fifteenDaysAgo),
         )
         .then((value) {
-      Future.delayed(const Duration(milliseconds: 200), () {
-        todayLocation += 130 * 14 + 130 * initListItemCount;
-        print(todayLocation);
-        if (controller.hasClients) {
-          controller.jumpTo(
-            todayLocation.toDouble(),
-            // duration: const Duration(milliseconds: 300),
-            // curve: Curves.ease,
-          );
-        }
-      });
+      itemScrollController.jumpTo(index: 14);
     });
   }
 }

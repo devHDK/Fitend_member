@@ -3,13 +3,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefUtils {
   static bool getIsNeedUpdateSchedule(SharedPreferences pref) {
-    final bool isNeedUpdateSchedule = pref.getBool(needScheduleUpdate) as bool;
-
-    print('isNeedUpdateSchedule :$isNeedUpdateSchedule');
+    final bool? isNeedUpdateSchedule = pref.getBool(needScheduleUpdate);
 
     if (isNeedUpdateSchedule == null) return false;
 
     return isNeedUpdateSchedule;
+  }
+
+  static bool getIsNeedUpdateNotification(SharedPreferences pref) {
+    final bool? isNeedUpdateNoti = pref.getBool(needNotificationUpdate);
+
+    if (isNeedUpdateNoti == null) return false;
+
+    return isNeedUpdateNoti;
   }
 
   static List<String> getNeedUpdateWorkoutList(SharedPreferences pref) {
@@ -23,10 +29,11 @@ class SharedPrefUtils {
   static Future<void> updateIsNeedUpdateSchedule(
       SharedPreferences pref, bool isNeedUpdate) async {
     await pref.setBool(needScheduleUpdate, isNeedUpdate);
-    final bool? temp = pref.getBool(needScheduleUpdate);
+  }
 
-    print('temp :$temp');
-    print('temp type :${temp.runtimeType}');
+  static Future<void> updateIsNeedUpdateNotification(
+      SharedPreferences pref, bool isNeedUpdate) async {
+    await pref.setBool(needNotificationUpdate, isNeedUpdate);
   }
 
   static Future<void> addOneNeedUpdateWorkoutList(
@@ -35,11 +42,11 @@ class SharedPrefUtils {
 
     pList.add(workoutScheduleId);
 
-    await pref.setStringList(needScheduleUpdate, pList);
+    await pref.setStringList(needWorkoutUpdateList, pList);
   }
 
   static Future<void> updateNeedUpdateWorkoutList(
       SharedPreferences pref, List<String> updateList) async {
-    await pref.setStringList(needScheduleUpdate, updateList);
+    await pref.setStringList(needWorkoutUpdateList, updateList);
   }
 }

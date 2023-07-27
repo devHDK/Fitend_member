@@ -1,6 +1,8 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/provider/shared_preference_provider.dart';
+import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/notifications/component/notification_cell.dart';
 import 'package:fitend_member/notifications/model/notification_model.dart';
 import 'package:fitend_member/notifications/provider/notification_provider.dart';
@@ -20,7 +22,7 @@ class NotificationScreen extends ConsumerStatefulWidget {
 }
 
 class _NotificationScreenState extends ConsumerState<NotificationScreen>
-    with RouteAware {
+    with RouteAware, WidgetsBindingObserver {
   final ScrollController controller = ScrollController();
   late NotificationModel notification;
   late SharedPreferences prefs;
@@ -30,31 +32,54 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
   void initState() {
     super.initState();
     controller.addListener(listener);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     ref
-        .read(routeObserver)
+        .read(routeObserverProvider)
         .subscribe(this, ModalRoute.of(context) as PageRoute);
   }
 
   @override
   void didPush() async {
-    if (!isDisposed) {
-      await putNotification();
-    }
+    putNotification();
+
+    await ref.read(notificationProvider.notifier).putNotification();
   }
 
   Future<void> putNotification() async {
-    await ref.read(notificationProvider.notifier).putNotification();
+    final pref = await ref.read(sharedPrefsProvider);
+    final isNeedUpdateNoti = SharedPrefUtils.getIsNeedUpdateNotification(pref);
+    print(isNeedUpdateNoti);
+    if (isNeedUpdateNoti) {
+      await ref.read(notificationProvider.notifier).paginate();
+      await SharedPrefUtils.updateIsNeedUpdateNotification(pref, false);
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        await putNotification();
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
   }
 
   @override
   void dispose() async {
     isDisposed = true;
-    ref.read(routeObserver).unsubscribe(this);
+    WidgetsBinding.instance.removeObserver(this);
+    ref.read(routeObserverProvider).unsubscribe(this);
     controller.removeListener(listener);
     super.dispose();
   }

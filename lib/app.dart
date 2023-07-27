@@ -1,8 +1,8 @@
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'flavors.dart';
 
@@ -22,9 +22,13 @@ class _AppState extends ConsumerState<App> {
 
   void initSharedPref() async {
     //sharedPreferences 세팅
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    await pref.setBool(needScheduleUpdate, false);
-    await pref.setStringList(needWorkoutUpdateList, []);
+    final pref = await ref.read(sharedPrefsProvider);
+
+    Future.wait([
+      pref.setBool(needScheduleUpdate, false),
+      pref.setBool(needNotificationUpdate, false),
+      pref.setStringList(needWorkoutUpdateList, []),
+    ]);
   }
 
   @override

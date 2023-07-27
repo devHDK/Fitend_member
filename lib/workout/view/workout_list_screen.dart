@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -10,11 +12,14 @@ import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/common/provider/shared_preference_provider.dart';
+import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
+import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
@@ -42,7 +47,8 @@ class WorkoutListScreen extends ConsumerStatefulWidget {
   ConsumerState<WorkoutListScreen> createState() => _WorkoutListScreenState();
 }
 
-class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
+class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
+    with RouteAware, WidgetsBindingObserver {
   late WorkoutModel workoutModel;
   late AsyncValue<Box> workoutBox;
   late AsyncValue<Box> timerXmoreBox;
@@ -67,6 +73,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     Future.delayed(
       const Duration(
@@ -96,6 +103,56 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ref
+        .read(routeObserverProvider)
+        .subscribe(this, ModalRoute.of(context) as PageRoute);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        await _checkIsNeedUpdateWorkoutDetail();
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+  }
+
+  @override
+  void didPush() async {
+    await _checkIsNeedUpdateWorkoutDetail();
+  }
+
+  Future<void> _checkIsNeedUpdateWorkoutDetail() async {
+    final pref = await ref.read(sharedPrefsProvider);
+    final needUpdateList = SharedPrefUtils.getNeedUpdateWorkoutList(pref);
+
+    print('needUpdateList : $needUpdateList');
+    print('workoutScheduleId : ${widget.id}');
+
+    if (needUpdateList.contains(widget.id.toString()) &&
+        !workoutModel.isUndefinedOrNull) {
+      ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
+      needUpdateList.remove(widget.id.toString());
+
+      SharedPrefUtils.updateNeedUpdateWorkoutList(pref, needUpdateList);
+    }
   }
 
   // @override

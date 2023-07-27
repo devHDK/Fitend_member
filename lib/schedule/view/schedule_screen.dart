@@ -6,6 +6,7 @@ import 'package:fitend_member/common/component/workout_schedule_card.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
+import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/notifications/model/notification_confirm_model.dart';
@@ -24,7 +25,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
@@ -69,6 +69,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     notificationConfirmResponse = await ref
         .read(notificationRepositoryProvider)
         .getNotificationsConfirm();
+
+    setState(() {});
   }
 
   void _getScheduleInitial() async {
@@ -105,6 +107,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
             ),
           );
         }
+
+        initListItemCount = 0;
       });
     });
     initial = false;
@@ -114,7 +118,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        print('resumed');
         await _checkIsNeedUpdate();
         break;
       case AppLifecycleState.inactive:
@@ -133,11 +136,13 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   Future<void> _checkIsNeedUpdate() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    bool isNeedUpdate = SharedPrefUtils.getIsNeedUpdateSchedule(pref);
-    print('isNeedUpdate : $isNeedUpdate');
+    _getNotificationState();
+
+    final pref = await ref.read(sharedPrefsProvider);
+    final isNeedUpdate = SharedPrefUtils.getIsNeedUpdateSchedule(pref);
     if (isNeedUpdate) {
       await _resetScheduleList();
+      await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, false);
     }
   }
 
@@ -145,14 +150,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
     ref
-        .read(routeObserver)
+        .read(routeObserverProvider)
         .subscribe(this, ModalRoute.of(context) as PageRoute);
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    ref.read(routeObserver).unsubscribe(this);
+    ref.read(routeObserverProvider).unsubscribe(this);
     controller.removeListener(listener);
     controller.dispose();
     super.dispose();
@@ -180,6 +185,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
           tempMonthCount += 1;
         }
       });
+
       controller.jumpTo(
         previousOffset +
             (130.0 * 31 + 130 * tempListCount) +
@@ -219,7 +225,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
       return ErrorDialog(error: state.message);
     }
 
-    var schedules = state as ScheduleModel;
+    final schedules = state as ScheduleModel;
     minDate = schedules.data.first.startDate.subtract(const Duration(days: 31));
     maxDate = schedules.data.last.startDate.add(const Duration(days: 1));
 
@@ -233,8 +239,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
       }
 
       if (schedules.data[i].schedule!.length >= 2) {
-        initListItemCount += schedules.data[i].schedule!.length - 1;
+        initListItemCount += scheduleListGlobal[i].schedule!.length - 1;
       }
+      print(initListItemCount);
 
       if (schedules.data[i].startDate.day == 1) {
         monthCount += 1;
@@ -398,12 +405,12 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   Future<void> _resetScheduleList() async {
-    setState(() {
-      todayLocation = 0;
-      initListItemCount = 0;
-      monthCount = 0;
-    });
+    print('initListItemCount $initListItemCount');
+
     scheduleListGlobal.removeRange(0, scheduleListGlobal.length - 1);
+    todayLocation = 0;
+    initListItemCount = 0;
+    monthCount = 0;
 
     await ref
         .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
@@ -413,7 +420,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         .then((value) {
       Future.delayed(const Duration(milliseconds: 200), () {
         todayLocation += 130 * 14 + 130 * initListItemCount;
-
+        print(todayLocation);
         if (controller.hasClients) {
           controller.jumpTo(
             todayLocation.toDouble(),

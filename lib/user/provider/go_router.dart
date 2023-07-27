@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 final routerProvider = Provider<GoRouter>(
   (ref) {
     final auth = ref.read(authProvider);
-    final route = ref.read(routeObserver);
+    final route = ref.read(routeObserverProvider);
 
     return GoRouter(
       observers: [route],
@@ -18,4 +18,4 @@ final routerProvider = Provider<GoRouter>(
   },
 );
 
-final routeObserver = Provider((ref) => RouteObserver<PageRoute>());
+final routeObserverProvider = Provider((ref) => RouteObserver<PageRoute>());

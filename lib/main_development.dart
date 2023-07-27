@@ -40,12 +40,12 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void processPushMessage(RemoteMessage message) async {
   final type = message.data['type'].toString();
   SharedPreferences pref = await SharedPreferences.getInstance();
-  print(message.data);
-  print(message.data['type']);
-  print(message.data['type'].toString().contains('workoutSchedule'));
 
   if (type.contains('reservation')) {
-    await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
+    Future.wait([
+      SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true),
+      SharedPrefUtils.updateIsNeedUpdateNotification(pref, true),
+    ]);
   } else {
     switch (DataUtils.getWorkoutPushType(type)) {
       case WorkoutPushType.workoutScheduleCreate:

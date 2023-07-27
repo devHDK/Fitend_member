@@ -17,8 +17,9 @@ enum WorkoutPushType {
   workoutScheduleChange,
 }
 
-const needScheduleUpdate = 'scheduleUpdate';
-const needWorkoutUpdateList = 'needWorkoutUpdateList';
+String needScheduleUpdate = 'scheduleUpdate';
+String needNotificationUpdate = 'notificationUpdate';
+String needWorkoutUpdateList = 'needWorkoutUpdateList';
 
 const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';
 const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN';
@@ -39,8 +40,8 @@ final localIp = F.appFlavor == Flavor.local && Platform.isAndroid
     : simulatorIp;
 
 // const devIp = 'https://api-dev.fit-end.com/api/mobile';
-// const devIp = 'http://172.30.1.11:4000/api/mobile';
-const devIp = 'http://192.168.0.63:4000/api/mobile';
+const devIp = 'http://172.30.1.66:4000/api/mobile';
+// const devIp = 'http://192.168.0.63:4000/api/mobile';
 const deployIp = 'https://api-prod.fit-end.com/api/mobile';
 
 //s3URL

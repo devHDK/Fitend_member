@@ -81,9 +81,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     int itemCount = scheduleListGlobal.length;
 
-    print('minIndex : $minIndex');
-    print('itemCount : $itemCount');
-    print('maxIndex : $maxIndex');
+    // print('minIndex : $minIndex');
+    // print('itemCount : $itemCount');
+    // print('maxIndex : $maxIndex');
 
     if (maxIndex == itemCount - 1 && !isLoading) {
       //스크롤을 아래로 내렸을때
@@ -153,6 +153,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     final pref = await ref.read(sharedPrefsProvider);
     final isNeedUpdate = SharedPrefUtils.getIsNeedUpdateSchedule(pref);
+    print('isNeedUpdate :$isNeedUpdate');
     if (isNeedUpdate) {
       await _resetScheduleList();
       await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, false);

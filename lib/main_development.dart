@@ -41,11 +41,12 @@ void processPushMessage(RemoteMessage message) async {
   final type = message.data['type'].toString();
   SharedPreferences pref = await SharedPreferences.getInstance();
 
+  print('type: $type');
+  print('message: ${message.toMap()}');
+
   if (type.contains('reservation')) {
-    Future.wait([
-      SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true),
-      SharedPrefUtils.updateIsNeedUpdateNotification(pref, true),
-    ]);
+    await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
+    await SharedPrefUtils.updateIsNeedUpdateNotification(pref, true);
   } else {
     switch (DataUtils.getWorkoutPushType(type)) {
       case WorkoutPushType.workoutScheduleCreate:

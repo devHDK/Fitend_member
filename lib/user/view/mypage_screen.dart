@@ -132,22 +132,22 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                     child: CupertinoSwitch(
                       activeColor: POINT_COLOR,
                       trackColor: GRAY_COLOR,
-                      value: state.user.isNotification,
+                      value: state.user.isNotification!,
                       onChanged: (value) async {
                         try {
                           ref.read(getMeProvider.notifier).changeIsNotification(
-                              isNotification: !state.user.isNotification);
+                              isNotification: !state.user.isNotification!);
 
                           await ref
                               .read(notificationRepositoryProvider)
                               .putNotificationsSetting(
                                   body: NotificationSettingParams(
                                       isNotification:
-                                          !state.user.isNotification));
+                                          !state.user.isNotification!));
                         } on DioError catch (e) {
                           debugPrint('$e');
                           ref.read(getMeProvider.notifier).changeIsNotification(
-                              isNotification: !state.user.isNotification);
+                              isNotification: !state.user.isNotification!);
                         }
                       },
                     ),

@@ -85,22 +85,26 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     print('itemCount : $itemCount');
     print('maxIndex : $maxIndex');
 
-    if (maxIndex == itemCount - 1) {
+    if (maxIndex == itemCount - 1 && !isLoading) {
       //스크롤을 아래로 내렸을때
+      isLoading = true;
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         ref
             .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
             .paginate(
-                startDate: maxDate, fetchMore: true, isDownScrolling: true);
+                startDate: maxDate, fetchMore: true, isDownScrolling: true)
+            .then((value) {
+          isLoading = false;
+        });
       });
-    } else if (minIndex == 0 && !isLoading) {
+    } else if (minIndex == 1 && !isLoading) {
       isLoading = true;
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         ref
             .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
             .paginate(startDate: minDate, fetchMore: true, isUpScrolling: true)
             .then((value) {
-          itemScrollController.jumpTo(index: 31);
+          itemScrollController.jumpTo(index: 32);
           isLoading = false;
         });
       });
@@ -245,10 +249,10 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         body: ScrollablePositionedList.builder(
           itemScrollController: itemScrollController,
           itemPositionsListener: itemPositionsListener,
-          initialScrollIndex: 14,
-          itemCount: schedules.data.length + 1,
+          initialScrollIndex: 15,
+          itemCount: schedules.data.length + 2,
           itemBuilder: (context, index) {
-            if (index == schedules.data.length) {
+            if (index == schedules.data.length + 1 || index == 0) {
               return const SizedBox(
                 height: 100,
                 child: Center(
@@ -257,19 +261,19 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
               );
             }
 
-            final model = schedules.data[index].schedule;
+            final model = schedules.data[index - 1].schedule;
 
             if (model!.isEmpty) {
               return Column(
                 children: [
-                  if (schedules.data[index].startDate.day == 1)
+                  if (schedules.data[index - 1].startDate.day == 1)
                     Container(
                       height: 34,
                       color: DARK_GRAY_COLOR,
                       child: Center(
                         child: Text(
                           DateFormat('yyyy년 M월')
-                              .format(schedules.data[index].startDate),
+                              .format(schedules.data[index - 1].startDate),
                           style: h3Headline.copyWith(
                             fontSize: 14,
                             color: Colors.white,
@@ -278,7 +282,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                       ),
                     ),
                   WorkoutScheduleCard(
-                    date: schedules.data[index].startDate,
+                    date: schedules.data[index - 1].startDate,
                     selected: false,
                     isComplete: null,
                   ),
@@ -289,14 +293,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
             if (model.isNotEmpty) {
               return Column(
                 children: [
-                  if (schedules.data[index].startDate.day == 1)
+                  if (schedules.data[index - 1].startDate.day == 1)
                     Container(
                       height: 34,
                       color: DARK_GRAY_COLOR,
                       child: Center(
                         child: Text(
                           DateFormat('yyyy년 M월')
-                              .format(schedules.data[index].startDate),
+                              .format(schedules.data[index - 1].startDate),
                           style: h3Headline.copyWith(
                             fontSize: 14,
                             color: Colors.white,
@@ -326,12 +330,12 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                         child: e is Workout
                             ? WorkoutScheduleCard.fromWorkoutModel(
                                 model: e,
-                                date: schedules.data[index].startDate,
+                                date: schedules.data[index - 1].startDate,
                                 isDateVisible: seq == 0 ? true : false,
                                 onNotifyParent: _onChildEvent,
                               )
                             : ReservationScheduleCard.fromReservationModel(
-                                date: schedules.data[index].startDate,
+                                date: schedules.data[index - 1].startDate,
                                 isDateVisible: seq == 0 ? true : false,
                                 model: e as Reservation,
                               ),
@@ -355,7 +359,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
           startDate: DataUtils.getDate(fifteenDaysAgo),
         )
         .then((value) {
-      itemScrollController.jumpTo(index: 14);
+      itemScrollController.jumpTo(index: 15);
     });
   }
 }

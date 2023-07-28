@@ -40,7 +40,7 @@ class User {
   final String email;
   final String nickname;
   final String? phone;
-  final bool isNotification;
+  final bool? isNotification;
   final String? deletedAt;
 
   User({
@@ -48,7 +48,7 @@ class User {
     required this.email,
     required this.nickname,
     this.phone,
-    required this.isNotification,
+    this.isNotification = true,
     this.deletedAt,
   });
 

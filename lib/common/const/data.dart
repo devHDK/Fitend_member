@@ -21,15 +21,17 @@ String needScheduleUpdate = 'scheduleUpdate';
 String needNotificationUpdate = 'notificationUpdate';
 String needWorkoutUpdateList = 'needWorkoutUpdateList';
 
-const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';
-const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN';
-const DEVICEID = 'DEVICEID';
-
 final buildEnv = F.appFlavor == Flavor.local
     ? Flavor.local.name
     : F.appFlavor == Flavor.development
         ? Flavor.development.name
         : Flavor.production.name;
+
+final ACCESS_TOKEN_KEY =
+    F.appFlavor == Flavor.production ? 'ACCESS_TOKEN' : 'ACCESS_TOKEN_DEV';
+final REFRESH_TOKEN_KEY =
+    F.appFlavor == Flavor.production ? 'REFRESH_TOKEN' : 'REFRESH_TOKEN_DEV';
+const DEVICEID = 'DEVICEID';
 
 const emulatorIp = 'http://10.0.2.2:4000/api/mobile';
 const simulatorIp = 'http://127.0.0.1:4000/api/mobile';

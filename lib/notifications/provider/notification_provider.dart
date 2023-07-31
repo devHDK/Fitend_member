@@ -64,7 +64,10 @@ class NotificationStateNotifier extends StateNotifier<NotificationModelBase> {
 
   Future<void> putNotification() async {
     try {
-      NotificationModel pstate = state as NotificationModel;
+      late NotificationModel pstate;
+      if (state is NotificationModel) {
+        pstate = state as NotificationModel;
+      }
 
       if (pstate.data != null && pstate.data!.isNotEmpty) {
         await repository.putNotificationsConfirm();

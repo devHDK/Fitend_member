@@ -48,13 +48,18 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
   void didPush() async {
     putNotification();
 
+    await FlutterAppBadger.removeBadge();
+  }
+
+  @override
+  void didPop() async {
     await ref.read(notificationProvider.notifier).putNotification();
-    FlutterAppBadger.removeBadge();
   }
 
   Future<void> putNotification() async {
     final pref = await ref.read(sharedPrefsProvider);
     final isNeedUpdateNoti = SharedPrefUtils.getIsNeedUpdateNotification(pref);
+
     print(isNeedUpdateNoti);
     if (isNeedUpdateNoti) {
       await ref.read(notificationProvider.notifier).paginate();
@@ -155,28 +160,36 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
                 ),
               ),
             )
-          : ListView.builder(
-              controller: controller,
-              itemCount: state.data!.length + 1,
-              itemBuilder: (context, index) {
-                if (index == notification.data!.length &&
-                    state.data!.length < state.total) {
-                  return const SizedBox(
-                    height: 100,
-                    child: Center(
-                      child: CircularProgressIndicator(color: POINT_COLOR),
-                    ),
-                  );
-                }
-
-                if (index == notification.data!.length &&
-                    state.data!.length == state.total) {
-                  return const SizedBox();
-                }
-
-                return NotificationCell(
-                    notificationData: notification.data![index]);
+          : RefreshIndicator(
+              backgroundColor: BACKGROUND_COLOR,
+              color: POINT_COLOR,
+              semanticsLabel: '새로고침',
+              onRefresh: () async {
+                await ref.read(notificationProvider.notifier).paginate();
               },
+              child: ListView.builder(
+                controller: controller,
+                itemCount: state.data!.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == notification.data!.length &&
+                      state.data!.length < state.total) {
+                    return const SizedBox(
+                      height: 100,
+                      child: Center(
+                        child: CircularProgressIndicator(color: POINT_COLOR),
+                      ),
+                    );
+                  }
+
+                  if (index == notification.data!.length &&
+                      state.data!.length == state.total) {
+                    return const SizedBox();
+                  }
+
+                  return NotificationCell(
+                      notificationData: notification.data![index]);
+                },
+              ),
             ),
     );
   }

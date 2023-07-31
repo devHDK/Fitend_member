@@ -208,9 +208,13 @@ class AuthProvider extends ChangeNotifier {
       return loginIn || state.location == '/onboard' ? '/schedule' : null;
     }
 
+    if (user is UserModelError && user.statusCode == 444) {
+      return null;
+    }
+
     // getMe Error...
     if (user is UserModelError) {
-      return loginIn && user.statusCode != 504 ? '/splash/login' : '/error';
+      return loginIn && (user.statusCode != 504) ? '/splash/login' : '/error';
     }
 
     return null;

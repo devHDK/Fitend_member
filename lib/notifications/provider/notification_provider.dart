@@ -67,18 +67,19 @@ class NotificationStateNotifier extends StateNotifier<NotificationModelBase> {
       late NotificationModel pstate;
       if (state is NotificationModel) {
         pstate = state as NotificationModel;
-      }
 
-      if (pstate.data != null && pstate.data!.isNotEmpty) {
-        await repository.putNotificationsConfirm();
-        state = pstate.copyWith(
-          data: pstate.data!.map((e) {
-            e = e.copyWith(
-              isConfirm: true,
-            );
-            return e;
-          }).toList(),
-        );
+        if (pstate.data != null && pstate.data!.isNotEmpty) {
+          await repository.putNotificationsConfirm();
+
+          state = pstate.copyWith(
+            data: pstate.data!.map((e) {
+              e = e.copyWith(
+                isConfirm: true,
+              );
+              return e;
+            }).toList(),
+          );
+        }
       }
     } catch (e) {
       print('putNotification error : $e');

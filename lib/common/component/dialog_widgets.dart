@@ -104,9 +104,11 @@ class DialogWidgets {
     required String message,
     required String confirmText,
     required GestureTapCallback confirmOnTap,
+    bool? dismissable = true,
   }) {
     return DialogBackground(
       blur: 0.2,
+      dismissable: dismissable,
       dialog: SimpleDialog(
         insetPadding: const EdgeInsets.symmetric(
           vertical: 20,

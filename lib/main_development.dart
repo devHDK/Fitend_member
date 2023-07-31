@@ -115,7 +115,6 @@ void main() async {
   FirebaseMessaging.onMessage.listen(
     (message) {
       processPushMessage(message);
-
       if (Platform.isAndroid) showFlutterNotification(message);
     },
   );

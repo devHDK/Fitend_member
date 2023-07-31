@@ -49,29 +49,36 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     required this.repository,
     required this.storage,
   }) : super(UserModelLoading()) {
-    checkStoreVersion().then((storeVersion) {
-      if (storeVersion != null && !storeVersion['needUpdate']) {
-        getMe();
-      } else {}
-    });
+    getMe();
   }
 
   getMe() async {
-    final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
-    final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
-
-    if (refreshToken == null || accessToken == null) {
-      state = null;
-      return;
-    }
-
     try {
-      final response = await repository.getMe();
+      checkStoreVersion().then((storeVersion) async {
+        print(storeVersion);
+        if (storeVersion != null) {
+          bool isNeedStoreUpdate = storeVersion['needUpdate'];
+          if (isNeedStoreUpdate) {
+            //sotre 연결
+            state =
+                UserModelError(error: 'store version error', statusCode: 444);
+          } else {
+            final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
+            final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
 
-      // await FirebaseMessaging.instance
-      //     .subscribeToTopic('user_${response.user.id}');
+            if (refreshToken == null || accessToken == null) {
+              state = null;
+              return;
+            }
 
-      state = response;
+            final response = await repository.getMe();
+            // await FirebaseMessaging.instance
+            //     .subscribeToTopic('user_${response.user.id}');
+
+            state = response;
+          }
+        }
+      });
     } on DioError catch (e) {
       if (e.type == DioErrorType.unknown) {
         state = UserModelError(error: 'connection error', statusCode: 504);

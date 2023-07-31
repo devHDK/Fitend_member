@@ -19,6 +19,7 @@ class ReservationScheduleCard extends ConsumerStatefulWidget {
   final int? totalSession;
   final String? ticketStartedAt;
   final String? ticketExpiredAt;
+  final bool? isNoshow;
 
   const ReservationScheduleCard({
     super.key,
@@ -33,6 +34,7 @@ class ReservationScheduleCard extends ConsumerStatefulWidget {
     this.totalSession,
     this.ticketStartedAt,
     this.ticketExpiredAt,
+    this.isNoshow,
   });
 
   factory ReservationScheduleCard.fromReservationModel({
@@ -52,6 +54,7 @@ class ReservationScheduleCard extends ConsumerStatefulWidget {
       ticketStartedAt: model.ticketStartedAt,
       ticketExpiredAt: model.ticketExpiredAt,
       isDateVisible: isDateVisible,
+      isNoshow: model.status == 'cancel' && model.times == 1,
     );
   }
 
@@ -182,10 +185,11 @@ class _ScheduleCardState extends ConsumerState<ReservationScheduleCard> {
                   )
                 else if (!widget.isComplete!) //오늘, 오늘 이후 스케줄이 미완료
                   SvgPicture.asset('asset/img/icon_check.svg')
-                else if (widget.isComplete! && !widget.selected)
+                else if ((widget.isComplete! && !widget.selected) ||
+                    widget.isNoshow!)
                   // Image.asset('asset/img/round_success.png'),
                   SvgPicture.asset(
-                      'asset/img/icon_check_complete.svg') // 스케줄이 완료 일때
+                      'asset/img/icon_check_complete.svg') // 스케줄이 완료(nowhow 포함) 일때
               ],
             ),
             if (widget.selected)

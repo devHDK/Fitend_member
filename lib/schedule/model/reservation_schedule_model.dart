@@ -65,6 +65,7 @@ class Reservation {
   final DateTime startTime;
   final DateTime endTime;
   final String status;
+  final int times;
   final String ticketType;
   final String userNickname;
   final String ticketStartedAt;
@@ -79,6 +80,7 @@ class Reservation {
     required this.startTime,
     required this.endTime,
     required this.status,
+    required this.times,
     required this.ticketType,
     required this.userNickname,
     required this.ticketStartedAt,
@@ -94,6 +96,7 @@ class Reservation {
     DateTime? startTime,
     DateTime? endTime,
     String? status,
+    int? times,
     String? ticketType,
     String? userNickname,
     String? ticketStartedAt,
@@ -108,6 +111,7 @@ class Reservation {
         startTime: startTime ?? this.startTime,
         endTime: endTime ?? this.endTime,
         status: status ?? this.status,
+        times: times ?? this.times,
         ticketType: ticketType ?? this.ticketType,
         userNickname: userNickname ?? this.userNickname,
         ticketStartedAt: ticketStartedAt ?? this.ticketStartedAt,

@@ -122,7 +122,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   void _getScheduleInitial() async {
     await ref
         .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
-        .paginate(startDate: DataUtils.getDate(fifteenDaysAgo));
+        .paginate(startDate: DataUtils.getDate(fifteenDaysAgo))
+        .then((value) {
+      // print('jump to 15');
+      // itemScrollController.jumpTo(index: 15);
+    });
 
     initial = false;
   }
@@ -159,7 +163,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     final pref = await ref.read(sharedPrefsProvider);
     final isNeedUpdate = SharedPrefUtils.getIsNeedUpdateSchedule(pref);
-    print('isNeedUpdate :$isNeedUpdate');
     if (isNeedUpdate) {
       await _resetScheduleList();
       await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, false);

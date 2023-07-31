@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
@@ -8,6 +11,7 @@ import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/repository/auth_repository.dart';
 import 'package:fitend_member/user/repository/get_me_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -159,6 +163,17 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     //   await FirebaseMessaging.instance.unsubscribeFromTopic('user_$userId');
     // }
 
+    try {
+      final deviceId = await _getDeviceInfo();
+
+      await authRepository.logout(
+        deviceId: deviceId,
+        platform: Platform.isAndroid ? 'android' : 'ios',
+      );
+    } catch (e) {
+      debugPrint('$e');
+    }
+
     state = null;
 
     if (scheduleListGlobal.isNotEmpty) {
@@ -210,5 +225,24 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     state = pstate.copyWith(
       user: pstate.user.copyWith(isNotification: isNotification),
     );
+  }
+
+  Future<String> _getDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    IosDeviceInfo? iosInfo;
+    String? androidUuid;
+
+    if (Platform.isAndroid) {
+      final savedUuid = await storage.read(key: DEVICEID);
+
+      androidUuid = savedUuid;
+
+      debugPrint('deviceId : $androidUuid');
+    } else if (Platform.isIOS) {
+      iosInfo = await deviceInfo.iosInfo;
+      debugPrint('deviceId : ${iosInfo.identifierForVendor!}');
+    }
+
+    return Platform.isAndroid ? androidUuid! : iosInfo!.identifierForVendor!;
   }
 }

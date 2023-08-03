@@ -7,7 +7,7 @@ import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/post_workout_record_feedback_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
-import 'package:fitend_member/schedule/provider/workout_schedule_provider.dart';
+import 'package:fitend_member/schedule/provider/schedule_provider.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
@@ -230,9 +230,8 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                           );
 
                                           ref
-                                              .read(workoutScheduleProvider(
-                                                      DataUtils.getDate(DateTime
-                                                              .now()
+                                              .read(scheduleProvider(DataUtils
+                                                      .getDate(DateTime.now()
                                                           .subtract(
                                                               const Duration(
                                                                   days: 15))))

@@ -26,7 +26,7 @@ abstract class WorkoutScheduleRepository {
     'accessToken': 'true',
   })
   Future<WorkoutScheduleModel> getWorkoutSchedule({
-    @Queries() required WorkoutSchedulePagenateParams params,
+    @Queries() required SchedulePagenateParams params,
   });
 
   @GET('/workoutSchedules/{id}')

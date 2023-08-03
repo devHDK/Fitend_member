@@ -3,6 +3,7 @@ import 'package:fitend_member/common/view/onboarding_screen.dart';
 import 'package:fitend_member/common/view/splash_screen.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
+import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -93,6 +94,14 @@ class AuthProvider extends ChangeNotifier {
               pageBuilder: (context, state) => _rightToLeftTransiton(
                 state,
                 const MyPageScreen(),
+              ),
+            ),
+            GoRoute(
+              path: 'notification',
+              name: NotificationScreen.routeName,
+              pageBuilder: (context, state) => _rightToLeftTransiton(
+                state,
+                const NotificationScreen(),
               ),
             ),
             GoRoute(
@@ -199,9 +208,13 @@ class AuthProvider extends ChangeNotifier {
       return loginIn || state.location == '/onboard' ? '/schedule' : null;
     }
 
+    if (user is UserModelError && user.statusCode == 444) {
+      return null;
+    }
+
     // getMe Error...
     if (user is UserModelError) {
-      return loginIn && user.statusCode != 504 ? '/splash/login' : '/error';
+      return loginIn && (user.statusCode != 504) ? '/splash/login' : '/error';
     }
 
     return null;

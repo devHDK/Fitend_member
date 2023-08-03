@@ -1,19 +1,24 @@
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/layout/default_layout.dart';
 import 'package:fitend_member/flavors.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:store_redirect/store_redirect.dart';
 
-class OnBoardingScreen extends StatefulWidget {
+class OnBoardingScreen extends ConsumerStatefulWidget {
   static String get routeName => 'onboard';
   const OnBoardingScreen({super.key});
 
   @override
-  State<OnBoardingScreen> createState() => _OnBoardingScreenState();
+  ConsumerState<OnBoardingScreen> createState() => _OnBoardingScreenState();
 }
 
-class _OnBoardingScreenState extends State<OnBoardingScreen> {
+class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
   PackageInfo? packageInfo;
   String? version;
 
@@ -23,19 +28,24 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
     // getStoreVersionInfo();
   }
 
-  // void getStoreVersionInfo() async {
-  //   packageInfo = await PackageInfo.fromPlatform();
-  //   version = packageInfo!.version;
-  //   await Future.wait([
-  //     checkUpdatable(version!).then((value) {
-  //       print('result $value');
-  //       return Future.value(true);
-  //     })
-  //   ]);
-  // }
-
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(getMeProvider);
+
+    if (state is UserModelError && state.statusCode == 444) {
+      return DialogWidgets.errorDialog(
+        message: '회원님들의 의견을 반영하여\n서비스 사용성을 개선했어요 🎉',
+        confirmText: '업데이트 하러 가기',
+        confirmOnTap: () {
+          StoreRedirect.redirect(
+            androidAppId: 'com.raid.fitend',
+            iOSAppId: 'id6450522413',
+          );
+        },
+        dismissable: false,
+      );
+    }
+
     return DefaultLayout(
       backgroundColor: BACKGROUND_COLOR,
       child: _flavorBanner(

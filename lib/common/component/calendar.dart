@@ -1,5 +1,5 @@
 import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
+import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -20,13 +20,13 @@ class Calendar extends StatelessWidget {
   final DateTime firstDay;
   final DateTime lastDay;
   final OnDaySelected onDaySelected;
-  final List<WorkoutData> schedules;
+  final List<ScheduleData> schedules;
 
   @override
   Widget build(BuildContext context) {
-    Map<String, List<Workout>> map = {
+    Map<String, List<dynamic>> map = {
       for (var data in schedules)
-        "${data.startDate.month}-${data.startDate.day}": data.workouts!
+        "${data.startDate.month}-${data.startDate.day}": data.schedule!
     };
 
     return TableCalendar(

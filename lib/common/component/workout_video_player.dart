@@ -103,7 +103,10 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
       child: Stack(
         children: [
           videoController!.value.isPlaying
-              ? VideoPlayer(videoController!)
+              ? Container(
+                  color: BACKGROUND_COLOR,
+                  child: VideoPlayer(videoController!),
+                )
               : videoController!.value.isPlaying ||
                       !videoController!.value.isInitialized
                   ? Container(

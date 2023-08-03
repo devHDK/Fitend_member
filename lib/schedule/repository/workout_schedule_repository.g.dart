@@ -20,7 +20,7 @@ class _WorkoutScheduleRepository implements WorkoutScheduleRepository {
 
   @override
   Future<WorkoutScheduleModel> getWorkoutSchedule(
-      {required WorkoutSchedulePagenateParams params}) async {
+      {required SchedulePagenateParams params}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.addAll(params.toJson());

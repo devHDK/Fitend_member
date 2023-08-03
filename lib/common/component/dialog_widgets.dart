@@ -3,6 +3,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/schedule/model/put_workout_schedule_date_model.dart';
+import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:flutter/material.dart';
@@ -103,9 +104,11 @@ class DialogWidgets {
     required String message,
     required String confirmText,
     required GestureTapCallback confirmOnTap,
+    bool? dismissable = true,
   }) {
     return DialogBackground(
       blur: 0.2,
+      dismissable: dismissable,
       dialog: SimpleDialog(
         insetPadding: const EdgeInsets.symmetric(
           vertical: 20,
@@ -186,7 +189,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
   DateTime? focusedDay;
   DateTime? firstDay;
   DateTime? lastDay;
-  Map<String, List<Workout>>? dateData = {};
+  Map<String, List<dynamic>>? dateData = {};
   DateTime today = DateTime(
     DateTime.now().year,
     DateTime.now().month,
@@ -237,9 +240,14 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
 
       //이전 워크아웃 인덱스
       final beforWorkoutIndex = scheduleListGlobal[beforeChangeScheduleIndex]
-          .workouts!
-          .indexWhere((element) =>
-              element.workoutScheduleId == widget.workoutScheduleId);
+          .schedule!
+          .indexWhere((element) {
+        if (element is Workout) {
+          return element.workoutScheduleId == widget.workoutScheduleId;
+        }
+
+        return false;
+      });
 
       //변경할 날짜의 스케줄 인덱스
       final afterCahngeSchdedulIndex = scheduleListGlobal.indexWhere((element) {
@@ -249,13 +257,13 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
       });
 
       //변경
-      scheduleListGlobal[afterCahngeSchdedulIndex].workouts!.add(
+      scheduleListGlobal[afterCahngeSchdedulIndex].schedule!.add(
           scheduleListGlobal[beforeChangeScheduleIndex]
-              .workouts![beforWorkoutIndex]);
+              .schedule![beforWorkoutIndex]);
 
       //기존건 삭제
       scheduleListGlobal[beforeChangeScheduleIndex]
-          .workouts!
+          .schedule!
           .removeAt(beforWorkoutIndex);
     } catch (e) {
       // print(e);
@@ -273,19 +281,19 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
 
   @override
   Widget build(BuildContext context) {
-    List<WorkoutData> scheduleList = [];
+    List<ScheduleData> scheduleList = [];
     if (firstDay != null && lastDay != null) {
       scheduleList = scheduleListGlobal
           .where((element) =>
               element.startDate.compareTo(firstDay!) >= 0 &&
               element.startDate.compareTo(lastDay!) <= 0 &&
-              element.workouts!.isNotEmpty)
+              element.schedule!.isNotEmpty)
           .toList();
     }
 
-    Map<String, List<Workout>> dateMap = {
+    Map<String, List<dynamic>> dateMap = {
       for (var data in scheduleList)
-        "${data.startDate.month}-${data.startDate.day}": data.workouts!
+        "${data.startDate.month}-${data.startDate.day}": data.schedule!
     };
 
     dateData = dateMap;

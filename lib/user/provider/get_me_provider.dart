@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
@@ -8,6 +11,7 @@ import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/repository/auth_repository.dart';
 import 'package:fitend_member/user/repository/get_me_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -49,30 +53,47 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     required this.repository,
     required this.storage,
   }) : super(UserModelLoading()) {
-    checkStoreVersion().then((storeVersion) {
-      if (storeVersion != null && !storeVersion['needUpdate']) {
-        Future.delayed(const Duration(milliseconds: 700), () {
-          getMe();
-        });
-      } else {}
-    });
+    getMe();
   }
 
   getMe() async {
-    final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
-    final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
-
-    if (refreshToken == null || accessToken == null) {
-      state = null;
-      return;
-    }
-
     try {
-      final response = await repository.getMe();
-      state = response;
+      checkStoreVersion().then((storeVersion) async {
+        print(storeVersion);
+        if (storeVersion != null) {
+          bool isNeedStoreUpdate = storeVersion['needUpdate'];
+          if (isNeedStoreUpdate) {
+            //sotre 연결
+            state =
+                UserModelError(error: 'store version error', statusCode: 444);
+          } else {
+            final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
+            final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
+
+            if (refreshToken == null || accessToken == null) {
+              state = null;
+              return;
+            }
+
+            final response = await repository.getMe();
+            // await FirebaseMessaging.instance
+            //     .subscribeToTopic('user_${response.user.id}');
+
+            state = response;
+          }
+        }
+      });
     } on DioError catch (e) {
       if (e.type == DioErrorType.unknown) {
         state = UserModelError(error: 'connection error', statusCode: 504);
+      }
+
+      if (e.response != null && e.response!.statusCode == 500) {
+        state = null;
+
+        await logout();
+
+        state = UserModelError(error: 'token error', statusCode: 500);
       }
     }
   }
@@ -82,6 +103,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     required String password,
     required String platform,
     required String token,
+    required String deviceId,
   }) async {
     try {
       state = UserModelLoading();
@@ -91,6 +113,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
         password: password,
         platform: platform,
         token: token,
+        deviceId: deviceId,
       );
 
       await storage.write(key: REFRESH_TOKEN_KEY, value: resp.refreshToken);
@@ -134,8 +157,28 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   }
 
   Future<void> logout() async {
+    // if (state is UserModel) {
+    //   final pState = state as UserModel;
+    //   int userId = pState.user.id;
+    //   await FirebaseMessaging.instance.unsubscribeFromTopic('user_$userId');
+    // }
+
+    try {
+      final deviceId = await _getDeviceInfo();
+
+      await authRepository.logout(
+        deviceId: deviceId,
+        platform: Platform.isAndroid ? 'android' : 'ios',
+      );
+    } catch (e) {
+      debugPrint('$e');
+    }
+
     state = null;
-    scheduleListGlobal.removeRange(0, scheduleListGlobal.length - 1);
+
+    if (scheduleListGlobal.isNotEmpty) {
+      scheduleListGlobal.removeRange(0, scheduleListGlobal.length - 1);
+    }
 
     await Future.wait([
       storage.delete(key: REFRESH_TOKEN_KEY),
@@ -167,7 +210,39 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
         newPassword: newPassword,
       ));
     } on DioError catch (e) {
-      throw DioError(requestOptions: e.requestOptions, response: e.response);
+      throw DioError(
+        requestOptions: e.requestOptions,
+        response: e.response,
+      );
     }
+  }
+
+  changeIsNotification({
+    required bool isNotification,
+  }) {
+    final pstate = state as UserModel;
+
+    state = pstate.copyWith(
+      user: pstate.user.copyWith(isNotification: isNotification),
+    );
+  }
+
+  Future<String> _getDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    IosDeviceInfo? iosInfo;
+    String? androidUuid;
+
+    if (Platform.isAndroid) {
+      final savedUuid = await storage.read(key: DEVICEID);
+
+      androidUuid = savedUuid;
+
+      debugPrint('deviceId : $androidUuid');
+    } else if (Platform.isIOS) {
+      iosInfo = await deviceInfo.iosInfo;
+      debugPrint('deviceId : ${iosInfo.identifierForVendor!}');
+    }
+
+    return Platform.isAndroid ? androidUuid! : iosInfo!.identifierForVendor!;
   }
 }

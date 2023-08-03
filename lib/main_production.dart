@@ -4,6 +4,7 @@ import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/exercise/model/target_muscle_model.dart';
 import 'package:fitend_member/firebase_options.dart';
+import 'package:fitend_member/firebase_setup.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
@@ -26,9 +27,11 @@ void main() async {
   ]);
 
   await Firebase.initializeApp(
-    name: 'prod',
+    // name: 'prod',
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await setupFlutterNotifications();
 
   final appDocumentDirectory = await getApplicationDocumentsDirectory();
 

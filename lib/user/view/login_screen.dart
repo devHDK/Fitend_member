@@ -2,18 +2,22 @@ import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   static String get routeName => 'login';
@@ -161,7 +165,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 labelText: '이메일',
                 autoFocus: false,
                 textInputType: TextInputType.emailAddress,
-                autoFillHint: const [AutofillHints.email],
+                autoFillHint: const [
+                  AutofillHints.username,
+                  AutofillHints.email
+                ],
                 onChanged: (value) {
                   email = value;
                 },
@@ -176,7 +183,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 autoFocus: false,
                 obscureText: true,
                 textInputType: TextInputType.visiblePassword,
-                autoFillHint: const [AutofillHints.password],
+                autoFillHint: const [
+                  AutofillHints.password,
+                ],
                 onChanged: (value) {
                   password = value;
                 },
@@ -204,6 +213,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           passwordTextcontroller.text.isEmpty
                       ? () {}
                       : () async {
+                          TextInput.finishAutofillContext(shouldSave: true);
+
                           if (_idTextController.text.isNotEmpty &&
                               _passwordTextController.text.isNotEmpty) {
                             // _saveEmailAndPassword();
@@ -240,13 +251,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             return;
                           }
 
+                          final token =
+                              await FirebaseMessaging.instance.getToken();
+
+                          final deviceId = await _getDeviceInfo();
+
                           final ret = await ref
                               .read(getMeProvider.notifier)
                               .login(
                                 email: idTextcontroller.text,
                                 password: passwordTextcontroller.text,
                                 platform: Platform.isIOS ? 'ios' : 'android',
-                                token: 'string',
+                                token: token!,
+                                deviceId: deviceId,
                               );
 
                           if (ret is UserModelError) {
@@ -354,16 +371,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  void _getDeviceInfo() async {
+  Future<String> _getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    IosDeviceInfo? iosInfo;
+    String? androidUuid;
+
     if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      debugPrint(androidInfo.version.incremental);
-      debugPrint(androidInfo.version.sdkInt.toString());
+      final savedUuid =
+          await ref.read(secureStorageProvider).read(key: DEVICEID);
+      if (savedUuid == null) {
+        var uuid = const Uuid();
+        androidUuid = uuid.v1();
+        await ref
+            .read(secureStorageProvider)
+            .write(key: DEVICEID, value: androidUuid);
+      } else {
+        androidUuid = savedUuid;
+      }
+
+      debugPrint('deviceId : $androidUuid');
     } else if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      debugPrint(iosInfo.utsname.machine);
-      debugPrint(iosInfo.systemVersion);
+      iosInfo = await deviceInfo.iosInfo;
+      debugPrint('deviceId : ${iosInfo.identifierForVendor!}');
     }
+
+    return Platform.isAndroid ? androidUuid! : iosInfo!.identifierForVendor!;
   }
 }

@@ -29,4 +29,16 @@ class DataUtils {
       mode: LaunchMode.platformDefault,
     );
   }
+
+  static getWorkoutPushType(String type) {
+    switch (type) {
+      case 'workoutScheduleCreate':
+        return WorkoutPushType.workoutScheduleCreate;
+      case 'workoutScheduleDelete':
+        return WorkoutPushType.workoutScheduleDelete;
+      case 'workoutScheduleChange':
+        return WorkoutPushType.workoutScheduleChange;
+      default:
+    }
+  }
 }

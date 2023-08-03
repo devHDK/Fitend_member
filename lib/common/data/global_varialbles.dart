@@ -1,3 +1,3 @@
-import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
+import 'package:fitend_member/schedule/model/schedule_model.dart';
 
-List<WorkoutData> scheduleListGlobal = [];
+List<ScheduleData> scheduleListGlobal = [];

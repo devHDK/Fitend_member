@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/component/reservation_schedule_card.dart';
@@ -21,6 +22,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -59,6 +61,22 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (initial) {
         _getScheduleInitial();
+      }
+
+      if (scheduleListGlobal.length < 32) {
+        bool hasData = false;
+        for (var element in scheduleListGlobal) {
+          if (element.schedule!.isNotEmpty) {
+            hasData = true;
+          }
+        }
+        if (!hasData) {
+          DialogWidgets.errorDialog(
+            message: '회원님을 위한 플랜을 준비중이에요!\n플랜이 완성되면 알려드릴게요 😊',
+            confirmText: '확인',
+            confirmOnTap: () => context.pop(),
+          ).show(context);
+        }
       }
     });
   }

@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/layout/default_layout.dart';
@@ -50,15 +51,31 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
       backgroundColor: BACKGROUND_COLOR,
       child: _flavorBanner(
         child: Center(
-          child: DefaultTextStyle(
-            style: GoogleFonts.audiowide(
+            child: AnimatedTextKit(animatedTexts: [
+          ColorizeAnimatedText(
+            'F I T E N D',
+            textStyle: GoogleFonts.audiowide(
               fontSize: 45,
               fontWeight: FontWeight.w500,
               color: POINT_COLOR,
             ),
-            child: const Text('F I T E N D'),
-          ),
-        ),
+            colors: [
+              POINT_COLOR,
+              Colors.pink.shade300,
+              Colors.white,
+            ],
+            speed: const Duration(milliseconds: 400),
+          )
+        ])
+            // DefaultTextStyle(
+            //   style: GoogleFonts.audiowide(
+            //     fontSize: 45,
+            //     fontWeight: FontWeight.w500,
+            //     color: POINT_COLOR,
+            //   ),
+            //   child: const Text('F I T E N D'),
+            // ),
+            ),
         show: F.appFlavor == Flavor.development || F.appFlavor == Flavor.local
             ? true
             : false,

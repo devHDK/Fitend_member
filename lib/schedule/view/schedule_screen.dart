@@ -48,6 +48,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   DateTime minDate = DateTime(DateTime.now().year);
   DateTime maxDate = DateTime(DateTime.now().year);
   bool initial = true;
+  bool buildInitial = true;
   bool isLoading = false;
 
   @override
@@ -61,22 +62,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (initial) {
         _getScheduleInitial();
-      }
-
-      if (scheduleListGlobal.length < 32) {
-        bool hasData = false;
-        for (var element in scheduleListGlobal) {
-          if (element.schedule!.isNotEmpty) {
-            hasData = true;
-          }
-        }
-        if (!hasData) {
-          DialogWidgets.errorDialog(
-            message: '회원님을 위한 플랜을 준비중이에요!\n플랜이 완성되면 알려드릴게요 😊',
-            confirmText: '확인',
-            confirmOnTap: () => context.pop(),
-          ).show(context);
-        }
       }
     });
   }
@@ -231,6 +216,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     scheduleListGlobal = schedules.data;
 
+    _checkHasData(schedules, context);
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -378,6 +365,28 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         ),
       ),
     );
+  }
+
+  void _checkHasData(ScheduleModel schedules, BuildContext context) {
+    if (schedules.data.length < 32 && buildInitial) {
+      bool hasData = false;
+
+      for (var element in schedules.data) {
+        if (element.schedule!.isNotEmpty) {
+          hasData = true;
+        }
+      }
+
+      if (!hasData) {
+        DialogWidgets.errorDialog(
+          message: '회원님을 위한 플랜을 준비중이에요!\n플랜이 완성되면 알려드릴게요 😊',
+          confirmText: '확인',
+          confirmOnTap: () => context.pop(),
+        ).show(context);
+      }
+    }
+
+    buildInitial = false;
   }
 
   Future<void> _resetScheduleList() async {

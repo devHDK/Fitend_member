@@ -85,8 +85,8 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
   @override
   void dispose() async {
     isDisposed = true;
-    WidgetsBinding.instance.removeObserver(this);
     ref.read(routeObserverProvider).unsubscribe(this);
+    WidgetsBinding.instance.removeObserver(this);
     controller.removeListener(listener);
     super.dispose();
   }

@@ -183,8 +183,7 @@ class _ScheduleCardState extends ConsumerState<ReservationScheduleCard> {
                   const SizedBox(
                     width: 24,
                   )
-                else if ((widget.isComplete! && !widget.selected) ||
-                    widget.isNoshow!)
+                else if ((widget.isComplete!) || widget.isNoshow!)
                   // Image.asset('asset/img/round_success.png'),
                   SvgPicture.asset('asset/img/icon_check_complete.svg')
                 else if (!widget.isComplete!) //스케줄이 미완료

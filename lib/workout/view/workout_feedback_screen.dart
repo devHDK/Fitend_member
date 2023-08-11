@@ -3,7 +3,6 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
-import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/post_workout_record_feedback_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
@@ -230,12 +229,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                           );
 
                                           ref
-                                              .read(scheduleProvider(DataUtils
-                                                      .getDate(DateTime.now()
-                                                          .subtract(
-                                                              const Duration(
-                                                                  days: 15))))
-                                                  .notifier)
+                                              .read(scheduleProvider.notifier)
                                               .updateScheduleState(
                                                 workoutScheduleId:
                                                     widget.workoutScheduleId,

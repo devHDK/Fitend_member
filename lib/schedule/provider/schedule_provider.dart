@@ -8,27 +8,24 @@ import 'package:fitend_member/schedule/repository/reservation_schedule_repositor
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final scheduleProvider = StateNotifierProvider.family<ScheduleStateNotifier,
-    ScheduleModelBase, DateTime>((ref, startDate) {
+final scheduleProvider =
+    StateNotifierProvider<ScheduleStateNotifier, ScheduleModelBase>((ref) {
   final workoutRepository = ref.watch(workoutScheduleRepositoryProvider);
   final reservationRepository = ref.watch(reservaionScheduleRepositoryProvider);
 
   return ScheduleStateNotifier(
     workoutRepository: workoutRepository,
     reservationRepository: reservationRepository,
-    startDate: startDate,
   );
 });
 
 class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
   final WorkoutScheduleRepository workoutRepository;
   final ReservationScheduleRepository reservationRepository;
-  final DateTime startDate;
 
   ScheduleStateNotifier({
     required this.workoutRepository,
     required this.reservationRepository,
-    required this.startDate,
   }) : super(ScheduleModelLoading());
   // {
   //   // paginate(startDate: startDate);

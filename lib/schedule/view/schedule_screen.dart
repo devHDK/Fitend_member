@@ -93,7 +93,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
       isLoading = true;
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         ref
-            .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
+            .read(scheduleProvider.notifier)
             .paginate(
                 startDate: maxDate, fetchMore: true, isDownScrolling: true)
             .then((value) {
@@ -104,7 +104,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
       isLoading = true;
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         ref
-            .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
+            .read(scheduleProvider.notifier)
             .paginate(startDate: minDate, fetchMore: true, isUpScrolling: true)
             .then((value) {
           itemScrollController.jumpTo(index: 32);
@@ -128,7 +128,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
   void _getScheduleInitial() async {
     await ref
-        .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
+        .read(scheduleProvider.notifier)
         .paginate(startDate: DataUtils.getDate(fifteenDaysAgo))
         .then((value) {
       _checkHasData(scheduleListGlobal, context);
@@ -198,8 +198,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
   @override
   Widget build(BuildContext context) {
-    final state =
-        ref.watch(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)));
+    final state = ref.watch(scheduleProvider);
 
     if (state is ScheduleModelLoading) {
       return const Center(
@@ -394,7 +393,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
   Future<void> _resetScheduleList() async {
     await ref
-        .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
+        .read(scheduleProvider.notifier)
         .paginate(
           startDate: DataUtils.getDate(fifteenDaysAgo),
         )

@@ -168,6 +168,10 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
         }
       } else {
         state = ScheduleModel(data: tempScheduleList);
+        if (state is ScheduleModel) {
+          final pstate = state as ScheduleModel;
+          scheduleListGlobal = pstate.data;
+        }
       }
     } catch (e) {
       print('e : ScheduleModelError');

@@ -131,8 +131,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         .read(scheduleProvider(DataUtils.getDate(fifteenDaysAgo)).notifier)
         .paginate(startDate: DataUtils.getDate(fifteenDaysAgo))
         .then((value) {
-      // print('jump to 15');
-      // itemScrollController.jumpTo(index: 15);
       _checkHasData(scheduleListGlobal, context);
     });
 
@@ -220,8 +218,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     maxDate = schedules.data.last.startDate.add(const Duration(days: 1));
 
     scheduleListGlobal = schedules.data;
-
-    // _checkHasData(schedules, context);
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -373,12 +369,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   void _checkHasData(List<ScheduleData> schedules, BuildContext context) {
-    if (schedules.length < 32 && buildInitial) {
+    if (schedules.length < 33 && schedules.length > 1 && buildInitial) {
       bool hasData = false;
 
-      for (var element in schedules) {
+      for (ScheduleData element in schedules) {
+        print('element $element');
         if (element.schedule!.isNotEmpty) {
           hasData = true;
+          break;
         }
       }
 
@@ -389,9 +387,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
           confirmOnTap: () => context.pop(),
         ).show(context);
       }
-    }
 
-    buildInitial = false;
+      buildInitial = false;
+    }
   }
 
   Future<void> _resetScheduleList() async {

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
@@ -62,21 +63,31 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
           state = ScheduleModelLoading();
         }
       }
+      ReservationScheduleModel? reservationResponse;
+      try {
+        reservationResponse =
+            await reservationRepository.getReservationSchedule(
+          params: SchedulePagenateParams(
+            startDate: startDate,
+            interval: 30,
+          ),
+        );
+      } on DioError catch (e) {
+        print('getReservationSchedule error : $e');
+      }
 
-      final reservationResponse =
-          await reservationRepository.getReservationSchedule(
-        params: SchedulePagenateParams(
-          startDate: startDate,
-          interval: 30,
-        ),
-      );
+      WorkoutScheduleModel? workoutResponse;
 
-      final workoutResponse = await workoutRepository.getWorkoutSchedule(
-        params: SchedulePagenateParams(
-          startDate: startDate,
-          interval: 30,
-        ),
-      );
+      try {
+        workoutResponse = await workoutRepository.getWorkoutSchedule(
+          params: SchedulePagenateParams(
+            startDate: startDate,
+            interval: 30,
+          ),
+        );
+      } on DioError catch (e) {
+        print('getWorkoutSchedule error : $e');
+      }
 
       List<ScheduleData> tempScheduleList = List.generate(
         31,
@@ -88,7 +99,9 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
 
       int index = 0;
 
-      if (reservationResponse.data!.isNotEmpty) {
+      if (reservationResponse != null &&
+          reservationResponse.data != null &&
+          reservationResponse.data!.isNotEmpty) {
         for (var e in tempScheduleList) {
           if (index >= reservationResponse.data!.length) {
             break;
@@ -115,7 +128,9 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
 
       index = 0;
 
-      if (workoutResponse.data!.isNotEmpty) {
+      if (workoutResponse != null &&
+          workoutResponse.data != null &&
+          workoutResponse.data!.isNotEmpty) {
         for (var e in tempScheduleList) {
           if (index >= workoutResponse.data!.length) {
             break;
@@ -155,6 +170,7 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
         state = ScheduleModel(data: tempScheduleList);
       }
     } catch (e) {
+      print('e : ScheduleModelError');
       state = ScheduleModelError(message: '데이터를 불러오지 못했습니다.');
     }
   }

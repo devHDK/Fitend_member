@@ -115,11 +115,15 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   void _getNotificationState() async {
-    notificationConfirmResponse = await ref
-        .read(notificationRepositoryProvider)
-        .getNotificationsConfirm();
+    try {
+      notificationConfirmResponse = await ref
+          .read(notificationRepositoryProvider)
+          .getNotificationsConfirm();
 
-    setState(() {});
+      setState(() {});
+    } catch (e) {
+      print('e : getNotificationsConfirm');
+    }
   }
 
   void _getScheduleInitial() async {
@@ -129,6 +133,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         .then((value) {
       // print('jump to 15');
       // itemScrollController.jumpTo(index: 15);
+      _checkHasData(scheduleListGlobal, context);
     });
 
     initial = false;
@@ -216,7 +221,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     scheduleListGlobal = schedules.data;
 
-    _checkHasData(schedules, context);
+    // _checkHasData(schedules, context);
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -367,11 +372,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     );
   }
 
-  void _checkHasData(ScheduleModel schedules, BuildContext context) {
-    if (schedules.data.length < 32 && buildInitial) {
+  void _checkHasData(List<ScheduleData> schedules, BuildContext context) {
+    if (schedules.length < 32 && buildInitial) {
       bool hasData = false;
 
-      for (var element in schedules.data) {
+      for (var element in schedules) {
         if (element.schedule!.isNotEmpty) {
           hasData = true;
         }

@@ -102,6 +102,7 @@ dependencies:
   numberpicker: ^2.1.2
   simple_circular_progress_bar: ^1.0.2
   emoji_picker_flutter: ^1.6.1
+  toggle_switch: ^2.1.0
 
 dev_dependencies:
   flutter_test:

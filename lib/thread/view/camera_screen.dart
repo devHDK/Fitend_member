@@ -1,53 +1,73 @@
-import 'dart:convert';
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:video_player/video_player.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
-class CameraScreen extends StatefulWidget {
+class CameraScreen extends ConsumerStatefulWidget {
   const CameraScreen({super.key});
 
   @override
-  State<CameraScreen> createState() => _CameraScreenState();
+  ConsumerState<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen>
+class _CameraScreenState extends ConsumerState<CameraScreen>
     with WidgetsBindingObserver {
   CameraController? controller;
-  VideoPlayerController? videoController;
 
   List<CameraDescription> cameras = [];
+  int orientation = 0;
 
-  File? _imageFile;
-  File? _videoFile;
+  late Timer timer;
+  int recordingDuration = 0;
 
   // Initial values
   bool _isCameraInitialized = false;
   bool _isCameraPermissionGranted = false;
   bool _isRearCameraSelected = true;
-  final bool _isVideoCameraSelected = false;
+  bool _isVideoCameraSelected = false;
   bool _isRecordingInProgress = false;
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
 
   // Current values
   double _currentZoomLevel = 1.0;
-  FlashMode? _currentFlashMode;
 
   List<File> allFileList = [];
 
   final resolutionPresets = ResolutionPreset.values;
 
   ResolutionPreset currentResolutionPreset = ResolutionPreset.veryHigh;
+
+  void recordingTimerStart() {
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      onTick,
+    );
+  }
+
+  void recordingTimerStop() {
+    timer.cancel();
+  }
+
+  void onTick(Timer timer) {
+    setState(() {
+      recordingDuration++;
+      print(recordingDuration);
+    });
+  }
 
   getPermissionStatus() async {
     await Permission.camera.request();
@@ -60,7 +80,6 @@ class _CameraScreenState extends State<CameraScreen>
       });
       // Set and initialize the new camera
       onNewCameraSelected(cameras[0]);
-      refreshAlreadyCapturedImages();
     } else {
       log('Camera Permission: DENIED');
     }
@@ -72,38 +91,6 @@ class _CameraScreenState extends State<CameraScreen>
       cameras = await availableCameras();
     } on CameraException catch (e) {
       print('Error in fetching the cameras: $e');
-    }
-  }
-
-  refreshAlreadyCapturedImages() async {
-    final directory = await getApplicationDocumentsDirectory();
-    List<FileSystemEntity> fileList = await directory.list().toList();
-    allFileList.clear();
-    List<Map<int, dynamic>> fileNames = [];
-
-    for (var file in fileList) {
-      if (file.path.contains('.jpg') || file.path.contains('.mp4')) {
-        allFileList.add(File(file.path));
-
-        String name = file.path.split('/').last.split('.').first;
-        fileNames.add({0: int.parse(name), 1: file.path.split('/').last});
-      }
-    }
-
-    if (fileNames.isNotEmpty) {
-      final recentFile =
-          fileNames.reduce((curr, next) => curr[0] > next[0] ? curr : next);
-      String recentFileName = recentFile[1];
-      if (recentFileName.contains('.mp4')) {
-        _videoFile = File('${directory.path}/$recentFileName');
-        _imageFile = null;
-        _startVideoPlayer();
-      } else {
-        _imageFile = File('${directory.path}/$recentFileName');
-        _videoFile = null;
-      }
-
-      setState(() {});
     }
   }
 
@@ -124,19 +111,6 @@ class _CameraScreenState extends State<CameraScreen>
     }
   }
 
-  Future<void> _startVideoPlayer() async {
-    if (_videoFile != null) {
-      videoController = VideoPlayerController.file(_videoFile!);
-      await videoController!.initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized,
-        // even before the play button has been pressed.
-        setState(() {});
-      });
-      await videoController!.setLooping(true);
-      await videoController!.play();
-    }
-  }
-
   Future<void> startVideoRecording() async {
     final CameraController? cameraController = controller;
 
@@ -149,7 +123,7 @@ class _CameraScreenState extends State<CameraScreen>
       await cameraController!.startVideoRecording();
       setState(() {
         _isRecordingInProgress = true;
-        print(_isRecordingInProgress);
+        recordingTimerStart();
       });
     } on CameraException catch (e) {
       print('Error starting to record video: $e');
@@ -166,6 +140,8 @@ class _CameraScreenState extends State<CameraScreen>
       XFile file = await controller!.stopVideoRecording();
       setState(() {
         _isRecordingInProgress = false;
+        recordingTimerStop();
+        recordingDuration = 0;
       });
       return file;
     } on CameraException catch (e) {
@@ -182,6 +158,7 @@ class _CameraScreenState extends State<CameraScreen>
 
     try {
       await controller!.pauseVideoRecording();
+      recordingTimerStop();
     } on CameraException catch (e) {
       print('Error pausing video recording: $e');
     }
@@ -195,6 +172,7 @@ class _CameraScreenState extends State<CameraScreen>
 
     try {
       await controller!.resumeVideoRecording();
+      recordingTimerStart();
     } on CameraException catch (e) {
       print('Error resuming video recording: $e');
     }
@@ -220,6 +198,7 @@ class _CameraScreenState extends State<CameraScreen>
     if (mounted) {
       setState(() {
         controller = cameraController;
+        controller!.setFlashMode(FlashMode.off);
       });
     }
 
@@ -242,8 +221,6 @@ class _CameraScreenState extends State<CameraScreen>
             .getMinZoomLevel()
             .then((value) => _minAvailableZoom = value),
       ]);
-
-      _currentFlashMode = controller!.value.flashMode;
     } on CameraException catch (e) {
       print('Error initializing camera: $e');
     }
@@ -270,10 +247,15 @@ class _CameraScreenState extends State<CameraScreen>
 
   @override
   void initState() {
-    // Hide the status bar in Android
+    WidgetsBinding.instance.addObserver(this);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     getPermissionStatus();
     getAvailableCameras();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
     super.initState();
   }
 
@@ -296,7 +278,11 @@ class _CameraScreenState extends State<CameraScreen>
   @override
   void dispose() {
     controller?.dispose();
-    videoController?.dispose();
+
+    if (timer.isActive) {
+      timer.cancel();
+    }
+
     super.dispose();
   }
 
@@ -306,6 +292,7 @@ class _CameraScreenState extends State<CameraScreen>
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
+          toolbarHeight: 40,
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
@@ -320,268 +307,397 @@ class _CameraScreenState extends State<CameraScreen>
         ),
         body: _isCameraPermissionGranted
             ? Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  AspectRatio(
-                    aspectRatio: 1 / controller!.value.aspectRatio,
-                    child: Stack(
-                      children: [
-                        _isCameraInitialized
-                            ? CameraPreview(
-                                controller!,
-                                child: LayoutBuilder(builder: (
-                                  BuildContext context,
-                                  BoxConstraints constraints,
-                                ) {
-                                  return GestureDetector(
-                                    behavior: HitTestBehavior.opaque,
-                                    onTapDown: (details) =>
-                                        onViewFinderTap(details, constraints),
-                                  );
-                                }),
-                              )
-                            : Expanded(
-                                child: Container(
-                                  color: Colors.black,
+                  SizedBox(
+                    width: 100.w,
+                    height: 100.w * 16 / 9,
+                    child: AspectRatio(
+                      aspectRatio: _isCameraInitialized
+                          ? controller!.value.aspectRatio
+                          : 9 / 16,
+                      child: Stack(
+                        children: [
+                          _isCameraInitialized
+                              ? RotatedBox(
+                                  quarterTurns: controller!
+                                              .value.deviceOrientation ==
+                                          DeviceOrientation.landscapeRight
+                                      ? 1
+                                      : controller!.value.deviceOrientation ==
+                                              DeviceOrientation.landscapeLeft
+                                          ? 3
+                                          : controller!.value
+                                                      .deviceOrientation ==
+                                                  DeviceOrientation.portraitUp
+                                              ? 0
+                                              : 2,
+                                  child: CameraPreview(
+                                    controller!,
+                                    child: LayoutBuilder(builder: (
+                                      BuildContext context,
+                                      BoxConstraints constraints,
+                                    ) {
+                                      return GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
+                                        onTapDown: (details) => onViewFinderTap(
+                                            details, constraints),
+                                      );
+                                    }),
+                                  ),
+                                )
+                              : Expanded(
+                                  child: Container(
+                                    color: Colors.black,
+                                  ),
                                 ),
-                              ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
-                          ),
-                          child: Column(
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              if (_isRearCameraSelected) _flashButtons(),
-                              const Spacer(),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _zoomSlider(),
+                              if (_isRecordingInProgress ||
+                                  recordingDuration > 0)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 10,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black87,
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          '${_currentZoomLevel.toStringAsFixed(1)}x',
-                                          style: const TextStyle(
-                                              color: Colors.white),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 15,
+                                        height: 15,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  InkWell(
-                                    onTap: _isRecordingInProgress
-                                        ? () async {
-                                            if (controller!
-                                                .value.isRecordingPaused) {
-                                              await resumeVideoRecording();
-                                            } else {
-                                              await pauseVideoRecording();
-                                            }
-                                          }
-                                        : () {
-                                            setState(() {
-                                              _isCameraInitialized = false;
-                                            });
-                                            onNewCameraSelected(cameras[
-                                                _isRearCameraSelected ? 1 : 0]);
-                                            setState(() {
-                                              _isRearCameraSelected =
-                                                  !_isRearCameraSelected;
-
-                                              if (!_isRearCameraSelected) {
-                                                controller!.setFlashMode(
-                                                  FlashMode.off,
-                                                );
-                                              }
-                                            });
-                                          },
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        const Icon(
-                                          Icons.circle,
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Container(
+                                        width: 60,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
                                           color: Colors.black38,
-                                          size: 60,
                                         ),
-                                        _isRecordingInProgress
-                                            ? controller!
-                                                    .value.isRecordingPaused
-                                                ? const Icon(
-                                                    Icons.play_arrow,
-                                                    color: Colors.white,
-                                                    size: 30,
-                                                  )
-                                                : const Icon(
-                                                    Icons.pause,
-                                                    color: Colors.white,
-                                                    size: 30,
-                                                  )
-                                            : const Icon(
-                                                Icons.cameraswitch_outlined,
-                                                color: Colors.white,
-                                                size: 30,
-                                              ),
-                                      ],
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: _isVideoCameraSelected
-                                        ? () async {
-                                            if (_isRecordingInProgress) {
-                                              XFile? rawVideo =
-                                                  await stopVideoRecording();
-                                              File videoFile =
-                                                  File(rawVideo!.path);
-
-                                              int currentUnix = DateTime.now()
-                                                  .millisecondsSinceEpoch;
-
-                                              final directory =
-                                                  await getApplicationDocumentsDirectory();
-
-                                              String fileFormat = videoFile.path
-                                                  .split('.')
-                                                  .last;
-
-                                              _videoFile = await videoFile.copy(
-                                                '${directory.path}/$currentUnix.$fileFormat',
-                                              );
-
-                                              _startVideoPlayer();
-                                            } else {
-                                              await startVideoRecording();
-                                            }
-                                          }
-                                        : () async {
-                                            XFile? rawImage =
-                                                await takePicture();
-
-                                            if (rawImage != null) {
-                                              File imageFile =
-                                                  File(rawImage.path);
-
-                                              final intPath =
-                                                  utf8.encode(imageFile.path);
-                                              final path =
-                                                  Uint8List.fromList(intPath);
-
-                                              int currentUnix = DateTime.now()
-                                                  .millisecondsSinceEpoch;
-
-                                              final filePath =
-                                                  await ImageGallerySaver
-                                                      .saveImage(
-                                                path,
-                                                quality: 100,
-                                                name:
-                                                    'fitend_image_$currentUnix',
-                                                isReturnImagePathOfIOS: true,
-                                              );
-
-                                              print('filePath : $filePath');
-                                            } else {
-                                              print('save fail');
-                                            }
-
-                                            // final directory =
-                                            //     await getApplicationDocumentsDirectory();
-
-                                            // String fileFormat =
-                                            //     imageFile.path.split('.').last;
-
-                                            // await imageFile.copy(
-                                            //   '${directory.path}/$currentUnix.$fileFormat',
-                                            // );
-                                            // refreshAlreadyCapturedImages();
-                                          },
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.circle,
-                                          color: _isVideoCameraSelected
-                                              ? Colors.white
-                                              : Colors.white38,
-                                          size: 80,
+                                        child: Center(
+                                          child: Text(
+                                            DataUtils.getTimeStringMinutes(
+                                                recordingDuration),
+                                            style: s1SubTitle.copyWith(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              height: 1.1,
+                                            ),
+                                          ),
                                         ),
-                                        Icon(
-                                          Icons.circle,
-                                          color: _isVideoCameraSelected
-                                              ? Colors.red
-                                              : Colors.white,
-                                          size: 65,
-                                        ),
-                                        _isVideoCameraSelected &&
-                                                _isRecordingInProgress
-                                            ? const Icon(
-                                                Icons.stop_rounded,
-                                                color: Colors.white,
-                                                size: 32,
-                                              )
-                                            : Container(),
-                                      ],
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap:
-                                        _imageFile != null || _videoFile != null
-                                            ? () {}
-                                            : null,
-                                    child: Container(
-                                      width: 60,
-                                      height: 60,
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                        border: Border.all(
-                                          color: Colors.white,
-                                          width: 2,
-                                        ),
-                                        image: _imageFile != null
-                                            ? DecorationImage(
-                                                image: FileImage(_imageFile!),
-                                                fit: BoxFit.cover,
-                                              )
-                                            : null,
                                       ),
-                                      child: videoController != null &&
-                                              videoController!
-                                                  .value.isInitialized
-                                          ? ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              child: AspectRatio(
-                                                aspectRatio: videoController!
-                                                    .value.aspectRatio,
-                                                child: VideoPlayer(
-                                                    videoController!),
+                                    ],
+                                  ),
+                                ),
+                              const Spacer(),
+                              // Row(
+                              //   children: [
+                              //     Expanded(
+                              //       child: _zoomSlider(),
+                              //     ),
+                              //     Padding(
+                              //       padding:
+                              //           const EdgeInsets.only(right: 8.0),
+                              //       child: Container(
+                              //         decoration: BoxDecoration(
+                              //           color: Colors.black45,
+                              //           borderRadius:
+                              //               BorderRadius.circular(10.0),
+                              //         ),
+                              //         child: Padding(
+                              //           padding: const EdgeInsets.all(5.0),
+                              //           child: Text(
+                              //             '${_currentZoomLevel.toStringAsFixed(1)}x',
+                              //             style: const TextStyle(
+                              //               color: Colors.white,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                              Container(
+                                color: Colors.black38,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 28, vertical: 10),
+                                  child: Column(
+                                    children: [
+                                      _isRecordingInProgress
+                                          ? const SizedBox(
+                                              height: 30,
+                                            )
+                                          : SizedBox(
+                                              height: 30,
+                                              child: ToggleSwitch(
+                                                initialLabelIndex:
+                                                    _isVideoCameraSelected
+                                                        ? 1
+                                                        : 0,
+                                                totalSwitches: 2,
+                                                activeBgColor: [
+                                                  POINT_COLOR.withOpacity(0.7),
+                                                  POINT_COLOR.withOpacity(0.7),
+                                                ],
+                                                customTextStyles: [
+                                                  h6Headline.copyWith(
+                                                      color: Colors.white,
+                                                      height: 1),
+                                                  h6Headline.copyWith(
+                                                    color: Colors.white,
+                                                    height: 1,
+                                                  ),
+                                                ],
+                                                animate: true,
+                                                animationDuration: 200,
+                                                labels: const [
+                                                  'PHOTO',
+                                                  'VIDEO',
+                                                ],
+                                                onToggle: (index) {
+                                                  if (index == 0) {
+                                                    _isVideoCameraSelected =
+                                                        false;
+                                                  } else {
+                                                    _isVideoCameraSelected =
+                                                        true;
+                                                  }
+
+                                                  setState(() {});
+                                                },
+                                              ),
+                                            ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          InkWell(
+                                            onTap: _isRecordingInProgress
+                                                ? () async {
+                                                    if (controller!.value
+                                                        .isRecordingPaused) {
+                                                      await resumeVideoRecording();
+                                                    } else {
+                                                      await pauseVideoRecording();
+                                                    }
+                                                  }
+                                                : () {
+                                                    setState(() {
+                                                      _isCameraInitialized =
+                                                          false;
+                                                    });
+                                                    onNewCameraSelected(cameras[
+                                                        _isRearCameraSelected
+                                                            ? 1
+                                                            : 0]);
+                                                    setState(() {
+                                                      _isRearCameraSelected =
+                                                          !_isRearCameraSelected;
+
+                                                      if (!_isRearCameraSelected) {
+                                                        controller!
+                                                            .setFlashMode(
+                                                          FlashMode.off,
+                                                        );
+                                                      }
+                                                    });
+                                                  },
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                const Icon(
+                                                  Icons.circle,
+                                                  color: Colors.black38,
+                                                  size: 50,
+                                                ),
+                                                _isRecordingInProgress
+                                                    ? controller!.value
+                                                            .isRecordingPaused
+                                                        ? const Icon(
+                                                            Icons.play_arrow,
+                                                            color: Colors.white,
+                                                            size: 25,
+                                                          )
+                                                        : const Icon(
+                                                            Icons.pause,
+                                                            color: Colors.white,
+                                                            size: 25,
+                                                          )
+                                                    : const Icon(
+                                                        Icons
+                                                            .cameraswitch_outlined,
+                                                        color: Colors.white,
+                                                        size: 25,
+                                                      ),
+                                              ],
+                                            ),
+                                          ),
+                                          InkWell(
+                                            onTap: _isVideoCameraSelected
+                                                ? () async {
+                                                    if (_isRecordingInProgress) {
+                                                      XFile? rawVideo =
+                                                          await stopVideoRecording();
+                                                      File videoFile =
+                                                          File(rawVideo!.path);
+
+                                                      await ImageGallerySaver
+                                                          .saveFile(
+                                                        videoFile.path,
+                                                      );
+
+                                                      // int currentUnix = DateTime
+                                                      //         .now()
+                                                      //     .millisecondsSinceEpoch;
+
+                                                      // final directory =
+                                                      //     await getApplicationDocumentsDirectory();
+
+                                                      // String fileFormat =
+                                                      //     videoFile.path
+                                                      //         .split('.')
+                                                      //         .last;
+                                                    } else {
+                                                      await startVideoRecording();
+                                                    }
+                                                  }
+                                                : () async {
+                                                    XFile? rawImage =
+                                                        await takePicture();
+
+                                                    if (rawImage != null) {
+                                                      File imageFile =
+                                                          File(rawImage.path);
+
+                                                      final path =
+                                                          await ImageGallerySaver
+                                                              .saveFile(
+                                                        imageFile.path,
+                                                        isReturnPathOfIOS: true,
+                                                      );
+
+                                                      print(path);
+                                                    } else {
+                                                      print('save fail');
+                                                    }
+                                                  },
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.circle,
+                                                  color: _isVideoCameraSelected
+                                                      ? Colors.white
+                                                      : Colors.white38,
+                                                  size: 80,
+                                                ),
+                                                Icon(
+                                                  Icons.circle,
+                                                  color: _isVideoCameraSelected
+                                                      ? Colors.red
+                                                      : Colors.white,
+                                                  size: 65,
+                                                ),
+                                                _isVideoCameraSelected &&
+                                                        _isRecordingInProgress
+                                                    ? const Icon(
+                                                        Icons.stop_rounded,
+                                                        color: Colors.white,
+                                                        size: 32,
+                                                      )
+                                                    : Container(),
+                                              ],
+                                            ),
+                                          ),
+                                          if (!_isRecordingInProgress)
+                                            InkWell(
+                                              onTap: () async {
+                                                await ref
+                                                    .read(threadCreateProvider
+                                                        .notifier)
+                                                    .pickImage(context)
+                                                    .then((assets) async {
+                                                  if (assets != null &&
+                                                      assets.isNotEmpty) {
+                                                    ref
+                                                        .read(
+                                                            threadCreateProvider
+                                                                .notifier)
+                                                        .updateIsLoading(true);
+
+                                                    for (var asset in assets) {
+                                                      if (await asset.file !=
+                                                          null) {
+                                                        final file =
+                                                            await asset.file;
+
+                                                        ref
+                                                            .read(
+                                                                threadCreateProvider
+                                                                    .notifier)
+                                                            .addAssets(
+                                                                file!.path);
+
+                                                        print(
+                                                            'file.path : ${file.path}');
+                                                      }
+                                                    }
+
+                                                    ref
+                                                        .read(
+                                                            threadCreateProvider
+                                                                .notifier)
+                                                        .updateIsLoading(false);
+                                                  } else {
+                                                    print('assets: $assets');
+                                                  }
+                                                });
+                                              },
+                                              child: const Stack(
+                                                children: [
+                                                  Icon(
+                                                    Icons.square_rounded,
+                                                    size: 50,
+                                                    color: Colors.black38,
+                                                  ),
+                                                  Positioned(
+                                                    top: 10,
+                                                    left: 10,
+                                                    child: Icon(
+                                                      Icons.photo,
+                                                      color: Colors.white,
+                                                      size: 30,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             )
-                                          : Container(),
-                                    ),
+                                          else
+                                            const SizedBox(
+                                              width: 50,
+                                            )
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   // Expanded(
@@ -699,81 +815,6 @@ class _CameraScreenState extends State<CameraScreen>
         });
         await controller!.setZoomLevel(value);
       },
-    );
-  }
-
-  Padding _flashButtons() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          InkWell(
-            onTap: () async {
-              setState(() {
-                _currentFlashMode = FlashMode.off;
-              });
-              await controller!.setFlashMode(
-                FlashMode.off,
-              );
-            },
-            child: Icon(
-              Icons.flash_off,
-              color: _currentFlashMode == FlashMode.off
-                  ? Colors.amber
-                  : Colors.white,
-            ),
-          ),
-          InkWell(
-            onTap: () async {
-              setState(() {
-                _currentFlashMode = FlashMode.auto;
-              });
-              await controller!.setFlashMode(
-                FlashMode.auto,
-              );
-            },
-            child: Icon(
-              Icons.flash_auto,
-              color: _currentFlashMode == FlashMode.auto
-                  ? Colors.amber
-                  : Colors.white,
-            ),
-          ),
-          InkWell(
-            onTap: () async {
-              setState(() {
-                _currentFlashMode = FlashMode.always;
-              });
-              await controller!.setFlashMode(
-                FlashMode.always,
-              );
-            },
-            child: Icon(
-              Icons.flash_on,
-              color: _currentFlashMode == FlashMode.always
-                  ? Colors.amber
-                  : Colors.white,
-            ),
-          ),
-          InkWell(
-            onTap: () async {
-              setState(() {
-                _currentFlashMode = FlashMode.torch;
-              });
-              await controller!.setFlashMode(
-                FlashMode.torch,
-              );
-            },
-            child: Icon(
-              Icons.highlight,
-              color: _currentFlashMode == FlashMode.torch
-                  ? Colors.amber
-                  : Colors.white,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

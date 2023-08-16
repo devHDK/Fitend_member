@@ -6,6 +6,7 @@ import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/notifications/component/notification_cell.dart';
 import 'package:fitend_member/notifications/model/notification_model.dart';
 import 'package:fitend_member/notifications/provider/notification_provider.dart';
+import 'package:fitend_member/notifications/repository/notifications_repository.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
@@ -48,6 +49,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
   void didPush() async {
     putNotification();
 
+    await ref.read(notificationRepositoryProvider).putNotificationsConfirm();
     await FlutterAppBadger.removeBadge();
   }
 

@@ -69,7 +69,7 @@ class NotificationStateNotifier extends StateNotifier<NotificationModelBase> {
         pstate = state as NotificationModel;
 
         if (pstate.data != null && pstate.data!.isNotEmpty) {
-          await repository.putNotificationsConfirm();
+          // await repository.putNotificationsConfirm();
 
           state = pstate.copyWith(
             data: pstate.data!.map((e) {

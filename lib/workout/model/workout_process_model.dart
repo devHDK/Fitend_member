@@ -1,41 +1,42 @@
-import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
+import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'workout_process_model.g.dart';
 
+abstract class WorkoutProcessModelBase {}
+
+class WorkoutProcessModelLoading extends WorkoutProcessModelBase {}
+
 @JsonSerializable()
-class WorkoutProcessModel {
-  final int recentWorkoutIndex;
-  final int recentSetIndex;
-  final int maxExerciseIndex;
-  final List<int> setInfoCompleteList;
-  final List<int> maxSetInfoList;
-  final Workout workout;
+class WorkoutProcessModel extends WorkoutProcessModelBase {
+  int exerciseIndex;
+  int maxExerciseIndex;
+  List<int> setInfoCompleteList;
+  List<int> maxSetInfoList;
+  List<Exercise> exercises;
 
   WorkoutProcessModel({
-    required this.recentWorkoutIndex,
-    required this.recentSetIndex,
+    required this.exerciseIndex,
     required this.maxExerciseIndex,
     required this.setInfoCompleteList,
     required this.maxSetInfoList,
-    required this.workout,
+    required this.exercises,
   });
 
   WorkoutProcessModel copyWith({
-    int? recentWorkoutIndex,
+    int? exerciseIndex,
     int? recentSetIndex,
     int? maxExerciseIndex,
     List<int>? setInfoCompleteList,
     List<int>? maxSetInfoList,
-    Workout? workout,
+    List<Exercise>? exercises,
   }) =>
       WorkoutProcessModel(
-        recentWorkoutIndex: recentWorkoutIndex ?? this.recentWorkoutIndex,
-        recentSetIndex: recentSetIndex ?? this.recentSetIndex,
+        exerciseIndex: exerciseIndex ?? this.exerciseIndex,
         maxExerciseIndex: maxExerciseIndex ?? this.maxExerciseIndex,
         setInfoCompleteList: setInfoCompleteList ?? this.setInfoCompleteList,
         maxSetInfoList: maxSetInfoList ?? this.maxSetInfoList,
-        workout: workout ?? this.workout,
+        exercises: exercises ?? this.exercises,
       );
 
   factory WorkoutProcessModel.fromJson(Map<String, dynamic> json) =>

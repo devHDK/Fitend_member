@@ -8,8 +8,7 @@ part of 'workout_process_model.dart';
 
 WorkoutProcessModel _$WorkoutProcessModelFromJson(Map<String, dynamic> json) =>
     WorkoutProcessModel(
-      recentWorkoutIndex: json['recentWorkoutIndex'] as int,
-      recentSetIndex: json['recentSetIndex'] as int,
+      exerciseIndex: json['exerciseIndex'] as int,
       maxExerciseIndex: json['maxExerciseIndex'] as int,
       setInfoCompleteList: (json['setInfoCompleteList'] as List<dynamic>)
           .map((e) => e as int)
@@ -17,16 +16,17 @@ WorkoutProcessModel _$WorkoutProcessModelFromJson(Map<String, dynamic> json) =>
       maxSetInfoList: (json['maxSetInfoList'] as List<dynamic>)
           .map((e) => e as int)
           .toList(),
-      workout: Workout.fromJson(json['workout'] as Map<String, dynamic>),
+      exercises: (json['exercises'] as List<dynamic>)
+          .map((e) => Exercise.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$WorkoutProcessModelToJson(
         WorkoutProcessModel instance) =>
     <String, dynamic>{
-      'recentWorkoutIndex': instance.recentWorkoutIndex,
-      'recentSetIndex': instance.recentSetIndex,
+      'exerciseIndex': instance.exerciseIndex,
       'maxExerciseIndex': instance.maxExerciseIndex,
       'setInfoCompleteList': instance.setInfoCompleteList,
       'maxSetInfoList': instance.maxSetInfoList,
-      'workout': instance.workout,
+      'exercises': instance.exercises,
     };

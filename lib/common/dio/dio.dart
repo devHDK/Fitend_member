@@ -47,8 +47,8 @@ final dioProvider = Provider(
   },
 );
 
-bool _shouldRetry(DioError err) {
-  return err.type == DioErrorType.unknown &&
+bool _shouldRetry(DioException err) {
+  return err.type == DioExceptionType.unknown &&
       err.error != null &&
       err.error is SocketException;
 }

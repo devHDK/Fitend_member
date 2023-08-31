@@ -27,6 +27,12 @@ class Exercise {
   final List<ExerciseVideo> videos;
   @HiveField(9)
   final List<SetInfo> setInfo;
+  @HiveField(10)
+  final int? circuitGroupNum;
+  @HiveField(11)
+  final int? circuitSeq;
+  @HiveField(12)
+  final String? setType;
 
   Exercise({
     required this.workoutPlanId,
@@ -38,6 +44,9 @@ class Exercise {
     required this.targetMuscles,
     required this.videos,
     required this.setInfo,
+    this.circuitGroupNum,
+    this.circuitSeq,
+    this.setType,
   });
 
   Exercise copyWith({
@@ -50,6 +59,9 @@ class Exercise {
     List<TargetMuscle>? targetMuscles,
     List<ExerciseVideo>? videos,
     List<SetInfo>? setInfo,
+    int? circuitGroupNum,
+    int? circuitSeq,
+    String? setType,
   }) =>
       Exercise(
         workoutPlanId: workoutPlanId ?? this.workoutPlanId,
@@ -61,6 +73,9 @@ class Exercise {
         targetMuscles: targetMuscles ?? this.targetMuscles,
         videos: videos ?? this.videos,
         setInfo: setInfo ?? this.setInfo,
+        circuitGroupNum: circuitGroupNum ?? this.circuitGroupNum,
+        circuitSeq: circuitSeq ?? this.circuitSeq,
+        setType: setType ?? this.setType,
       );
 
   static Exercise clone({required Exercise exercise}) {
@@ -74,6 +89,9 @@ class Exercise {
       targetMuscles: exercise.targetMuscles,
       videos: exercise.videos,
       setInfo: exercise.setInfo,
+      circuitGroupNum: exercise.circuitGroupNum,
+      circuitSeq: exercise.circuitSeq,
+      setType: exercise.setType,
     );
   }
 

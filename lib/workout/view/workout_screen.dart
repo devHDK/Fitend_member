@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_clipper.dart';
@@ -15,6 +16,7 @@ import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/common/utils/hive_box_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
@@ -812,53 +814,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         }
       },
       cancelOnTap: () {
-        modifiedBox.whenData(
-          (value) {
-            for (var element in widget.exercises) {
-              value.delete(element.workoutPlanId);
-            }
-          },
-        );
-
-        workoutBox.whenData(
-          (value) {
-            for (var element in widget.exercises) {
-              value.delete(element.workoutPlanId);
-            }
-          },
-        );
-
-        timerWorkoutBox.whenData(
-          (value) {
-            for (var element in widget.exercises) {
-              if ((element.trackingFieldId == 3 ||
-                      element.trackingFieldId == 4) &&
-                  element.setInfo.length == 1) {
-                value.delete(element.workoutPlanId);
-              }
-            }
-          },
-        );
-
-        timerXMoreBox.whenData(
-          (value) {
-            for (var element in widget.exercises) {
-              if ((element.trackingFieldId == 3 ||
-                      element.trackingFieldId == 4) &&
-                  element.setInfo.length > 1) {
-                value.delete(element.workoutPlanId);
-              }
-            }
-          },
-        );
-
-        workoutResultBox.whenData(
-          (value) {
-            for (var element in widget.exercises) {
-              value.delete(element.workoutPlanId);
-            }
-          },
-        );
+        BoxUtils.deleteBox(workoutBox, widget.exercises);
+        BoxUtils.deleteBox(modifiedBox, widget.exercises);
+        BoxUtils.deleteTimerBox(timerWorkoutBox, widget.exercises);
+        BoxUtils.deleteTimerBox(timerXMoreBox, widget.exercises);
+        BoxUtils.deleteBox(workoutResultBox, widget.exercises);
 
         processingExerciseIndexBox.whenData(
           (value) {
@@ -968,7 +928,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         );
                       },
                     );
-                  } on DioError {
+                  } on Error {
+                    print(e);
                     showDialog(
                       barrierDismissible: false,
                       context: context,
@@ -1122,7 +1083,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _IconButton(
+            _iconButton(
               img: 'asset/img/icon_change.svg',
               name: '운동 변경',
               onTap: () async {
@@ -1154,7 +1115,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 );
               },
             ),
-            _IconButton(
+            _iconButton(
               img: 'asset/img/icon_guide.svg',
               name: '운동 가이드',
               onTap: () {
@@ -1164,7 +1125,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 ));
               },
             ),
-            _IconButton(
+            _iconButton(
               img: 'asset/img/icon_record.svg',
               name: '영상 녹화',
               textColor: LIGHT_GRAY_COLOR,
@@ -1176,7 +1137,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 ).show(context);
               },
             ),
-            _IconButton(
+            _iconButton(
               img: 'asset/img/icon_stop.svg',
               name: '운동 종료',
               onTap: () {
@@ -1192,153 +1153,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         context.pop();
                       },
                       cancelOnTap: () async {
-                        context.pop();
-
-                        try {
-                          List<WorkoutRecordModel> tempRecordList = [];
-
-                          workoutBox.whenData(
-                            (value) {
-                              for (int i = 0;
-                                  i < widget.exercises.length;
-                                  i++) {
-                                var record = value
-                                    .get(widget.exercises[i].workoutPlanId);
-
-                                if (record != null &&
-                                    record is WorkoutRecordModel) {
-                                  if (record.setInfo.length <
-                                      maxSetInfoList[i]) {
-                                    for (int j = 0;
-                                        j <
-                                            maxSetInfoList[i] -
-                                                setInfoCompleteList[i];
-                                        j++) {
-                                      record.setInfo.add(
-                                        SetInfo(
-                                            index: record.setInfo.length + 1),
-                                      );
-                                    }
-                                  }
-
-                                  value.put(widget.exercises[i].workoutPlanId,
-                                      record);
-                                  tempRecordList.add(record);
-                                } else {
-                                  var tempRecord = WorkoutRecordModel(
-                                    workoutPlanId:
-                                        widget.exercises[i].workoutPlanId,
-                                    setInfo: [],
-                                  );
-                                  for (int j = 0; j < maxSetInfoList[i]; j++) {
-                                    tempRecord.setInfo.add(SetInfo(
-                                      index: j + 1,
-                                    ));
-                                  }
-                                  value.put(widget.exercises[i].workoutPlanId,
-                                      tempRecord);
-                                  tempRecordList.add(tempRecord);
-                                }
-                              }
-                            },
-                          );
-
-                          await recordRepository
-                              .postWorkoutRecords(
-                            body: PostWorkoutRecordModel(
-                              records: tempRecordList,
-                            ),
-                          )
-                              .then((value) {
-                            context.pop();
-                            GoRouter.of(context)
-                                .pushNamed(WorkoutFeedbackScreen.routeName,
-                                    pathParameters: {
-                                      'workoutScheduleId':
-                                          widget.workoutScheduleId.toString(),
-                                    },
-                                    extra: widget.exercises,
-                                    queryParameters: {
-                                      'startDate': DateFormat('yyyy-MM-dd')
-                                          .format(widget.date),
-                                    });
-                          });
-                        } on DioError catch (e) {
-                          if (e.response!.statusCode == 403) {
-                            workoutBox.whenData(
-                              (value) {
-                                for (var element in widget.exercises) {
-                                  value.delete(element.workoutPlanId);
-                                }
-                              },
-                            );
-
-                            modifiedBox.whenData(
-                              (value) async {
-                                for (var element in widget.exercises) {
-                                  await value.delete(element.workoutPlanId);
-                                }
-                              },
-                            );
-
-                            timerWorkoutBox.whenData(
-                              (value) {
-                                for (var element in widget.exercises) {
-                                  if ((element.trackingFieldId == 3 ||
-                                          element.trackingFieldId == 4) &&
-                                      element.setInfo.length == 1) {
-                                    value.delete(element.workoutPlanId);
-                                  }
-                                }
-                              },
-                            );
-
-                            timerXMoreBox.whenData(
-                              (value) {
-                                for (var element in widget.exercises) {
-                                  if ((element.trackingFieldId == 3 ||
-                                          element.trackingFieldId == 4) &&
-                                      element.setInfo.length > 1) {
-                                    value.delete(element.workoutPlanId);
-                                  }
-                                }
-                              },
-                            );
-
-                            workoutResultBox.whenData(
-                              (value) {
-                                for (var element in widget.exercises) {
-                                  value.delete(element.workoutPlanId);
-                                }
-                              },
-                            );
-
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) => DialogWidgets.errorDialog(
-                                message:
-                                    '운동 정보가 변경되었습니다.😂\n 앱을 종료후 다시 실행해 주세요.',
-                                confirmText: '확인',
-                                confirmOnTap: () {
-                                  context.pop();
-                                },
-                              ),
-                            );
-                          } else {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) => DialogWidgets.errorDialog(
-                                message: '다시 시도해주세요',
-                                confirmText: '확인',
-                                confirmOnTap: () {
-                                  context.pop();
-                                },
-                              ),
-                            );
-                          }
-                        }
+                        await _quitWorkout(workoutBox, recordRepository,
+                            modifiedBox, timerWorkoutBox, timerXMoreBox);
                         //완료!!!!!!!!!
                       },
                     );
@@ -1352,7 +1168,107 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     );
   }
 
-  InkWell _IconButton({
+  Future<void> _quitWorkout(
+      AsyncValue<Box<dynamic>> workoutBox,
+      WorkoutRecordsRepository recordRepository,
+      AsyncValue<Box<dynamic>> modifiedBox,
+      AsyncValue<Box<dynamic>> timerWorkoutBox,
+      AsyncValue<Box<dynamic>> timerXMoreBox) async {
+    context.pop();
+
+    try {
+      List<WorkoutRecordModel> tempRecordList = [];
+
+      workoutBox.whenData(
+        (value) {
+          for (int i = 0; i < widget.exercises.length; i++) {
+            var record = value.get(widget.exercises[i].workoutPlanId);
+
+            if (record != null && record is WorkoutRecordModel) {
+              if (record.setInfo.length < maxSetInfoList[i]) {
+                for (int j = 0;
+                    j < maxSetInfoList[i] - setInfoCompleteList[i];
+                    j++) {
+                  record.setInfo.add(
+                    SetInfo(index: record.setInfo.length + 1),
+                  );
+                }
+              }
+
+              value.put(widget.exercises[i].workoutPlanId, record);
+              tempRecordList.add(record);
+            } else {
+              var tempRecord = WorkoutRecordModel(
+                workoutPlanId: widget.exercises[i].workoutPlanId,
+                setInfo: [],
+              );
+              for (int j = 0; j < maxSetInfoList[i]; j++) {
+                tempRecord.setInfo.add(SetInfo(
+                  index: j + 1,
+                ));
+              }
+              value.put(widget.exercises[i].workoutPlanId, tempRecord);
+              tempRecordList.add(tempRecord);
+            }
+          }
+        },
+      );
+
+      await recordRepository
+          .postWorkoutRecords(
+        body: PostWorkoutRecordModel(
+          records: tempRecordList,
+        ),
+      )
+          .then((value) {
+        context.pop();
+        GoRouter.of(context).pushNamed(WorkoutFeedbackScreen.routeName,
+            pathParameters: {
+              'workoutScheduleId': widget.workoutScheduleId.toString(),
+            },
+            extra: widget.exercises,
+            queryParameters: {
+              'startDate': DateFormat('yyyy-MM-dd').format(widget.date),
+            });
+      }).onError((error, stackTrace) {
+        if (error is DioError && error.response!.statusCode == 403) {
+          BoxUtils.deleteBox(workoutBox, widget.exercises);
+          BoxUtils.deleteBox(modifiedBox, widget.exercises);
+          BoxUtils.deleteTimerBox(timerWorkoutBox, widget.exercises);
+          BoxUtils.deleteTimerBox(timerXMoreBox, widget.exercises);
+          BoxUtils.deleteBox(workoutResultBox, widget.exercises);
+
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => DialogWidgets.errorDialog(
+              message: '운동 정보가 변경되었습니다.😂\n 앱을 종료후 다시 실행해 주세요.',
+              confirmText: '확인',
+              confirmOnTap: () {
+                context.pop();
+              },
+            ),
+          );
+        } else {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => DialogWidgets.errorDialog(
+              message: '다시 시도해주세요',
+              confirmText: '확인',
+              confirmOnTap: () {
+                context.pop();
+              },
+            ),
+          );
+        }
+      });
+    } on Error catch (e) {
+      print(e);
+    }
+  }
+
+  InkWell _iconButton({
     required String img,
     required String name,
     required GestureTapCallback onTap,

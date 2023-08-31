@@ -26,13 +26,16 @@ class ExerciseAdapter extends TypeAdapter<Exercise> {
       targetMuscles: (fields[7] as List).cast<TargetMuscle>(),
       videos: (fields[8] as List).cast<ExerciseVideo>(),
       setInfo: (fields[9] as List).cast<SetInfo>(),
+      circuitGroupNum: fields[10] as int?,
+      circuitSeq: fields[11] as int?,
+      setType: fields[12] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Exercise obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(12)
       ..writeByte(1)
       ..write(obj.workoutPlanId)
       ..writeByte(2)
@@ -50,7 +53,13 @@ class ExerciseAdapter extends TypeAdapter<Exercise> {
       ..writeByte(8)
       ..write(obj.videos)
       ..writeByte(9)
-      ..write(obj.setInfo);
+      ..write(obj.setInfo)
+      ..writeByte(10)
+      ..write(obj.circuitGroupNum)
+      ..writeByte(11)
+      ..write(obj.circuitSeq)
+      ..writeByte(12)
+      ..write(obj.setType);
   }
 
   @override
@@ -84,6 +93,9 @@ Exercise _$ExerciseFromJson(Map<String, dynamic> json) => Exercise(
       setInfo: (json['setInfo'] as List<dynamic>)
           .map((e) => SetInfo.fromJson(e as Map<String, dynamic>))
           .toList(),
+      circuitGroupNum: json['circuitGroupNum'] as int?,
+      circuitSeq: json['circuitSeq'] as int?,
+      setType: json['setType'] as String?,
     );
 
 Map<String, dynamic> _$ExerciseToJson(Exercise instance) => <String, dynamic>{
@@ -96,4 +108,7 @@ Map<String, dynamic> _$ExerciseToJson(Exercise instance) => <String, dynamic>{
       'targetMuscles': instance.targetMuscles,
       'videos': instance.videos,
       'setInfo': instance.setInfo,
+      'circuitGroupNum': instance.circuitGroupNum,
+      'circuitSeq': instance.circuitSeq,
+      'setType': instance.setType,
     };

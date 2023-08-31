@@ -90,7 +90,7 @@ class CustomInterceptor extends Interceptor {
 
 // 3)에러가 났을때
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (_shouldRetry(err)) {
       try {
         final dioRtry = ref.read(dioRetryProvider);
@@ -98,7 +98,7 @@ class CustomInterceptor extends Interceptor {
         final response = await dioRtry.fetch(err.requestOptions);
 
         return handler.resolve(response);
-      } on DioError catch (e) {
+      } on DioException catch (e) {
         return handler.reject(e);
       }
     }
@@ -148,7 +148,7 @@ class CustomInterceptor extends Interceptor {
 
         //성공
         return handler.resolve(response);
-      } on DioError catch (e) {
+      } on DioException catch (e) {
         //circular dependency error
         // A, B
         ref.read(getMeProvider.notifier).logout();

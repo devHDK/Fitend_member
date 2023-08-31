@@ -87,8 +87,8 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
           }
         }
       });
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.unknown) {
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.unknown) {
         state = UserModelError(error: 'connection error', statusCode: 504);
       }
 
@@ -128,7 +128,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
       state = userResp;
 
       return userResp;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       if (e.response != null) {
         if (e.response!.statusCode != null) {
           if (e.response!.statusCode! == 404 ||
@@ -195,8 +195,8 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   }) async {
     try {
       await repository.confirmPassword(password: password);
-    } on DioError catch (e) {
-      throw DioError(
+    } on DioException catch (e) {
+      throw DioException(
         requestOptions: e.requestOptions,
         response: e.response,
       );
@@ -213,8 +213,8 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
         password: password,
         newPassword: newPassword,
       ));
-    } on DioError catch (e) {
-      throw DioError(
+    } on DioException catch (e) {
+      throw DioException(
         requestOptions: e.requestOptions,
         response: e.response,
       );

@@ -144,7 +144,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                                   body: NotificationSettingParams(
                                       isNotification:
                                           !state.user.isNotification!));
-                        } on DioError catch (e) {
+                        } on DioException catch (e) {
                           debugPrint('$e');
                           ref.read(getMeProvider.notifier).changeIsNotification(
                               isNotification: !state.user.isNotification!);

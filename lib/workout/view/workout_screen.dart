@@ -72,8 +72,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   List<int> maxSetInfoList = [];
   bool workoutFinish = false;
   bool isPoped = false;
-  bool lastChecked = false;
-  late int maxExcerciseIndex;
+  late int maxExerciseIndex;
   bool isTooltipVisible = false;
   int tooltipCount = 0;
   late Timer timer;
@@ -90,13 +89,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     setInfoCompleteList = List.generate(widget.exercises.length, (index) => 0);
     maxSetInfoList = List.generate(widget.exercises.length,
         (index) => widget.exercises[index].setInfo.length);
-    maxExcerciseIndex = widget.exercises.length - 1;
+    maxExerciseIndex = widget.exercises.length - 1;
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (initial) {
         workoutRecordBox.whenData(
           (value) async {
-            for (int i = 0; i <= maxExcerciseIndex; i++) {
+            for (int i = 0; i <= maxExerciseIndex; i++) {
               final tempRecord =
                   await value.get(widget.exercises[i].workoutPlanId);
 
@@ -204,7 +203,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final workoutBox = ref.read(hiveWorkoutRecordProvider);
+    final recordBox = ref.read(hiveWorkoutRecordProvider);
     final timerWorkoutBox = ref.read(hiveTimerRecordProvider);
     final timerXMoreBox = ref.read(hiveTimerXMoreRecordProvider);
     final modifiedBox = ref.read(hiveModifiedExerciseProvider);
@@ -213,14 +212,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     final workoutResult = ref.read(hiveWorkoutResultProvider);
     final processingExerciseIndexBox = ref.read(hiveExerciseIndexProvider);
 
-    workoutRecordBox = workoutBox;
+    workoutRecordBox = recordBox;
     workoutResultBox = workoutResult;
     modifiedExerciseBox = modifiedBox;
     exerciseIndexBox = processingExerciseIndexBox;
 
     return WillPopScope(
       onWillPop: () async {
-        _screenPop(processingExerciseIndexBox, context, modifiedBox, workoutBox,
+        _screenPop(processingExerciseIndexBox, context, modifiedBox, recordBox,
             timerWorkoutBox, timerXMoreBox);
 
         return Future.value(true);
@@ -237,7 +236,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               onPressed: () {
                 if (mounted) {
                   _screenPop(processingExerciseIndexBox, context, modifiedBox,
-                      workoutBox, timerWorkoutBox, timerXMoreBox);
+                      recordBox, timerWorkoutBox, timerXMoreBox);
                 }
               },
               icon: const Icon(Icons.arrow_back),
@@ -440,10 +439,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     }
                                   },
                             proccessOnTap: () {
-                              if (exerciseIndex <= maxExcerciseIndex &&
+                              if (exerciseIndex <= maxExerciseIndex &&
                                   setInfoCompleteList[exerciseIndex] <
                                       maxSetInfoList[exerciseIndex]) {
-                                _hiveDataControl(workoutBox);
+                                _hiveDataControl(recordBox);
                               }
 
                               if (setInfoCompleteList[exerciseIndex] <
@@ -456,7 +455,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               //운동 변경
                               if (setInfoCompleteList[exerciseIndex] ==
                                       maxSetInfoList[exerciseIndex] &&
-                                  exerciseIndex < maxExcerciseIndex) {
+                                  exerciseIndex < maxExerciseIndex) {
                                 //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                                 setState(() {
                                   exerciseIndex += 1; // 운동 변경
@@ -474,8 +473,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
                                 while (setInfoCompleteList[exerciseIndex] ==
                                         maxSetInfoList[exerciseIndex] &&
-                                    exerciseIndex < maxExcerciseIndex) {
-                                  if (exerciseIndex == maxExcerciseIndex) {
+                                    exerciseIndex < maxExerciseIndex) {
+                                  if (exerciseIndex == maxExerciseIndex) {
                                     break;
                                   }
 
@@ -494,7 +493,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               if (!workoutFinish) {
                                 _checkLastExercise(
                                   recordRepository: recordRepository,
-                                  workoutBox: workoutBox,
+                                  workoutRecordBox: recordBox,
                                 ); //끝났는지 체크!
                               }
                             },
@@ -562,7 +561,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   final record = value.get(widget
                                       .exercises[exerciseIndex].workoutPlanId);
                                   if (record is SetInfo) {
-                                    workoutBox.whenData((_) {
+                                    recordBox.whenData((_) {
                                       _.put(
                                         modifiedExercises[exerciseIndex]
                                             .workoutPlanId,
@@ -581,7 +580,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
                                     if (setInfoCompleteList[exerciseIndex] ==
                                             maxSetInfoList[exerciseIndex] &&
-                                        exerciseIndex < maxExcerciseIndex) {
+                                        exerciseIndex < maxExerciseIndex) {
                                       //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                                       setState(() {
                                         exerciseIndex += 1;
@@ -600,9 +599,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       while (setInfoCompleteList[
                                                   exerciseIndex] ==
                                               maxSetInfoList[exerciseIndex] &&
-                                          exerciseIndex < maxExcerciseIndex) {
-                                        if (exerciseIndex ==
-                                            maxExcerciseIndex) {
+                                          exerciseIndex < maxExerciseIndex) {
+                                        if (exerciseIndex == maxExerciseIndex) {
                                           break;
                                         }
                                         setState(() {
@@ -620,7 +618,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     if (!workoutFinish) {
                                       _checkLastExercise(
                                         recordRepository: recordRepository,
-                                        workoutBox: workoutBox,
+                                        workoutRecordBox: recordBox,
                                       ); //끝났는지 체크!
                                     }
                                   }
@@ -684,7 +682,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               }
                             },
                             proccessOnTap: () {
-                              if (exerciseIndex <= maxExcerciseIndex &&
+                              if (exerciseIndex <= maxExerciseIndex &&
                                   setInfoCompleteList[exerciseIndex] <
                                       maxSetInfoList[exerciseIndex]) {
                                 timerXMoreBox.whenData(
@@ -719,7 +717,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               //운동 변경
                               if (setInfoCompleteList[exerciseIndex] ==
                                       maxSetInfoList[exerciseIndex] &&
-                                  exerciseIndex < maxExcerciseIndex) {
+                                  exerciseIndex < maxExerciseIndex) {
                                 //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
                                 setState(() {
                                   exerciseIndex += 1;
@@ -737,8 +735,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
                                 while (setInfoCompleteList[exerciseIndex] ==
                                         maxSetInfoList[exerciseIndex] &&
-                                    exerciseIndex < maxExcerciseIndex) {
-                                  if (exerciseIndex == maxExcerciseIndex) {
+                                    exerciseIndex < maxExerciseIndex) {
+                                  if (exerciseIndex == maxExerciseIndex) {
                                     break;
                                   }
                                   setState(() {
@@ -756,7 +754,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               if (!workoutFinish) {
                                 _checkLastExercise(
                                   recordRepository: recordRepository,
-                                  workoutBox: workoutBox,
+                                  workoutRecordBox: recordBox,
                                 ); //끝났는지 체크!
                               }
                             },
@@ -771,7 +769,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         ),
                         if (isSwipeUp)
                           _bottomButtons(
-                            workoutBox,
+                            recordBox,
                             modifiedBox,
                             timerWorkoutBox,
                             timerXMoreBox,
@@ -794,7 +792,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       AsyncValue<Box<dynamic>> processingExerciseIndexBox,
       BuildContext context,
       AsyncValue<Box<dynamic>> modifiedBox,
-      AsyncValue<Box<dynamic>> workoutBox,
+      AsyncValue<Box<dynamic>> recordBox,
       AsyncValue<Box<dynamic>> timerWorkoutBox,
       AsyncValue<Box<dynamic>> timerXMoreBox) {
     DialogWidgets.confirmDialog(
@@ -814,7 +812,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         }
       },
       cancelOnTap: () {
-        BoxUtils.deleteBox(workoutBox, widget.exercises);
+        BoxUtils.deleteBox(recordBox, widget.exercises);
         BoxUtils.deleteBox(modifiedBox, widget.exercises);
         BoxUtils.deleteTimerBox(timerWorkoutBox, widget.exercises);
         BoxUtils.deleteTimerBox(timerXMoreBox, widget.exercises);
@@ -838,13 +836,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
   void _checkLastExercise({
     required WorkoutRecordsRepository recordRepository,
-    required AsyncValue<Box> workoutBox,
+    required AsyncValue<Box> workoutRecordBox,
   }) async {
-    if (exerciseIndex == maxExcerciseIndex &&
+    if (exerciseIndex == maxExerciseIndex &&
         setInfoCompleteList[exerciseIndex] == maxSetInfoList[exerciseIndex]) {
       // 리스트 끝의 운동을 다 했는지 확인!
       bool finish = true;
-      for (int i = 0; i <= maxExcerciseIndex; i++) {
+      for (int i = 0; i <= maxExerciseIndex; i++) {
         if (setInfoCompleteList[i] != maxSetInfoList[i]) {
           showDialog(
             barrierDismissible: false,
@@ -868,7 +866,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
                     List<WorkoutRecordModel> tempRecordList = [];
 
-                    workoutBox.whenData(
+                    workoutRecordBox.whenData(
                       (value) {
                         for (int i = 0; i < widget.exercises.length; i++) {
                           final record =
@@ -947,7 +945,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             },
           );
           finish = false;
-          lastChecked = true;
           break;
         }
       }
@@ -959,7 +956,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         try {
           List<WorkoutRecordModel> tempRecordList = [];
 
-          workoutBox.whenData(
+          workoutRecordBox.whenData(
             (value) {
               for (int i = 0; i < widget.exercises.length; i++) {
                 final record = value.get(widget.exercises[i].workoutPlanId);
@@ -1011,7 +1008,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               },
             );
           });
-        } on DioError {
+        } on DioException {
           showDialog(
             barrierDismissible: false,
             context: context,
@@ -1064,7 +1061,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 
   Column _bottomButtons(
-    AsyncValue<Box<dynamic>> workoutBox,
+    AsyncValue<Box<dynamic>> recordBox,
     AsyncValue<Box<dynamic>> modifiedBox,
     AsyncValue<Box<dynamic>> timerWorkoutBox,
     AsyncValue<Box<dynamic>> timerXMoreBox,
@@ -1153,7 +1150,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         context.pop();
                       },
                       cancelOnTap: () async {
-                        await _quitWorkout(workoutBox, recordRepository,
+                        await _quitWorkout(recordBox, recordRepository,
                             modifiedBox, timerWorkoutBox, timerXMoreBox);
                         //완료!!!!!!!!!
                       },
@@ -1169,7 +1166,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 
   Future<void> _quitWorkout(
-      AsyncValue<Box<dynamic>> workoutBox,
+      AsyncValue<Box<dynamic>> recordBox,
       WorkoutRecordsRepository recordRepository,
       AsyncValue<Box<dynamic>> modifiedBox,
       AsyncValue<Box<dynamic>> timerWorkoutBox,
@@ -1179,7 +1176,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     try {
       List<WorkoutRecordModel> tempRecordList = [];
 
-      workoutBox.whenData(
+      recordBox.whenData(
         (value) {
           for (int i = 0; i < widget.exercises.length; i++) {
             var record = value.get(widget.exercises[i].workoutPlanId);
@@ -1231,8 +1228,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               'startDate': DateFormat('yyyy-MM-dd').format(widget.date),
             });
       }).onError((error, stackTrace) {
-        if (error is DioError && error.response!.statusCode == 403) {
-          BoxUtils.deleteBox(workoutBox, widget.exercises);
+        if (error is DioException && error.response!.statusCode == 403) {
+          BoxUtils.deleteBox(recordBox, widget.exercises);
           BoxUtils.deleteBox(modifiedBox, widget.exercises);
           BoxUtils.deleteTimerBox(timerWorkoutBox, widget.exercises);
           BoxUtils.deleteTimerBox(timerXMoreBox, widget.exercises);

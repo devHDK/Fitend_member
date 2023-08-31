@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
@@ -5,16 +6,18 @@ import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
-import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
+import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
+import 'package:fitend_member/workout/repository/workout_records_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 final workoutProcessProvider = StateNotifierProvider.family<
     WorkoutProcessStateNotifier, WorkoutProcessModel, int>((ref, id) {
-  final repository = ref.watch(workoutScheduleRepositoryProvider);
+  final repository = ref.watch(workoutRecordsRepositoryProvider);
   final provider = ref.read(workoutProvider(id).notifier);
   final AsyncValue<Box> workoutRecordBox = ref.read(hiveWorkoutRecordProvider);
   final AsyncValue<Box> timerWorkoutBox = ref.read(hiveTimerRecordProvider);
@@ -36,7 +39,7 @@ final workoutProcessProvider = StateNotifierProvider.family<
 });
 
 class WorkoutProcessStateNotifier extends StateNotifier<WorkoutProcessModel> {
-  final WorkoutScheduleRepository repository;
+  final WorkoutRecordsRepository repository;
   final int id;
   final WorkoutStateNotifier workoutProvider;
   final AsyncValue<Box> workoutRecordBox;
@@ -60,10 +63,12 @@ class WorkoutProcessStateNotifier extends StateNotifier<WorkoutProcessModel> {
           setInfoCompleteList: [],
           maxSetInfoList: [],
           exercises: [],
+          workoutFinished: false,
         )) {
     init(workoutProvider);
   }
 
+  //init
   Future<void> init(WorkoutStateNotifier workoutProvider) async {
     List<Exercise> tempExercises = [];
     List<Exercise> modifiedExercises = [];
@@ -100,6 +105,8 @@ class WorkoutProcessStateNotifier extends StateNotifier<WorkoutProcessModel> {
           );
         }
       }
+
+      state.exercises = modifiedExercises;
     });
 
     workoutRecordBox.whenData((value) async {
@@ -127,7 +134,173 @@ class WorkoutProcessStateNotifier extends StateNotifier<WorkoutProcessModel> {
     });
   }
 
-  //다음 운동
-  //다음 운동(슈퍼세트)
-  //세트 수정
+  // 다음 운동
+  // return <= -1  => 모든 운동 완료,
+  // return > -1 => exerciseIndex
+  Future<int> nextStepForRegular() async {
+    if (state.exerciseIndex <= state.maxExerciseIndex &&
+        state.setInfoCompleteList[state.exerciseIndex] <
+            state.maxSetInfoList[state.exerciseIndex]) {
+      _saveCompleteSet(workoutRecordBox);
+    }
+
+    if (state.setInfoCompleteList[state.exerciseIndex] <
+        state.maxSetInfoList[state.exerciseIndex]) {
+      state.setInfoCompleteList[state.exerciseIndex] += 1;
+    }
+
+    //운동 변경
+    if (state.setInfoCompleteList[state.exerciseIndex] ==
+            state.maxSetInfoList[state.exerciseIndex] &&
+        state.exerciseIndex < state.maxExerciseIndex) {
+      //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
+
+      state.exerciseIndex += 1; // 운동 변경
+      exerciseIndexBox.whenData(
+        (value) async {
+          await value.put(id, state.exerciseIndex);
+        },
+      );
+
+      while (state.setInfoCompleteList[state.exerciseIndex] ==
+              state.maxSetInfoList[state.exerciseIndex] &&
+          state.exerciseIndex < state.maxExerciseIndex) {
+        if (state.exerciseIndex == state.maxExerciseIndex) {
+          break;
+        }
+
+        state.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+        exerciseIndexBox.whenData(
+          (value) {
+            value.put(id, state.exerciseIndex);
+          },
+        );
+      }
+    }
+    //끝났는지 체크!
+    if (!state.workoutFinished) {
+      return _checkLastExerciseRegular();
+    } else {
+      return -1;
+    }
+  }
+
+  //완료 운동 저장
+  void _saveCompleteSet(AsyncValue<Box<dynamic>> workoutRecordBox) {
+    workoutRecordBox.whenData(
+      (value) {
+        final record =
+            value.get(state.exercises[state.exerciseIndex].workoutPlanId);
+        if (record != null && record.setInfo.length > 0) {
+          //local DB에 데이터가 있을때
+          value.put(
+            state.exercises[state.exerciseIndex].workoutPlanId,
+            WorkoutRecordModel(
+              workoutPlanId: state.exercises[state.exerciseIndex].workoutPlanId,
+              setInfo: [
+                ...record.setInfo,
+                state.exercises[state.exerciseIndex]
+                    .setInfo[state.setInfoCompleteList[state.exerciseIndex]],
+              ],
+            ),
+          );
+        } else {
+          //local DB에 데이터가 없을때
+          value.put(
+            state.exercises[state.exerciseIndex].workoutPlanId,
+            WorkoutRecordModel(
+              workoutPlanId: state.exercises[state.exerciseIndex].workoutPlanId,
+              setInfo: [
+                state.exercises[state.exerciseIndex]
+                    .setInfo[state.setInfoCompleteList[state.exerciseIndex]],
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  //완료안된 운동이 있는지 체크
+  int _checkLastExerciseRegular() {
+    for (int i = 0; i <= state.maxExerciseIndex; i++) {
+      if (state.setInfoCompleteList[i] != state.maxSetInfoList[i]) {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+
+  //운동 변경
+  void exerciseChange(int exerciseIndex) {
+    state.exerciseIndex = exerciseIndex;
+  }
+
+  //운동 종료 상태 변경
+  void workoutFinishedChange(bool workoutFinished) {
+    state.workoutFinished = workoutFinished;
+  }
+
+  //운동 종료
+  Future<void> quitWorkout() async {
+    try {
+      List<WorkoutRecordModel> tempRecordList = [];
+
+      workoutRecordBox.whenData(
+        (value) {
+          for (int i = 0; i < state.exercises.length; i++) {
+            final record = value.get(state.exercises[i].workoutPlanId);
+
+            if (record != null && record is WorkoutRecordModel) {
+              if (record.setInfo.length < state.maxSetInfoList[i]) {
+                for (int j = 0;
+                    j < state.maxSetInfoList[i] - state.setInfoCompleteList[i];
+                    j++) {
+                  record.setInfo.add(
+                    SetInfo(index: record.setInfo.length + 1),
+                  );
+                }
+              }
+              value.put(state.exercises[i].workoutPlanId, record);
+              tempRecordList.add(record);
+            } else {
+              var tempRecord = WorkoutRecordModel(
+                workoutPlanId: state.exercises[i].workoutPlanId,
+                setInfo: [],
+              );
+              for (int j = 0; j < state.maxSetInfoList[i]; j++) {
+                tempRecord.setInfo.add(SetInfo(index: j + 1));
+              }
+              value.put(state.exercises[i].workoutPlanId, tempRecord);
+              tempRecordList.add(tempRecord);
+            }
+          }
+        },
+      );
+
+      try {
+        //운동 기록 서버로
+        await repository.postWorkoutRecords(
+            body: PostWorkoutRecordModel(
+          records: tempRecordList,
+        ));
+      } on DioException catch (e) {
+        throw DioException(
+          requestOptions: e.requestOptions,
+          response: e.response,
+        );
+      }
+    } on Error catch (e) {
+      print(e);
+    }
+  }
+
+  // 다음 운동(슈퍼세트)
+  // 세트 수정
+  // 총 운동 시간 추가
+
+  // 이전에 수행하지 않은 운동 이동
+
+  // 다음 운동 체크
 }

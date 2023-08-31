@@ -267,7 +267,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                           // );
                                         },
                                       );
-                                    } on DioError catch (e) {
+                                    } on DioException catch (e) {
                                       setState(() {
                                         buttonEnable = true;
                                       });

@@ -14,14 +14,15 @@ class WorkoutProcessModel extends WorkoutProcessModelBase {
   List<int> setInfoCompleteList;
   List<int> maxSetInfoList;
   List<Exercise> exercises;
+  bool workoutFinished;
 
-  WorkoutProcessModel({
-    required this.exerciseIndex,
-    required this.maxExerciseIndex,
-    required this.setInfoCompleteList,
-    required this.maxSetInfoList,
-    required this.exercises,
-  });
+  WorkoutProcessModel(
+      {required this.exerciseIndex,
+      required this.maxExerciseIndex,
+      required this.setInfoCompleteList,
+      required this.maxSetInfoList,
+      required this.exercises,
+      required this.workoutFinished});
 
   WorkoutProcessModel copyWith({
     int? exerciseIndex,
@@ -30,14 +31,15 @@ class WorkoutProcessModel extends WorkoutProcessModelBase {
     List<int>? setInfoCompleteList,
     List<int>? maxSetInfoList,
     List<Exercise>? exercises,
+    bool? workoutFinished,
   }) =>
       WorkoutProcessModel(
-        exerciseIndex: exerciseIndex ?? this.exerciseIndex,
-        maxExerciseIndex: maxExerciseIndex ?? this.maxExerciseIndex,
-        setInfoCompleteList: setInfoCompleteList ?? this.setInfoCompleteList,
-        maxSetInfoList: maxSetInfoList ?? this.maxSetInfoList,
-        exercises: exercises ?? this.exercises,
-      );
+          exerciseIndex: exerciseIndex ?? this.exerciseIndex,
+          maxExerciseIndex: maxExerciseIndex ?? this.maxExerciseIndex,
+          setInfoCompleteList: setInfoCompleteList ?? this.setInfoCompleteList,
+          maxSetInfoList: maxSetInfoList ?? this.maxSetInfoList,
+          exercises: exercises ?? this.exercises,
+          workoutFinished: workoutFinished ?? this.workoutFinished);
 
   factory WorkoutProcessModel.fromJson(Map<String, dynamic> json) =>
       _$WorkoutProcessModelFromJson(json);

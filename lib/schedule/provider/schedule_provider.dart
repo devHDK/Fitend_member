@@ -69,7 +69,7 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
             interval: 30,
           ),
         );
-      } on DioError catch (e) {
+      } on DioException catch (e) {
         print('getReservationSchedule error : $e');
       }
 
@@ -82,7 +82,7 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
             interval: 30,
           ),
         );
-      } on DioError catch (e) {
+      } on DioException catch (e) {
         print('getWorkoutSchedule error : $e');
       }
 

@@ -8,6 +8,7 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class WorkoutCard extends ConsumerStatefulWidget {
@@ -15,6 +16,7 @@ class WorkoutCard extends ConsumerStatefulWidget {
   final int completeSetCount;
   final int? exerciseIndex;
   final bool? isSelected;
+  final bool? islastCircuit;
 
   const WorkoutCard({
     super.key,
@@ -22,6 +24,7 @@ class WorkoutCard extends ConsumerStatefulWidget {
     required this.completeSetCount,
     this.exerciseIndex,
     this.isSelected,
+    this.islastCircuit,
   });
 
   @override
@@ -78,13 +81,28 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
               Row(
                 children: [
                   Container(
-                    width: 30,
-                    height: 8,
+                    width: 39,
+                    height: 17,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: index <= widget.completeSetCount - 1
                           ? POINT_COLOR
                           : LIGHT_GRAY_COLOR,
+                    ),
+                    child: Center(
+                      child: Text(
+                        widget.exercise.trackingFieldId == 1
+                            ? '${widget.exercise.setInfo[index].weight!.floor()} ∙ ${widget.exercise.setInfo[index].reps}'
+                            : widget.exercise.trackingFieldId == 2
+                                ? '${widget.exercise.setInfo[index].reps}'
+                                : '${(widget.exercise.setInfo[index].seconds! / 60).ceil().toString().padLeft(2, '0')}:${(widget.exercise.setInfo[index].seconds! % 60).toString().padLeft(2, '0')}',
+                        style: s1SubTitle.copyWith(
+                          color: index <= widget.completeSetCount - 1
+                              ? Colors.white
+                              : GRAY_COLOR,
+                          fontSize: 10,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -96,21 +114,37 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
           : countList.add(
               Row(
                 children: [
-                  SizedBox(
-                    width: 182,
-                    height: 8,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: LinearProgressIndicator(
-                        value: timerSetInfo.seconds == null
-                            ? 0.0
-                            : (timerSetInfo.seconds! /
-                                widget.exercise.setInfo[0].seconds!),
-                        backgroundColor: LIGHT_GRAY_COLOR,
-                        valueColor:
-                            const AlwaysStoppedAnimation<Color>(POINT_COLOR),
+                  Stack(
+                    children: [
+                      SizedBox(
+                        width: 223,
+                        height: 17,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: LinearProgressIndicator(
+                            value: timerSetInfo.seconds == null
+                                ? 0.0
+                                : (timerSetInfo.seconds! /
+                                    widget.exercise.setInfo[0].seconds!),
+                            backgroundColor: LIGHT_GRAY_COLOR,
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                POINT_COLOR),
+                          ),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        left: 92,
+                        child: Text(
+                          '${(widget.exercise.setInfo[index].seconds! / 60).ceil().toString().padLeft(2, '0')}:${(widget.exercise.setInfo[index].seconds! % 60).toString().padLeft(2, '0')}',
+                          style: s2SubTitle.copyWith(
+                            fontSize: 10,
+                            color: index <= widget.completeSetCount - 1
+                                ? Colors.white
+                                : GRAY_COLOR,
+                          ),
+                        ),
+                      )
+                    ],
                   )
                 ],
               ),
@@ -127,7 +161,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
           ? const EdgeInsets.symmetric(horizontal: 28)
           : null,
       width: MediaQuery.of(context).size.width,
-      height: 157,
+      height: widget.exercise.circuitGroupNum != null ? 137 : 157,
       decoration: BoxDecoration(
         color: BACKGROUND_COLOR,
         border: Border.fromBorderSide(
@@ -142,10 +176,15 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _renderImage(
-            widget.exercise.videos[0].thumbnail,
-            widget.exercise.targetMuscles[0].id,
-            widget.exerciseIndex,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _renderImage(
+                widget.exercise.videos[0].thumbnail,
+                widget.exercise.targetMuscles[0].id,
+                widget.exerciseIndex,
+              ),
+            ],
           ),
           const SizedBox(
             width: 23,
@@ -288,10 +327,11 @@ class _RenderBody extends StatelessWidget {
           height: 12,
         ),
         _RenderSetInfo(
-            exercise: exercise,
-            countList: countList,
-            firstList: firstList,
-            secondList: secondList)
+          exercise: exercise,
+          countList: countList,
+          firstList: firstList,
+          secondList: secondList,
+        )
       ],
     );
   }

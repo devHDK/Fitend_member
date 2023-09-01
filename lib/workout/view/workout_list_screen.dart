@@ -28,6 +28,7 @@ import 'package:fitend_member/workout/view/workout_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -204,6 +205,24 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
 
     isWorkoutComplete = model.isWorkoutComplete;
     isRecorded = model.isRecord;
+
+    List<int> circuitGroupNumList = [];
+
+    for (var exercise in model.exercises) {
+      if (exercise.circuitGroupNum != null) {
+        circuitGroupNumList.add(exercise.circuitGroupNum!);
+      }
+    }
+
+    Map<int, int> groupCounts =
+        circuitGroupNumList.fold({}, (Map<int, int> map, element) {
+      if (!map.containsKey(element)) {
+        map[element] = 1;
+      } else if (map.containsKey(element)) {
+        map[element] = map[element]! + 1;
+      }
+      return map;
+    });
 
     if (model.isWorkoutComplete) {
       hasLocal = true;
@@ -493,9 +512,65 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                         ),
                       );
                     },
-                    child: WorkoutCard(
-                      exercise: exerciseModel,
-                      completeSetCount: completeSetCount,
+                    child: Column(
+                      children: [
+                        if (exerciseModel.circuitGroupNum != null &&
+                            exerciseModel.circuitSeq == 1)
+                          Column(
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 30,
+                                  ),
+                                  SvgPicture.asset(
+                                      'asset/img/icon_turn_down.svg'),
+                                ],
+                              ),
+                            ],
+                          )
+                        else if (exerciseModel.circuitGroupNum != null)
+                          Row(children: [
+                            const SizedBox(
+                              width: 30,
+                            ),
+                            SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                          ]),
+                        WorkoutCard(
+                          exercise: exerciseModel,
+                          completeSetCount: completeSetCount,
+                          islastCircuit:
+                              exerciseModel.circuitGroupNum != null &&
+                                  groupCounts[exerciseModel.circuitGroupNum!] ==
+                                      exerciseModel.circuitSeq!,
+                        ),
+                        if (exerciseModel.circuitGroupNum != null &&
+                            groupCounts[exerciseModel.circuitGroupNum!] ==
+                                exerciseModel.circuitSeq!)
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 30,
+                                  ),
+                                  SvgPicture.asset(
+                                      'asset/img/icon_turn_up.svg'),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                          )
+                      ],
                     ),
                   );
                 },

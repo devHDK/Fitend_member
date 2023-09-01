@@ -221,14 +221,13 @@ class WorkoutProcessStateNotifier extends StateNotifier<WorkoutProcessModel> {
     );
   }
 
-  //완료안된 운동이 있는지 체크
+  //완료안된 운동이 있는지 체크후 수행하지 않은 운동인덱스 return
   int _checkLastExerciseRegular() {
     for (int i = 0; i <= state.maxExerciseIndex; i++) {
       if (state.setInfoCompleteList[i] != state.maxSetInfoList[i]) {
         return i;
       }
     }
-
     return -1;
   }
 
@@ -297,10 +296,8 @@ class WorkoutProcessStateNotifier extends StateNotifier<WorkoutProcessModel> {
   }
 
   // 다음 운동(슈퍼세트)
-  // 세트 수정
+  // 세트 수정 (timer, reps, weight * reps)
   // 총 운동 시간 추가
 
   // 이전에 수행하지 않은 운동 이동
-
-  // 다음 운동 체크
 }

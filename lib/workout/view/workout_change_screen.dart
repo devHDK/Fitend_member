@@ -8,6 +8,7 @@ import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -59,6 +60,24 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
       },
     );
 
+    List<int> circuitGroupNumList = [];
+
+    for (var exercise in model.exercises) {
+      if (exercise.circuitGroupNum != null) {
+        circuitGroupNumList.add(exercise.circuitGroupNum!);
+      }
+    }
+
+    Map<int, int> groupCounts =
+        circuitGroupNumList.fold({}, (Map<int, int> map, element) {
+      if (!map.containsKey(element)) {
+        map[element] = 1;
+      } else if (map.containsKey(element)) {
+        map[element] = map[element]! + 1;
+      }
+      return map;
+    });
+
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
@@ -96,19 +115,70 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
                   loading: () => print('loading...'),
                 );
 
-                return InkWell(
+                return GestureDetector(
                   onTap: () {
                     setState(() {
                       selectedIndex = index;
                     });
                   },
-                  child: WorkoutCard(
-                    exercise: exerciseModel,
-                    completeSetCount: completeSetCount,
-                    exerciseIndex: widget.exerciseIndex == index
-                        ? widget.exerciseIndex
-                        : null,
-                    isSelected: selectedIndex == index ? true : false,
+                  child: Column(
+                    children: [
+                      if (exerciseModel.circuitGroupNum != null &&
+                          exerciseModel.circuitSeq == 1)
+                        Column(
+                          children: [
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 58,
+                                ),
+                                SvgPicture.asset(
+                                    'asset/img/icon_turn_down.svg'),
+                              ],
+                            ),
+                          ],
+                        )
+                      else if (exerciseModel.circuitGroupNum != null)
+                        Row(children: [
+                          const SizedBox(
+                            width: 58,
+                          ),
+                          SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                        ]),
+                      WorkoutCard(
+                        exercise: exerciseModel,
+                        completeSetCount: completeSetCount,
+                        exerciseIndex: widget.exerciseIndex == index
+                            ? widget.exerciseIndex
+                            : null,
+                        isSelected: selectedIndex == index ? true : false,
+                      ),
+                      if (exerciseModel.circuitGroupNum != null &&
+                          groupCounts[exerciseModel.circuitGroupNum!] ==
+                              exerciseModel.circuitSeq!)
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  width: 58,
+                                ),
+                                SvgPicture.asset('asset/img/icon_turn_up.svg'),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                          ],
+                        )
+                    ],
                   ),
                 );
               },

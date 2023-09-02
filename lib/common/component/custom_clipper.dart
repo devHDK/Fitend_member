@@ -4,10 +4,10 @@ class TrianlgeCustomClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
-    path.moveTo(0, 13);
+    path.moveTo(0, -1);
+    path.lineTo(20, -1);
     path.lineTo(20, 13);
-    path.lineTo(20, 0);
-    path.lineTo(0, 13);
+    path.lineTo(0, -1);
     path.close();
     return path;
   }
@@ -25,7 +25,7 @@ class MyClipPath extends StatelessWidget {
       clipper: TrianlgeCustomClipper(),
       child: Container(
         height: 13,
-        width: 38,
+        width: 48,
         color: Colors.black.withOpacity(0.8),
       ),
     );

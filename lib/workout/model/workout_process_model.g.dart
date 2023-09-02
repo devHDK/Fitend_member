@@ -19,6 +19,9 @@ WorkoutProcessModel _$WorkoutProcessModelFromJson(Map<String, dynamic> json) =>
       exercises: (json['exercises'] as List<dynamic>)
           .map((e) => Exercise.fromJson(e as Map<String, dynamic>))
           .toList(),
+      modifiedExercises: (json['modifiedExercises'] as List<dynamic>)
+          .map((e) => Exercise.fromJson(e as Map<String, dynamic>))
+          .toList(),
       workoutFinished: json['workoutFinished'] as bool,
     );
 
@@ -30,5 +33,6 @@ Map<String, dynamic> _$WorkoutProcessModelToJson(
       'setInfoCompleteList': instance.setInfoCompleteList,
       'maxSetInfoList': instance.maxSetInfoList,
       'exercises': instance.exercises,
+      'modifiedExercises': instance.modifiedExercises,
       'workoutFinished': instance.workoutFinished,
     };

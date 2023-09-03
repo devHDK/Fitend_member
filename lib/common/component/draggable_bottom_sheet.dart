@@ -22,7 +22,7 @@ class _CustomDraggableBottomSheetState
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      height: widget.isSwipeUp ? 315 : 195,
+      height: widget.isSwipeUp ? MediaQuery.of(context).size.height : 195,
       width: size.width,
       decoration: const BoxDecoration(
           color: Colors.white,

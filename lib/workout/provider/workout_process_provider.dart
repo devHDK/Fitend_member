@@ -4,6 +4,7 @@ import 'package:fitend_member/common/provider/hive_modified_exercise_provider.da
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/common/utils/hive_box_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
@@ -59,7 +60,7 @@ class WorkoutProcessStateNotifier
     required this.modifiedExerciseBox,
     required this.exerciseIndexBox,
   }) : super(null) {
-    init(workoutProvider);
+    // init(workoutProvider);
   }
 
   //init
@@ -141,8 +142,6 @@ class WorkoutProcessStateNotifier
         tempState.exerciseIndex = 0;
       }
     });
-
-    print(tempState.toJson());
 
     state = WorkoutProcessModel(
       exerciseIndex: tempState.exerciseIndex,
@@ -328,6 +327,24 @@ class WorkoutProcessStateNotifier
     } on Error catch (e) {
       print(e);
     }
+  }
+
+  void resetWorkoutProcess() {
+    final pstate = state as WorkoutProcessModel;
+
+    BoxUtils.deleteBox(workoutRecordBox, pstate.exercises);
+    BoxUtils.deleteBox(modifiedExerciseBox, pstate.exercises);
+    BoxUtils.deleteTimerBox(timerWorkoutBox, pstate.exercises);
+    BoxUtils.deleteTimerBox(timerXMoreBox, pstate.exercises);
+    // BoxUtils.deleteBox(workoutResultBox, widget.exercises);
+
+    exerciseIndexBox.whenData(
+      (value) {
+        value.delete(
+          id,
+        );
+      },
+    );
   }
 
   // 다음 운동(슈퍼세트)

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
@@ -18,6 +19,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 class TimerXMoreProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
+  final bool isSwipeUp;
   final GestureTapCallback updateSeinfoTap;
   final GestureTapCallback proccessOnTap;
   final GestureTapCallback resetSet;
@@ -26,6 +28,7 @@ class TimerXMoreProgressCard extends ConsumerStatefulWidget {
     super.key,
     required this.exercise,
     required this.setInfoIndex,
+    required this.isSwipeUp,
     required this.updateSeinfoTap,
     required this.proccessOnTap,
     required this.resetSet,
@@ -43,7 +46,7 @@ class _WeightWrepsProgressCardState
   late Timer timer;
   late int totalSeconds = -1;
   bool initial = true;
-  bool isRunning = false;
+
   int count = 0;
 
   DateTime resumedTime = DateTime(
@@ -135,7 +138,7 @@ class _WeightWrepsProgressCardState
             setState(() {
               totalSeconds = 0;
               timer.cancel();
-              isRunning = false;
+              // isRunning = false;
               isBackground = false;
             });
 
@@ -162,8 +165,6 @@ class _WeightWrepsProgressCardState
               totalSeconds -= resumedTime.difference(pausedTime).inSeconds;
               isBackground = false;
             });
-
-            onStartPressed();
           }
 
           if (count + resumedTime.difference(pausedTime).inSeconds >= 11) {
@@ -179,13 +180,13 @@ class _WeightWrepsProgressCardState
       case AppLifecycleState.inactive:
         break;
       case AppLifecycleState.paused:
-        if (isRunning) {
-          pausedTime = DateTime.now();
-          isBackground = true;
+        // if (isRunning) {
+        //   pausedTime = DateTime.now();
+        //   isBackground = true;
 
-          timer.cancel();
-          isRunning = false;
-        }
+        //   timer.cancel();
+        //   isRunning = false;
+        // }
 
         break;
       case AppLifecycleState.detached:
@@ -201,7 +202,7 @@ class _WeightWrepsProgressCardState
     if (oldWidget.setInfoIndex != widget.setInfoIndex) {
       if (timer.isActive) {
         timer.cancel();
-        isRunning = false;
+        // isRunning = false;
         count = 0;
       }
 
@@ -225,7 +226,7 @@ class _WeightWrepsProgressCardState
             });
           } else {
             setState(() {
-              isRunning = false;
+              // isRunning = false;
               count = 11;
               totalSeconds = 0;
             });
@@ -262,55 +263,11 @@ class _WeightWrepsProgressCardState
     });
   }
 
-  void onStartPressed() {
-    timer = Timer.periodic(
-      const Duration(seconds: 1),
-      onTick,
-    );
-    setState(() {
-      isRunning = true;
-    });
-  }
-
-  void onPausePressed() {
-    timer.cancel();
-    setState(() {
-      isRunning = false;
-    });
-  }
-
-  void onStopPressed() {
-    // timer.cancel();
-
-    timerXmoreBox.whenData(
-      (value) {
-        var record = value.get(widget.exercise.workoutPlanId);
-
-        if (record is WorkoutRecordModel) {
-          record.setInfo.removeLast();
-
-          value.put(widget.exercise.workoutPlanId, record);
-        }
-      },
-    );
-
-    // workoutBox.whenData((value) {
-    //   value.delete(widget.exercise.workoutPlanId);
-    // });
-
-    // widget.resetSet();
-
-    setState(() {
-      totalSeconds = widget.exercise.setInfo[widget.setInfoIndex].seconds!;
-      count = 0;
-    });
-  }
-
   void onTick(Timer timer) {
     if (totalSeconds == 0) {
       //0초가 됬을때 저장
       setState(() {
-        isRunning = false;
+        // isRunning = false;
         count = 11;
       });
       timer.cancel();
@@ -410,8 +367,9 @@ class _WeightWrepsProgressCardState
                           : null,
                   color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
                 ),
-                width:
-                    ((size.width - 152) / widget.exercise.setInfo.length) - 1,
+                width: widget.isSwipeUp
+                    ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
+                    : ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
                 duration: const Duration(microseconds: 1000),
                 curve: Curves.linear,
@@ -438,8 +396,9 @@ class _WeightWrepsProgressCardState
                           : null,
                   color: LIGHT_GRAY_COLOR,
                 ),
-                width:
-                    ((size.width - 152) / widget.exercise.setInfo.length) - 1,
+                width: widget.isSwipeUp
+                    ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
+                    : ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
               ),
               const SizedBox(
@@ -451,8 +410,9 @@ class _WeightWrepsProgressCardState
           return Row(
             children: [
               Container(
-                width:
-                    ((size.width - 152) / widget.exercise.setInfo.length) - 1,
+                width: widget.isSwipeUp
+                    ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
+                    : ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
                 decoration: BoxDecoration(
                   borderRadius: index == 0
@@ -477,131 +437,130 @@ class _WeightWrepsProgressCardState
       },
     ).toList();
 
+    Set targetMuscles = {};
+    String muscleString = '';
+
+    for (var targetMuscle in widget.exercise.targetMuscles) {
+      if (targetMuscle.type == 'main') {
+        targetMuscles.add(targetMuscle.muscleType);
+      }
+    }
+
+    for (var muscle in targetMuscles) {
+      muscleString += ' ${muscleGroup[muscle]!} ∙';
+    }
+
     return Column(
+      crossAxisAlignment: !widget.isSwipeUp
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
       children: [
-        Text(
-          (widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor() >
-                      0 &&
-                  (widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60) >
-                      0
-              ? '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분 ${(widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60).toString().padLeft(2, '0')}초'
-              : (widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60)
-                              .floor() >
-                          0 &&
-                      (widget.exercise.setInfo[widget.setInfoIndex].seconds! %
-                              60) ==
-                          0
-                  ? '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분'
-                  : '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60).toString().padLeft(2, '0')}초',
-          style: s1SubTitle.copyWith(
-            color: GRAY_COLOR,
-          ),
-        ),
-        const SizedBox(
-          height: 4,
-        ),
-        Text(
-          widget.exercise.name,
-          style: h3Headline.copyWith(
-            color: Colors.black,
-            overflow: TextOverflow.ellipsis,
-          ),
-          maxLines: 1,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        GestureDetector(
-          onTap: isRunning
-              ? () => onPausePressed()
-              : totalSeconds == 0
-                  ? () => onStopPressed()
-                  : () => onStartPressed(),
-          child: Container(
-            width: 100,
-            height: 24,
-            decoration: BoxDecoration(
-              border: Border.all(color: POINT_COLOR),
-              borderRadius: BorderRadius.circular(12),
-              color: (totalSeconds ==
-                              widget.exercise.setInfo[widget.setInfoIndex]
-                                  .seconds! ||
-                          totalSeconds < 0) &&
-                      !isRunning
-                  ? POINT_COLOR
-                  : Colors.white,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                isRunning
-                    ? SvgPicture.asset('asset/img/icon_pause_small.svg')
-                    : totalSeconds > 0 &&
-                            totalSeconds <
-                                widget.exercise.setInfo[widget.setInfoIndex]
-                                    .seconds!
-                        ? SvgPicture.asset('asset/img/icon_replay_small.svg')
-                        : totalSeconds == 0
-                            ? SvgPicture.asset('asset/img/icon_reset_small.svg')
-                            : SvgPicture.asset('asset/img/icon_play_small.svg'),
-                const SizedBox(
-                  width: 8,
+        if (!widget.isSwipeUp)
+          Column(
+            children: [
+              Text(
+                (widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60)
+                                .floor() >
+                            0 &&
+                        (widget.exercise.setInfo[widget.setInfoIndex].seconds! %
+                                60) >
+                            0
+                    ? '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분 ${(widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60).toString().padLeft(2, '0')}초'
+                    : (widget.exercise.setInfo[widget.setInfoIndex].seconds! /
+                                        60)
+                                    .floor() >
+                                0 &&
+                            (widget.exercise.setInfo[widget.setInfoIndex]
+                                        .seconds! %
+                                    60) ==
+                                0
+                        ? '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! / 60).floor()}분'
+                        : '${(widget.exercise.setInfo[widget.setInfoIndex].seconds! % 60).toString().padLeft(2, '0')}초',
+                style: s1SubTitle.copyWith(
+                  color: GRAY_COLOR,
                 ),
-                Center(
-                  child: Text(
-                    (totalSeconds ==
-                                    widget.exercise.setInfo[widget.setInfoIndex]
-                                        .seconds! ||
-                                totalSeconds < 0) &&
-                            !isRunning
-                        ? '운동 시작'
-                        : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
-                    style: s2SubTitle.copyWith(
-                      color: (totalSeconds ==
-                                      widget
-                                          .exercise
-                                          .setInfo[widget.setInfoIndex]
-                                          .seconds! ||
-                                  totalSeconds < 0) &&
-                              !isRunning
-                          ? Colors.white
-                          : POINT_COLOR,
-                      fontWeight: (totalSeconds ==
-                                      widget
-                                          .exercise
-                                          .setInfo[widget.setInfoIndex]
-                                          .seconds! ||
-                                  totalSeconds < 0) &&
-                              !isRunning
-                          ? FontWeight.w700
-                          : FontWeight.w400,
-                      height: 1.2,
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              Text(
+                widget.exercise.name,
+                style: h3Headline.copyWith(
+                  color: Colors.black,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                maxLines: 1,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: 100,
+                height: 24,
+                decoration: BoxDecoration(
+                  border: Border.all(color: POINT_COLOR),
+                  borderRadius: BorderRadius.circular(12),
+                  color: POINT_COLOR,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      width: 8,
                     ),
-                  ),
+                    Center(
+                      child: Text(
+                        '타이머',
+                        style: s1SubTitle.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          height: 1.2,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                  ],
                 ),
-                const SizedBox(
-                  width: 8,
-                ),
-              ],
-            ),
+              ),
+            ],
+          )
+        else
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                muscleString.substring(0, muscleString.length - 1),
+                style: s2SubTitle.copyWith(color: GRAY_COLOR),
+              ),
+              Text(
+                widget.exercise.name,
+                style: h1Headline,
+              ),
+            ],
           ),
-        ),
         const SizedBox(
           height: 10,
         ),
         Row(
           children: [
-            InkWell(
-              onTap: () {
-                widget.updateSeinfoTap();
-              },
-              child: SvgPicture.asset(
-                'asset/img/icon_edit.svg',
+            if (!widget.isSwipeUp)
+              InkWell(
+                onTap: () {
+                  widget.updateSeinfoTap();
+                },
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'asset/img/icon_edit.svg',
+                    ),
+                    const SizedBox(
+                      width: 12,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(
-              width: 12,
-            ),
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -609,28 +568,21 @@ class _WeightWrepsProgressCardState
                 children: progressList,
               ),
             ),
-            const SizedBox(
-              width: 12,
-            ),
-            InkWell(
-              // 운동 진행
-              onTap: count < 10
-                  ? () {
-                      showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) => DialogWidgets.errorDialog(
-                          message: '먼저 운동을 진행해주세요 🏋🏻',
-                          confirmText: '확인',
-                          confirmOnTap: () => context.pop(),
-                        ),
-                      );
-                    }
-                  : widget.proccessOnTap,
-              child: SvgPicture.asset(
-                'asset/img/icon_forward.svg',
+            if (!widget.isSwipeUp)
+              InkWell(
+                // 운동 진행
+                onTap: widget.proccessOnTap,
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: 12,
+                    ),
+                    SvgPicture.asset(
+                      'asset/img/icon_forward.svg',
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ],

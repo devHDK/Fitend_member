@@ -3,6 +3,7 @@ import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
+import 'package:fitend_member/common/component/hexagon_container.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
@@ -20,6 +21,7 @@ import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:collection/collection.dart';
 
 class WorkoutScreen extends ConsumerStatefulWidget {
   final List<Exercise> exercises;
@@ -42,8 +44,6 @@ class WorkoutScreen extends ConsumerStatefulWidget {
 class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     with SingleTickerProviderStateMixin {
   bool isSwipeUp = false;
-  bool initial = true;
-  bool isPoped = false;
   bool isTooltipVisible = false;
   int tooltipCount = 0;
   late Timer timer;
@@ -54,7 +54,15 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     initData();
   }
 
-  initData() {}
+  initData() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (mounted) {
+        ref
+            .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+            .init(ref.read(workoutProvider(widget.workoutScheduleId).notifier));
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -113,40 +121,41 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
     final model = state as WorkoutProcessModel;
 
-    print(model.setInfoCompleteList);
-
     return WillPopScope(
       onWillPop: () async {
+        _pagePop(context);
+
         return Future.value(true);
       },
       child: Scaffold(
         backgroundColor: GRAY_COLOR,
-        floatingActionButton: isSwipeUp
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('button'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('button'),
-                  ),
-                ],
-              )
-            : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+        // floatingActionButton: isSwipeUp
+        //     ? Row(
+        //         mainAxisAlignment: MainAxisAlignment.center,
+        //         children: [
+        //           ElevatedButton(
+        //             onPressed: () {},
+        //             child: const Text('button'),
+        //           ),
+        //           ElevatedButton(
+        //             onPressed: () {},
+        //             child: const Text('button'),
+        //           ),
+        //         ],
+        //       )
+        //     : null,
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           leading: Padding(
             padding: const EdgeInsets.only(left: 18),
             child: IconButton(
-              // onPressed: () => GoRouter.of(context).pop('result'),
               onPressed: () {
-                if (mounted) {}
+                if (mounted) {
+                  _pagePop(context);
+                }
               },
               icon: const Icon(Icons.arrow_back),
               color: Colors.black,
@@ -187,7 +196,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               ),
             ),
             Positioned(
-              bottom: 210,
+              bottom: 200,
               right: 28,
               child: IconButton(
                 iconSize: 36,
@@ -225,7 +234,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     setState(() {
                       isSwipeUp = true;
                     });
-                  } else {
+                  } else if (details.velocity.pixelsPerSecond.direction > 0) {
                     setState(() {
                       isSwipeUp = false;
                     });
@@ -236,6 +245,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   content: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 28),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (model.modifiedExercises[model.exerciseIndex]
                                     .trackingFieldId ==
@@ -244,6 +254,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     .trackingFieldId ==
                                 2)
                           WeightWrepsProgressCard(
+                            isSwipeUp: isSwipeUp,
                             exercise:
                                 model.modifiedExercises[model.exerciseIndex],
                             setInfoIndex:
@@ -254,10 +265,19 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     1
                                 ? () {}
                                 : () {},
-                            proccessOnTap: () {},
+                            proccessOnTap: () {
+                              ref
+                                  .read(workoutProcessProvider(
+                                          widget.workoutScheduleId)
+                                      .notifier)
+                                  .nextStepForRegular();
+
+                              setState(() {});
+                            },
 
                             //운동 변경
                           ),
+
                         // Timer X 1set
                         if ((model.modifiedExercises[model.exerciseIndex]
                                         .trackingFieldId ==
@@ -269,6 +289,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     .length ==
                                 1)
                           TimerXOneProgressCard(
+                            isSwipeUp: isSwipeUp,
                             exercise:
                                 model.modifiedExercises[model.exerciseIndex],
                             setInfoIndex:
@@ -288,6 +309,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     .length >
                                 1)
                           TimerXMoreProgressCard(
+                            isSwipeUp: isSwipeUp,
                             exercise:
                                 model.modifiedExercises[model.exerciseIndex],
                             setInfoIndex:
@@ -296,9 +318,138 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             proccessOnTap: () {},
                             resetSet: () {},
                           ),
-                      ],
 
-                      // if (isSwipeUp)
+                        if (isSwipeUp)
+                          // seperator
+                          Column(
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      height: 1,
+                                      color: LIGHT_GRAY_COLOR,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    '${model.modifiedExercises[model.exerciseIndex].setInfo.length} SET',
+                                    style: s1SubTitle.copyWith(
+                                        color: LIGHT_GRAY_COLOR),
+                                  ),
+                                  const SizedBox(
+                                    width: 3,
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      height: 1,
+                                      color: LIGHT_GRAY_COLOR,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: size.height -
+                                    (MediaQuery.of(context).padding.top + 195),
+                                child: ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    return Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 85,
+                                          width: size.width,
+                                          child: Row(
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Container(
+                                                    height: 40,
+                                                    width: 1,
+                                                    color: LIGHT_GRAY_COLOR,
+                                                  ),
+                                                  HexagonContainer(
+                                                    label:
+                                                        (index + 1).toString(),
+                                                    labelColor: Colors.black,
+                                                    color: index ==
+                                                            state.exerciseIndex
+                                                        ? Colors.white
+                                                        : LIGHT_GRAY_COLOR,
+                                                    lineColor: index ==
+                                                            state.exerciseIndex
+                                                        ? POINT_COLOR
+                                                        : LIGHT_GRAY_COLOR,
+                                                    size: 39,
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 2,
+                                                  ),
+                                                  Container(
+                                                    height: 4,
+                                                    width: 1,
+                                                    color: LIGHT_GRAY_COLOR,
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                width: 20,
+                                              ),
+                                              Column(
+                                                children: [
+                                                  const SizedBox(
+                                                    height: 38,
+                                                  ),
+                                                  Container(
+                                                    width: 260,
+                                                    height: 46,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .all(
+                                                        Radius.circular(10),
+                                                      ),
+                                                      border: Border.all(
+                                                          color: POINT_COLOR,
+                                                          width: 3),
+                                                      color: Colors.white,
+                                                    ),
+                                                  )
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        if (index ==
+                                            model.exercises[state.exerciseIndex]
+                                                    .setInfo.length -
+                                                1)
+                                          Container(
+                                            height: 100,
+                                          )
+                                      ],
+                                    );
+                                  },
+                                  itemCount: model
+                                      .exercises[state.exerciseIndex]
+                                      .setInfo
+                                      .length,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 200,
+                              )
+                            ],
+                          ),
+                      ],
                     ),
                   ),
                 ),
@@ -310,13 +461,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     );
   }
 
-  void _screenPop(
-      AsyncValue<Box<dynamic>> processingExerciseIndexBox,
-      BuildContext context,
-      AsyncValue<Box<dynamic>> modifiedBox,
-      AsyncValue<Box<dynamic>> recordBox,
-      AsyncValue<Box<dynamic>> timerWorkoutBox,
-      AsyncValue<Box<dynamic>> timerXMoreBox) {
+  void _pagePop(BuildContext context) {
     DialogWidgets.confirmDialog(
       message: '아직 운동이 끝나지 않았어요 😮\n저장 후 뒤로 갈까요?',
       confirmText: '네, 저장할게요',
@@ -328,24 +473,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         }
       },
       cancelOnTap: () {
-        BoxUtils.deleteBox(recordBox, widget.exercises);
-        BoxUtils.deleteBox(modifiedBox, widget.exercises);
-        BoxUtils.deleteTimerBox(timerWorkoutBox, widget.exercises);
-        BoxUtils.deleteTimerBox(timerXMoreBox, widget.exercises);
-        // BoxUtils.deleteBox(workoutResultBox, widget.exercises);
-
-        processingExerciseIndexBox.whenData(
-          (value) {
-            value.delete(
-              widget.workoutScheduleId,
-            );
-          },
-        );
-
-        int count = 0;
         if (mounted) {
+          int count = 0;
+
+          ref
+              .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+              .resetWorkoutProcess();
+
           Navigator.of(context).popUntil((_) => count++ >= 2);
         }
+        setState(() {});
       },
     ).show(context);
   }
@@ -366,7 +503,7 @@ class _ShowTip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned(
       left: 28,
-      bottom: 260,
+      bottom: 250,
       right: 28,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,

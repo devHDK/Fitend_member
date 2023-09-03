@@ -95,7 +95,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                             ? '${widget.exercise.setInfo[index].weight!.floor()} ∙ ${widget.exercise.setInfo[index].reps}'
                             : widget.exercise.trackingFieldId == 2
                                 ? '${widget.exercise.setInfo[index].reps}'
-                                : '${(widget.exercise.setInfo[index].seconds! / 60).ceil().toString().padLeft(2, '0')}:${(widget.exercise.setInfo[index].seconds! % 60).toString().padLeft(2, '0')}',
+                                : '${(widget.exercise.setInfo[index].seconds! / 60).floor().toString().padLeft(2, '0')}:${(widget.exercise.setInfo[index].seconds! % 60).toString().padLeft(2, '0')}',
                         style: s1SubTitle.copyWith(
                           color: index <= widget.completeSetCount - 1
                               ? Colors.white
@@ -135,7 +135,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                       Positioned(
                         left: 92,
                         child: Text(
-                          '${(widget.exercise.setInfo[index].seconds! / 60).ceil().toString().padLeft(2, '0')}:${(widget.exercise.setInfo[index].seconds! % 60).toString().padLeft(2, '0')}',
+                          '${(widget.exercise.setInfo[index].seconds! / 60).floor().toString().padLeft(2, '0')}:${(widget.exercise.setInfo[index].seconds! % 60).toString().padLeft(2, '0')}',
                           style: s2SubTitle.copyWith(
                             fontSize: 10,
                             color: index <= widget.completeSetCount - 1

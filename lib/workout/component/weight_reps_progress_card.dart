@@ -1,18 +1,18 @@
 import 'dart:async';
 
-import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 
 class WeightWrepsProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
+  final bool isSwipeUp;
   final GestureTapCallback updateSeinfoTap;
   final GestureTapCallback proccessOnTap;
 
@@ -20,6 +20,7 @@ class WeightWrepsProgressCard extends ConsumerStatefulWidget {
     super.key,
     required this.exercise,
     required this.setInfoIndex,
+    required this.isSwipeUp,
     required this.proccessOnTap,
     required this.updateSeinfoTap,
   });
@@ -75,8 +76,9 @@ class _WeightWrepsProgressCardState
                           : null,
                   color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
                 ),
-                width:
-                    ((size.width - 152) / widget.exercise.setInfo.length) - 1,
+                width: widget.isSwipeUp
+                    ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
+                    : ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
                 duration: const Duration(microseconds: 1000),
                 curve: Curves.linear,
@@ -96,8 +98,9 @@ class _WeightWrepsProgressCardState
                   borderRadius: BorderRadius.circular(2),
                   color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
                 ),
-                width:
-                    ((size.width - 152) / widget.exercise.setInfo.length) - 1,
+                width: widget.isSwipeUp
+                    ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
+                    : ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
                 duration: const Duration(microseconds: 1000),
                 curve: Curves.linear,
@@ -124,8 +127,9 @@ class _WeightWrepsProgressCardState
                           : null,
                   color: LIGHT_GRAY_COLOR,
                 ),
-                width:
-                    ((size.width - 152) / widget.exercise.setInfo.length) - 1,
+                width: widget.isSwipeUp
+                    ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
+                    : ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
               ),
               const SizedBox(
@@ -163,6 +167,19 @@ class _WeightWrepsProgressCardState
       },
     ).toList();
 
+    Set targetMuscles = {};
+    String muscleString = '';
+
+    for (var targetMuscle in widget.exercise.targetMuscles) {
+      if (targetMuscle.type == 'main') {
+        targetMuscles.add(targetMuscle.muscleType);
+      }
+    }
+
+    for (var muscle in targetMuscles) {
+      muscleString += ' ${muscleGroup[muscle]!} ∙';
+    }
+
     if (widget.setInfoIndex > widget.exercise.setInfo.length - 1) {
       length = widget.setInfoIndex - 1;
     } else {
@@ -170,63 +187,91 @@ class _WeightWrepsProgressCardState
     }
 
     return Column(
+      crossAxisAlignment: !widget.isSwipeUp
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.exercise.trackingFieldId == 1
-              ? '${widget.exercise.setInfo[length].weight}kg ∙ ${widget.exercise.setInfo[length].reps}회'
-              : widget.exercise.trackingFieldId == 2
-                  ? '${widget.exercise.setInfo[length].reps}회'
-                  : '${(widget.exercise.setInfo[length].seconds! / 60).floor()}분 ${widget.exercise.setInfo[length].seconds! % 60}초',
-          style: s1SubTitle.copyWith(
-            color: GRAY_COLOR,
-          ),
-        ),
-        const SizedBox(
-          height: 4,
-        ),
-        Text(
-          widget.exercise.name,
-          style: h3Headline.copyWith(
-            color: Colors.black,
-            overflow: TextOverflow.ellipsis,
-          ),
-          maxLines: 1,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: POINT_COLOR),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-            child: Text(
-              '${length + 1}세트 진행중',
-              style: h6Headline.copyWith(
-                color: POINT_COLOR,
-                height: 1.2,
+        if (!widget.isSwipeUp)
+          Column(
+            children: [
+              Text(
+                widget.exercise.trackingFieldId == 1
+                    ? '${widget.exercise.setInfo[length].weight}kg ∙ ${widget.exercise.setInfo[length].reps}회'
+                    : widget.exercise.trackingFieldId == 2
+                        ? '${widget.exercise.setInfo[length].reps}회'
+                        : '${(widget.exercise.setInfo[length].seconds! / 60).floor()}분 ${widget.exercise.setInfo[length].seconds! % 60}초',
+                style: s1SubTitle.copyWith(
+                  color: GRAY_COLOR,
+                ),
               ),
-            ),
+              const SizedBox(
+                height: 4,
+              ),
+              Text(
+                widget.exercise.name,
+                style: h3Headline.copyWith(
+                  color: Colors.black,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                maxLines: 1,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: POINT_COLOR),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                  child: Text(
+                    '${length + 1}세트 진행중',
+                    style: h6Headline.copyWith(
+                      color: POINT_COLOR,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        else
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                muscleString.substring(0, muscleString.length - 1),
+                style: s2SubTitle.copyWith(color: GRAY_COLOR),
+              ),
+              Text(
+                widget.exercise.name,
+                style: h1Headline,
+              ),
+            ],
           ),
-        ),
         const SizedBox(
           height: 10,
         ),
         Row(
           children: [
-            InkWell(
-              onTap: () {
-                widget.updateSeinfoTap();
-              },
-              child: SvgPicture.asset(
-                'asset/img/icon_edit.svg',
+            if (!widget.isSwipeUp)
+              InkWell(
+                onTap: () {
+                  widget.updateSeinfoTap();
+                },
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'asset/img/icon_edit.svg',
+                    ),
+                    const SizedBox(
+                      width: 12,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(
-              width: 12,
-            ),
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -234,33 +279,24 @@ class _WeightWrepsProgressCardState
                 children: progressList,
               ),
             ),
-            const SizedBox(
-              width: 12,
-            ),
-            InkWell(
-              // 운동 진행
-              onTap: count > 10
-                  ? () {
-                      setState(() {
-                        count = 0;
-                      });
-                      widget.proccessOnTap();
-                    }
-                  : () {
-                      showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) => DialogWidgets.errorDialog(
-                          message: '먼저 운동을 진행해주세요 🏋🏻',
-                          confirmText: '확인',
-                          confirmOnTap: () => context.pop(),
-                        ),
-                      );
-                    },
-              child: SvgPicture.asset(
-                'asset/img/icon_forward.svg',
+            if (!widget.isSwipeUp)
+              InkWell(
+                // 운동 진행
+                onTap: () {
+                  widget.proccessOnTap();
+                },
+
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: 12,
+                    ),
+                    SvgPicture.asset(
+                      'asset/img/icon_forward.svg',
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ],

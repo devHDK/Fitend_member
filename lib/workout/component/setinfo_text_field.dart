@@ -52,25 +52,14 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
       focusNode: focusNode,
       cursorColor: POINT_COLOR,
       textAlign: TextAlign.center,
+      autovalidateMode: AutovalidateMode.always,
       style: h3Headline.copyWith(
-        color: Colors.white,
+        color: Colors.black,
       ),
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         filled: true,
-        fillColor: LIGHT_GRAY_COLOR,
-        hoverColor: POINT_COLOR,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 7,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
-        ),
+        fillColor: Colors.white,
+        border: InputBorder.none,
       ),
       keyboardType: widget.textInputType,
       inputFormatters: [

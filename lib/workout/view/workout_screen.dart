@@ -2,15 +2,14 @@ import 'dart:async';
 import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/component/draggable_bottom_sheet.dart';
-import 'package:fitend_member/common/component/hexagon_container.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/utils/hive_box_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
+import 'package:fitend_member/exercise/view/exercise_screen.dart';
+import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_weight_reps_card.dart';
 import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
@@ -18,10 +17,12 @@ import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
 import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
+import 'package:fitend_member/workout/view/workout_change_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:collection/collection.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class WorkoutScreen extends ConsumerStatefulWidget {
   final List<Exercise> exercises;
@@ -42,11 +43,15 @@ class WorkoutScreen extends ConsumerStatefulWidget {
 }
 
 class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   bool isSwipeUp = false;
   bool isTooltipVisible = false;
   int tooltipCount = 0;
   late Timer timer;
+  final panelController = PanelController();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -108,6 +113,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final size = MediaQuery.of(context).size;
     final state = ref.watch(workoutProcessProvider(widget.workoutScheduleId));
 
@@ -129,23 +135,36 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       },
       child: Scaffold(
         backgroundColor: GRAY_COLOR,
-        // floatingActionButton: isSwipeUp
-        //     ? Row(
-        //         mainAxisAlignment: MainAxisAlignment.center,
-        //         children: [
-        //           ElevatedButton(
-        //             onPressed: () {},
-        //             child: const Text('button'),
-        //           ),
-        //           ElevatedButton(
-        //             onPressed: () {},
-        //             child: const Text('button'),
-        //           ),
-        //         ],
-        //       )
-        //     : null,
-        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        // floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+        floatingActionButton: isSwipeUp
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    width: 120,
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: Container(
+                      width: size.width - 176,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: POINT_COLOR,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '다음 운동',
+                          style: h2Headline.copyWith(
+                              fontSize: 21, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButtonAnimator: null,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
@@ -221,32 +240,44 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 widget: widget,
                 exerciseIndex: model.exerciseIndex,
               ),
-            AnimatedPositioned(
-              bottom: 0.0,
-              curve: Curves.ease,
-              duration: const Duration(milliseconds: 300),
-              top: isSwipeUp
-                  ? (MediaQuery.of(context).padding.top + kToolbarHeight)
-                  : size.height - 195,
-              child: GestureDetector(
-                onVerticalDragEnd: (details) {
-                  if (details.velocity.pixelsPerSecond.direction < 0) {
-                    setState(() {
-                      isSwipeUp = true;
-                    });
-                  } else if (details.velocity.pixelsPerSecond.direction > 0) {
-                    setState(() {
-                      isSwipeUp = false;
-                    });
-                  }
-                },
-                child: CustomDraggableBottomSheet(
-                  isSwipeUp: isSwipeUp,
-                  content: Padding(
+            SlidingUpPanel(
+              key: ValueKey(widget.workoutScheduleId),
+              minHeight: 195,
+              maxHeight: size.height -
+                  (MediaQuery.of(context).padding.top + kToolbarHeight),
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              onPanelClosed: () => setState(() {
+                isSwipeUp = false;
+              }),
+              onPanelOpened: () => setState(() {
+                isSwipeUp = true;
+              }),
+              panel: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 28),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 12,
+                            ),
+                            child: Container(
+                              width: 44,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                  color: LIGHT_GRAY_COLOR,
+                                  borderRadius: BorderRadius.circular(2)),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+
                         if (model.modifiedExercises[model.exerciseIndex]
                                     .trackingFieldId ==
                                 1 ||
@@ -319,142 +350,194 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             resetSet: () {},
                           ),
 
-                        if (isSwipeUp)
-                          // seperator
-                          Column(
-                            children: [
-                              const SizedBox(
-                                height: 20,
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                color: LIGHT_GRAY_COLOR,
                               ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: 1,
-                                      color: LIGHT_GRAY_COLOR,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    '${model.modifiedExercises[model.exerciseIndex].setInfo.length} SET',
-                                    style: s1SubTitle.copyWith(
-                                        color: LIGHT_GRAY_COLOR),
-                                  ),
-                                  const SizedBox(
-                                    width: 3,
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      height: 1,
-                                      color: LIGHT_GRAY_COLOR,
-                                    ),
-                                  ),
-                                ],
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              '${model.modifiedExercises[model.exerciseIndex].setInfo.length} SET',
+                              style:
+                                  s1SubTitle.copyWith(color: LIGHT_GRAY_COLOR),
+                            ),
+                            const SizedBox(
+                              width: 3,
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: 1,
+                                color: LIGHT_GRAY_COLOR,
                               ),
-                              SizedBox(
-                                height: size.height -
-                                    (MediaQuery.of(context).padding.top + 195),
-                                child: ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    return Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 85,
-                                          width: size.width,
-                                          child: Row(
-                                            children: [
-                                              Column(
-                                                children: [
-                                                  Container(
-                                                    height: 40,
-                                                    width: 1,
-                                                    color: LIGHT_GRAY_COLOR,
-                                                  ),
-                                                  HexagonContainer(
-                                                    label:
-                                                        (index + 1).toString(),
-                                                    labelColor: Colors.black,
-                                                    color: index ==
-                                                            state.exerciseIndex
-                                                        ? Colors.white
-                                                        : LIGHT_GRAY_COLOR,
-                                                    lineColor: index ==
-                                                            state.exerciseIndex
-                                                        ? POINT_COLOR
-                                                        : LIGHT_GRAY_COLOR,
-                                                    size: 39,
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 2,
-                                                  ),
-                                                  Container(
-                                                    height: 4,
-                                                    width: 1,
-                                                    color: LIGHT_GRAY_COLOR,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                width: 20,
-                                              ),
-                                              Column(
-                                                children: [
-                                                  const SizedBox(
-                                                    height: 38,
-                                                  ),
-                                                  Container(
-                                                    width: 260,
-                                                    height: 46,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                        Radius.circular(10),
-                                                      ),
-                                                      border: Border.all(
-                                                          color: POINT_COLOR,
-                                                          width: 3),
-                                                      color: Colors.white,
-                                                    ),
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        if (index ==
-                                            model.exercises[state.exerciseIndex]
-                                                    .setInfo.length -
-                                                1)
-                                          Container(
-                                            height: 100,
-                                          )
-                                      ],
-                                    );
-                                  },
-                                  itemCount: model
-                                      .exercises[state.exerciseIndex]
-                                      .setInfo
-                                      .length,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 200,
-                              )
-                            ],
-                          ),
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),
-                ),
+                  SizedBox(
+                    height: size.height -
+                        (MediaQuery.of(context).padding.top +
+                            kToolbarHeight +
+                            195 +
+                            5),
+                    child: Expanded(
+                      child: CustomScrollView(
+                        shrinkWrap: true,
+                        key: UniqueKey(),
+                        slivers: [
+                          SliverPadding(
+                            padding: const EdgeInsets.symmetric(horizontal: 28),
+                            sliver: SliverList.builder(
+                              itemCount: model
+                                  .modifiedExercises[model.exerciseIndex]
+                                  .setInfo
+                                  .length,
+                              itemBuilder: (context, index) {
+                                if (model.modifiedExercises[model.exerciseIndex]
+                                        .trackingFieldId ==
+                                    1) {
+                                  return SetInfoBoxForWeightReps(
+                                    initialReps: model
+                                        .modifiedExercises[model.exerciseIndex]
+                                        .setInfo[index]
+                                        .reps!,
+                                    initialWeight: model
+                                        .modifiedExercises[model.exerciseIndex]
+                                        .setInfo[index]
+                                        .weight!,
+                                    model: model,
+                                    setInfoIndex: index,
+                                  );
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: Container(
+                              color: LIGHT_GRAY_COLOR.withOpacity(0.15),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 28,
+                                ),
+                                child: Column(
+                                  children: [
+                                    SvgPicture.asset('asset/img/icon_more.svg'),
+                                    InkWell(
+                                      onTap: () async {
+                                        Navigator.of(context)
+                                            .push(CupertinoPageRoute(
+                                          builder: (context) =>
+                                              WorkoutChangeScreen(
+                                            exerciseIndex: model.exerciseIndex,
+                                            workout: widget.workout,
+                                          ),
+                                        ))
+                                            .then(
+                                          (value) {
+                                            setState(() {
+                                              if (value != null) {
+                                                ref
+                                                    .read(workoutProcessProvider(
+                                                            widget
+                                                                .workoutScheduleId)
+                                                        .notifier)
+                                                    .exerciseChange(value);
+                                                // isTooltipVisible = false;
+                                                // tooltipCount = 0;
+                                                // onTooltipPressed();
+                                              }
+                                            });
+                                          },
+                                        );
+                                      },
+                                      child: SizedBox(
+                                        height: 55,
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            SvgPicture.asset(
+                                                'asset/img/icon_list.svg'),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              '운동 리스트',
+                                              style: h5Headline.copyWith(
+                                                height: 1,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .push(CupertinoPageRoute(
+                                          builder: (context) => ExerciseScreen(
+                                              exercise: widget.exercises[
+                                                  model.exerciseIndex]),
+                                        ));
+                                      },
+                                      child: SizedBox(
+                                        height: 55,
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: SvgPicture.asset(
+                                                  'asset/img/icon_guide.svg'),
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              '운동 가이드',
+                                              style: h5Headline.copyWith(
+                                                height: 1,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 50,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
+            )
           ],
         ),
       ),

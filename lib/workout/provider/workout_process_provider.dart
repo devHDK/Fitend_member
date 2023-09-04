@@ -180,8 +180,8 @@ class WorkoutProcessStateNotifier
 
       pstate.exerciseIndex += 1; // 운동 변경
       exerciseIndexBox.whenData(
-        (value) async {
-          await value.put(id, pstate.exerciseIndex);
+        (value) {
+          value.put(id, pstate.exerciseIndex);
         },
       );
 
@@ -353,6 +353,7 @@ class WorkoutProcessStateNotifier
   }
 
   // 다음 운동(슈퍼세트)
+
   // 세트 수정 (seconds, reps, weight)
   void modifiedWeight(double weight, int setInfoIndex) {
     final pstate = state as WorkoutProcessModel;
@@ -363,8 +364,28 @@ class WorkoutProcessStateNotifier
     print(pstate
         .modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex].weight);
 
-    //저장
+    //로컬 저장
+    modifiedExerciseBox.whenData((value) {
+      final record =
+          value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
+
+      if (record is Exercise) {
+        record.setInfo[setInfoIndex].weight = weight;
+        value.put(pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
+      }
+    });
     //완료된 세트의 경우 수정후 저장
+    if (setInfoIndex < pstate.setInfoCompleteList[pstate.exerciseIndex]) {
+      workoutRecordBox.whenData((value) {
+        final record =
+            value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
+        if (record is WorkoutRecordModel) {
+          record.setInfo[setInfoIndex].weight = weight;
+          value.put(
+              pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
+        }
+      });
+    }
 
     state = pstate;
   }
@@ -375,11 +396,64 @@ class WorkoutProcessStateNotifier
     pstate.modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex].reps =
         reps;
 
-    print(pstate
-        .modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex].reps);
+    //로컬 저장
+    modifiedExerciseBox.whenData((value) {
+      final record =
+          value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
 
-    //저장
+      if (record is Exercise) {
+        record.setInfo[setInfoIndex].reps = reps;
+        value.put(pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
+      }
+    });
     //완료된 세트의 경우 수정후 저장
+    if (setInfoIndex < pstate.setInfoCompleteList[pstate.exerciseIndex]) {
+      workoutRecordBox.whenData((value) {
+        final record =
+            value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
+        if (record is WorkoutRecordModel) {
+          print(record.setInfo[0].reps);
+          record.setInfo[setInfoIndex].reps = reps;
+          value.put(
+              pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
+        }
+      });
+    }
+
+    state = pstate;
+  }
+
+  void modifiedSeconds(int seconds, int setInfoIndex) {
+    final pstate = state as WorkoutProcessModel;
+
+    pstate.modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex]
+        .seconds = seconds;
+
+    print(pstate
+        .modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex].seconds);
+
+    //로컬 저장
+    modifiedExerciseBox.whenData((value) {
+      final record =
+          value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
+
+      if (record is Exercise) {
+        record.setInfo[setInfoIndex].reps = seconds;
+        value.put(pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
+      }
+    });
+    //완료된 세트의 경우 수정후 저장
+    if (setInfoIndex < pstate.setInfoCompleteList[pstate.exerciseIndex]) {
+      workoutRecordBox.whenData((value) {
+        final record =
+            value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
+        if (record is WorkoutRecordModel) {
+          record.setInfo[setInfoIndex].reps = seconds;
+          value.put(
+              pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
+        }
+      });
+    }
 
     state = pstate;
   }

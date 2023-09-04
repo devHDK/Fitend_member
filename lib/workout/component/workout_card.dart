@@ -101,6 +101,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                               ? Colors.white
                               : GRAY_COLOR,
                           fontSize: 10,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
@@ -141,6 +142,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                             color: index <= widget.completeSetCount - 1
                                 ? Colors.white
                                 : GRAY_COLOR,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       )

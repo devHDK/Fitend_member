@@ -169,7 +169,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
         ref.read(hiveWorkoutResultProvider);
     final AsyncValue<Box> workoutFeedbackBox =
         ref.read(hiveWorkoutFeedbackProvider);
-    final AsyncValue<Box> modifiedBox = ref.watch(hiveModifiedExerciseProvider);
+    final AsyncValue<Box> modifiedBox = ref.read(hiveModifiedExerciseProvider);
     final AsyncValue<Box> processingExerciseIndexBox =
         ref.read(hiveExerciseIndexProvider);
 

@@ -84,130 +84,137 @@ class _SetInfoBoxForWeightRepsState extends State<SetInfoBoxForWeightReps> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 85,
-          width: MediaQuery.of(context).size.width - 56,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  Container(
-                    height: 40,
-                    width: 1,
-                    color: LIGHT_GRAY_COLOR,
-                  ),
-                  HexagonContainer(
-                    label: (widget.setInfoIndex + 1).toString(),
-                    labelColor: Colors.black,
-                    color: widget.setInfoIndex == widget.model.exerciseIndex
-                        ? Colors.white
-                        : LIGHT_GRAY_COLOR,
-                    lineColor: widget.setInfoIndex == widget.model.exerciseIndex
-                        ? POINT_COLOR
-                        : LIGHT_GRAY_COLOR,
-                    size: 39,
-                  ),
-                  const SizedBox(
-                    height: 2,
-                  ),
-                  Container(
-                    height: 4,
-                    width: 1,
-                    color: LIGHT_GRAY_COLOR,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Column(
-                children: [
-                  const SizedBox(
-                    height: 36,
-                  ),
-                  Container(
-                    width: 260,
-                    height: 46,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                      border: Border.all(
-                        color: widget.setInfoIndex == widget.model.exerciseIndex
-                            ? POINT_COLOR
-                            : Colors.white,
-                        width: 3,
-                      ),
-                      color: Colors.white,
+    return Flexible(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 85,
+            width: MediaQuery.of(context).size.width - 56,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Container(
+                      height: 40,
+                      width: 1,
+                      color: LIGHT_GRAY_COLOR,
                     ),
-                    child: SizedBox(
-                      width: 255,
-                      height: 44,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: SetInfoTextField(
-                              controller: weightController,
-                              textInputType:
-                                  const TextInputType.numberWithOptions(
-                                decimal: true,
+                    HexagonContainer(
+                      label: (widget.setInfoIndex + 1).toString(),
+                      labelColor: Colors.black,
+                      color: widget.setInfoIndex == widget.model.exerciseIndex
+                          ? Colors.white
+                          : LIGHT_GRAY_COLOR,
+                      lineColor:
+                          widget.setInfoIndex == widget.model.exerciseIndex
+                              ? POINT_COLOR
+                              : LIGHT_GRAY_COLOR,
+                      size: 39,
+                    ),
+                    const SizedBox(
+                      height: 2,
+                    ),
+                    Container(
+                      height: 4,
+                      width: 1,
+                      color: LIGHT_GRAY_COLOR,
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  children: [
+                    const SizedBox(
+                      height: 36,
+                    ),
+                    Container(
+                      width: 260,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                        border: Border.all(
+                          color:
+                              widget.setInfoIndex == widget.model.exerciseIndex
+                                  ? POINT_COLOR
+                                  : Colors.white,
+                          width: 3,
+                        ),
+                        color: Colors.white,
+                      ),
+                      child: SizedBox(
+                        width: 255,
+                        height: 44,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                              width: 70,
+                              child: SetInfoTextField(
+                                controller: weightController,
+                                textInputType:
+                                    const TextInputType.numberWithOptions(
+                                  decimal: true,
+                                ),
+                                allowedDigits: r'^-?\d*\.?\d?',
                               ),
-                              allowedDigits: r'^-?\d*\.?\d?',
                             ),
-                          ),
-                          Text(
-                            'kg',
-                            style: s1SubTitle.copyWith(),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                            '/',
-                            style: s1SubTitle.copyWith(),
-                          ),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          Expanded(
-                            child: SetInfoTextField(
-                              controller: repsController,
-                              textInputType:
-                                  const TextInputType.numberWithOptions(),
+                            Text(
+                              'kg',
+                              style: s1SubTitle.copyWith(),
                             ),
-                          ),
-                          Text(
-                            '회',
-                            style: s1SubTitle.copyWith(),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                        ],
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              '/',
+                              style: s1SubTitle.copyWith(),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            SizedBox(
+                              width: 70,
+                              child: SetInfoTextField(
+                                controller: repsController,
+                                textInputType:
+                                    const TextInputType.numberWithOptions(),
+                              ),
+                            ),
+                            Text(
+                              '회',
+                              style: s1SubTitle.copyWith(),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              )
-            ],
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
-        ),
-        if (widget.setInfoIndex ==
-            widget.model.exercises[widget.model.exerciseIndex].setInfo.length -
-                1)
-          Container(
-            height: 100,
-          )
-      ],
+          if (widget.setInfoIndex ==
+              widget.model.exercises[widget.model.exerciseIndex].setInfo
+                      .length -
+                  1)
+            Container(
+              height: 100,
+            )
+        ],
+      ),
     );
   }
 }

@@ -687,8 +687,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                             setState(() {
                               isPoped = true;
                               // ref
-                              //     .read(workoutProvider(widget.id).notifier)
-                              //     .getWorkout(id: widget.id);
+                              //     .read(workoutProcessProvider(widget.id)
+                              //         .notifier)
+                              //     .init(ref.read(
+                              //         workoutProvider(widget.id).notifier));
                             });
                           });
                         }

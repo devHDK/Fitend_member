@@ -353,7 +353,37 @@ class WorkoutProcessStateNotifier
   }
 
   // 다음 운동(슈퍼세트)
-  // 세트 수정 (timer, reps, weight * reps)
+  // 세트 수정 (seconds, reps, weight)
+  void modifiedWeight(double weight, int setInfoIndex) {
+    final pstate = state as WorkoutProcessModel;
+
+    pstate.modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex]
+        .weight = weight;
+
+    print(pstate
+        .modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex].weight);
+
+    //저장
+    //완료된 세트의 경우 수정후 저장
+
+    state = pstate;
+  }
+
+  void modifiedReps(int reps, int setInfoIndex) {
+    final pstate = state as WorkoutProcessModel;
+
+    pstate.modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex].reps =
+        reps;
+
+    print(pstate
+        .modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex].reps);
+
+    //저장
+    //완료된 세트의 경우 수정후 저장
+
+    state = pstate;
+  }
+
   // 총 운동 시간 추가
 
   // 이전에 수행하지 않은 운동 이동

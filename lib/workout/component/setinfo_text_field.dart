@@ -10,6 +10,7 @@ class SetInfoTextField extends StatefulWidget {
   final String allowedDigits;
   final ValueChanged<String> onChanged;
   final String initValue;
+  final Color textColor;
 
   const SetInfoTextField({
     super.key,
@@ -18,6 +19,7 @@ class SetInfoTextField extends StatefulWidget {
     this.allowedDigits = r'^\d*',
     required this.onChanged,
     required this.initValue,
+    required this.textColor,
   });
 
   @override
@@ -58,14 +60,13 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
       focusNode: focusNode,
       cursorColor: POINT_COLOR,
       textAlign: TextAlign.center,
-      style: h3Headline.copyWith(
-        color: Colors.black,
-      ),
+      style: h3Headline.copyWith(color: widget.textColor),
       decoration: const InputDecoration(
         filled: true,
         fillColor: Colors.white,
         border: InputBorder.none,
       ),
+      onTapOutside: (event) => focusNode.unfocus(),
       keyboardType: widget.textInputType,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(widget.allowedDigits)),

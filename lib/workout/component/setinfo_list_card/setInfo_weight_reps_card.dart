@@ -3,6 +3,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/workout/component/setinfo_text_field.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
+import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,12 +14,14 @@ class SetInfoBoxForWeightReps extends ConsumerStatefulWidget {
     required this.setInfoIndex,
     required this.initialWeight,
     required this.initialReps,
+    required this.workoutScheduleId,
   });
 
   final WorkoutProcessModel model;
   final int setInfoIndex;
   final double initialWeight;
   final int initialReps;
+  final int workoutScheduleId;
 
   @override
   ConsumerState<SetInfoBoxForWeightReps> createState() =>
@@ -39,6 +42,9 @@ class _SetInfoBoxForWeightRepsState
 
   @override
   Widget build(BuildContext context) {
+    final isNowSet = widget.setInfoIndex ==
+        widget.model.setInfoCompleteList[widget.model.exerciseIndex];
+
     return Column(
       children: [
         SizedBox(
@@ -57,13 +63,9 @@ class _SetInfoBoxForWeightRepsState
                   ),
                   HexagonContainer(
                     label: (widget.setInfoIndex + 1).toString(),
-                    labelColor: Colors.black,
-                    color: widget.setInfoIndex == widget.model.exerciseIndex
-                        ? Colors.white
-                        : LIGHT_GRAY_COLOR,
-                    lineColor: widget.setInfoIndex == widget.model.exerciseIndex
-                        ? POINT_COLOR
-                        : LIGHT_GRAY_COLOR,
+                    labelColor: isNowSet ? Colors.black : GRAY_COLOR,
+                    color: isNowSet ? Colors.white : LIGHT_GRAY_COLOR,
+                    lineColor: isNowSet ? POINT_COLOR : LIGHT_GRAY_COLOR,
                     size: 39,
                   ),
                   const SizedBox(
@@ -92,7 +94,9 @@ class _SetInfoBoxForWeightRepsState
                         Radius.circular(10),
                       ),
                       border: Border.all(
-                        color: widget.setInfoIndex == widget.model.exerciseIndex
+                        color: widget.setInfoIndex ==
+                                widget.model.setInfoCompleteList[
+                                    widget.model.exerciseIndex]
                             ? POINT_COLOR
                             : Colors.white,
                         width: 3,
@@ -112,9 +116,23 @@ class _SetInfoBoxForWeightRepsState
                           Expanded(
                             child: SetInfoTextField(
                               initValue: widget.initialWeight.toString(),
+                              textColor: isNowSet ? Colors.black : GRAY_COLOR,
                               onChanged: (value) {
+                                if (double.parse(value) < 1) {
+                                  value = 1.0.toString();
+                                }
+
                                 if (double.parse(value) > 999.0) {
                                   value = 999.0.toString();
+                                }
+
+                                if (value.isNotEmpty) {
+                                  ref
+                                      .read(workoutProcessProvider(
+                                              widget.workoutScheduleId)
+                                          .notifier)
+                                      .modifiedWeight(double.parse(value),
+                                          widget.setInfoIndex);
                                 }
                               },
                               textInputType:
@@ -126,14 +144,18 @@ class _SetInfoBoxForWeightRepsState
                           ),
                           Text(
                             'kg',
-                            style: s1SubTitle.copyWith(),
+                            style: s1SubTitle.copyWith(
+                              color: isNowSet ? Colors.black : GRAY_COLOR,
+                            ),
                           ),
                           const SizedBox(
                             width: 20,
                           ),
                           Text(
                             '/',
-                            style: s1SubTitle.copyWith(),
+                            style: s1SubTitle.copyWith(
+                              color: isNowSet ? Colors.black : GRAY_COLOR,
+                            ),
                           ),
                           const SizedBox(
                             width: 20,
@@ -141,9 +163,23 @@ class _SetInfoBoxForWeightRepsState
                           Expanded(
                             child: SetInfoTextField(
                               initValue: widget.initialReps.toString(),
+                              textColor: isNowSet ? Colors.black : GRAY_COLOR,
                               onChanged: (value) {
+                                if (int.parse(value) < 1) {
+                                  value = 1.toString();
+                                }
+
                                 if (int.parse(value) > 99) {
                                   value = 99.toString();
+                                }
+
+                                if (value.isNotEmpty) {
+                                  ref
+                                      .read(workoutProcessProvider(
+                                              widget.workoutScheduleId)
+                                          .notifier)
+                                      .modifiedReps(int.parse(value),
+                                          widget.setInfoIndex);
                                 }
                               },
                               textInputType:

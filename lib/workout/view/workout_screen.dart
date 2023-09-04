@@ -404,6 +404,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               1) {
                             return SetInfoBoxForWeightReps(
                               key: ValueKey(index),
+                              workoutScheduleId: widget.workoutScheduleId,
                               initialReps: element.reps!,
                               initialWeight: element.weight!,
                               model: model,

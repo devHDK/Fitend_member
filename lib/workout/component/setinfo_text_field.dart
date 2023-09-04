@@ -5,15 +5,19 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SetInfoTextField extends StatefulWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final TextInputType textInputType;
   final String allowedDigits;
+  final ValueChanged<String> onChanged;
+  final String initValue;
 
   const SetInfoTextField({
     super.key,
-    required this.controller,
+    this.controller,
     this.textInputType = TextInputType.number,
     this.allowedDigits = r'^\d*',
+    required this.onChanged,
+    required this.initValue,
   });
 
   @override
@@ -49,6 +53,7 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: widget.initValue,
       controller: widget.controller,
       focusNode: focusNode,
       cursorColor: POINT_COLOR,
@@ -65,6 +70,7 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(widget.allowedDigits)),
       ],
+      onChanged: widget.onChanged,
     );
   }
 }

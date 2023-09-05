@@ -5,7 +5,7 @@ import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final workoutRecordsProvider = StateNotifierProvider.family<
+final workoutResultProvider = StateNotifierProvider.family<
     WorkoutRecordStateNotifier, WorkoutResultModelBase?, int>((ref, id) {
   final workoutRecordsRepository = ref.watch(workoutRecordsRepositoryProvider);
 

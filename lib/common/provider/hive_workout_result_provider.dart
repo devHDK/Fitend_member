@@ -3,11 +3,11 @@ import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-final hiveWorkoutResultProvider = FutureProvider<Box>(
+final hiveWorkoutRecordForResultProvider = FutureProvider<Box>(
   (ref) async {
-    await Hive.openBox<WorkoutRecordResult>(workoutResult);
+    await Hive.openBox<WorkoutRecord>(workoutResult);
 
-    Box box = Hive.box<WorkoutRecordResult>(workoutResult);
+    Box box = Hive.box<WorkoutRecord>(workoutResult);
 
     return box;
   },

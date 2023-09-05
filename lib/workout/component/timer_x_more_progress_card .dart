@@ -8,7 +8,7 @@ import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
-import 'package:fitend_member/workout/model/workout_record_model.dart';
+import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -77,7 +77,7 @@ class _WeightWrepsProgressCardState
           timerXmoreBox.whenData((value) async {
             final record = await value.get(widget.exercise.workoutPlanId);
 
-            if (record != null && record is WorkoutRecordModel) {
+            if (record != null && record is WorkoutRecordSimple) {
               if (record.setInfo.length > widget.setInfoIndex) {
                 setState(() {
                   totalSeconds =
@@ -146,7 +146,7 @@ class _WeightWrepsProgressCardState
               (value) {
                 var record = value.get(widget.exercise.workoutPlanId);
 
-                if (record is WorkoutRecordModel) {
+                if (record is WorkoutRecordSimple) {
                   record.setInfo.removeLast();
                   record.setInfo.add(
                     SetInfo(
@@ -215,7 +215,7 @@ class _WeightWrepsProgressCardState
     timerXmoreBox.whenData((value) async {
       final record = await value.get(widget.exercise.workoutPlanId);
 
-      if (record != null && record is WorkoutRecordModel) {
+      if (record != null && record is WorkoutRecordSimple) {
         if (record.setInfo.length > widget.setInfoIndex) {
           if (record.setInfo[widget.setInfoIndex].seconds! <
               widget.exercise.setInfo[widget.setInfoIndex].seconds!) {
@@ -241,7 +241,7 @@ class _WeightWrepsProgressCardState
             );
             value.put(
               widget.exercise.workoutPlanId,
-              WorkoutRecordModel(
+              WorkoutRecordSimple(
                 workoutPlanId: widget.exercise.workoutPlanId,
                 setInfo: [
                   ...record.setInfo,
@@ -283,7 +283,7 @@ class _WeightWrepsProgressCardState
 
           if (record != null &&
               widget.setInfoIndex < record.setInfo.length &&
-              record is WorkoutRecordModel) {
+              record is WorkoutRecordSimple) {
             record.setInfo[widget.setInfoIndex] =
                 record.setInfo[widget.setInfoIndex].copyWith(
               seconds: widget.exercise.setInfo[widget.setInfoIndex].seconds! -
@@ -291,7 +291,7 @@ class _WeightWrepsProgressCardState
             );
             value.put(
               widget.exercise.workoutPlanId,
-              WorkoutRecordModel(
+              WorkoutRecordSimple(
                 workoutPlanId: widget.exercise.workoutPlanId,
                 setInfo: [
                   ...record.setInfo,
@@ -299,11 +299,11 @@ class _WeightWrepsProgressCardState
               ),
             );
           } else if (record != null &&
-              record is WorkoutRecordModel &&
+              record is WorkoutRecordSimple &&
               widget.setInfoIndex == record.setInfo.length) {
             value.put(
               widget.exercise.workoutPlanId,
-              WorkoutRecordModel(
+              WorkoutRecordSimple(
                   workoutPlanId: widget.exercise.workoutPlanId,
                   setInfo: [
                     ...record.setInfo,
@@ -318,7 +318,7 @@ class _WeightWrepsProgressCardState
             // print(totalSeconds);
             value.put(
               widget.exercise.workoutPlanId,
-              WorkoutRecordModel(
+              WorkoutRecordSimple(
                 workoutPlanId: widget.exercise.workoutPlanId,
                 setInfo: [
                   SetInfo(
@@ -340,7 +340,7 @@ class _WeightWrepsProgressCardState
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final AsyncValue<Box> workoutRecordBox =
-        ref.watch(hiveWorkoutRecordProvider);
+        ref.watch(hiveWorkoutRecordSimpleProvider);
     final AsyncValue<Box> timerXMoreRecordBox =
         ref.watch(hiveTimerXMoreRecordProvider);
 

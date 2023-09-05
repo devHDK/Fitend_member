@@ -10,7 +10,7 @@ PostWorkoutRecordModel _$PostWorkoutRecordModelFromJson(
         Map<String, dynamic> json) =>
     PostWorkoutRecordModel(
       records: (json['records'] as List<dynamic>)
-          .map((e) => WorkoutRecordModel.fromJson(e as Map<String, dynamic>))
+          .map((e) => WorkoutRecordSimple.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

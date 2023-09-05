@@ -20,11 +20,11 @@ import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
-import 'package:fitend_member/workout/model/workout_record_model.dart';
+import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
-import 'package:fitend_member/workout/provider/workout_records_provider.dart';
+import 'package:fitend_member/workout/provider/workout_result_provider.dart';
 import 'package:fitend_member/workout/view/workout_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +85,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             if (initial) {
               if ((isWorkoutComplete || isRecorded) && !hasLocal) {
                 ref
-                    .read(workoutRecordsProvider(widget.id).notifier)
+                    .read(workoutResultProvider(widget.id).notifier)
                     .getWorkoutResults(workoutScheduleId: widget.id);
               }
 
@@ -155,17 +155,17 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
-    final pstate = ref.watch(workoutRecordsProvider(widget.id));
+    final pstate = ref.watch(workoutResultProvider(widget.id));
 
     final AsyncValue<Box> workoutRecordBox =
-        ref.read(hiveWorkoutRecordProvider);
+        ref.read(hiveWorkoutRecordSimpleProvider);
     final AsyncValue<Box> timerXoneRecordBox =
         ref.read(hiveTimerRecordProvider);
     final AsyncValue<Box> timerXMoreRecordBox =
         ref.read(hiveTimerXMoreRecordProvider);
 
     final AsyncValue<Box> workoutResultBox =
-        ref.read(hiveWorkoutResultProvider);
+        ref.read(hiveWorkoutRecordForResultProvider);
     final AsyncValue<Box> workoutFeedbackBox =
         ref.read(hiveWorkoutFeedbackProvider);
     final AsyncValue<Box> modifiedBox = ref.read(hiveModifiedExerciseProvider);
@@ -236,7 +236,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             for (var i = 0; i < pstate.workoutRecords.length; i++) {
               value.put(
                 pstate.workoutRecords[i].workoutPlanId,
-                WorkoutRecordModel(
+                WorkoutRecordSimple(
                   workoutPlanId: pstate.workoutRecords[i].workoutPlanId,
                   setInfo: pstate.workoutRecords[i].setInfo,
                 ),
@@ -272,7 +272,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             for (var i = 0; i < pstate.workoutRecords.length; i++) {
               value.put(
                 pstate.workoutRecords[i].workoutPlanId,
-                WorkoutRecordResult(
+                WorkoutRecord(
                   exerciseName: pstate.workoutRecords[i].exerciseName,
                   targetMuscles: pstate.workoutRecords[i].targetMuscles,
                   trackingFieldId: pstate.workoutRecords[i].trackingFieldId,
@@ -325,7 +325,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
           for (int i = 0; i < model.exercises.length; i++) {
             final record = value.get(model.exercises[i].workoutPlanId);
 
-            if (record != null && record is WorkoutRecordResult) {
+            if (record != null && record is WorkoutRecord) {
               model.exercises[i] =
                   model.exercises[i].copyWith(setInfo: record.setInfo);
             } else {
@@ -484,7 +484,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                   workoutRecordBox.when(
                     data: (data) {
                       final record = data.get(exerciseModel.workoutPlanId);
-                      if (record != null && record is WorkoutRecordModel) {
+                      if (record != null && record is WorkoutRecordSimple) {
                         List<SetInfo> savedSetInfo = record.setInfo;
                         int unCompletecnt = 0;
 
@@ -612,7 +612,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                                 if (record == null) {
                                   value.put(
                                     e.workoutPlanId,
-                                    WorkoutRecordResult(
+                                    WorkoutRecord(
                                       exerciseName: e.name,
                                       targetMuscles: [e.targetMuscles[0].name],
                                       trackingFieldId: e.trackingFieldId,

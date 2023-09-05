@@ -2,32 +2,32 @@ import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'workout_record_model.g.dart';
+part 'workout_record_simple_model.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 1)
-class WorkoutRecordModel {
+class WorkoutRecordSimple {
   @HiveField(1)
   final int workoutPlanId;
   @HiveField(2)
   final List<SetInfo> setInfo;
 
-  WorkoutRecordModel({
+  WorkoutRecordSimple({
     required this.workoutPlanId,
     required this.setInfo,
   });
 
-  WorkoutRecordModel copyWith({
+  WorkoutRecordSimple copyWith({
     int? workoutPlanId,
     List<SetInfo>? setInfo,
   }) =>
-      WorkoutRecordModel(
+      WorkoutRecordSimple(
         workoutPlanId: workoutPlanId ?? this.workoutPlanId,
         setInfo: setInfo ?? this.setInfo,
       );
 
-  factory WorkoutRecordModel.fromJson(Map<String, dynamic> json) =>
-      _$WorkoutRecordModelFromJson(json);
+  factory WorkoutRecordSimple.fromJson(Map<String, dynamic> json) =>
+      _$WorkoutRecordSimpleFromJson(json);
 
-  Map<String, dynamic> toJson() => _$WorkoutRecordModelToJson(this);
+  Map<String, dynamic> toJson() => _$WorkoutRecordSimpleToJson(this);
 }

@@ -6,9 +6,9 @@ import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dar
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
-import 'package:fitend_member/workout/model/workout_record_model.dart';
+import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
-import 'package:fitend_member/workout/provider/workout_records_provider.dart';
+import 'package:fitend_member/workout/provider/workout_result_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -49,8 +49,8 @@ class ScheduleResultScreen extends ConsumerStatefulWidget {
 class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   //  WorkoutResultModel state;
   WorkoutFeedbackRecordModel? feedback;
-  List<WorkoutRecordResult> workoutResults = [];
-  List<WorkoutRecordModel> workoutRecords = [];
+  List<WorkoutRecord> workoutResults = [];
+  List<WorkoutRecordSimple> workoutRecords = [];
   bool initial = true;
   bool hasLocal = false;
   DateTime startDate = DateTime(
@@ -71,7 +71,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
 
   void getResults() async {
     final provider =
-        ref.read(workoutRecordsProvider(widget.workoutScheduleId).notifier);
+        ref.read(workoutResultProvider(widget.workoutScheduleId).notifier);
 
     await provider.getWorkoutResults(
         workoutScheduleId: widget.workoutScheduleId);
@@ -84,10 +84,10 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final pstate = ref.watch(workoutRecordsProvider(widget.workoutScheduleId));
+    final pstate = ref.watch(workoutResultProvider(widget.workoutScheduleId));
     final workoutFeedbackBox = ref.watch(hiveWorkoutFeedbackProvider);
     // final workoutResultBox = ref.watch(hiveWorkoutResultProvider);
-    final workoutRecordBox = ref.watch(hiveWorkoutRecordProvider);
+    final workoutRecordBox = ref.watch(hiveWorkoutRecordSimpleProvider);
 
     workoutFeedbackBox.whenData(
       (value) {
@@ -125,7 +125,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
 
           for (var i = 0; i < widget.exercises.length; i++) {
             final record = value.get(widget.exercises[i].workoutPlanId);
-            if (record != null && record is WorkoutRecordModel) {
+            if (record != null && record is WorkoutRecordSimple) {
               workoutRecords.add(record);
             } else {
               hasLocal = false;
@@ -418,7 +418,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   }
 
   Column _renderExerciseResult(
-      WorkoutRecordResult model, int index, WorkoutResultModel state) {
+      WorkoutRecord model, int index, WorkoutResultModel state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

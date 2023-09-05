@@ -39,7 +39,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<Box> box = ref.watch(hiveWorkoutRecordProvider);
+    final AsyncValue<Box> box = ref.watch(hiveWorkoutRecordSimpleProvider);
     final AsyncValue<Box> modifiedExerciseBox =
         ref.read(hiveModifiedExerciseProvider);
 

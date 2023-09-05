@@ -262,7 +262,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
   @override
   Widget build(BuildContext context) {
     final AsyncValue<Box> workoutRecordBox =
-        ref.watch(hiveWorkoutRecordProvider);
+        ref.watch(hiveWorkoutRecordSimpleProvider);
     final AsyncValue<Box> timerWorkoutBox = ref.watch(hiveTimerRecordProvider);
 
     timerBox = timerWorkoutBox;

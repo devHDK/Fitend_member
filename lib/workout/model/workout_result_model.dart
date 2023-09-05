@@ -20,7 +20,7 @@ class WorkoutResultModel extends WorkoutResultModelBase {
   final int strengthIndex;
   final List<int>? issueIndexes;
   final String? contents;
-  final List<WorkoutRecordResult> workoutRecords;
+  final List<WorkoutRecord> workoutRecords;
 
   WorkoutResultModel({
     required this.startDate,
@@ -35,7 +35,7 @@ class WorkoutResultModel extends WorkoutResultModelBase {
     int? strengthIndex,
     List<int>? issueIndexes,
     String? contents,
-    List<WorkoutRecordResult>? workoutRecords,
+    List<WorkoutRecord>? workoutRecords,
   }) =>
       WorkoutResultModel(
         startDate: startDate ?? this.startDate,
@@ -53,7 +53,7 @@ class WorkoutResultModel extends WorkoutResultModelBase {
 
 @JsonSerializable()
 @HiveType(typeId: 3)
-class WorkoutRecordResult {
+class WorkoutRecord {
   @HiveField(1)
   final String exerciseName;
   @HiveField(2)
@@ -65,7 +65,7 @@ class WorkoutRecordResult {
   @HiveField(5)
   final List<SetInfo> setInfo;
 
-  WorkoutRecordResult({
+  WorkoutRecord({
     required this.exerciseName,
     required this.targetMuscles,
     required this.trackingFieldId,
@@ -73,14 +73,14 @@ class WorkoutRecordResult {
     required this.setInfo,
   });
 
-  WorkoutRecordResult copyWith({
+  WorkoutRecord copyWith({
     String? exerciseName,
     List<String>? targetMuscles,
     int? trackingFieldId,
     int? workoutPlanId,
     List<SetInfo>? setInfo,
   }) =>
-      WorkoutRecordResult(
+      WorkoutRecord(
         exerciseName: exerciseName ?? this.exerciseName,
         targetMuscles: targetMuscles ?? this.targetMuscles,
         trackingFieldId: trackingFieldId ?? this.trackingFieldId,
@@ -88,8 +88,8 @@ class WorkoutRecordResult {
         setInfo: setInfo ?? this.setInfo,
       );
 
-  factory WorkoutRecordResult.fromJson(Map<String, dynamic> json) =>
-      _$WorkoutRecordResultFromJson(json);
+  factory WorkoutRecord.fromJson(Map<String, dynamic> json) =>
+      _$WorkoutRecordFromJson(json);
 
-  Map<String, dynamic> toJson() => _$WorkoutRecordResultToJson(this);
+  Map<String, dynamic> toJson() => _$WorkoutRecordToJson(this);
 }

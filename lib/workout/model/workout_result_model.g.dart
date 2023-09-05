@@ -6,17 +6,17 @@ part of 'workout_result_model.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class WorkoutRecordResultAdapter extends TypeAdapter<WorkoutRecordResult> {
+class WorkoutRecordAdapter extends TypeAdapter<WorkoutRecord> {
   @override
   final int typeId = 3;
 
   @override
-  WorkoutRecordResult read(BinaryReader reader) {
+  WorkoutRecord read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return WorkoutRecordResult(
+    return WorkoutRecord(
       exerciseName: fields[1] as String,
       targetMuscles: (fields[2] as List).cast<String>(),
       trackingFieldId: fields[3] as int,
@@ -26,7 +26,7 @@ class WorkoutRecordResultAdapter extends TypeAdapter<WorkoutRecordResult> {
   }
 
   @override
-  void write(BinaryWriter writer, WorkoutRecordResult obj) {
+  void write(BinaryWriter writer, WorkoutRecord obj) {
     writer
       ..writeByte(5)
       ..writeByte(1)
@@ -47,7 +47,7 @@ class WorkoutRecordResultAdapter extends TypeAdapter<WorkoutRecordResult> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is WorkoutRecordResultAdapter &&
+      other is WorkoutRecordAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -65,7 +65,7 @@ WorkoutResultModel _$WorkoutResultModelFromJson(Map<String, dynamic> json) =>
           .toList(),
       contents: json['contents'] as String?,
       workoutRecords: (json['workoutRecords'] as List<dynamic>)
-          .map((e) => WorkoutRecordResult.fromJson(e as Map<String, dynamic>))
+          .map((e) => WorkoutRecord.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -78,8 +78,8 @@ Map<String, dynamic> _$WorkoutResultModelToJson(WorkoutResultModel instance) =>
       'workoutRecords': instance.workoutRecords,
     };
 
-WorkoutRecordResult _$WorkoutRecordResultFromJson(Map<String, dynamic> json) =>
-    WorkoutRecordResult(
+WorkoutRecord _$WorkoutRecordFromJson(Map<String, dynamic> json) =>
+    WorkoutRecord(
       exerciseName: json['exerciseName'] as String,
       targetMuscles: (json['targetMuscles'] as List<dynamic>)
           .map((e) => e as String)
@@ -91,8 +91,7 @@ WorkoutRecordResult _$WorkoutRecordResultFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$WorkoutRecordResultToJson(
-        WorkoutRecordResult instance) =>
+Map<String, dynamic> _$WorkoutRecordToJson(WorkoutRecord instance) =>
     <String, dynamic>{
       'exerciseName': instance.exerciseName,
       'targetMuscles': instance.targetMuscles,

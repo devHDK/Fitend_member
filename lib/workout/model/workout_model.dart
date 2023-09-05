@@ -1,5 +1,5 @@
 import 'package:fitend_member/exercise/model/exercise_model.dart';
-import 'package:fitend_member/workout/model/workout_result_model.dart';
+import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'workout_model.g.dart';
 
@@ -25,10 +25,8 @@ class WorkoutModel extends WorkoutModelBase {
   final bool isRecord;
   final List<Exercise> exercises;
   List<Exercise>? modifiedExercises;
-  List<WorkoutRecordResult>? recordedExercises;
+  List<WorkoutRecordSimple>? recordedExercises;
   bool? isProcessing;
-  bool? hasLocal;
-  // final bool? changedDate;
 
   WorkoutModel({
     required this.workoutScheduleId,
@@ -43,7 +41,6 @@ class WorkoutModel extends WorkoutModelBase {
     this.recordedExercises,
     required this.isRecord,
     this.isProcessing,
-    this.hasLocal,
   });
 
   WorkoutModel copyWith({
@@ -57,9 +54,8 @@ class WorkoutModel extends WorkoutModelBase {
     bool? isRecord,
     List<Exercise>? exercises,
     List<Exercise>? modifiedExercises,
-    List<WorkoutRecordResult>? recordedExercises,
+    List<WorkoutRecordSimple>? recordedExercises,
     bool? isProcessing,
-    bool? hasLocal,
   }) =>
       WorkoutModel(
         workoutScheduleId: workoutScheduleId ?? this.workoutScheduleId,
@@ -74,7 +70,6 @@ class WorkoutModel extends WorkoutModelBase {
         modifiedExercises: modifiedExercises ?? this.modifiedExercises,
         recordedExercises: recordedExercises ?? this.recordedExercises,
         isProcessing: isProcessing ?? this.isProcessing,
-        hasLocal: hasLocal ?? this.hasLocal,
       );
 
   static WorkoutModel clone({required WorkoutModel model}) {
@@ -91,7 +86,6 @@ class WorkoutModel extends WorkoutModelBase {
       recordedExercises: model.recordedExercises,
       isRecord: model.isRecord,
       isProcessing: model.isProcessing,
-      hasLocal: model.hasLocal,
     );
   }
 

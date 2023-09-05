@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
@@ -6,66 +7,77 @@ import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
+import 'package:fitend_member/exercise/model/exercise_model.dart';
+import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
-import 'package:fitend_member/workout/model/workout_record_model.dart';
+import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
-import 'package:fitend_member/workout/provider/workout_records_provider.dart';
+import 'package:fitend_member/workout/provider/workout_result_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:collection/collection.dart';
 
 final workoutProvider =
     StateNotifierProvider.family<WorkoutStateNotifier, WorkoutModelBase, int>(
         (ref, id) {
   final repository = ref.watch(workoutScheduleRepositoryProvider);
-  final provider = ref.read(workoutRecordsProvider(id).notifier);
-  final AsyncValue<Box> workoutRecordBox = ref.read(hiveWorkoutRecordProvider);
-  final AsyncValue<Box> workoutResultBox = ref.read(hiveWorkoutResultProvider);
+  final provider = ref.read(workoutResultProvider(id).notifier);
+  final AsyncValue<Box> workoutRecordSimpleBox =
+      ref.read(hiveWorkoutRecordSimpleProvider);
+  final AsyncValue<Box> workoutRecordForResultBox =
+      ref.read(hiveWorkoutRecordForResultProvider);
   final AsyncValue<Box> timerWorkoutBox = ref.read(hiveTimerRecordProvider);
   final AsyncValue<Box> timerXMoreBox = ref.read(hiveTimerXMoreRecordProvider);
   final AsyncValue<Box> modifiedExerciseBox =
       ref.read(hiveModifiedExerciseProvider);
   final AsyncValue<Box> workoutFeedbackBox =
       ref.read(hiveWorkoutFeedbackProvider);
+
   final AsyncValue<Box> exerciseIndexBox = ref.read(hiveExerciseIndexProvider);
+  final AsyncValue<Box> processingExerciseIndexBox =
+      ref.read(hiveExerciseIndexProvider);
 
   return WorkoutStateNotifier(
-    workoutRecordProvider: provider,
+    workoutResultProvider: provider,
     repository: repository,
     id: id,
-    workoutRecordBox: workoutRecordBox,
-    workoutResultBox: workoutResultBox,
+    workoutRecordSimpleBox: workoutRecordSimpleBox,
+    workoutRecordForResultBox: workoutRecordForResultBox,
     timerWorkoutBox: timerWorkoutBox,
     timerXMoreBox: timerXMoreBox,
     modifiedExerciseBox: modifiedExerciseBox,
     exerciseIndexBox: exerciseIndexBox,
     workoutFeedbackBox: workoutFeedbackBox,
+    processingExerciseIndexBox: processingExerciseIndexBox,
   );
 });
 
 class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
   final WorkoutScheduleRepository repository;
-  final WorkoutRecordStateNotifier workoutRecordProvider;
+  final WorkoutRecordStateNotifier workoutResultProvider;
   final int id;
-  final AsyncValue<Box> workoutRecordBox;
-  final AsyncValue<Box> workoutResultBox;
+  final AsyncValue<Box> workoutRecordSimpleBox;
+  final AsyncValue<Box> workoutRecordForResultBox;
   final AsyncValue<Box> timerWorkoutBox;
   final AsyncValue<Box> timerXMoreBox;
   final AsyncValue<Box> modifiedExerciseBox;
   final AsyncValue<Box> exerciseIndexBox;
   final AsyncValue<Box> workoutFeedbackBox;
+  final AsyncValue<Box> processingExerciseIndexBox;
 
   WorkoutStateNotifier({
     required this.repository,
-    required this.workoutRecordProvider,
+    required this.workoutResultProvider,
     required this.id,
-    required this.workoutRecordBox,
-    required this.workoutResultBox,
+    required this.workoutRecordSimpleBox,
+    required this.workoutRecordForResultBox,
     required this.timerWorkoutBox,
     required this.timerXMoreBox,
     required this.modifiedExerciseBox,
     required this.exerciseIndexBox,
     required this.workoutFeedbackBox,
+    required this.processingExerciseIndexBox,
   }) : super(WorkoutModelLoading()) {
     getWorkout(id: id);
   }
@@ -75,22 +87,103 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
       final response = await repository.getWorkout(id: id);
 
       if (response.isWorkoutComplete) {
-        response.hasLocal = true;
-
-        workoutRecordBox.whenData(
-          (value) {
-            final record = value.get(response.exercises[0].workoutPlanId);
-            if (record == null) {
-              // result 기록 없음
-              workoutRecordProvider.getWorkoutResults(workoutScheduleId: id);
-              response.hasLocal = false;
-            } else {
-              workoutRecordBox.whenData((value) {
-                for (int i = 0; i < response.exercises.length; i++) {}
-              });
-            }
-          },
+        //운동이 완료 상태일때
+        bool hasLocal = false;
+        WorkoutResultModel tempResultModel = WorkoutResultModel(
+          startDate: '',
+          strengthIndex: 0,
+          workoutRecords: [],
         );
+
+        workoutFeedbackBox.whenData((value) {
+          final record = value.get(id);
+
+          if (record != null && record is WorkoutFeedbackRecordModel) {
+            hasLocal = true;
+            tempResultModel = tempResultModel.copyWith(
+              startDate: record.startDate.toString(),
+              strengthIndex: record.strengthIndex,
+              issueIndexes: record.issueIndexes,
+              contents: record.contents,
+            );
+          }
+        });
+
+        if (hasLocal) {
+          List<WorkoutRecord> tempRecordList = [];
+          workoutRecordForResultBox.whenData((value) {
+            for (var exercise in response.exercises) {
+              final record = value.get(exercise.workoutPlanId);
+              if (record != null && record is WorkoutRecord) {
+                tempRecordList.add(record);
+              }
+            }
+
+            tempResultModel =
+                tempResultModel.copyWith(workoutRecords: tempRecordList);
+          });
+
+          workoutResultProvider.state = tempResultModel;
+        } else {
+          //TODO:  getWorkoutResults 에서 local db 저장
+          await workoutResultProvider.getWorkoutResults(workoutScheduleId: id);
+
+          if (workoutResultProvider.state is WorkoutResultModel) {
+            final workoutResultState =
+                workoutResultProvider.state as WorkoutResultModel;
+
+            List<WorkoutRecordSimple> tempRecordList = [];
+
+            //기록에 저장
+            workoutRecordSimpleBox.whenData((value) {
+              workoutResultState.workoutRecords.mapIndexed((index, e) {
+                value.put(
+                    e.workoutPlanId,
+                    WorkoutRecordSimple(
+                        workoutPlanId: e.workoutPlanId, setInfo: e.setInfo));
+                tempRecordList.add(WorkoutRecordSimple(
+                    workoutPlanId: e.workoutPlanId, setInfo: e.setInfo));
+              });
+            });
+
+            response.recordedExercises = tempRecordList; // 기록 목록 업데이트
+          }
+        }
+      } else {
+        processingExerciseIndexBox.whenData((value) {
+          final record = value.get(id);
+          if (record != null) {
+            response.isProcessing = true;
+          } else {
+            response.isProcessing = false;
+          }
+        });
+
+        if (response.isProcessing != null && response.isProcessing!) {
+          //진행중이던 운동일경우
+          List<WorkoutRecordSimple> tempRecordList = [];
+          workoutRecordSimpleBox.whenData((value) {
+            for (int i = 0; i < response.exercises.length; i++) {
+              final record = value.get(response.exercises[i].workoutPlanId);
+              if (record != null && record is WorkoutRecordSimple) {
+                tempRecordList.add(record);
+              }
+            }
+
+            response.recordedExercises = tempRecordList;
+          });
+
+          List<Exercise> tempModifiedExercises = [];
+          modifiedExerciseBox.whenData((value) {
+            for (int i = 0; i < response.exercises.length; i++) {
+              final record = value.get(response.exercises[i].workoutPlanId);
+              if (record != null && record is Exercise) {
+                tempModifiedExercises.add(record);
+              }
+            }
+            response.modifiedExercises = tempModifiedExercises;
+          });
+        } else {}
       }
 
       state = response;

@@ -1,18 +1,18 @@
-import 'package:fitend_member/workout/model/workout_record_model.dart';
+import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'post_workout_record_model.g.dart';
 
 @JsonSerializable()
 class PostWorkoutRecordModel {
-  final List<WorkoutRecordModel> records;
+  final List<WorkoutRecordSimple> records;
 
   PostWorkoutRecordModel({
     required this.records,
   });
 
   PostWorkoutRecordModel copyWith({
-    List<WorkoutRecordModel>? records,
+    List<WorkoutRecordSimple>? records,
   }) =>
       PostWorkoutRecordModel(
         records: records ?? this.records,

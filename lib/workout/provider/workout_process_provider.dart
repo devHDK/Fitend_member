@@ -10,7 +10,7 @@ import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
-import 'package:fitend_member/workout/model/workout_record_model.dart';
+import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
 import 'package:fitend_member/workout/view/workout_list_screen.dart';
@@ -21,7 +21,8 @@ final workoutProcessProvider = StateNotifierProvider.family<
     WorkoutProcessStateNotifier, WorkoutProcessModelBase?, int>((ref, id) {
   final repository = ref.watch(workoutRecordsRepositoryProvider);
   final provider = ref.read(workoutProvider(id).notifier);
-  final AsyncValue<Box> workoutRecordBox = ref.read(hiveWorkoutRecordProvider);
+  final AsyncValue<Box> workoutRecordBox =
+      ref.read(hiveWorkoutRecordSimpleProvider);
   final AsyncValue<Box> timerWorkoutBox = ref.read(hiveTimerRecordProvider);
   final AsyncValue<Box> timerXMoreBox = ref.read(hiveTimerXMoreRecordProvider);
   final AsyncValue<Box> modifiedExerciseBox =
@@ -220,7 +221,7 @@ class WorkoutProcessStateNotifier
         //local DB에 데이터가 있을때
         value.put(
           pstate.exercises[pstate.exerciseIndex].workoutPlanId,
-          WorkoutRecordModel(
+          WorkoutRecordSimple(
             workoutPlanId: pstate.exercises[pstate.exerciseIndex].workoutPlanId,
             setInfo: [
               ...record.setInfo,
@@ -233,7 +234,7 @@ class WorkoutProcessStateNotifier
         //local DB에 데이터가 없을때
         value.put(
           pstate.exercises[pstate.exerciseIndex].workoutPlanId,
-          WorkoutRecordModel(
+          WorkoutRecordSimple(
             workoutPlanId: pstate.exercises[pstate.exerciseIndex].workoutPlanId,
             setInfo: [
               pstate.exercises[pstate.exerciseIndex]
@@ -275,14 +276,14 @@ class WorkoutProcessStateNotifier
   Future<void> quitWorkout() async {
     try {
       final pstate = state as WorkoutProcessModel;
-      List<WorkoutRecordModel> tempRecordList = [];
+      List<WorkoutRecordSimple> tempRecordList = [];
 
       workoutRecordBox.whenData(
         (value) {
           for (int i = 0; i < pstate.exercises.length; i++) {
             final record = value.get(pstate.exercises[i].workoutPlanId);
 
-            if (record != null && record is WorkoutRecordModel) {
+            if (record != null && record is WorkoutRecordSimple) {
               if (record.setInfo.length < pstate.maxSetInfoList[i]) {
                 for (int j = 0;
                     j <
@@ -297,7 +298,7 @@ class WorkoutProcessStateNotifier
               value.put(pstate.exercises[i].workoutPlanId, record);
               tempRecordList.add(record);
             } else {
-              var tempRecord = WorkoutRecordModel(
+              var tempRecord = WorkoutRecordSimple(
                 workoutPlanId: pstate.exercises[i].workoutPlanId,
                 setInfo: [],
               );
@@ -379,7 +380,7 @@ class WorkoutProcessStateNotifier
       workoutRecordBox.whenData((value) {
         final record =
             value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
-        if (record is WorkoutRecordModel) {
+        if (record is WorkoutRecordSimple) {
           record.setInfo[setInfoIndex].weight = weight;
           value.put(
               pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
@@ -411,7 +412,7 @@ class WorkoutProcessStateNotifier
       workoutRecordBox.whenData((value) {
         final record =
             value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
-        if (record is WorkoutRecordModel) {
+        if (record is WorkoutRecordSimple) {
           print(record.setInfo[0].reps);
           record.setInfo[setInfoIndex].reps = reps;
           value.put(
@@ -447,7 +448,7 @@ class WorkoutProcessStateNotifier
       workoutRecordBox.whenData((value) {
         final record =
             value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
-        if (record is WorkoutRecordModel) {
+        if (record is WorkoutRecordSimple) {
           record.setInfo[setInfoIndex].reps = seconds;
           value.put(
               pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);

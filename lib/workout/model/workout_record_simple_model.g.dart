@@ -1,29 +1,29 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'workout_record_model.dart';
+part of 'workout_record_simple_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class WorkoutRecordModelAdapter extends TypeAdapter<WorkoutRecordModel> {
+class WorkoutRecordSimpleAdapter extends TypeAdapter<WorkoutRecordSimple> {
   @override
   final int typeId = 1;
 
   @override
-  WorkoutRecordModel read(BinaryReader reader) {
+  WorkoutRecordSimple read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return WorkoutRecordModel(
+    return WorkoutRecordSimple(
       workoutPlanId: fields[1] as int,
       setInfo: (fields[2] as List).cast<SetInfo>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, WorkoutRecordModel obj) {
+  void write(BinaryWriter writer, WorkoutRecordSimple obj) {
     writer
       ..writeByte(2)
       ..writeByte(1)
@@ -38,7 +38,7 @@ class WorkoutRecordModelAdapter extends TypeAdapter<WorkoutRecordModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is WorkoutRecordModelAdapter &&
+      other is WorkoutRecordSimpleAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -47,15 +47,16 @@ class WorkoutRecordModelAdapter extends TypeAdapter<WorkoutRecordModel> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-WorkoutRecordModel _$WorkoutRecordModelFromJson(Map<String, dynamic> json) =>
-    WorkoutRecordModel(
+WorkoutRecordSimple _$WorkoutRecordSimpleFromJson(Map<String, dynamic> json) =>
+    WorkoutRecordSimple(
       workoutPlanId: json['workoutPlanId'] as int,
       setInfo: (json['setInfo'] as List<dynamic>)
           .map((e) => SetInfo.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$WorkoutRecordModelToJson(WorkoutRecordModel instance) =>
+Map<String, dynamic> _$WorkoutRecordSimpleToJson(
+        WorkoutRecordSimple instance) =>
     <String, dynamic>{
       'workoutPlanId': instance.workoutPlanId,
       'setInfo': instance.setInfo,

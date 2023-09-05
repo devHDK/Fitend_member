@@ -52,7 +52,7 @@ final s3Url = F.appFlavor != Flavor.production
     : 'https://djt0uuz3ub045.cloudfront.net/';
 const muscleImageUrl = 'public/targetMuscles/';
 
-String workoutRecordBox = 'WorkoutRecords';
+String workoutRecordSimple = 'WorkoutRecords';
 String timerXOneRecordBox = 'timerXoneRecords';
 String timerXMoreRecordBox = 'timerXMoreRecords';
 String workoutResult = 'workoutResult';

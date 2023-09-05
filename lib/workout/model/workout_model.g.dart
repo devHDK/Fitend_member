@@ -19,7 +19,15 @@ WorkoutModel _$WorkoutModelFromJson(Map<String, dynamic> json) => WorkoutModel(
       exercises: (json['exercises'] as List<dynamic>)
           .map((e) => Exercise.fromJson(e as Map<String, dynamic>))
           .toList(),
+      modifiedExercises: (json['modifiedExercises'] as List<dynamic>?)
+          ?.map((e) => Exercise.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      recordedExercises: (json['recordedExercises'] as List<dynamic>?)
+          ?.map((e) => WorkoutRecordResult.fromJson(e as Map<String, dynamic>))
+          .toList(),
       isRecord: json['isRecord'] as bool,
+      isProcessing: json['isProcessing'] as bool?,
+      hasLocal: json['hasLocal'] as bool?,
     );
 
 Map<String, dynamic> _$WorkoutModelToJson(WorkoutModel instance) =>
@@ -33,4 +41,8 @@ Map<String, dynamic> _$WorkoutModelToJson(WorkoutModel instance) =>
       'isWorkoutComplete': instance.isWorkoutComplete,
       'isRecord': instance.isRecord,
       'exercises': instance.exercises,
+      'modifiedExercises': instance.modifiedExercises,
+      'recordedExercises': instance.recordedExercises,
+      'isProcessing': instance.isProcessing,
+      'hasLocal': instance.hasLocal,
     };

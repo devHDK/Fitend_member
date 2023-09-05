@@ -22,6 +22,7 @@ import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
+import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/provider/workout_records_provider.dart';
 import 'package:fitend_member/workout/view/workout_screen.dart';
@@ -156,8 +157,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     final state = ref.watch(workoutProvider(widget.id));
     final pstate = ref.watch(workoutRecordsProvider(widget.id));
 
-    // final processState = ref.watch(workoutProcessProvider(widget.id));
-
     final AsyncValue<Box> workoutRecordBox =
         ref.read(hiveWorkoutRecordProvider);
     final AsyncValue<Box> timerXoneRecordBox =
@@ -196,6 +195,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     }
 
     final model = WorkoutModel.clone(model: state as WorkoutModel);
+    print(model.exercises[0].setInfo[0].weight);
     workoutModel = WorkoutModel.clone(model: model);
 
     workoutBox = workoutRecordBox;

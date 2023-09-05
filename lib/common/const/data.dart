@@ -42,8 +42,8 @@ final localIp = F.appFlavor == Flavor.local && Platform.isAndroid
     : simulatorIp;
 
 // const devIp = 'https://api-dev.fit-end.com/api/mobile';
-// const devIp = 'http://172.30.1.50:4000/api/mobile';
-const devIp = 'http://192.168.0.63:4000/api/mobile';
+const devIp = 'http://172.30.1.50:4000/api/mobile';
+// const devIp = 'http://192.168.0.63:4000/api/mobile';
 const deployIp = 'https://api-prod.fit-end.com/api/mobile';
 
 //s3URL

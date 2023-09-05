@@ -5,9 +5,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 class BoxUtils {
   static void deleteBox(AsyncValue<Box> box, List<Exercise> exercises) {
     box.whenData(
-      (value) async {
+      (value) {
         for (var element in exercises) {
-          await value.delete(element.workoutPlanId);
+          value.delete(element.workoutPlanId);
         }
       },
     );
@@ -15,11 +15,11 @@ class BoxUtils {
 
   static void deleteTimerBox(AsyncValue<Box> box, List<Exercise> exercises) {
     box.whenData(
-      (value) async {
+      (value) {
         for (var element in exercises) {
           if ((element.trackingFieldId == 3 || element.trackingFieldId == 4) &&
               element.setInfo.length == 1) {
-            await value.delete(element.workoutPlanId);
+            value.delete(element.workoutPlanId);
           }
         }
       },

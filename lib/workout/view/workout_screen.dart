@@ -541,7 +541,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       cancelOnTap: () {
         if (mounted) {
           int count = 0;
-
           ref
               .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
               .resetWorkoutProcess();

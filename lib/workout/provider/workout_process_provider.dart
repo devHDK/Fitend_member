@@ -4,6 +4,7 @@ import 'package:fitend_member/common/provider/hive_modified_exercise_provider.da
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/utils/hive_box_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
@@ -21,19 +22,22 @@ final workoutProcessProvider = StateNotifierProvider.family<
     WorkoutProcessStateNotifier, WorkoutProcessModelBase?, int>((ref, id) {
   final repository = ref.watch(workoutRecordsRepositoryProvider);
   final provider = ref.read(workoutProvider(id).notifier);
-  final AsyncValue<Box> workoutRecordBox =
-      ref.read(hiveWorkoutRecordSimpleProvider);
-  final AsyncValue<Box> timerWorkoutBox = ref.read(hiveTimerRecordProvider);
-  final AsyncValue<Box> timerXMoreBox = ref.read(hiveTimerXMoreRecordProvider);
+  final AsyncValue<Box> workoutRecordSimpleBox =
+      ref.watch(hiveWorkoutRecordSimpleProvider);
+  final AsyncValue<Box> workoutRecordForResultBox =
+      ref.watch(hiveWorkoutRecordForResultProvider);
+  final AsyncValue<Box> timerWorkoutBox = ref.watch(hiveTimerRecordProvider);
+  final AsyncValue<Box> timerXMoreBox = ref.watch(hiveTimerXMoreRecordProvider);
   final AsyncValue<Box> modifiedExerciseBox =
-      ref.read(hiveModifiedExerciseProvider);
-  final AsyncValue<Box> exerciseIndexBox = ref.read(hiveExerciseIndexProvider);
+      ref.watch(hiveModifiedExerciseProvider);
+  final AsyncValue<Box> exerciseIndexBox = ref.watch(hiveExerciseIndexProvider);
 
   return WorkoutProcessStateNotifier(
     repository: repository,
     id: id,
     workoutProvider: provider,
-    workoutRecordBox: workoutRecordBox,
+    workoutRecordSimpleBox: workoutRecordSimpleBox,
+    workoutRecordForResultBox: workoutRecordForResultBox,
     timerWorkoutBox: timerWorkoutBox,
     timerXMoreBox: timerXMoreBox,
     modifiedExerciseBox: modifiedExerciseBox,
@@ -46,7 +50,8 @@ class WorkoutProcessStateNotifier
   final WorkoutRecordsRepository repository;
   final int id;
   final WorkoutStateNotifier workoutProvider;
-  final AsyncValue<Box> workoutRecordBox;
+  final AsyncValue<Box> workoutRecordSimpleBox;
+  final AsyncValue<Box> workoutRecordForResultBox;
   final AsyncValue<Box> timerWorkoutBox;
   final AsyncValue<Box> timerXMoreBox;
   final AsyncValue<Box> modifiedExerciseBox;
@@ -56,7 +61,8 @@ class WorkoutProcessStateNotifier
     required this.repository,
     required this.id,
     required this.workoutProvider,
-    required this.workoutRecordBox,
+    required this.workoutRecordSimpleBox,
+    required this.workoutRecordForResultBox,
     required this.timerWorkoutBox,
     required this.timerXMoreBox,
     required this.modifiedExerciseBox,
@@ -120,7 +126,7 @@ class WorkoutProcessStateNotifier
       }
     });
 
-    workoutRecordBox.whenData((value) {
+    workoutRecordSimpleBox.whenData((value) {
       // 완료된 운동 체크
       for (int i = 0; i <= tempState.maxExerciseIndex; i++) {
         final tempRecord = value.get(tempState.exercises[i].workoutPlanId);
@@ -145,6 +151,8 @@ class WorkoutProcessStateNotifier
       }
     });
 
+    print('modifiedExercises : ${tempState.modifiedExercises}');
+
     state = WorkoutProcessModel(
       exerciseIndex: tempState.exerciseIndex,
       maxExerciseIndex: tempState.maxExerciseIndex,
@@ -165,7 +173,7 @@ class WorkoutProcessStateNotifier
     if (pstate.exerciseIndex <= pstate.maxExerciseIndex &&
         pstate.setInfoCompleteList[pstate.exerciseIndex] <
             pstate.maxSetInfoList[pstate.exerciseIndex]) {
-      _saveCompleteSet(workoutRecordBox);
+      _saveCompleteSet(workoutRecordSimpleBox);
     }
 
     if (pstate.setInfoCompleteList[pstate.exerciseIndex] <
@@ -278,7 +286,7 @@ class WorkoutProcessStateNotifier
       final pstate = state as WorkoutProcessModel;
       List<WorkoutRecordSimple> tempRecordList = [];
 
-      workoutRecordBox.whenData(
+      workoutRecordSimpleBox.whenData(
         (value) {
           for (int i = 0; i < pstate.exercises.length; i++) {
             final record = value.get(pstate.exercises[i].workoutPlanId);
@@ -334,11 +342,11 @@ class WorkoutProcessStateNotifier
   void resetWorkoutProcess() {
     final pstate = state as WorkoutProcessModel;
 
-    BoxUtils.deleteBox(workoutRecordBox, pstate.exercises);
+    BoxUtils.deleteBox(workoutRecordSimpleBox, pstate.exercises);
     BoxUtils.deleteBox(modifiedExerciseBox, pstate.exercises);
     BoxUtils.deleteTimerBox(timerWorkoutBox, pstate.exercises);
     BoxUtils.deleteTimerBox(timerXMoreBox, pstate.exercises);
-    // BoxUtils.deleteBox(workoutResultBox, widget.exercises);
+    BoxUtils.deleteBox(workoutRecordForResultBox, pstate.exercises);
 
     exerciseIndexBox.whenData(
       (value) {
@@ -377,7 +385,7 @@ class WorkoutProcessStateNotifier
     });
     //완료된 세트의 경우 수정후 저장
     if (setInfoIndex < pstate.setInfoCompleteList[pstate.exerciseIndex]) {
-      workoutRecordBox.whenData((value) {
+      workoutRecordSimpleBox.whenData((value) {
         final record =
             value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
         if (record is WorkoutRecordSimple) {
@@ -409,7 +417,7 @@ class WorkoutProcessStateNotifier
     });
     //완료된 세트의 경우 수정후 저장
     if (setInfoIndex < pstate.setInfoCompleteList[pstate.exerciseIndex]) {
-      workoutRecordBox.whenData((value) {
+      workoutRecordSimpleBox.whenData((value) {
         final record =
             value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
         if (record is WorkoutRecordSimple) {
@@ -445,7 +453,7 @@ class WorkoutProcessStateNotifier
     });
     //완료된 세트의 경우 수정후 저장
     if (setInfoIndex < pstate.setInfoCompleteList[pstate.exerciseIndex]) {
-      workoutRecordBox.whenData((value) {
+      workoutRecordSimpleBox.whenData((value) {
         final record =
             value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
         if (record is WorkoutRecordSimple) {

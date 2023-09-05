@@ -3,25 +3,14 @@ import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart';
-import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
-import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
-import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
-import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
-import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
-import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
-import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
-import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
-import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
-import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/provider/workout_result_provider.dart';
@@ -31,7 +20,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
 class WorkoutListScreen extends ConsumerStatefulWidget {
@@ -50,16 +38,7 @@ class WorkoutListScreen extends ConsumerStatefulWidget {
 class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     with RouteAware, WidgetsBindingObserver {
   late WorkoutModel workoutModel;
-  late AsyncValue<Box> workoutBox;
-  late AsyncValue<Box> timerXmoreBox;
-  late AsyncValue<Box> timerXoneBox;
-  late AsyncValue<Box> modifiedExercise;
-  late AsyncValue<Box> workoutResult;
-  late AsyncValue<Box> processingExerciseIndex;
-  bool isProcessing = false;
   bool isPoped = false;
-  bool isWorkoutComplete = false;
-  bool isRecorded = false;
   bool initial = true;
   bool hasLocal = false;
   bool changedDate = false;
@@ -83,19 +62,12 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
         WidgetsBinding.instance.addPostFrameCallback(
           (timeStamp) {
             if (initial) {
-              if ((isWorkoutComplete || isRecorded) && !hasLocal) {
-                ref
-                    .read(workoutResultProvider(widget.id).notifier)
-                    .getWorkoutResults(workoutScheduleId: widget.id);
-              }
-
-              if (isProcessing &&
+              if (workoutModel.isProcessing! &&
                   !isPoped &&
-                  !isRecorded &&
+                  !workoutModel.isRecord &&
                   today.compareTo(DateTime.parse(workoutModel.startDate)) ==
                       0) {
                 _showConfirmDialog();
-                isProcessing = false;
               }
               initial = false;
             }
@@ -157,21 +129,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     final state = ref.watch(workoutProvider(widget.id));
     final pstate = ref.watch(workoutResultProvider(widget.id));
 
-    final AsyncValue<Box> workoutRecordBox =
-        ref.read(hiveWorkoutRecordSimpleProvider);
-    final AsyncValue<Box> timerXoneRecordBox =
-        ref.read(hiveTimerRecordProvider);
-    final AsyncValue<Box> timerXMoreRecordBox =
-        ref.read(hiveTimerXMoreRecordProvider);
-
-    final AsyncValue<Box> workoutResultBox =
-        ref.read(hiveWorkoutRecordForResultProvider);
-    final AsyncValue<Box> workoutFeedbackBox =
-        ref.read(hiveWorkoutFeedbackProvider);
-    final AsyncValue<Box> modifiedBox = ref.read(hiveModifiedExerciseProvider);
-    final AsyncValue<Box> processingExerciseIndexBox =
-        ref.read(hiveExerciseIndexProvider);
-
     if (state is WorkoutModelLoading) {
       return const Scaffold(
         backgroundColor: BACKGROUND_COLOR,
@@ -195,18 +152,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     }
 
     final model = WorkoutModel.clone(model: state as WorkoutModel);
-    print(model.exercises[0].setInfo[0].weight);
     workoutModel = WorkoutModel.clone(model: model);
-
-    workoutBox = workoutRecordBox;
-    timerXoneBox = timerXoneRecordBox;
-    timerXmoreBox = timerXMoreRecordBox;
-    modifiedExercise = modifiedBox;
-    workoutResult = workoutResultBox;
-    processingExerciseIndex = processingExerciseIndexBox;
-
-    isWorkoutComplete = model.isWorkoutComplete;
-    isRecorded = model.isRecord;
 
     List<int> circuitGroupNumList = [];
 
@@ -225,138 +171,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
       }
       return map;
     });
-
-    if (model.isWorkoutComplete) {
-      hasLocal = true;
-      // 완료된 운동
-      workoutRecordBox.whenData(
-        (value) {
-          final record = value.get(model.exercises[0].workoutPlanId);
-          if (record == null && pstate is WorkoutResultModel) {
-            for (var i = 0; i < pstate.workoutRecords.length; i++) {
-              value.put(
-                pstate.workoutRecords[i].workoutPlanId,
-                WorkoutRecordSimple(
-                  workoutPlanId: pstate.workoutRecords[i].workoutPlanId,
-                  setInfo: pstate.workoutRecords[i].setInfo,
-                ),
-              );
-            }
-            hasLocal = false;
-          }
-        },
-      );
-
-      workoutFeedbackBox.whenData(
-        (value) {
-          final record = value.get(widget.id);
-          if (record == null && pstate is WorkoutResultModel) {
-            value.put(
-              widget.id,
-              WorkoutFeedbackRecordModel(
-                startDate: DateTime.parse(pstate.startDate),
-                strengthIndex: pstate.strengthIndex,
-                issueIndexes: pstate.issueIndexes,
-                contents: pstate.contents,
-              ),
-            );
-            hasLocal = false;
-          }
-        },
-      );
-
-      workoutResultBox.whenData(
-        (value) {
-          final record = value.get(model.exercises[0].workoutPlanId);
-          if (record == null && pstate is WorkoutResultModel) {
-            for (var i = 0; i < pstate.workoutRecords.length; i++) {
-              value.put(
-                pstate.workoutRecords[i].workoutPlanId,
-                WorkoutRecord(
-                  exerciseName: pstate.workoutRecords[i].exerciseName,
-                  targetMuscles: pstate.workoutRecords[i].targetMuscles,
-                  trackingFieldId: pstate.workoutRecords[i].trackingFieldId,
-                  workoutPlanId: pstate.workoutRecords[i].workoutPlanId,
-                  setInfo: pstate.workoutRecords[i].setInfo,
-                ),
-              );
-            }
-            hasLocal = false;
-          }
-        },
-      );
-
-      timerXoneBox.whenData((value) {
-        if (pstate is WorkoutResultModel) {
-          for (var i = 0; i < pstate.workoutRecords.length; i++) {
-            if (pstate.workoutRecords[i].setInfo.length == 1 &&
-                (pstate.workoutRecords[i].trackingFieldId == 3 ||
-                    pstate.workoutRecords[i].trackingFieldId == 4)) {
-              final record = value.get(pstate.workoutRecords[i].workoutPlanId);
-              if (record == null) {
-                value.put(pstate.workoutRecords[i].workoutPlanId,
-                    pstate.workoutRecords[i].setInfo[0]);
-                hasLocal = false;
-              }
-            }
-          }
-        }
-      });
-
-      modifiedBox.whenData(
-        (value) {
-          for (var exercise in model.exercises) {
-            if ((exercise.trackingFieldId == 3 ||
-                    exercise.trackingFieldId == 4) &&
-                exercise.setInfo.length == 1) {
-              final record = value.get(exercise.workoutPlanId);
-              if (record is Exercise && record.setInfo[0].seconds != null) {
-                exercise.setInfo[0] = SetInfo(
-                    index: record.setInfo[0].index,
-                    seconds: record.setInfo[0].seconds);
-              }
-            }
-          }
-        },
-      );
-    } else {
-      workoutResultBox.whenData(
-        (value) {
-          for (int i = 0; i < model.exercises.length; i++) {
-            final record = value.get(model.exercises[i].workoutPlanId);
-
-            if (record != null && record is WorkoutRecord) {
-              model.exercises[i] =
-                  model.exercises[i].copyWith(setInfo: record.setInfo);
-            } else {
-              hasLocal = false;
-            }
-          }
-        },
-      );
-
-      workoutRecordBox.whenData(
-        (value) async {
-          for (var element in model.exercises) {
-            final comfleteSet = await value.get(element.workoutPlanId);
-            if (comfleteSet != null && comfleteSet.setInfo.length > 0) {
-              isProcessing = true;
-              hasLocal = true;
-              break;
-            } else {
-              hasLocal = false;
-            }
-          }
-        },
-      );
-
-      processingExerciseIndexBox.whenData((value) {
-        final record = value.get(widget.id);
-        if (record != null) {
-          isProcessing = true;
-        }
-      });
-    }
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -481,29 +295,22 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                   final exerciseModel = model.exercises[index];
 
                   int completeSetCount = 0;
-                  workoutRecordBox.when(
-                    data: (data) {
-                      final record = data.get(exerciseModel.workoutPlanId);
-                      if (record != null && record is WorkoutRecordSimple) {
-                        List<SetInfo> savedSetInfo = record.setInfo;
-                        int unCompletecnt = 0;
+                  int unCompletecnt = 0;
 
-                        for (SetInfo info in savedSetInfo) {
-                          if (info.reps == null &&
-                              info.seconds == null &&
-                              info.weight == null) {
-                            unCompletecnt += 1;
-                          }
-                        }
-                        completeSetCount =
-                            record.setInfo.length - unCompletecnt;
-                      } else {
-                        completeSetCount = 0;
+                  if (model.recordedExercises != null &&
+                      model.recordedExercises!.isNotEmpty) {
+                    for (SetInfo info
+                        in model.recordedExercises![index].setInfo) {
+                      if (info.reps == null &&
+                          info.seconds == null &&
+                          info.weight == null) {
+                        unCompletecnt += 1;
                       }
-                    },
-                    error: (error, stackTrace) => completeSetCount = 0,
-                    loading: () => print('loading...'),
-                  );
+                    }
+                    completeSetCount =
+                        model.recordedExercises![index].setInfo.length -
+                            unCompletecnt;
+                  }
 
                   return GestureDetector(
                     onTap: () {
@@ -604,55 +411,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                     }
                   : today.compareTo(DateTime.parse(model.startDate)) == 0
                       ? () async {
-                          workoutResultBox.whenData(
-                            (value) {
-                              for (var e in state.exercises) {
-                                final record = value.get(e.workoutPlanId);
-
-                                if (record == null) {
-                                  value.put(
-                                    e.workoutPlanId,
-                                    WorkoutRecord(
-                                      exerciseName: e.name,
-                                      targetMuscles: [e.targetMuscles[0].name],
-                                      trackingFieldId: e.trackingFieldId,
-                                      workoutPlanId: e.workoutPlanId,
-                                      setInfo: e.setInfo,
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                          );
-
-                          workoutFeedbackBox.whenData(
-                            (value) {
-                              final record = value.get(model.workoutScheduleId);
-                              if (record == null) {
-                                value.put(
-                                  model.workoutScheduleId,
-                                  WorkoutFeedbackRecordModel(
-                                    startDate: DateTime.parse(model.startDate),
-                                  ),
-                                );
-                              }
-                            },
-                          );
-
-                          modifiedBox.whenData(
-                            (value) {
-                              for (int i = 0; i < model.exercises.length; i++) {
-                                final exercise =
-                                    value.get(model.exercises[i].workoutPlanId);
-                                if (exercise == null) {
-                                  //저장된게 없으면 저장
-                                  value.put(
-                                      workoutModel.exercises[i].workoutPlanId,
-                                      workoutModel.exercises[i]);
-                                }
-                              }
-                            },
-                          );
+                          ref
+                              .read(workoutProvider(widget.id).notifier)
+                              .workoutSaveForStart();
 
                           await Navigator.of(context)
                               .push(
@@ -776,54 +537,13 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             });
           },
           cancelOnTap: () async {
-            workoutBox.whenData(
-              (value) {
-                for (var element in workoutModel.exercises) {
-                  value.delete(element.workoutPlanId);
-                }
-              },
-            );
+            ref
+                .read(workoutProcessProvider(widget.id).notifier)
+                .resetWorkoutProcess();
 
-            timerXmoreBox.whenData((value) {
-              for (var element in workoutModel.exercises) {
-                if ((element.trackingFieldId == 3 ||
-                        element.trackingFieldId == 4) &&
-                    element.setInfo.length > 1) {
-                  value.delete(element.workoutPlanId);
-                }
-              }
-            });
-
-            timerXoneBox.whenData((value) {
-              for (var element in workoutModel.exercises) {
-                if ((element.trackingFieldId == 3 ||
-                        element.trackingFieldId == 4) &&
-                    element.setInfo.length == 1) {
-                  value.delete(element.workoutPlanId);
-                }
-              }
-            });
-            workoutResult.whenData(
-              (value) {
-                for (var element in workoutModel.exercises) {
-                  value.delete(element.workoutPlanId);
-                }
-              },
-            );
-            processingExerciseIndex.whenData(
-              (value) {
-                value.delete(widget.id);
-              },
-            );
-
-            modifiedExercise.whenData(
-              (value) async {
-                for (var element in workoutModel.exercises) {
-                  //  await value.delete(element.workoutPlanId);
-                  await value.put(element.workoutPlanId, element);
-                }
-              },
-            );
+            ref
+                .read(workoutProvider(widget.id).notifier)
+                .modifiedBoxDuplicate();
 
             Navigator.of(context).pop();
 

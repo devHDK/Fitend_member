@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
@@ -24,19 +23,19 @@ final workoutProvider =
   final repository = ref.watch(workoutScheduleRepositoryProvider);
   final provider = ref.read(workoutResultProvider(id).notifier);
   final AsyncValue<Box> workoutRecordSimpleBox =
-      ref.read(hiveWorkoutRecordSimpleProvider);
+      ref.watch(hiveWorkoutRecordSimpleProvider);
   final AsyncValue<Box> workoutRecordForResultBox =
-      ref.read(hiveWorkoutRecordForResultProvider);
-  final AsyncValue<Box> timerWorkoutBox = ref.read(hiveTimerRecordProvider);
-  final AsyncValue<Box> timerXMoreBox = ref.read(hiveTimerXMoreRecordProvider);
+      ref.watch(hiveWorkoutRecordForResultProvider);
+  final AsyncValue<Box> timerWorkoutBox = ref.watch(hiveTimerRecordProvider);
+  final AsyncValue<Box> timerXMoreBox = ref.watch(hiveTimerXMoreRecordProvider);
   final AsyncValue<Box> modifiedExerciseBox =
-      ref.read(hiveModifiedExerciseProvider);
+      ref.watch(hiveModifiedExerciseProvider);
   final AsyncValue<Box> workoutFeedbackBox =
-      ref.read(hiveWorkoutFeedbackProvider);
+      ref.watch(hiveWorkoutFeedbackProvider);
 
-  final AsyncValue<Box> exerciseIndexBox = ref.read(hiveExerciseIndexProvider);
+  final AsyncValue<Box> exerciseIndexBox = ref.watch(hiveExerciseIndexProvider);
   final AsyncValue<Box> processingExerciseIndexBox =
-      ref.read(hiveExerciseIndexProvider);
+      ref.watch(hiveExerciseIndexProvider);
 
   return WorkoutStateNotifier(
     workoutResultProvider: provider,
@@ -152,6 +151,7 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
       } else {
         processingExerciseIndexBox.whenData((value) {
           final record = value.get(id);
+
           if (record != null) {
             response.isProcessing = true;
           } else {
@@ -183,13 +183,70 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
             }
             response.modifiedExercises = tempModifiedExercises;
           });
-        } else {}
+        }
       }
 
       state = response;
     } on DioException {
       state = WorkoutModelError(message: '데이터를 불러올수없습니다');
     }
+  }
+
+  //modifiedExecises 등등 저장
+  void workoutSaveForStart() async {
+    final pstate = state as WorkoutModel;
+
+    modifiedExerciseBox.whenData((value) {
+      for (int i = 0; i < pstate.exercises.length; i++) {
+        final exercise = value.get(pstate.exercises[i].workoutPlanId);
+        if (exercise == null) {
+          //저장된게 없으면 저장
+          value.put(pstate.exercises[i].workoutPlanId, pstate.exercises[i]);
+        }
+      }
+    });
+
+    workoutRecordForResultBox.whenData((value) {
+      for (var e in pstate.exercises) {
+        final record = value.get(e.workoutPlanId);
+        if (record == null) {
+          value.put(
+            e.workoutPlanId,
+            WorkoutRecord(
+              exerciseName: e.name,
+              targetMuscles: [e.targetMuscles[0].name],
+              trackingFieldId: e.trackingFieldId,
+              workoutPlanId: e.workoutPlanId,
+              setInfo: e.setInfo,
+            ),
+          );
+        }
+      }
+    });
+
+    workoutFeedbackBox.whenData((value) {
+      final record = value.get(pstate.workoutScheduleId);
+      if (record == null) {
+        value.put(
+          pstate.workoutScheduleId,
+          WorkoutFeedbackRecordModel(
+            startDate: DateTime.parse(pstate.startDate),
+          ),
+        );
+      }
+    });
+  }
+
+  void modifiedBoxDuplicate() {
+    final pstate = state as WorkoutModel;
+
+    modifiedExerciseBox.whenData(
+      (value) {
+        for (var element in pstate.exercises) {
+          value.put(element.workoutPlanId, element);
+        }
+      },
+    );
   }
 
   void updateWorkoutStateDate({

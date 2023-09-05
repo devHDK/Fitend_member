@@ -9,7 +9,7 @@ class WorkoutFeedbackRecordModel {
   @HiveField(1)
   final DateTime startDate;
   @HiveField(2)
-  final int strengthIndex;
+  final int? strengthIndex;
   @HiveField(3)
   final List<int>? issueIndexes;
   @HiveField(4)
@@ -17,7 +17,7 @@ class WorkoutFeedbackRecordModel {
 
   WorkoutFeedbackRecordModel({
     required this.startDate,
-    required this.strengthIndex,
+    this.strengthIndex,
     this.issueIndexes,
     this.contents,
   });

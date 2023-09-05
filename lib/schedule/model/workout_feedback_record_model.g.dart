@@ -19,7 +19,7 @@ class WorkoutFeedbackRecordModelAdapter
     };
     return WorkoutFeedbackRecordModel(
       startDate: fields[1] as DateTime,
-      strengthIndex: fields[2] as int,
+      strengthIndex: fields[2] as int?,
       issueIndexes: (fields[3] as List?)?.cast<int>(),
       contents: fields[4] as String?,
     );
@@ -58,7 +58,7 @@ WorkoutFeedbackRecordModel _$WorkoutFeedbackRecordModelFromJson(
         Map<String, dynamic> json) =>
     WorkoutFeedbackRecordModel(
       startDate: DateTime.parse(json['startDate'] as String),
-      strengthIndex: json['strengthIndex'] as int,
+      strengthIndex: json['strengthIndex'] as int?,
       issueIndexes: (json['issueIndexes'] as List<dynamic>?)
           ?.map((e) => e as int)
           .toList(),

@@ -39,7 +39,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<Box> box = ref.watch(hiveWorkoutRecordSimpleProvider);
+    final AsyncValue<Box> recordSimplebox =
+        ref.watch(hiveWorkoutRecordSimpleProvider);
     final AsyncValue<Box> modifiedExerciseBox =
         ref.read(hiveModifiedExerciseProvider);
 
@@ -102,7 +103,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
               (context, index) {
                 final exerciseModel = model.exercises[index];
                 int completeSetCount = 0;
-                box.when(
+                recordSimplebox.when(
                   data: (data) {
                     final record = data.get(exerciseModel.workoutPlanId);
                     if (record != null) {
@@ -212,7 +213,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
             onPressed: selectedIndex == widget.exerciseIndex
                 ? () {}
                 : () {
-                    box.whenData(
+                    recordSimplebox.whenData(
                       (data) {
                         final record = data.get(widget
                             .workout.exercises[selectedIndex].workoutPlanId);

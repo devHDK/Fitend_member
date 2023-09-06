@@ -87,9 +87,9 @@ class WorkoutProcessStateNotifier
         modifiedExercises: [],
         workoutFinished: false);
     List<Exercise> tempExercises = [];
-    final workoutProvierState = workoutProvider.state as WorkoutModel;
+    final workoutProviderState = workoutProvider.state as WorkoutModel;
 
-    tempExercises = workoutProvierState.exercises; // 서버에서 받은 운동 목록
+    tempExercises = workoutProviderState.exercises; // 서버에서 받은 운동 목록
     tempState.exercises = tempExercises;
     tempState.maxExerciseIndex = tempExercises.length - 1; //
     tempState.setInfoCompleteList =
@@ -148,10 +148,11 @@ class WorkoutProcessStateNotifier
         tempState.exerciseIndex = record;
       } else {
         tempState.exerciseIndex = 0;
+        value.put(id, 0);
       }
     });
 
-    print('modifiedExercises : ${tempState.modifiedExercises}');
+    workoutProvider.state = workoutProviderState.copyWith(isProcessing: true);
 
     state = WorkoutProcessModel(
       exerciseIndex: tempState.exerciseIndex,
@@ -348,13 +349,19 @@ class WorkoutProcessStateNotifier
     BoxUtils.deleteTimerBox(timerXMoreBox, pstate.exercises);
     BoxUtils.deleteBox(workoutRecordForResultBox, pstate.exercises);
 
-    exerciseIndexBox.whenData(
-      (value) {
-        value.delete(
-          id,
-        );
-      },
-    );
+    exerciseIndexBox.whenData((value) {
+      value.delete(
+        id,
+      );
+    });
+
+    if (workoutProvider.state is WorkoutModel) {
+      final tempWorkoutState = workoutProvider.state as WorkoutModel;
+
+      workoutProvider.state = tempWorkoutState.copyWith(
+        isProcessing: false,
+      );
+    }
 
     state = null;
 

@@ -3,6 +3,7 @@ import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
@@ -20,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
 class WorkoutListScreen extends ConsumerStatefulWidget {
@@ -55,19 +57,22 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
 
     WidgetsBinding.instance.addObserver(this);
 
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        if (initial) {
-          if (workoutModel.isProcessing! &&
-              !isPoped &&
-              !workoutModel.isRecord &&
-              today.compareTo(DateTime.parse(workoutModel.startDate)) == 0) {
-            _showConfirmDialog();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          if (initial) {
+            if ((workoutModel.isProcessing != null &&
+                    workoutModel.isProcessing!) &&
+                !isPoped &&
+                !workoutModel.isRecord &&
+                today.compareTo(DateTime.parse(workoutModel.startDate)) == 0) {
+              _showConfirmDialog();
+            }
+            initial = false;
           }
-          initial = false;
-        }
-      },
-    );
+        },
+      );
+    });
   }
 
   @override
@@ -120,6 +125,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
+    final AsyncValue<Box> workoutRecordbox =
+        ref.watch(hiveWorkoutRecordSimpleProvider);
     // final pstate = ref.watch(workoutResultProvider(widget.id));
 
     if (state is WorkoutModelLoading) {
@@ -288,22 +295,19 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                   final exerciseModel = model.exercises[index];
 
                   int completeSetCount = 0;
-                  int unCompletecnt = 0;
 
-                  if (model.recordedExercises != null &&
-                      model.recordedExercises!.isNotEmpty) {
-                    for (SetInfo info
-                        in model.recordedExercises![index].setInfo) {
-                      if (info.reps == null &&
-                          info.seconds == null &&
-                          info.weight == null) {
-                        unCompletecnt += 1;
+                  workoutRecordbox.when(
+                    data: (data) {
+                      final record = data.get(exerciseModel.workoutPlanId);
+                      if (record != null) {
+                        completeSetCount = record.setInfo.length;
+                      } else {
+                        completeSetCount = 0;
                       }
-                    }
-                    completeSetCount =
-                        model.recordedExercises![index].setInfo.length -
-                            unCompletecnt;
-                  }
+                    },
+                    error: (error, stackTrace) => completeSetCount = 0,
+                    loading: () => print('loading...'),
+                  );
 
                   return GestureDetector(
                     onTap: () {
@@ -530,10 +534,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             });
           },
           cancelOnTap: () async {
-            ref
-                .read(workoutProcessProvider(widget.id).notifier)
-                .resetWorkoutProcess();
-
+            ref.read(workoutProvider(widget.id).notifier).resetWorkoutProcess();
             ref
                 .read(workoutProvider(widget.id).notifier)
                 .modifiedBoxDuplicate();

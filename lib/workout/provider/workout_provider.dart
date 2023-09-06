@@ -6,6 +6,7 @@ import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
+import 'package:fitend_member/common/utils/hive_box_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
@@ -83,7 +84,7 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
 
   Future<void> getWorkout({required int id}) async {
     try {
-      final response = await repository.getWorkout(id: id);
+      var response = await repository.getWorkout(id: id);
 
       if (response.isWorkoutComplete) {
         //운동이 완료 상태일때
@@ -155,11 +156,12 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
 
           if (record != null) {
             response.isProcessing = true;
-            print(response.isProcessing);
           } else {
             response.isProcessing = false;
           }
         });
+
+        print('isProcessing ${response.isProcessing} ');
 
         if (response.isProcessing != null && response.isProcessing!) {
           //진행중이던 운동일경우
@@ -243,6 +245,10 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
   void modifiedBoxDuplicate() {
     final pstate = state as WorkoutModel;
 
+    exerciseIndexBox.whenData((value) {
+      value.put(id, 0);
+    });
+
     modifiedExerciseBox.whenData(
       (value) {
         for (var element in pstate.exercises) {
@@ -250,6 +256,28 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
         }
       },
     );
+
+    // state = pstate.copyWith(isProcessing: true);
+  }
+
+  void resetWorkoutProcess() {
+    final pstate = state as WorkoutModel;
+
+    BoxUtils.deleteBox(workoutRecordSimpleBox, pstate.exercises);
+    BoxUtils.deleteBox(modifiedExerciseBox, pstate.exercises);
+    BoxUtils.deleteTimerBox(timerWorkoutBox, pstate.exercises);
+    BoxUtils.deleteTimerBox(timerXMoreBox, pstate.exercises);
+    BoxUtils.deleteBox(workoutRecordForResultBox, pstate.exercises);
+
+    exerciseIndexBox.whenData((value) {
+      value.delete(
+        id,
+      );
+    });
+
+    // state = pstate.copyWith(isProcessing: true);
+
+    // init(workoutProvider);
   }
 
   void updateWorkoutStateDate({

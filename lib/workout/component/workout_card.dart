@@ -4,8 +4,10 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
+import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -36,6 +38,8 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
   Widget build(BuildContext context) {
     final AsyncValue<Box> timerRecordBox = ref.watch(hiveTimerRecordProvider);
     final AsyncValue<Box> modifiedBox = ref.watch(hiveModifiedExerciseProvider);
+    final AsyncValue<Box> recordSimpleBox =
+        ref.watch(hiveWorkoutRecordSimpleProvider);
 
     List<Widget> countList = [];
     List<Widget> firstList = [];
@@ -43,6 +47,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
 
     SetInfo timerSetInfo = SetInfo(index: 1, seconds: 0);
     SetInfo modifiedSetInfo = SetInfo(index: 1, seconds: 0);
+    List<SetInfo> recordedSetInfoList = [];
 
     if ((widget.exercise.trackingFieldId == 3 ||
             widget.exercise.trackingFieldId == 4) &&
@@ -72,6 +77,13 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
       });
     }
 
+    recordSimpleBox.whenData((value) {
+      final record = value.get(widget.exercise.workoutPlanId);
+      if (record is WorkoutRecordSimple) {
+        recordedSetInfoList = record.setInfo;
+      }
+    });
+
     List.generate(
       widget.exercise.setInfo.length,
       (index) => widget.exercise.setInfo.length != 1 ||
@@ -92,10 +104,10 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                     child: Center(
                       child: Text(
                         widget.exercise.trackingFieldId == 1
-                            ? '${widget.exercise.setInfo[index].weight!.floor()} ∙ ${widget.exercise.setInfo[index].reps}'
+                            ? '${index <= widget.completeSetCount - 1 ? recordedSetInfoList[index].weight!.floor() : widget.exercise.setInfo[index].weight!.floor()} ∙ ${index <= widget.completeSetCount - 1 ? recordedSetInfoList[index].reps : widget.exercise.setInfo[index].reps}'
                             : widget.exercise.trackingFieldId == 2
-                                ? '${widget.exercise.setInfo[index].reps}'
-                                : '${(widget.exercise.setInfo[index].seconds! / 60).floor().toString().padLeft(2, '0')}:${(widget.exercise.setInfo[index].seconds! % 60).toString().padLeft(2, '0')}',
+                                ? '${index <= widget.completeSetCount - 1 ? recordedSetInfoList[index].reps : widget.exercise.setInfo[index].reps}'
+                                : '${index <= widget.completeSetCount - 1 ? (recordedSetInfoList[index].seconds! / 60).floor().toString().padLeft(2, '0') : (widget.exercise.setInfo[index].seconds! / 60).floor().toString().padLeft(2, '0')}:${index <= widget.completeSetCount - 1 ? (recordedSetInfoList[index].seconds! % 60).toString().padLeft(2, '0') : (widget.exercise.setInfo[index].seconds! % 60).toString().padLeft(2, '0')}',
                         style: s1SubTitle.copyWith(
                           color: index <= widget.completeSetCount - 1
                               ? Colors.white

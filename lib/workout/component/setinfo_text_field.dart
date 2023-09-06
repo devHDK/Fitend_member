@@ -9,7 +9,7 @@ class SetInfoTextField extends StatefulWidget {
   final TextInputType textInputType;
   final String allowedDigits;
   final ValueChanged<String> onChanged;
-  final String initValue;
+  final String? initValue;
   final Color textColor;
 
   const SetInfoTextField({
@@ -18,7 +18,7 @@ class SetInfoTextField extends StatefulWidget {
     this.textInputType = TextInputType.number,
     this.allowedDigits = r'^\d*',
     required this.onChanged,
-    required this.initValue,
+    this.initValue,
     required this.textColor,
   });
 

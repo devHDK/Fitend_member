@@ -10,7 +10,6 @@ import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 

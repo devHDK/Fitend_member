@@ -187,34 +187,14 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               color: DARK_GRAY_COLOR,
               height: 1,
             ),
-            InkWell(
-              onTap: () => flutterLocalNotificationsPlugin.show(
-                1,
-                'Hi',
-                'fitend!',
-                NotificationDetails(
-                  android: AndroidNotificationDetails(
-                    channel.id,
-                    channel.name,
-                    channelDescription: channel.description,
-                    icon: '@mipmap/ic_launcher',
+            _renderLabel(
+                name: '현재 버전',
+                child: Text(
+                  packageInfo != null ? 'v${packageInfo!.version}' : '',
+                  style: s3SubTitle.copyWith(
+                    color: POINT_COLOR,
                   ),
-                  iOS: const DarwinNotificationDetails(
-                    presentAlert: true,
-                    presentBadge: true,
-                    presentSound: true,
-                  ),
-                ),
-              ),
-              child: _renderLabel(
-                  name: '현재 버전',
-                  child: Text(
-                    packageInfo != null ? 'v${packageInfo!.version}' : '',
-                    style: s3SubTitle.copyWith(
-                      color: POINT_COLOR,
-                    ),
-                  )),
-            ),
+                )),
             const Divider(
               color: DARK_GRAY_COLOR,
               height: 1,

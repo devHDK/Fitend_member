@@ -13,7 +13,7 @@ class WeightWrepsProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
   final bool isSwipeUp;
-  final GestureTapCallback updateSeinfoTap;
+  final GestureTapCallback listOnTap;
   final GestureTapCallback proccessOnTap;
 
   const WeightWrepsProgressCard({
@@ -22,7 +22,7 @@ class WeightWrepsProgressCard extends ConsumerStatefulWidget {
     required this.setInfoIndex,
     required this.isSwipeUp,
     required this.proccessOnTap,
-    required this.updateSeinfoTap,
+    required this.listOnTap,
   });
 
   @override
@@ -141,8 +141,9 @@ class _WeightWrepsProgressCardState
           return Row(
             children: [
               Container(
-                width:
-                    ((size.width - 152) / widget.exercise.setInfo.length) - 1,
+                width: widget.isSwipeUp
+                    ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
+                    : ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
                 decoration: BoxDecoration(
                   color: POINT_COLOR,
@@ -259,12 +260,16 @@ class _WeightWrepsProgressCardState
             if (!widget.isSwipeUp)
               InkWell(
                 onTap: () {
-                  widget.updateSeinfoTap();
+                  widget.listOnTap();
                 },
                 child: Row(
                   children: [
-                    SvgPicture.asset(
-                      'asset/img/icon_edit.svg',
+                    SizedBox(
+                      width: 32,
+                      height: 32,
+                      child: SvgPicture.asset(
+                        'asset/img/icon_list.svg',
+                      ),
                     ),
                     const SizedBox(
                       width: 12,

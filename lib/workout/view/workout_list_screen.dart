@@ -52,27 +52,20 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addObserver(this);
 
-    Future.delayed(
-      const Duration(
-        milliseconds: 300,
-      ),
-      () {
-        WidgetsBinding.instance.addPostFrameCallback(
-          (timeStamp) {
-            if (initial) {
-              if (workoutModel.isProcessing! &&
-                  !isPoped &&
-                  !workoutModel.isRecord &&
-                  today.compareTo(DateTime.parse(workoutModel.startDate)) ==
-                      0) {
-                _showConfirmDialog();
-              }
-              initial = false;
-            }
-          },
-        );
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        if (initial) {
+          if (workoutModel.isProcessing! &&
+              !isPoped &&
+              !workoutModel.isRecord &&
+              today.compareTo(DateTime.parse(workoutModel.startDate)) == 0) {
+            _showConfirmDialog();
+          }
+          initial = false;
+        }
       },
     );
   }
@@ -127,7 +120,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(workoutProvider(widget.id));
-    final pstate = ref.watch(workoutResultProvider(widget.id));
+    // final pstate = ref.watch(workoutResultProvider(widget.id));
 
     if (state is WorkoutModelLoading) {
       return const Scaffold(

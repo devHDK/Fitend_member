@@ -149,11 +149,13 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
           }
         }
       } else {
+        print('운동 안끝남요');
         processingExerciseIndexBox.whenData((value) {
           final record = value.get(id);
 
           if (record != null) {
             response.isProcessing = true;
+            print(response.isProcessing);
           } else {
             response.isProcessing = false;
           }
@@ -166,6 +168,7 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
             for (int i = 0; i < response.exercises.length; i++) {
               final record = value.get(response.exercises[i].workoutPlanId);
               if (record != null && record is WorkoutRecordSimple) {
+                print(record);
                 tempRecordList.add(record);
               }
             }

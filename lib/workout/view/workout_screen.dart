@@ -143,7 +143,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      ref
+                          .read(workoutProcessProvider(widget.workoutScheduleId)
+                              .notifier)
+                          .nextStepForRegular();
+
+                      setState(() {});
+                    },
                     child: Container(
                       width: size.width - 56,
                       height: 44,
@@ -292,12 +299,30 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 model.modifiedExercises[model.exerciseIndex],
                             setInfoIndex:
                                 model.setInfoCompleteList[model.exerciseIndex],
-                            updateSeinfoTap: state
-                                        .modifiedExercises[model.exerciseIndex]
-                                        .trackingFieldId ==
-                                    1
-                                ? () {}
-                                : () {},
+                            listOnTap: () async {
+                              await Navigator.of(context)
+                                  .push(CupertinoPageRoute(
+                                builder: (context) => WorkoutChangeScreen(
+                                  exerciseIndex: model.exerciseIndex,
+                                  workout: widget.workout,
+                                ),
+                              ))
+                                  .then(
+                                (value) {
+                                  if (value != null) {
+                                    ref
+                                        .read(workoutProcessProvider(
+                                                widget.workoutScheduleId)
+                                            .notifier)
+                                        .exerciseChange(value);
+                                    // isTooltipVisible = false;
+                                    // tooltipCount = 0;
+                                    // onTooltipPressed();
+                                    setState(() {});
+                                  }
+                                },
+                              );
+                            },
                             proccessOnTap: () {
                               ref
                                   .read(workoutProcessProvider(
@@ -328,7 +353,30 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             setInfoIndex:
                                 model.setInfoCompleteList[model.exerciseIndex],
                             proccessOnTap: () {},
-                            updateSeinfoTap: () {},
+                            listOnTap: () async {
+                              await Navigator.of(context)
+                                  .push(CupertinoPageRoute(
+                                builder: (context) => WorkoutChangeScreen(
+                                  exerciseIndex: model.exerciseIndex,
+                                  workout: widget.workout,
+                                ),
+                              ))
+                                  .then(
+                                (value) {
+                                  if (value != null) {
+                                    ref
+                                        .read(workoutProcessProvider(
+                                                widget.workoutScheduleId)
+                                            .notifier)
+                                        .exerciseChange(value);
+                                    // isTooltipVisible = false;
+                                    // tooltipCount = 0;
+                                    // onTooltipPressed();
+                                    setState(() {});
+                                  }
+                                },
+                              );
+                            },
                           ),
 
                         // Timer X more
@@ -347,7 +395,30 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 model.modifiedExercises[model.exerciseIndex],
                             setInfoIndex:
                                 model.setInfoCompleteList[model.exerciseIndex],
-                            updateSeinfoTap: () {},
+                            listOnTap: () async {
+                              await Navigator.of(context)
+                                  .push(CupertinoPageRoute(
+                                builder: (context) => WorkoutChangeScreen(
+                                  exerciseIndex: model.exerciseIndex,
+                                  workout: widget.workout,
+                                ),
+                              ))
+                                  .then(
+                                (value) {
+                                  if (value != null) {
+                                    ref
+                                        .read(workoutProcessProvider(
+                                                widget.workoutScheduleId)
+                                            .notifier)
+                                        .exerciseChange(value);
+                                    // isTooltipVisible = false;
+                                    // tooltipCount = 0;
+                                    // onTooltipPressed();
+                                    setState(() {});
+                                  }
+                                },
+                              );
+                            },
                             proccessOnTap: () {},
                             resetSet: () {},
                           ),

@@ -18,7 +18,7 @@ class TimerXOneProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
   final int setInfoIndex;
   final bool isSwipeUp;
-  final GestureTapCallback updateSeinfoTap;
+  final GestureTapCallback listOnTap;
   final GestureTapCallback proccessOnTap;
 
   const TimerXOneProgressCard({
@@ -27,7 +27,7 @@ class TimerXOneProgressCard extends ConsumerStatefulWidget {
     required this.isSwipeUp,
     required this.proccessOnTap,
     required this.setInfoIndex,
-    required this.updateSeinfoTap,
+    required this.listOnTap,
   });
 
   @override
@@ -406,12 +406,16 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
             if (!widget.isSwipeUp)
               InkWell(
                 onTap: () {
-                  widget.updateSeinfoTap();
+                  widget.listOnTap();
                 },
                 child: Row(
                   children: [
-                    SvgPicture.asset(
-                      'asset/img/icon_edit.svg',
+                    SizedBox(
+                      width: 32,
+                      height: 32,
+                      child: SvgPicture.asset(
+                        'asset/img/icon_list.svg',
+                      ),
                     ),
                     const SizedBox(
                       width: 12,

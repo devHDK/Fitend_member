@@ -4,6 +4,7 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class WorkoutBanner extends StatelessWidget {
   final String title;
@@ -41,7 +42,7 @@ class WorkoutBanner extends StatelessWidget {
           opacity: 0.4,
         ),
       ),
-      width: MediaQuery.of(context).size.width,
+      width: 100.w,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
         child: Column(

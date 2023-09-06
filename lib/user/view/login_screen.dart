@@ -18,6 +18,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   static String get routeName => 'login';
@@ -128,10 +129,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   builder: (p0, isKeyboardVisible) {
                     return SizedBox(
                       height: !isKeyboardVisible
-                          ? MediaQuery.sizeOf(context).height -
-                              kToolbarHeight -
-                              MediaQuery.viewPaddingOf(context).top -
-                              370
+                          ? 100.h - kToolbarHeight - 56 - 370
                           : 50,
                     );
                   },

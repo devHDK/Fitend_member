@@ -6,6 +6,7 @@ import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:video_player/video_player.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class WorkoutVideoPlayer extends StatefulWidget {
   final ExerciseVideo video;
@@ -119,12 +120,12 @@ class _WorkoutVideoPlayerState extends State<WorkoutVideoPlayer> {
                       ),
                     )
                   : SizedBox(
-                      // height: MediaQuery.of(context).size.height - 175,
+                      // height: 100.h - 175,
                       child: CustomNetworkImage(
                         imageUrl: widget.video.thumbnail,
                         boxFit: BoxFit.fill,
-                        width: MediaQuery.of(context).size.width,
-                        // height: MediaQuery.of(context).size.height - 175,
+                        width: 100.w,
+                        // height: 100.h - 175,
                       ),
                     ),
 
@@ -202,7 +203,7 @@ class _Controls extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black.withOpacity(0.3),
-      height: MediaQuery.of(context).size.height,
+      height: 100.h,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

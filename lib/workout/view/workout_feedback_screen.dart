@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class WorkoutFeedbackScreen extends ConsumerStatefulWidget {
   static String get routeName => 'workoutFeedback';
@@ -90,7 +91,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
   }
 
   void addKeyboardHeightListener() {
-    final viewInsets = MediaQuery.of(context).padding;
+    final viewInsets = MediaQuery.paddingOf(context);
     final newKeyboardHeight = viewInsets.bottom;
     if (newKeyboardHeight > 0) {
       setState(() => keyboardHeight = newKeyboardHeight);
@@ -111,7 +112,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = Size(100.w, 100.h);
     final repository = ref.read(workoutScheduleRepositoryProvider);
     final AsyncValue<Box> workoutFeedbackBox =
         ref.watch(hiveWorkoutFeedbackProvider);

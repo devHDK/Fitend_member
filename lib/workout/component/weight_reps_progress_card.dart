@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class WeightWrepsProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
@@ -53,7 +54,7 @@ class _WeightWrepsProgressCardState
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = Size(100.w, 100.h);
 
     List<Widget> progressList = widget.exercise.setInfo.mapIndexed(
       (index, element) {
@@ -206,15 +207,27 @@ class _WeightWrepsProgressCardState
                 ),
               ),
               const SizedBox(
-                height: 4,
+                height: 5,
               ),
-              Text(
-                widget.exercise.name,
-                style: h3Headline.copyWith(
-                  color: Colors.black,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                maxLines: 1,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.exercise.name,
+                    style: h3Headline.copyWith(
+                      color: Colors.black,
+                      overflow: TextOverflow.ellipsis,
+                      height: 1.2,
+                    ),
+                    maxLines: 1,
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  if (widget.exercise.setType != null)
+                    Image.asset('asset/img/icon_repeat.png')
+                ],
               ),
               const SizedBox(
                 height: 10,
@@ -246,9 +259,22 @@ class _WeightWrepsProgressCardState
                 muscleString.substring(0, muscleString.length - 1),
                 style: s2SubTitle.copyWith(color: GRAY_COLOR),
               ),
-              Text(
-                widget.exercise.name,
-                style: h1Headline,
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.exercise.name,
+                    style: h1Headline.copyWith(height: 1.2),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  if (widget.exercise.setType != null)
+                    Image.asset('asset/img/icon_repeat.png')
+                ],
               ),
             ],
           ),

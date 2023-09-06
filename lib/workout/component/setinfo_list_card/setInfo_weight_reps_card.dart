@@ -6,6 +6,7 @@ import 'package:fitend_member/workout/model/workout_process_model.dart';
 import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SetInfoBoxForWeightReps extends ConsumerStatefulWidget {
   const SetInfoBoxForWeightReps({
@@ -49,7 +50,7 @@ class _SetInfoBoxForWeightRepsState
       children: [
         SizedBox(
           height: 85,
-          width: MediaQuery.of(context).size.width - 56,
+          width: 100.w - 56,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -87,7 +88,7 @@ class _SetInfoBoxForWeightRepsState
                     height: 35,
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width - 120,
+                    width: 100.w - 120,
                     height: 46,
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(

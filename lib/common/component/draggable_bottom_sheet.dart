@@ -1,5 +1,6 @@
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class CustomDraggableBottomSheet extends StatefulWidget {
   final bool isSwipeUp;
@@ -20,9 +21,9 @@ class _CustomDraggableBottomSheetState
     extends State<CustomDraggableBottomSheet> {
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = Size(100.w, 100.h);
     return Container(
-      height: widget.isSwipeUp ? MediaQuery.of(context).size.height : 195,
+      height: widget.isSwipeUp ? 100.h : 195,
       width: size.width,
       decoration: const BoxDecoration(
           color: Colors.white,

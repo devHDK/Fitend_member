@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class WorkoutCard extends ConsumerStatefulWidget {
   final Exercise exercise;
@@ -174,7 +175,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
       padding: widget.isSelected != null
           ? const EdgeInsets.symmetric(horizontal: 28)
           : null,
-      width: MediaQuery.of(context).size.width,
+      width: 100.w,
       height: widget.exercise.circuitGroupNum != null ? 137 : 157,
       decoration: BoxDecoration(
         color: BACKGROUND_COLOR,

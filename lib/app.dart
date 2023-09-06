@@ -5,7 +5,8 @@ import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'flavors.dart';
 
 class App extends ConsumerStatefulWidget {
@@ -66,22 +67,25 @@ class _AppState extends ConsumerState<App> {
   @override
   Widget build(BuildContext context) {
     final route = ref.watch(routerProvider);
-
-    return MaterialApp.router(
-      builder: (context, child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
-          child: child!,
+    return ResponsiveSizer(
+      builder: (p0, p1, p2) {
+        return MaterialApp.router(
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+              child: child!,
+            );
+          },
+          title: F.title,
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            fontFamily: "Pretendard",
+          ),
+          routerConfig: route,
+          // routerDelegate: route.routerDelegate,
+          // routeInformationParser: route.routeInformationParser,
         );
       },
-      title: F.title,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: "Pretendard",
-      ),
-      routerConfig: route,
-      // routerDelegate: route.routerDelegate,
-      // routeInformationParser: route.routeInformationParser,
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PasswordConfirmScreen extends ConsumerStatefulWidget {
   static String get routeName => 'passwordConfirm';
@@ -132,7 +133,7 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Container(
             height: 44,
-            width: MediaQuery.of(context).size.width,
+            width: 100.w,
             decoration: BoxDecoration(
               color: _passwordController.text.length < 8
                   ? POINT_COLOR.withOpacity(0.5)

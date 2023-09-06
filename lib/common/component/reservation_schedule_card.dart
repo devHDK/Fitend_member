@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ReservationScheduleCard extends ConsumerStatefulWidget {
   final DateTime? date;
@@ -73,7 +74,7 @@ class _ScheduleCardState extends ConsumerState<ReservationScheduleCard> {
   Widget build(BuildContext context) {
     return Container(
       height: widget.selected ? 175 : 130,
-      width: MediaQuery.of(context).size.width,
+      width: 100.w,
       decoration: BoxDecoration(
         color: Colors.transparent,
         image: widget.selected
@@ -202,7 +203,7 @@ class _ScheduleCardState extends ConsumerState<ReservationScheduleCard> {
                     color: LIGHT_GRAY_COLOR,
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width,
+                    width: 100.w,
                     height: 22,
                   ),
                   Row(

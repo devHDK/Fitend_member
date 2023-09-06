@@ -22,6 +22,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:collection/collection.dart';
 
@@ -112,7 +113,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = Size(100.w, 100.h);
     final state = ref.watch(workoutProcessProvider(widget.workoutScheduleId));
 
     if (state is WorkoutProcessModelLoading) {
@@ -128,6 +129,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     }
 
     final model = state;
+
+    print(model.toJson());
 
     return WillPopScope(
       onWillPop: () async {
@@ -200,18 +203,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           children: [
             Positioned(
               // left: 0.0,
-              right: MediaQuery.of(context).size.width > 600 //테블릿이면
-                  ? (MediaQuery.of(context).size.width -
-                          (MediaQuery.of(context).size.height) * 9 / 16) /
-                      2
+              right: 100.w > 600 //테블릿이면
+                  ? (100.w - (100.h) * 9 / 16) / 2
                   : 0,
               child: SizedBox(
-                width: MediaQuery.of(context).size.width > 600 //테블릿이면
-                    ? (MediaQuery.of(context).size.height) * 9 / 16
-                    : MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width > 600
-                    ? MediaQuery.of(context).size.height
-                    : MediaQuery.of(context).size.width * 16 / 9,
+                width: 100.w > 600 //테블릿이면
+                    ? (100.h) * 9 / 16
+                    : 100.w,
+                height: 100.w > 600 ? 100.h : 100.w * 16 / 9,
                 child: WorkoutVideoPlayer(
                   video: ExerciseVideo(
                       url:
@@ -252,8 +251,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             SlidingUpPanel(
               key: ValueKey(widget.workoutScheduleId),
               minHeight: 195,
-              maxHeight: size.height -
-                  (MediaQuery.of(context).padding.top + kToolbarHeight),
+              maxHeight: size.height - (56 + kToolbarHeight),
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(30), topRight: Radius.circular(30)),
               onPanelClosed: () => setState(() {
@@ -460,10 +458,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   ),
                   SizedBox(
                     height: size.height -
-                        (MediaQuery.of(context).padding.top +
+                        (56 +
                             kToolbarHeight +
                             195 +
-                            5),
+                            5), // (appbar + toolbar + bottomSlide mini)
                     child: ListView(
                       key: UniqueKey(),
                       padding: EdgeInsets.zero,

@@ -23,6 +23,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class WorkoutListScreen extends ConsumerStatefulWidget {
   static String get routeName => 'workout';
@@ -456,7 +457,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 28),
                 child: Container(
                   height: 44,
-                  width: MediaQuery.of(context).size.width,
+                  width: 100.w,
                   decoration: BoxDecoration(
                     color: model.isWorkoutComplete ||
                             today.compareTo(DateTime.parse(model.startDate)) ==

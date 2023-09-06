@@ -112,6 +112,9 @@ class WorkoutProcessStateNotifier
               trainerProfileImage: record.trainerProfileImage,
               targetMuscles: record.targetMuscles,
               videos: record.videos,
+              circuitGroupNum: record.circuitGroupNum,
+              circuitSeq: record.circuitSeq,
+              setType: record.setType,
               setInfo: record.setInfo.map((e) {
                 return SetInfo(
                   index: e.index,

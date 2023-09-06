@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class TimerXOneProgressCard extends ConsumerStatefulWidget {
   final Exercise exercise;
@@ -303,15 +304,27 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
                 ),
               ),
               const SizedBox(
-                height: 4,
+                height: 5,
               ),
-              Text(
-                widget.exercise.name,
-                style: h3Headline.copyWith(
-                  color: Colors.black,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                maxLines: 1,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.exercise.name,
+                    style: h3Headline.copyWith(
+                      color: Colors.black,
+                      overflow: TextOverflow.ellipsis,
+                      height: 1.2,
+                    ),
+                    maxLines: 1,
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  if (widget.exercise.setType != null)
+                    Image.asset('asset/img/icon_repeat.png')
+                ],
               ),
               const SizedBox(
                 height: 10,
@@ -392,9 +405,22 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
                 muscleString.substring(0, muscleString.length - 1),
                 style: s2SubTitle.copyWith(color: GRAY_COLOR),
               ),
-              Text(
-                widget.exercise.name,
-                style: h1Headline,
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.exercise.name,
+                    style: h1Headline.copyWith(height: 1.2),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  if (widget.exercise.setType != null)
+                    Image.asset('asset/img/icon_repeat.png')
+                ],
               ),
             ],
           ),
@@ -426,9 +452,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
             Expanded(
               child: Row(mainAxisSize: MainAxisSize.max, children: [
                 SizedBox(
-                  width: !widget.isSwipeUp
-                      ? MediaQuery.sizeOf(context).width - 152
-                      : MediaQuery.sizeOf(context).width - 56,
+                  width: !widget.isSwipeUp ? 100.w - 152 : 100.w - 56,
                   height: 4,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(2),

@@ -9,6 +9,7 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ExerciseScreen extends StatefulWidget {
   final int? id;
@@ -72,12 +73,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               color: GRAY_COLOR,
               child: Center(
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width > 600 //테블릿이면
-                      ? (MediaQuery.of(context).size.height - 175) * 9 / 16
-                      : MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width > 600
-                      ? MediaQuery.of(context).size.height - 175
-                      : MediaQuery.of(context).size.width * 16 / 9,
+                  width: 100.w > 600 //테블릿이면
+                      ? (100.h - 175) * 9 / 16
+                      : 100.w,
+                  height: 100.w > 600 ? 100.h - 175 : 100.w * 16 / 9,
                   child: GuideVideoPlayer(
                     videos: widget.exercise.videos
                         .map((e) => ExerciseVideo(

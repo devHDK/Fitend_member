@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class WorkoutChangeScreen extends ConsumerStatefulWidget {
   static String get routeName => 'workoutChange';
@@ -197,7 +198,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Container(
-          width: MediaQuery.of(context).size.width,
+          width: 100.w,
           height: 45,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),

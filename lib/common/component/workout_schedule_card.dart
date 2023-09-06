@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class WorkoutScheduleCard extends ConsumerStatefulWidget {
   final DateTime? date;
@@ -79,7 +80,7 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
   Widget build(BuildContext context) {
     return Container(
       height: widget.selected ? 175 : 130,
-      width: MediaQuery.of(context).size.width,
+      width: 100.w,
       decoration: BoxDecoration(
         color: Colors.transparent,
         image: widget.selected
@@ -203,7 +204,7 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                     height: 23,
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width,
+                    width: 100.w,
                     height: 44,
                     child: Container(
                       decoration: BoxDecoration(

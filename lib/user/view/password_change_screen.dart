@@ -7,6 +7,7 @@ import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PasswordChangeScreen extends ConsumerStatefulWidget {
   static String get routeName => 'passwordConfirm';
@@ -154,8 +155,7 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
                           backgroundColor: Colors.transparent,
                           elevation: 0,
                           padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  (MediaQuery.sizeOf(context).width - 160) / 2),
+                              horizontal: (100.w - 160) / 2),
                           content: Container(
                             width: 160,
                             decoration: BoxDecoration(
@@ -211,7 +211,7 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 28),
             child: Container(
               height: 44,
-              width: MediaQuery.of(context).size.width,
+              width: 100.w,
               decoration: BoxDecoration(
                 color: (_nuPasswordController.text.length < 8 ||
                             _newPasswordController.text.length < 8) ||

@@ -86,6 +86,7 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   store_redirect: ^2.0.1
   sliding_up_panel: ^2.0.0+1
+  responsive_sizer: ^3.2.0
   
 
 

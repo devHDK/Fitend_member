@@ -48,6 +48,11 @@ class _HexagonPainter extends CustomPainter {
   _HexagonPainter(this.color, this.lineColor);
 
   @override
+  bool shouldRepaint(_HexagonPainter oldDelegate) {
+    return oldDelegate.color != color;
+  }
+
+  @override
   void paint(Canvas canvas, Size size) {
     final radius = size.width / math.sqrt(3);
     final centerX = size.width / 2;
@@ -82,10 +87,5 @@ class _HexagonPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1,
     );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    throw UnimplementedError();
   }
 }

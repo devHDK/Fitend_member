@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -213,7 +214,7 @@ class _WeightWrepsProgressCardState
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  AutoSizeText(
                     widget.exercise.name,
                     style: h3Headline.copyWith(
                       color: Colors.black,
@@ -265,7 +266,7 @@ class _WeightWrepsProgressCardState
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  AutoSizeText(
                     widget.exercise.name,
                     style: h1Headline.copyWith(height: 1.2),
                   ),

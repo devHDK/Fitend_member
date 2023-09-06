@@ -9,6 +9,7 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
+import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_reps_card.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_weight_reps_card.dart';
 import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
@@ -479,7 +480,19 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               model: model,
                               setInfoIndex: index,
                             );
+                          } else if (model
+                                  .modifiedExercises[model.exerciseIndex]
+                                  .trackingFieldId ==
+                              2) {
+                            return SetInfoBoxForReps(
+                              key: ValueKey(index),
+                              workoutScheduleId: widget.workoutScheduleId,
+                              initialReps: element.reps!,
+                              model: model,
+                              setInfoIndex: index,
+                            );
                           }
+
                           return const SizedBox();
                         }).toList(),
                         Container(

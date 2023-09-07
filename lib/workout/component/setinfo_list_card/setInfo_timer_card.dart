@@ -8,6 +8,7 @@ import 'package:fitend_member/workout/component/custom_timer_picker.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/provider/workout_process_provider.dart';
+import 'package:fitend_member/workout/view/timer_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -171,7 +172,22 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                             width: 45,
                           ),
                           InkWell(
-                            onTap: isNowSet ? () {} : null,
+                            onTap: isNowSet
+                                ? () {
+                                    Navigator.of(context)
+                                        .push(CupertinoPageRoute(
+                                            builder: (context) => TimerScreen(
+                                                  model: widget.model,
+                                                  setInfoIndex:
+                                                      widget.setInfoIndex,
+                                                  secondsGoal:
+                                                      widget.initialSeconds,
+                                                  secondsRecord:
+                                                      recordSetInfo.seconds!,
+                                                ),
+                                            fullscreenDialog: true));
+                                  }
+                                : null,
                             child: SizedBox(
                               height: 20,
                               width: 20,

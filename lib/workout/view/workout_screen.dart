@@ -10,6 +10,7 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_reps_card.dart';
+import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_timer_card.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_weight_reps_card.dart';
 import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
 import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
@@ -491,9 +492,15 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               model: model,
                               setInfoIndex: index,
                             );
+                          } else {
+                            return SetInfoBoxForTimer(
+                              key: ValueKey(index),
+                              workoutScheduleId: widget.workoutScheduleId,
+                              initialSeconds: element.seconds!,
+                              model: model,
+                              setInfoIndex: index,
+                            );
                           }
-
-                          return const SizedBox();
                         }).toList(),
                         Container(
                           color: LIGHT_GRAY_COLOR.withOpacity(0.15),

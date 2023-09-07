@@ -14,7 +14,6 @@ import 'package:fitend_member/workout/model/workout_process_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
-import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 

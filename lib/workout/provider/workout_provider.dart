@@ -150,7 +150,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
           }
         }
       } else {
-        print('운동 안끝남요');
         processingExerciseIndexBox.whenData((value) {
           final record = value.get(id);
 
@@ -160,8 +159,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
             response.isProcessing = false;
           }
         });
-
-        print('isProcessing ${response.isProcessing} ');
 
         if (response.isProcessing != null && response.isProcessing!) {
           //진행중이던 운동일경우

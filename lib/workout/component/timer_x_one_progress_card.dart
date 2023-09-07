@@ -323,7 +323,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
                     width: 5,
                   ),
                   if (widget.exercise.setType != null)
-                    Image.asset('asset/img/icon_repeat.png')
+                    SvgPicture.asset('asset/img/icon_repeat.svg')
                 ],
               ),
               const SizedBox(
@@ -419,7 +419,7 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
                     width: 5,
                   ),
                   if (widget.exercise.setType != null)
-                    Image.asset('asset/img/icon_repeat.png')
+                    SvgPicture.asset('asset/img/icon_repeat.svg')
                 ],
               ),
             ],

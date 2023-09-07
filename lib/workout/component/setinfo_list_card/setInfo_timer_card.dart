@@ -9,6 +9,7 @@ import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SetInfoBoxForTimer extends ConsumerStatefulWidget {
@@ -111,27 +112,54 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const SizedBox(
-                            width: 10,
-                          ),
-                          const SizedBox(
                             width: 20,
                           ),
-                          Expanded(
-                              child: InkWell(
-                            onTap: () {
-                              showCupertinoModalPopup<void>(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return _buildContainer(
-                                        const CustomTimerPicker());
-                                  });
+                          SvgPicture.asset('asset/img/icon_target.svg'),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          InkWell(
+                            child: AutoSizeText(
+                              '${(widget.initialSeconds / 60).floor().toString().padLeft(2, '0')} : ${(widget.initialSeconds % 60).toString().padLeft(2, '0')} ',
+                              style: s2SubTitle.copyWith(
+                                color: GRAY_COLOR,
+                                height: 1.1,
+                              ),
+                            ),
+                            onTap: () async {
+                              await showCupertinoModalPopup<int>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return _buildContainer(
+                                    CustomTimerPicker(
+                                      seconds: widget.initialSeconds,
+                                    ),
+                                  );
+                                },
+                              );
                             },
-                            child:
-                                AutoSizeText(widget.initialSeconds.toString()),
-                          )),
-                          Text(
-                            '회',
-                            style: s1SubTitle.copyWith(),
+                          ),
+                          const SizedBox(
+                            width: 45,
+                          ),
+                          SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: SvgPicture.asset(
+                              'asset/img/icon_clock.svg',
+                              color: isNowSet ? POINT_COLOR : GRAY_COLOR,
+                              width: 16,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          AutoSizeText(
+                            '${(widget.initialSeconds / 60).floor().toString().padLeft(2, '0')} : ${(widget.initialSeconds % 60).toString().padLeft(2, '0')} ',
+                            style: h2Headline.copyWith(
+                              height: 1.2,
+                              color: isNowSet ? Colors.black : GRAY_COLOR,
+                            ),
                           ),
                           const SizedBox(
                             width: 20,

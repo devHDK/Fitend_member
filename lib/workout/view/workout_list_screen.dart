@@ -540,6 +540,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                 .read(workoutProvider(widget.id).notifier)
                 .modifiedBoxDuplicate();
 
+            ref.read(workoutProvider(widget.id).notifier).workoutSaveForStart();
+
             Navigator.of(context).pop();
 
             await Navigator.of(context)

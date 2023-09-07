@@ -15,12 +15,14 @@ class SetInfoBoxForReps extends ConsumerStatefulWidget {
     required this.setInfoIndex,
     required this.initialReps,
     required this.workoutScheduleId,
+    required this.refresh,
   });
 
   final WorkoutProcessModel model;
   final int setInfoIndex;
   final int initialReps;
   final int workoutScheduleId;
+  final Function refresh;
 
   @override
   ConsumerState<SetInfoBoxForReps> createState() => _SetInfoBoxForRepsState();
@@ -36,7 +38,7 @@ class _SetInfoBoxForRepsState extends ConsumerState<SetInfoBoxForReps> {
         repsController.text = 99.toString();
       }
 
-      setState(() {});
+      widget.refresh();
     } catch (e) {
       print(e);
     }

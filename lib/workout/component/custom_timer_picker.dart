@@ -1,7 +1,10 @@
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class CustomTimerPicker extends StatefulWidget {
   final int seconds;
@@ -30,50 +33,106 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: [
-          NumberPicker(
-            haptics: true,
-            textStyle: h1Headline.copyWith(color: GRAY_COLOR),
-            selectedTextStyle: h1Headline.copyWith(
-              color: POINT_COLOR,
-            ),
-            minValue: 0,
-            maxValue: 100,
-            value: min,
-            onChanged: (value) {
-              setState(() {
-                min = value;
-              });
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              NumberPicker(
+                haptics: true,
+                textStyle: h1Headline.copyWith(color: GRAY_COLOR),
+                selectedTextStyle: h1Headline.copyWith(
+                  color: POINT_COLOR,
+                ),
+                minValue: 0,
+                maxValue: 100,
+                value: min,
+                onChanged: (value) {
+                  setState(() {
+                    min = value;
+                  });
+                },
+              ),
+              Text(
+                'min',
+                style: s1SubTitle.copyWith(
+                  fontSize: 22,
+                ),
+              ),
+              NumberPicker(
+                haptics: true,
+                textStyle: h1Headline.copyWith(color: GRAY_COLOR),
+                selectedTextStyle: h1Headline.copyWith(
+                  color: POINT_COLOR,
+                ),
+                minValue: 0,
+                maxValue: 59,
+                value: sec,
+                onChanged: (value) {
+                  setState(() {
+                    sec = value;
+                  });
+                },
+              ),
+              Text(
+                'sec',
+                style: s1SubTitle.copyWith(
+                  fontSize: 22,
+                ),
+              ),
+            ],
           ),
-          Text(
-            'min',
-            style: s1SubTitle.copyWith(
-              fontSize: 22,
-            ),
+          const SizedBox(
+            height: 10,
           ),
-          NumberPicker(
-            haptics: true,
-            textStyle: h1Headline.copyWith(color: GRAY_COLOR),
-            selectedTextStyle: h1Headline.copyWith(
-              color: POINT_COLOR,
-            ),
-            minValue: 0,
-            maxValue: 59,
-            value: sec,
-            onChanged: (value) {
-              setState(() {
-                sec = value;
-              });
-            },
-          ),
-          Text(
-            'sec',
-            style: s1SubTitle.copyWith(
-              fontSize: 22,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () {
+                  context.pop();
+                },
+                child: Container(
+                  width: 40.w,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: GRAY_COLOR,
+                  ),
+                  child: Center(
+                    child: Text(
+                      '취소',
+                      style: h2Headline.copyWith(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.pop(min * 60 + sec);
+                },
+                child: Container(
+                  width: 40.w,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: POINT_COLOR,
+                  ),
+                  child: Center(
+                    child: Text(
+                      '완료',
+                      style: h2Headline.copyWith(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

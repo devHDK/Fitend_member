@@ -16,6 +16,7 @@ class SetInfoBoxForWeightReps extends ConsumerStatefulWidget {
     required this.initialWeight,
     required this.initialReps,
     required this.workoutScheduleId,
+    required this.refresh,
   });
 
   final WorkoutProcessModel model;
@@ -23,6 +24,7 @@ class SetInfoBoxForWeightReps extends ConsumerStatefulWidget {
   final double initialWeight;
   final int initialReps;
   final int workoutScheduleId;
+  final Function refresh;
 
   @override
   ConsumerState<SetInfoBoxForWeightReps> createState() =>
@@ -40,8 +42,6 @@ class _SetInfoBoxForWeightRepsState
           int.parse(repsController.text) > 99) {
         repsController.text = 99.toString();
       }
-
-      setState(() {});
     } catch (e) {
       print(e);
     }

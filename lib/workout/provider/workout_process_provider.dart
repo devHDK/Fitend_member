@@ -441,14 +441,11 @@ class WorkoutProcessStateNotifier
     state = pstate;
   }
 
-  void modifiedSeconds(int seconds, int setInfoIndex) {
+  void modifiedSecondsGoal(int seconds, int setInfoIndex) {
     final pstate = state as WorkoutProcessModel;
 
     pstate.modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex]
         .seconds = seconds;
-
-    print(pstate
-        .modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex].seconds);
 
     //로컬 저장
     modifiedExerciseBox.whenData((value) {
@@ -460,6 +457,25 @@ class WorkoutProcessStateNotifier
         value.put(pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
       }
     });
+
+    state = pstate;
+  }
+
+  void modifiedSecondsRecord(int seconds, int setInfoIndex) {
+    final pstate = state as WorkoutProcessModel;
+    print(seconds);
+
+    timerXMoreBox.whenData((value) {
+      final record =
+          value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
+
+      if (record is WorkoutRecordSimple) {
+        record.setInfo[setInfoIndex].reps = seconds;
+
+        value.put(pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
+      }
+    });
+
     //완료된 세트의 경우 수정후 저장
     if (setInfoIndex < pstate.setInfoCompleteList[pstate.exerciseIndex]) {
       workoutRecordSimpleBox.whenData((value) {
@@ -472,8 +488,6 @@ class WorkoutProcessStateNotifier
         }
       });
     }
-
-    state = pstate;
   }
 
   // 총 운동 시간 추가

@@ -465,7 +465,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             195 +
                             5), // (appbar + toolbar + bottomSlide mini)
                     child: ListView(
-                      key: UniqueKey(),
                       padding: EdgeInsets.zero,
                       children: [
                         ...model.modifiedExercises[model.exerciseIndex].setInfo
@@ -480,6 +479,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               initialWeight: element.weight!,
                               model: model,
                               setInfoIndex: index,
+                              refresh: () {
+                                setState(() {});
+                              },
                             );
                           } else if (model
                                   .modifiedExercises[model.exerciseIndex]
@@ -491,6 +493,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               initialReps: element.reps!,
                               model: model,
                               setInfoIndex: index,
+                              refresh: () {
+                                setState(() {});
+                              },
                             );
                           } else {
                             return SetInfoBoxForTimer(
@@ -499,6 +504,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               initialSeconds: element.seconds!,
                               model: model,
                               setInfoIndex: index,
+                              refresh: () {
+                                setState(() {});
+                              },
                             );
                           }
                         }).toList(),

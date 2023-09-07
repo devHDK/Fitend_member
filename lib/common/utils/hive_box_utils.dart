@@ -17,8 +17,7 @@ class BoxUtils {
     box.whenData(
       (value) {
         for (var element in exercises) {
-          if ((element.trackingFieldId == 3 || element.trackingFieldId == 4) &&
-              element.setInfo.length == 1) {
+          if ((element.trackingFieldId == 3 || element.trackingFieldId == 4)) {
             value.delete(element.workoutPlanId);
           }
         }

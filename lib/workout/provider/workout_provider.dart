@@ -8,6 +8,7 @@ import 'package:fitend_member/common/provider/hive_workout_record_provider.dart'
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/utils/hive_box_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
+import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -235,6 +236,33 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
             startDate: DateTime.parse(pstate.startDate),
           ),
         );
+      }
+    });
+
+    timerXMoreBox.whenData((value) {
+      for (int i = 0; i < pstate.exercises.length; i++) {
+        if (pstate.exercises[i].trackingFieldId == 3 ||
+            pstate.exercises[i].trackingFieldId == 4) {
+          final record = value.get(pstate.exercises[i].workoutPlanId);
+          //저장된게 없으면 저장
+          if (record == null ||
+              (record is WorkoutRecordSimple &&
+                  record.setInfo.length !=
+                      pstate.exercises[i].setInfo.length)) {
+            final tempSetInfoList =
+                List.generate(pstate.exercises[i].setInfo.length, (index) {
+              return SetInfo(index: index + 1, seconds: 0);
+            });
+
+            value.put(
+              pstate.exercises[i].workoutPlanId,
+              WorkoutRecordSimple(
+                workoutPlanId: pstate.exercises[i].workoutPlanId,
+                setInfo: tempSetInfoList,
+              ),
+            );
+          }
+        }
       }
     });
   }

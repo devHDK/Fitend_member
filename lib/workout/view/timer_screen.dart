@@ -1,15 +1,12 @@
-import 'dart:ffi';
+import 'dart:async';
 
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
-import 'dart:math';
 
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
@@ -33,12 +30,86 @@ class TimerScreen extends ConsumerStatefulWidget {
 
 class _TimerScreenState extends ConsumerState<TimerScreen> {
   late ValueNotifier<double> valueNotifier;
+  late int totalSeconds;
+  late Timer timer;
+  bool isRunning = false;
+  bool isReady = false;
+  int count = 4;
 
   @override
   void initState() {
     super.initState();
     valueNotifier = ValueNotifier(
-        (widget.secondsRecord.toDouble() / widget.secondsRecord.toDouble()));
+        (widget.secondsRecord.toDouble() / widget.secondsGoal.toDouble()));
+
+    if (widget.secondsRecord < widget.secondsGoal) {
+      totalSeconds = widget.secondsGoal - widget.secondsRecord;
+    } else {
+      totalSeconds = 0;
+    }
+  }
+
+  void onStartPressed() {
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      onTick,
+    );
+    setState(() {
+      isReady = true;
+      isRunning = true;
+    });
+  }
+
+  void onPausePressed() {
+    timer.cancel();
+    setState(() {
+      isRunning = false;
+      count = 4;
+    });
+  }
+
+  void onResetPressed() {
+    setState(() {
+      count = 4;
+      totalSeconds = widget.secondsGoal;
+      valueNotifier.value = 0.0;
+    });
+  }
+
+  void onStopPressed() {
+    setState(() {
+      count = 4;
+      timer.cancel();
+      isRunning = false;
+      isReady = false;
+      valueNotifier.value =
+          (widget.secondsGoal - totalSeconds) / widget.secondsGoal;
+    });
+  }
+
+  void onTick(Timer timer) {
+    if (count > 0) {
+      setState(() {
+        count--;
+        // isReady = true;
+        valueNotifier.value = (4 - count).toDouble() / 4.toDouble();
+      });
+    } else {
+      if (totalSeconds == 0) {
+        //0초가 됬을때 저장
+        setState(() {
+          isRunning = false;
+        });
+        timer.cancel();
+      } else {
+        setState(() {
+          isReady = false;
+          totalSeconds -= 1;
+          valueNotifier.value = (widget.secondsGoal - totalSeconds).toDouble() /
+              widget.secondsGoal.toDouble();
+        });
+      }
+    }
   }
 
   @override
@@ -85,15 +156,33 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
             const SizedBox(
               height: 100,
             ),
-            SimpleCircularProgressBar(
-              animationDuration: 0,
-              size: 220,
-              backColor: POINT_COLOR.withOpacity(0.1),
-              backStrokeWidth: 20,
-              progressStrokeWidth: 20,
-              progressColors: [POINT_COLOR, POINT_COLOR.withOpacity(0.5)],
-              valueNotifier: valueNotifier,
-              maxValue: 1,
+            Stack(
+              children: [
+                SizedBox(
+                  width: 220,
+                  height: 220,
+                  child: Center(
+                    child: Text(
+                      count < 4 && count > 0 && isRunning && isReady
+                          ? '$count'
+                          : count == 0 && isRunning && isReady
+                              ? 'Go!'
+                              : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')}',
+                      style: h1Headline.copyWith(fontSize: 40),
+                    ),
+                  ),
+                ),
+                SimpleCircularProgressBar(
+                  animationDuration: 1,
+                  size: 220,
+                  backColor: POINT_COLOR.withOpacity(0.1),
+                  backStrokeWidth: 20,
+                  progressStrokeWidth: 20,
+                  progressColors: [POINT_COLOR, POINT_COLOR.withOpacity(0.3)],
+                  valueNotifier: valueNotifier,
+                  maxValue: 1,
+                ),
+              ],
             ),
             const SizedBox(
               height: 100,
@@ -104,7 +193,13 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                 Column(
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () => isReady
+                          ? onStopPressed()
+                          : isRunning
+                              ? onPausePressed()
+                              : totalSeconds == 0
+                                  ? onResetPressed()
+                                  : onStartPressed(),
                       child: Container(
                         width: 60,
                         height: 60,
@@ -113,12 +208,24 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Center(
-                          child: SvgPicture.asset('asset/img/icon_reset.svg'),
+                          child: SvgPicture.asset(isReady
+                              ? 'asset/img/icon_stop.svg'
+                              : isRunning
+                                  ? 'asset/img/icon_pause.svg'
+                                  : totalSeconds == 0
+                                      ? 'asset/img/icon_reset.svg'
+                                      : 'asset/img/icon_play.svg'),
                         ),
                       ),
                     ),
                     Text(
-                      'Reset',
+                      isReady
+                          ? 'Stop'
+                          : isRunning
+                              ? 'Pause'
+                              : totalSeconds == 0
+                                  ? 'Reset'
+                                  : 'play',
                       style: s2SubTitle,
                     ),
                   ],

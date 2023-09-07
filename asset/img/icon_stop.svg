@@ -1,4 +1,5 @@
-<svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="2.75" y="2.75" width="38.5" height="38.5" rx="17.25" stroke="#848484" stroke-width="1.5"/>
-<rect x="15" y="15" width="14" height="14" rx="2" fill="#848484"/>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="square">
+<path id="Vector" d="M16 4H8C5.79086 4 4 5.79086 4 8V16C4 18.2091 5.79086 20 8 20H16C18.2091 20 20 18.2091 20 16V8C20 5.79086 18.2091 4 16 4Z" fill="#848484"/>
+</g>
 </svg>

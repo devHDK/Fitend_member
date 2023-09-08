@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
+import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -17,28 +18,49 @@ class TimerScreen extends ConsumerStatefulWidget {
     required this.setInfoIndex,
     required this.secondsGoal,
     required this.secondsRecord,
+    required this.workoutScheduleId,
+    required this.refresh,
   });
 
   final WorkoutProcessModel model;
   final int setInfoIndex;
   final int secondsGoal;
   final int secondsRecord;
+  final int workoutScheduleId;
+  final Function refresh;
 
   @override
   ConsumerState<TimerScreen> createState() => _TimerScreenState();
 }
 
-class _TimerScreenState extends ConsumerState<TimerScreen> {
+class _TimerScreenState extends ConsumerState<TimerScreen>
+    with WidgetsBindingObserver {
   late ValueNotifier<double> valueNotifier;
   late int totalSeconds;
   late Timer timer;
   bool isRunning = false;
   bool isReady = false;
   int count = 4;
+  bool isBackground = false;
+
+  DateTime resumedTime = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  DateTime pausedTime = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
 
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addObserver(this);
+
     valueNotifier = ValueNotifier(
         (widget.secondsRecord.toDouble() / widget.secondsGoal.toDouble()));
 
@@ -64,11 +86,15 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     timer.cancel();
     setState(() {
       isRunning = false;
-      count = 4;
+      // count = 4;
     });
   }
 
   void onResetPressed() {
+    ref
+        .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+        .resetTimer(widget.setInfoIndex);
+
     setState(() {
       count = 4;
       totalSeconds = widget.secondsGoal;
@@ -97,24 +123,87 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
     } else {
       if (totalSeconds == 0) {
         //0초가 됬을때 저장
+        timer.cancel();
         setState(() {
           isRunning = false;
         });
-        timer.cancel();
       } else {
         setState(() {
           isReady = false;
-          totalSeconds -= 1;
           valueNotifier.value = (widget.secondsGoal - totalSeconds).toDouble() /
               widget.secondsGoal.toDouble();
+          totalSeconds -= 1;
         });
+
+        ref
+            .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+            .modifiedSecondsRecord(
+                widget.secondsGoal - totalSeconds, widget.setInfoIndex);
       }
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (isBackground) {
+          resumedTime = DateTime.now();
+          debugPrint(
+              "time substraction ${resumedTime.difference(pausedTime).inSeconds}");
+
+          if (totalSeconds <= resumedTime.difference(pausedTime).inSeconds) {
+            setState(() {
+              totalSeconds = 0;
+              timer.cancel();
+              isRunning = false;
+              isBackground = false;
+              valueNotifier.value = 1;
+            });
+
+            ref
+                .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+                .modifiedSecondsRecord(widget.secondsGoal, widget.setInfoIndex);
+          } else {
+            setState(() {
+              totalSeconds -= resumedTime.difference(pausedTime).inSeconds;
+              isBackground = false;
+              isRunning = true;
+
+              timer = Timer.periodic(
+                const Duration(seconds: 1),
+                onTick,
+              );
+            });
+          }
+
+          setState(() {});
+        }
+
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        if (isRunning) {
+          pausedTime = DateTime.now();
+          print(pausedTime);
+          isBackground = true;
+
+          timer.cancel();
+          isRunning = false;
+        }
+
+        break;
+      case AppLifecycleState.detached:
+        // print("app in detached");
+        break;
     }
   }
 
   @override
   void dispose() {
     valueNotifier.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -173,7 +262,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                   ),
                 ),
                 SimpleCircularProgressBar(
-                  animationDuration: 1,
+                  animationDuration: 0,
                   size: 220,
                   backColor: POINT_COLOR.withOpacity(0.1),
                   backStrokeWidth: 20,
@@ -234,6 +323,8 @@ class _TimerScreenState extends ConsumerState<TimerScreen> {
                   children: [
                     TextButton(
                       onPressed: () {
+                        widget.refresh();
+
                         context.pop();
                       },
                       child: Container(

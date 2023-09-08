@@ -61,6 +61,7 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
 
       if (record is WorkoutRecordSimple) {
         recordSetInfo = record.setInfo[widget.setInfoIndex];
+        print(recordSetInfo.seconds);
       }
     });
 
@@ -184,6 +185,9 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                                                       widget.initialSeconds,
                                                   secondsRecord:
                                                       recordSetInfo.seconds!,
+                                                  workoutScheduleId:
+                                                      widget.workoutScheduleId,
+                                                  refresh: widget.refresh,
                                                 ),
                                             fullscreenDialog: true));
                                   }

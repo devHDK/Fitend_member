@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 
@@ -231,8 +232,8 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(
-              height: 55,
+            SizedBox(
+              height: 7.h,
             ),
             Text(
               '${widget.setInfoIndex + 1} SET',
@@ -247,8 +248,8 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                 color: GRAY_COLOR,
               ),
             ),
-            const SizedBox(
-              height: 100,
+            SizedBox(
+              height: 10.h,
             ),
             Stack(
               children: [
@@ -278,8 +279,8 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                 ),
               ],
             ),
-            const SizedBox(
-              height: 100,
+            SizedBox(
+              height: 10.h,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -351,6 +352,24 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                 ),
               ],
             ),
+            SizedBox(
+              height: 5.h,
+            ),
+            if (totalSeconds == 0)
+              TextButton(
+                onPressed: () {
+                  context.pop();
+
+                  ref
+                      .read(workoutProcessProvider(widget.workoutScheduleId)
+                          .notifier)
+                      .nextStepForRegular();
+                },
+                child: Text(
+                  '다음 운동',
+                  style: h3Headline.copyWith(color: POINT_COLOR),
+                ),
+              )
           ],
         ),
       ),

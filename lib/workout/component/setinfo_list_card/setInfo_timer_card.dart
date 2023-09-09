@@ -177,19 +177,17 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                                 ? () {
                                     Navigator.of(context)
                                         .push(CupertinoPageRoute(
-                                            builder: (context) => TimerScreen(
-                                                  model: widget.model,
-                                                  setInfoIndex:
-                                                      widget.setInfoIndex,
-                                                  secondsGoal:
-                                                      widget.initialSeconds,
-                                                  secondsRecord:
-                                                      recordSetInfo.seconds!,
-                                                  workoutScheduleId:
-                                                      widget.workoutScheduleId,
-                                                  refresh: widget.refresh,
-                                                ),
-                                            fullscreenDialog: true));
+                                      builder: (context) => TimerScreen(
+                                        model: widget.model,
+                                        setInfoIndex: widget.setInfoIndex,
+                                        secondsGoal: widget.initialSeconds,
+                                        secondsRecord: recordSetInfo.seconds!,
+                                        workoutScheduleId:
+                                            widget.workoutScheduleId,
+                                        refresh: widget.refresh,
+                                      ),
+                                      fullscreenDialog: true,
+                                    ));
                                   }
                                 : null,
                             child: SizedBox(

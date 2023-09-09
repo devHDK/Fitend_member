@@ -8,7 +8,11 @@ import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
+import 'package:fitend_member/workout/model/workout_process_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
+import 'package:fitend_member/workout/provider/workout_process_provider.dart';
+import 'package:fitend_member/workout/view/timer_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,21 +21,25 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class TimerXMoreProgressCard extends ConsumerStatefulWidget {
+  final int workoutScheduleId;
   final Exercise exercise;
   final int setInfoIndex;
   final bool isSwipeUp;
   final GestureTapCallback listOnTap;
   final GestureTapCallback proccessOnTap;
   final GestureTapCallback resetSet;
+  final Function refresh;
 
   const TimerXMoreProgressCard({
     super.key,
+    required this.workoutScheduleId,
     required this.exercise,
     required this.setInfoIndex,
     required this.isSwipeUp,
     required this.listOnTap,
     required this.proccessOnTap,
     required this.resetSet,
+    required this.refresh,
   });
 
   @override
@@ -40,15 +48,7 @@ class TimerXMoreProgressCard extends ConsumerStatefulWidget {
 }
 
 class _WeightWrepsProgressCardState
-    extends ConsumerState<TimerXMoreProgressCard> with WidgetsBindingObserver {
-  bool colorChanged = false;
-
-  late Timer timer;
-  late int totalSeconds = -1;
-  bool initial = true;
-
-  int count = 0;
-
+    extends ConsumerState<TimerXMoreProgressCard> {
   DateTime resumedTime = DateTime(
     DateTime.now().year,
     DateTime.now().month,
@@ -63,289 +63,40 @@ class _WeightWrepsProgressCardState
 
   bool isBackground = false;
 
-  late AsyncValue<Box> workoutBox;
-  late AsyncValue<Box> timerXmoreBox;
-
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        if (initial) {
-          timerXmoreBox.whenData((value) async {
-            final record = await value.get(widget.exercise.workoutPlanId);
-
-            if (record != null && record is WorkoutRecordSimple) {
-              if (record.setInfo.length > widget.setInfoIndex) {
-                setState(() {
-                  totalSeconds =
-                      widget.exercise.setInfo[widget.setInfoIndex].seconds! -
-                          record.setInfo[widget.setInfoIndex].seconds!;
-                });
-              } else {
-                setState(() {
-                  totalSeconds =
-                      widget.exercise.setInfo[widget.setInfoIndex].seconds!;
-                });
-              }
-            } else {
-              setState(() {
-                totalSeconds =
-                    widget.exercise.setInfo[widget.setInfoIndex].seconds!;
-              });
-            }
-          });
-          // print('totalSeconds : $totalSeconds');
-
-          initial = false;
-        }
-      },
-    );
-
-    Timer.periodic(
-      const Duration(milliseconds: 1000),
-      (timer) {
-        setState(() {
-          colorChanged = !colorChanged;
-        });
-      },
-    );
   }
 
   @override
   void dispose() {
-    if (timer.isActive) {
-      timer.cancel();
-    }
-
-    WidgetsBinding.instance.removeObserver(this);
-
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        if (isBackground) {
-          resumedTime = DateTime.now();
-          debugPrint(
-              "time substraction ${resumedTime.difference(pausedTime).inSeconds}");
-
-          if (totalSeconds <= resumedTime.difference(pausedTime).inSeconds) {
-            setState(() {
-              totalSeconds = 0;
-              timer.cancel();
-              // isRunning = false;
-              isBackground = false;
-            });
-
-            timerXmoreBox.whenData(
-              (value) {
-                var record = value.get(widget.exercise.workoutPlanId);
-
-                if (record is WorkoutRecordSimple) {
-                  record.setInfo.removeLast();
-                  record.setInfo.add(
-                    SetInfo(
-                      index: record.setInfo.length + 1,
-                      seconds: widget
-                          .exercise.setInfo[record.setInfo.length].seconds,
-                    ),
-                  );
-
-                  value.put(widget.exercise.workoutPlanId, record);
-                }
-              },
-            );
-          } else {
-            setState(() {
-              totalSeconds -= resumedTime.difference(pausedTime).inSeconds;
-              isBackground = false;
-            });
-          }
-
-          if (count + resumedTime.difference(pausedTime).inSeconds >= 11) {
-            count = 11;
-          } else {
-            count += resumedTime.difference(pausedTime).inSeconds;
-          }
-
-          setState(() {});
-        }
-
-        break;
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.paused:
-        // if (isRunning) {
-        //   pausedTime = DateTime.now();
-        //   isBackground = true;
-
-        //   timer.cancel();
-        //   isRunning = false;
-        // }
-
-        break;
-      case AppLifecycleState.detached:
-        // print("app in detached");
-        break;
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant TimerXMoreProgressCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.setInfoIndex != widget.setInfoIndex) {
-      if (timer.isActive) {
-        timer.cancel();
-        // isRunning = false;
-        count = 0;
-      }
-
-      setState(() {
-        totalSeconds = widget.exercise.setInfo[widget.setInfoIndex].seconds!;
-      });
-      // print('totalSeconds : $totalSeconds');
-    }
-
-    timerXmoreBox.whenData((value) async {
-      final record = await value.get(widget.exercise.workoutPlanId);
-
-      if (record != null && record is WorkoutRecordSimple) {
-        if (record.setInfo.length > widget.setInfoIndex) {
-          if (record.setInfo[widget.setInfoIndex].seconds! <
-              widget.exercise.setInfo[widget.setInfoIndex].seconds!) {
-            setState(() {
-              totalSeconds =
-                  widget.exercise.setInfo[widget.setInfoIndex].seconds! -
-                      record.setInfo[widget.setInfoIndex].seconds!;
-            });
-          } else {
-            setState(() {
-              // isRunning = false;
-              count = 11;
-              totalSeconds = 0;
-            });
-
-            if (timer.isActive) {
-              timer.cancel();
-            }
-
-            record.setInfo[widget.setInfoIndex] =
-                record.setInfo[widget.setInfoIndex].copyWith(
-              seconds: widget.exercise.setInfo[widget.setInfoIndex].seconds!,
-            );
-            value.put(
-              widget.exercise.workoutPlanId,
-              WorkoutRecordSimple(
-                workoutPlanId: widget.exercise.workoutPlanId,
-                setInfo: [
-                  ...record.setInfo,
-                ],
-              ),
-            );
-          }
-        } else {
-          setState(() {
-            totalSeconds =
-                widget.exercise.setInfo[widget.setInfoIndex].seconds!;
-          });
-        }
-      } else {
-        setState(() {
-          totalSeconds = widget.exercise.setInfo[widget.setInfoIndex].seconds!;
-        });
-      }
-    });
-  }
-
-  void onTick(Timer timer) {
-    if (totalSeconds == 0) {
-      //0초가 됬을때 저장
-      setState(() {
-        // isRunning = false;
-        count = 11;
-      });
-      timer.cancel();
-    } else {
-      setState(() {
-        totalSeconds -= 1;
-        count++;
-      });
-
-      timerXmoreBox.whenData(
-        (value) {
-          final record = value.get(widget.exercise.workoutPlanId);
-
-          if (record != null &&
-              widget.setInfoIndex < record.setInfo.length &&
-              record is WorkoutRecordSimple) {
-            record.setInfo[widget.setInfoIndex] =
-                record.setInfo[widget.setInfoIndex].copyWith(
-              seconds: widget.exercise.setInfo[widget.setInfoIndex].seconds! -
-                  totalSeconds,
-            );
-            value.put(
-              widget.exercise.workoutPlanId,
-              WorkoutRecordSimple(
-                workoutPlanId: widget.exercise.workoutPlanId,
-                setInfo: [
-                  ...record.setInfo,
-                ],
-              ),
-            );
-          } else if (record != null &&
-              record is WorkoutRecordSimple &&
-              widget.setInfoIndex == record.setInfo.length) {
-            value.put(
-              widget.exercise.workoutPlanId,
-              WorkoutRecordSimple(
-                  workoutPlanId: widget.exercise.workoutPlanId,
-                  setInfo: [
-                    ...record.setInfo,
-                    SetInfo(
-                      index: record.setInfo.length + 1,
-                      seconds: 1,
-                    ),
-                  ]),
-            );
-          } else {
-            // print('timerXmoreBox 처음 저장!');
-            // print(totalSeconds);
-            value.put(
-              widget.exercise.workoutPlanId,
-              WorkoutRecordSimple(
-                workoutPlanId: widget.exercise.workoutPlanId,
-                setInfo: [
-                  SetInfo(
-                    index: 1,
-                    seconds:
-                        widget.exercise.setInfo[widget.setInfoIndex].seconds! -
-                            totalSeconds,
-                  )
-                ],
-              ),
-            );
-          }
-        },
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = Size(100.w, 100.h);
-    final AsyncValue<Box> workoutRecordBox =
-        ref.watch(hiveWorkoutRecordSimpleProvider);
     final AsyncValue<Box> timerXMoreRecordBox =
         ref.watch(hiveTimerXMoreRecordProvider);
+    final state = ref.read(workoutProcessProvider(widget.workoutScheduleId));
 
-    workoutBox = workoutRecordBox;
-    timerXmoreBox = timerXMoreRecordBox;
+    final pstate = state as WorkoutProcessModel;
+
+    final modifiedSetInfo = pstate
+        .modifiedExercises[pstate.exerciseIndex].setInfo[widget.setInfoIndex];
+
+    SetInfo recordSetInfo = SetInfo(index: widget.setInfoIndex + 1);
+
+    timerXMoreRecordBox.whenData((value) {
+      final record = value.get(widget.exercise.workoutPlanId);
+
+      if (record is WorkoutRecordSimple) {
+        recordSetInfo = record.setInfo[widget.setInfoIndex];
+        print(recordSetInfo.seconds);
+      }
+    });
+
+    final remainSeconds = modifiedSetInfo.seconds! - recordSetInfo.seconds!;
 
     List<Widget> progressList = widget.exercise.setInfo.mapIndexed(
       (index, element) {
@@ -353,7 +104,7 @@ class _WeightWrepsProgressCardState
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AnimatedContainer(
+              Container(
                 decoration: BoxDecoration(
                   borderRadius: index == 0
                       ? const BorderRadius.only(
@@ -365,14 +116,12 @@ class _WeightWrepsProgressCardState
                               topRight: Radius.circular(2),
                             )
                           : null,
-                  color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
+                  color: POINT_COLOR,
                 ),
                 width: widget.isSwipeUp
                     ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
                     : ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
-                duration: const Duration(microseconds: 1000),
-                curve: Curves.linear,
               ),
               const SizedBox(
                 width: 1,
@@ -506,45 +255,69 @@ class _WeightWrepsProgressCardState
               const SizedBox(
                 height: 10,
               ),
-              Container(
-                width: 100,
-                height: 24,
-                decoration: BoxDecoration(
-                  border: Border.all(color: POINT_COLOR),
-                  borderRadius: BorderRadius.circular(12),
-                  color: POINT_COLOR,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: Center(
-                        child: SvgPicture.asset(
-                          'asset/img/icon_timer_white.svg',
-                          width: 18,
-                          height: 18,
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).push(CupertinoPageRoute(
+                    builder: (context) => TimerScreen(
+                      model: pstate,
+                      setInfoIndex: widget.setInfoIndex,
+                      secondsGoal: modifiedSetInfo.seconds!,
+                      secondsRecord: recordSetInfo.seconds!,
+                      workoutScheduleId: widget.workoutScheduleId,
+                      refresh: widget.refresh,
+                    ),
+                    fullscreenDialog: true,
+                  ));
+                },
+                child: Container(
+                  width: 100,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: POINT_COLOR),
+                    borderRadius: BorderRadius.circular(12),
+                    color:
+                        recordSetInfo.seconds == 0 ? POINT_COLOR : Colors.white,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Center(
+                          child: SvgPicture.asset(
+                            recordSetInfo.seconds == 0
+                                ? 'asset/img/icon_timer_white.svg'
+                                : 'asset/img/icon_timer_red.svg',
+                            width: 18,
+                            height: 18,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Center(
-                      child: Text(
-                        '타이머',
-                        style: s1SubTitle.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          height: 1.2,
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Center(
+                        child: Text(
+                          recordSetInfo.seconds == 0
+                              ? '타이머'
+                              : '${(remainSeconds / 60).floor().toString().padLeft(2, '0')} : ${(remainSeconds % 60).toString().padLeft(2, '0')} ',
+                          style: s1SubTitle.copyWith(
+                            color: recordSetInfo.seconds == 0
+                                ? Colors.white
+                                : POINT_COLOR,
+                            fontWeight: recordSetInfo.seconds == 0
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            height: 1.2,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                  ],
+                      const SizedBox(
+                        width: 8,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

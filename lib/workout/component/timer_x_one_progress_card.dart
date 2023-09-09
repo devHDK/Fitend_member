@@ -5,9 +5,15 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
+import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
+import 'package:fitend_member/workout/model/workout_process_model.dart';
+import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
+import 'package:fitend_member/workout/provider/workout_process_provider.dart';
+import 'package:fitend_member/workout/view/timer_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,19 +22,23 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class TimerXOneProgressCard extends ConsumerStatefulWidget {
+  final int workoutScheduleId;
   final Exercise exercise;
   final int setInfoIndex;
   final bool isSwipeUp;
   final GestureTapCallback listOnTap;
   final GestureTapCallback proccessOnTap;
+  final Function refresh;
 
   const TimerXOneProgressCard({
     super.key,
+    required this.workoutScheduleId,
     required this.exercise,
     required this.isSwipeUp,
     required this.proccessOnTap,
     required this.setInfoIndex,
     required this.listOnTap,
+    required this.refresh,
   });
 
   @override
@@ -38,12 +48,6 @@ class TimerXOneProgressCard extends ConsumerStatefulWidget {
 
 class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
     with WidgetsBindingObserver {
-  late Timer timer;
-  late int totalSeconds = -1;
-  bool initial = true;
-  bool isRunning = false;
-  int count = 0;
-
   DateTime resumedTime = DateTime(
     DateTime.now().year,
     DateTime.now().month,
@@ -64,210 +68,36 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addObserver(this);
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (initial) {
-        timerBox.whenData((value) async {
-          final record = await value.get(widget.exercise.workoutPlanId);
-
-          if (record != null && record is SetInfo && widget.setInfoIndex == 0) {
-            setState(() {
-              totalSeconds =
-                  widget.exercise.setInfo[0].seconds! - record.seconds!;
-            });
-          } else {
-            setState(() {
-              totalSeconds = widget.exercise.setInfo[0].seconds!;
-            });
-          }
-        });
-        // print('totalSeconds : $totalSeconds');
-        initial = false;
-      }
-    });
   }
 
   @override
   void dispose() {
-    if (timer.isActive) {
-      timer.cancel();
-    }
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        if (isBackground) {
-          resumedTime = DateTime.now();
-          print(
-              "time substraction  ${resumedTime.difference(pausedTime).inSeconds}");
+  Widget build(BuildContext context) {
+    final AsyncValue<Box> timerXMoreRecordBox =
+        ref.watch(hiveTimerXMoreRecordProvider);
+    final state = ref.read(workoutProcessProvider(widget.workoutScheduleId));
 
-          if (totalSeconds <= resumedTime.difference(pausedTime).inSeconds) {
-            setState(() {
-              totalSeconds = 0;
-              timer.cancel();
-              isRunning = false;
-              isBackground = false;
-            });
+    final pstate = state as WorkoutProcessModel;
 
-            timerBox.whenData((value) {
-              value.put(
-                widget.exercise.workoutPlanId,
-                SetInfo(
-                  index: 1,
-                  seconds: widget.exercise.setInfo[0].seconds!,
-                ),
-              );
-            });
-          } else {
-            setState(() {
-              totalSeconds -= resumedTime.difference(pausedTime).inSeconds;
-              isBackground = false;
-            });
+    final modifiedSetInfo = pstate
+        .modifiedExercises[pstate.exerciseIndex].setInfo[widget.setInfoIndex];
 
-            onStartPressed();
-          }
+    SetInfo recordSetInfo = SetInfo(index: widget.setInfoIndex + 1);
 
-          if (count + resumedTime.difference(pausedTime).inSeconds >= 11) {
-            count = 11;
-          } else {
-            count += resumedTime.difference(pausedTime).inSeconds;
-          }
-
-          setState(() {});
-        }
-
-        break;
-      case AppLifecycleState.inactive:
-        break;
-      case AppLifecycleState.paused:
-        if (isRunning) {
-          pausedTime = DateTime.now();
-          isBackground = true;
-
-          timer.cancel();
-          isRunning = false;
-        }
-
-        break;
-      case AppLifecycleState.detached:
-        // print("app in detached");
-        break;
-    }
-  }
-
-  void onStartPressed() {
-    timer = Timer.periodic(
-      const Duration(seconds: 1),
-      onTick,
-    );
-    setState(() {
-      isRunning = true;
-    });
-  }
-
-  void onPausePressed() {
-    timer.cancel();
-    setState(() {
-      isRunning = false;
-    });
-  }
-
-  void onStopPressed() {
-    // timer.cancel();
-
-    timerBox.whenData(
-      (value) {
-        value.delete(widget.exercise.workoutPlanId);
-      },
-    );
-
-    workoutBox.whenData((value) {
-      value.delete(widget.exercise.workoutPlanId);
-    });
-
-    setState(() {
-      count = 0;
-      totalSeconds = widget.exercise.setInfo[0].seconds!;
-    });
-  }
-
-  @override
-  void didUpdateWidget(covariant TimerXOneProgressCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    timerBox.whenData((value) {
+    timerXMoreRecordBox.whenData((value) {
       final record = value.get(widget.exercise.workoutPlanId);
-      if (record != null && record is SetInfo && widget.setInfoIndex == 0) {
-        if (record.seconds! < widget.exercise.setInfo[0].seconds!) {
-          setState(() {
-            totalSeconds =
-                widget.exercise.setInfo[0].seconds! - record.seconds!;
-          });
-        } else if (record.seconds! >= widget.exercise.setInfo[0].seconds!) {
-          setState(() {
-            totalSeconds = 0;
-            isRunning = false;
-            count = 11;
-          });
 
-          timer.cancel();
-
-          timerBox.whenData((value) {
-            value.put(
-              widget.exercise.workoutPlanId,
-              SetInfo(
-                index: 1,
-                seconds: widget.exercise.setInfo[0].seconds!,
-              ),
-            );
-          });
-        }
-      } else {
-        setState(() {
-          totalSeconds = widget.exercise.setInfo[0].seconds!;
-        });
+      if (record is WorkoutRecordSimple) {
+        recordSetInfo = record.setInfo[widget.setInfoIndex];
+        print(recordSetInfo.seconds);
       }
     });
-  }
 
-  void onTick(Timer timer) {
-    if (totalSeconds == 0) {
-      //0초가 됬을때 저장
-      setState(() {
-        isRunning = false;
-        count = 11;
-      });
-      timer.cancel();
-    } else {
-      setState(() {
-        totalSeconds -= 1;
-        count++;
-      });
-      timerBox.whenData((value) async {
-        await value.put(
-          widget.exercise.workoutPlanId,
-          SetInfo(
-              index: 1,
-              seconds: widget.exercise.setInfo[0].seconds! - totalSeconds),
-        );
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final AsyncValue<Box> workoutRecordBox =
-        ref.watch(hiveWorkoutRecordSimpleProvider);
-    final AsyncValue<Box> timerWorkoutBox = ref.watch(hiveTimerRecordProvider);
-
-    timerBox = timerWorkoutBox;
-    workoutBox = workoutRecordBox;
+    final remainSeconds = modifiedSetInfo.seconds! - recordSetInfo.seconds!;
 
     Set targetMuscles = {};
     String muscleString = '';
@@ -329,12 +159,20 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
               const SizedBox(
                 height: 10,
               ),
-              GestureDetector(
-                onTap: isRunning
-                    ? () => onPausePressed()
-                    : totalSeconds == 0
-                        ? () => onStopPressed()
-                        : () => onStartPressed(),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).push(CupertinoPageRoute(
+                    builder: (context) => TimerScreen(
+                      model: pstate,
+                      setInfoIndex: widget.setInfoIndex,
+                      secondsGoal: modifiedSetInfo.seconds!,
+                      secondsRecord: recordSetInfo.seconds!,
+                      workoutScheduleId: widget.workoutScheduleId,
+                      refresh: widget.refresh,
+                    ),
+                    fullscreenDialog: true,
+                  ));
+                },
                 child: Container(
                   width: 100,
                   height: 24,
@@ -342,46 +180,37 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
                     border: Border.all(color: POINT_COLOR),
                     borderRadius: BorderRadius.circular(12),
                     color:
-                        totalSeconds == widget.exercise.setInfo[0].seconds! &&
-                                !isRunning
-                            ? POINT_COLOR
-                            : Colors.white,
+                        recordSetInfo.seconds == 0 ? POINT_COLOR : Colors.white,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      isRunning
-                          ? SvgPicture.asset('asset/img/icon_pause_small.svg')
-                          : totalSeconds > 0 &&
-                                  totalSeconds <
-                                      widget.exercise.setInfo[0].seconds!
-                              ? SvgPicture.asset(
-                                  'asset/img/icon_replay_small.svg')
-                              : totalSeconds == 0
-                                  ? SvgPicture.asset(
-                                      'asset/img/icon_reset_small.svg')
-                                  : SvgPicture.asset(
-                                      'asset/img/icon_play_small.svg'),
+                      SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Center(
+                          child: SvgPicture.asset(
+                            recordSetInfo.seconds == 0
+                                ? 'asset/img/icon_timer_white.svg'
+                                : 'asset/img/icon_timer_red.svg',
+                            width: 18,
+                            height: 18,
+                          ),
+                        ),
+                      ),
                       const SizedBox(
                         width: 8,
                       ),
                       Center(
                         child: Text(
-                          (totalSeconds ==
-                                          widget.exercise.setInfo[0].seconds! ||
-                                      totalSeconds < 0) &&
-                                  !isRunning
-                              ? '운동 시작'
-                              : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')} ',
-                          style: s2SubTitle.copyWith(
-                            color: totalSeconds ==
-                                        widget.exercise.setInfo[0].seconds! &&
-                                    !isRunning
+                          recordSetInfo.seconds == 0
+                              ? '타이머'
+                              : '${(remainSeconds / 60).floor().toString().padLeft(2, '0')} : ${(remainSeconds % 60).toString().padLeft(2, '0')} ',
+                          style: s1SubTitle.copyWith(
+                            color: recordSetInfo.seconds == 0
                                 ? Colors.white
                                 : POINT_COLOR,
-                            fontWeight: totalSeconds ==
-                                        widget.exercise.setInfo[0].seconds! &&
-                                    !isRunning
+                            fontWeight: recordSetInfo.seconds == 0
                                 ? FontWeight.w700
                                 : FontWeight.w400,
                             height: 1.2,
@@ -461,9 +290,8 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
                         borderRadius: BorderRadius.circular(2),
                       ),
                       child: LinearProgressIndicator(
-                        value: (widget.exercise.setInfo[0].seconds! -
-                                totalSeconds) /
-                            widget.exercise.setInfo[0].seconds!,
+                        value:
+                            recordSetInfo.seconds! / modifiedSetInfo.seconds!,
                         backgroundColor: LIGHT_GRAY_COLOR,
                         valueColor: const AlwaysStoppedAnimation(POINT_COLOR),
                       ),
@@ -476,13 +304,6 @@ class _TimerXOneProgressCardState extends ConsumerState<TimerXOneProgressCard>
               InkWell(
                 // 운동 진행
                 onTap: () {
-                  if (timer.isActive) {
-                    timer.cancel();
-                    setState(() {
-                      isRunning = false;
-                    });
-                  }
-
                   widget.proccessOnTap();
                 },
                 child: Row(

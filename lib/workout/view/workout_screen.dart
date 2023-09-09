@@ -294,6 +294,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     .trackingFieldId ==
                                 2)
                           WeightWrepsProgressCard(
+                            workoutScheduleId: widget.workoutScheduleId,
                             isSwipeUp: isSwipeUp,
                             exercise:
                                 model.modifiedExercises[model.exerciseIndex],
@@ -347,6 +348,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     .length ==
                                 1)
                           TimerXOneProgressCard(
+                            workoutScheduleId: widget.workoutScheduleId,
                             isSwipeUp: isSwipeUp,
                             exercise:
                                 model.modifiedExercises[model.exerciseIndex],
@@ -376,6 +378,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   }
                                 },
                               );
+                            },
+                            refresh: () {
+                              setState(() {});
                             },
                           ),
 
@@ -390,38 +395,41 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     .length >
                                 1)
                           TimerXMoreProgressCard(
-                            isSwipeUp: isSwipeUp,
-                            exercise:
-                                model.modifiedExercises[model.exerciseIndex],
-                            setInfoIndex:
-                                model.setInfoCompleteList[model.exerciseIndex],
-                            listOnTap: () async {
-                              await Navigator.of(context)
-                                  .push(CupertinoPageRoute(
-                                builder: (context) => WorkoutChangeScreen(
-                                  exerciseIndex: model.exerciseIndex,
-                                  workout: widget.workout,
-                                ),
-                              ))
-                                  .then(
-                                (value) {
-                                  if (value != null) {
-                                    ref
-                                        .read(workoutProcessProvider(
-                                                widget.workoutScheduleId)
-                                            .notifier)
-                                        .exerciseChange(value);
-                                    // isTooltipVisible = false;
-                                    // tooltipCount = 0;
-                                    // onTooltipPressed();
-                                    setState(() {});
-                                  }
-                                },
-                              );
-                            },
-                            proccessOnTap: () {},
-                            resetSet: () {},
-                          ),
+                              workoutScheduleId: widget.workoutScheduleId,
+                              isSwipeUp: isSwipeUp,
+                              exercise:
+                                  model.modifiedExercises[model.exerciseIndex],
+                              setInfoIndex: model
+                                  .setInfoCompleteList[model.exerciseIndex],
+                              listOnTap: () async {
+                                await Navigator.of(context)
+                                    .push(CupertinoPageRoute(
+                                  builder: (context) => WorkoutChangeScreen(
+                                    exerciseIndex: model.exerciseIndex,
+                                    workout: widget.workout,
+                                  ),
+                                ))
+                                    .then(
+                                  (value) {
+                                    if (value != null) {
+                                      ref
+                                          .read(workoutProcessProvider(
+                                                  widget.workoutScheduleId)
+                                              .notifier)
+                                          .exerciseChange(value);
+                                      // isTooltipVisible = false;
+                                      // tooltipCount = 0;
+                                      // onTooltipPressed();
+                                      setState(() {});
+                                    }
+                                  },
+                                );
+                              },
+                              proccessOnTap: () {},
+                              resetSet: () {},
+                              refresh: () {
+                                setState(() {});
+                              }),
 
                         const SizedBox(
                           height: 20,

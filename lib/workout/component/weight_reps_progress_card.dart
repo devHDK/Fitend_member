@@ -12,6 +12,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class WeightWrepsProgressCard extends ConsumerStatefulWidget {
+  final int workoutScheduleId;
   final Exercise exercise;
   final int setInfoIndex;
   final bool isSwipeUp;
@@ -20,6 +21,7 @@ class WeightWrepsProgressCard extends ConsumerStatefulWidget {
 
   const WeightWrepsProgressCard({
     super.key,
+    required this.workoutScheduleId,
     required this.exercise,
     required this.setInfoIndex,
     required this.isSwipeUp,
@@ -35,22 +37,13 @@ class WeightWrepsProgressCard extends ConsumerStatefulWidget {
 class _WeightWrepsProgressCardState
     extends ConsumerState<WeightWrepsProgressCard> {
   // int index = 0;
-  bool colorChanged = false;
+
   int count = 0;
   int length = 0;
 
   @override
   void initState() {
     super.initState();
-    Timer.periodic(
-      const Duration(milliseconds: 1000),
-      (timer) {
-        setState(() {
-          colorChanged = !colorChanged;
-          count += 1;
-        });
-      },
-    );
   }
 
   @override
@@ -64,7 +57,7 @@ class _WeightWrepsProgressCardState
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AnimatedContainer(
+              Container(
                 decoration: BoxDecoration(
                   borderRadius: index == 0
                       ? const BorderRadius.only(
@@ -76,14 +69,12 @@ class _WeightWrepsProgressCardState
                               topRight: Radius.circular(2),
                             )
                           : null,
-                  color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
+                  color: POINT_COLOR,
                 ),
                 width: widget.isSwipeUp
                     ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
                     : ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
-                duration: const Duration(microseconds: 1000),
-                curve: Curves.linear,
               ),
               const SizedBox(
                 width: 1,
@@ -98,7 +89,7 @@ class _WeightWrepsProgressCardState
               AnimatedContainer(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(2),
-                  color: colorChanged ? LIGHT_GRAY_COLOR : POINT_COLOR,
+                  color: POINT_COLOR,
                 ),
                 width: widget.isSwipeUp
                     ? ((size.width - 56) / widget.exercise.setInfo.length) - 1

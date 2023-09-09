@@ -204,6 +204,11 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
   void dispose() {
     valueNotifier.dispose();
     WidgetsBinding.instance.removeObserver(this);
+
+    if (timer.isActive) {
+      timer.cancel();
+    }
+
     super.dispose();
   }
 
@@ -324,7 +329,6 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                     TextButton(
                       onPressed: () {
                         widget.refresh();
-
                         context.pop();
                       },
                       child: Container(

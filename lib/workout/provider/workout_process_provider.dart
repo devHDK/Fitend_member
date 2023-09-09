@@ -78,13 +78,15 @@ class WorkoutProcessStateNotifier
     state = WorkoutProcessModelLoading();
 
     WorkoutProcessModel tempState = WorkoutProcessModel(
-        exerciseIndex: 0,
-        maxExerciseIndex: 0,
-        setInfoCompleteList: [],
-        maxSetInfoList: [],
-        exercises: [],
-        modifiedExercises: [],
-        workoutFinished: false);
+      exerciseIndex: 0,
+      maxExerciseIndex: 0,
+      setInfoCompleteList: [],
+      maxSetInfoList: [],
+      exercises: [],
+      modifiedExercises: [],
+      workoutFinished: false,
+      groupCounts: {},
+    );
     List<Exercise> tempExercises = [];
     final workoutProviderState = workoutProvider.state as WorkoutModel;
 
@@ -154,6 +156,24 @@ class WorkoutProcessStateNotifier
       }
     });
 
+    List<int> circuitGroupNumList = [];
+
+    for (var exercise in tempState.exercises) {
+      if (exercise.circuitGroupNum != null) {
+        circuitGroupNumList.add(exercise.circuitGroupNum!);
+      }
+    }
+
+    Map<int, int> groupCounts =
+        circuitGroupNumList.fold({}, (Map<int, int> map, element) {
+      if (!map.containsKey(element)) {
+        map[element] = 1;
+      } else if (map.containsKey(element)) {
+        map[element] = map[element]! + 1;
+      }
+      return map;
+    });
+
     workoutProvider.state = workoutProviderState.copyWith(isProcessing: true);
 
     state = WorkoutProcessModel(
@@ -164,58 +184,118 @@ class WorkoutProcessStateNotifier
       exercises: tempState.exercises,
       modifiedExercises: tempState.modifiedExercises,
       workoutFinished: tempState.workoutFinished,
+      groupCounts: groupCounts,
     );
   }
 
   // 다음 운동
   // return <= -1  => 모든 운동 완료,
   // return > -1 => exerciseIndex
-  Future<int> nextStepForRegular() async {
+  int nextWorkout() {
     final pstate = state as WorkoutProcessModel;
 
     if (pstate.exerciseIndex <= pstate.maxExerciseIndex &&
         pstate.setInfoCompleteList[pstate.exerciseIndex] <
-            pstate.maxSetInfoList[pstate.exerciseIndex]) {
+            pstate.maxSetInfoList[pstate.exerciseIndex] &&
+        (pstate.exercises[pstate.exerciseIndex].trackingFieldId == 1 ||
+            pstate.exercises[pstate.exerciseIndex].trackingFieldId == 2)) {
+      //timer 운동 제외! 0초로 이미 저장되있음
+
       _saveCompleteSet(workoutRecordSimpleBox);
     }
 
-    //setInfoCompleteList 업데이트
+    //setInfoCompleteList 업데이트 => 세트 +1
     if (pstate.setInfoCompleteList[pstate.exerciseIndex] <
         pstate.maxSetInfoList[pstate.exerciseIndex]) {
       pstate.setInfoCompleteList[pstate.exerciseIndex] += 1;
     }
 
     if (pstate.exercises[pstate.exerciseIndex].setType != null) {
+      //슈퍼세트
+      if (pstate.exercises[pstate.exerciseIndex].circuitSeq ==
+          pstate.exercises[pstate.exerciseIndex].circuitSeq) {
+        //슈퍼세트 마지막 운동
+        final index = getUnCompleteSuperSet(
+            pstate.exercises[pstate.exerciseIndex].circuitGroupNum!);
+
+        if (index != null) {
+          pstate.exerciseIndex = index; //
+        } else {
+          if (pstate.exerciseIndex < pstate.maxExerciseIndex) {
+            //마지막 운동이 아니라면
+            pstate.exerciseIndex += 1;
+
+            while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
+                    pstate.maxSetInfoList[pstate.exerciseIndex] &&
+                pstate.exerciseIndex < pstate.maxExerciseIndex) {
+              pstate.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+
+              if (pstate.exerciseIndex == pstate.maxExerciseIndex) {
+                break;
+              }
+            }
+          }
+        }
+      } else {
+        //슈퍼세트 마지막 운동 X
+        while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
+            pstate.maxSetInfoList[pstate.exerciseIndex]) {
+          pstate.exerciseIndex += 1;
+
+          if (pstate.groupCounts[
+                  pstate.exercises[pstate.exerciseIndex].circuitGroupNum] ==
+              pstate.exercises[pstate.exerciseIndex].circuitSeq) {
+            final index = getUnCompleteSuperSet(
+                pstate.exercises[pstate.exerciseIndex].circuitGroupNum!);
+
+            if (index != null) {
+              pstate.exerciseIndex = index;
+            } else {
+              if (pstate.exerciseIndex < pstate.maxExerciseIndex) {
+                //마지막 운동이 아니라면
+                pstate.exerciseIndex += 1;
+
+                while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
+                        pstate.maxSetInfoList[pstate.exerciseIndex] &&
+                    pstate.exerciseIndex < pstate.maxExerciseIndex) {
+                  pstate.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+
+                  if (pstate.exerciseIndex == pstate.maxExerciseIndex) {
+                    break;
+                  }
+                }
+              }
+            }
+            break;
+          }
+        }
+      }
     } else {
-      //운동 변경
+      //레귤러
       if (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
               pstate.maxSetInfoList[pstate.exerciseIndex] &&
           pstate.exerciseIndex < pstate.maxExerciseIndex) {
         //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
 
-        pstate.exerciseIndex += 1; // 운동 변경
-        exerciseIndexBox.whenData(
-          (value) {
-            value.put(id, pstate.exerciseIndex);
-          },
-        );
-
+        pstate.exerciseIndex += 1; //운동 변경
         while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
                 pstate.maxSetInfoList[pstate.exerciseIndex] &&
             pstate.exerciseIndex < pstate.maxExerciseIndex) {
+          pstate.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+
           if (pstate.exerciseIndex == pstate.maxExerciseIndex) {
             break;
           }
-
-          pstate.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
-          exerciseIndexBox.whenData(
-            (value) {
-              value.put(id, pstate.exerciseIndex);
-            },
-          );
         }
       }
     }
+
+    pstate.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+    exerciseIndexBox.whenData(
+      (value) {
+        value.put(id, pstate.exerciseIndex);
+      },
+    );
 
     //끝났는지 체크!
     if (!pstate.workoutFinished) {
@@ -510,7 +590,34 @@ class WorkoutProcessStateNotifier
     });
   }
 
-  // 총 운동 시간 추가
+  //배열에서  groupnum, seq로 index 찾기
+  int getExerciseIndexByGroupNumSeq(int groupNum, int seq) {
+    final pstate = state as WorkoutProcessModel;
 
+    int exerciseIndex = pstate.exercises.indexWhere((exercise) =>
+        exercise.circuitGroupNum == groupNum && exercise.circuitSeq == seq);
+
+    return exerciseIndex;
+  }
+
+  //미완료 슈퍼세트
+  int? getUnCompleteSuperSet(int groupNum) {
+    final pstate = state as WorkoutProcessModel;
+
+    List<Exercise> superSetList = pstate.modifiedExercises
+        .where((element) => element.circuitGroupNum == groupNum)
+        .toList();
+
+    for (var exercise in superSetList) {
+      final index = getExerciseIndexByGroupNumSeq(
+          exercise.circuitGroupNum!, exercise.circuitSeq!);
+      if (pstate.setInfoCompleteList[index] < pstate.maxSetInfoList[index]) {
+        return index;
+      }
+    }
+    return null;
+  }
+
+  // 총 운동 시간 추가
   // 이전에 수행하지 않은 운동 이동
 }

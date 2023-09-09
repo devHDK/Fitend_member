@@ -151,7 +151,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       ref
                           .read(workoutProcessProvider(widget.workoutScheduleId)
                               .notifier)
-                          .nextStepForRegular();
+                          .nextWorkout();
 
                       setState(() {});
                     },
@@ -327,7 +327,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   .read(workoutProcessProvider(
                                           widget.workoutScheduleId)
                                       .notifier)
-                                  .nextStepForRegular();
+                                  .nextWorkout();
 
                               setState(() {});
                             },
@@ -370,7 +370,15 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 },
                               );
                             },
-                            proccessOnTap: () {},
+                            proccessOnTap: () {
+                              ref
+                                  .read(workoutProcessProvider(
+                                          widget.workoutScheduleId)
+                                      .notifier)
+                                  .nextWorkout();
+
+                              setState(() {});
+                            },
                             resetSet: () {},
                             refresh: () {
                               setState(() {});

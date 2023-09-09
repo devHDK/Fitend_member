@@ -363,7 +363,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                   ref
                       .read(workoutProcessProvider(widget.workoutScheduleId)
                           .notifier)
-                      .nextStepForRegular();
+                      .nextWorkout();
                 },
                 child: Text(
                   '다음 운동',

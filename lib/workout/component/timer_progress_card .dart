@@ -20,7 +20,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class TimerXMoreProgressCard extends ConsumerStatefulWidget {
+class TimerProgressCard extends ConsumerStatefulWidget {
   final int workoutScheduleId;
   final Exercise exercise;
   final int setInfoIndex;
@@ -30,7 +30,7 @@ class TimerXMoreProgressCard extends ConsumerStatefulWidget {
   final GestureTapCallback resetSet;
   final Function refresh;
 
-  const TimerXMoreProgressCard({
+  const TimerProgressCard({
     super.key,
     required this.workoutScheduleId,
     required this.exercise,
@@ -43,12 +43,11 @@ class TimerXMoreProgressCard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<TimerXMoreProgressCard> createState() =>
+  ConsumerState<TimerProgressCard> createState() =>
       _WeightWrepsProgressCardState();
 }
 
-class _WeightWrepsProgressCardState
-    extends ConsumerState<TimerXMoreProgressCard> {
+class _WeightWrepsProgressCardState extends ConsumerState<TimerProgressCard> {
   DateTime resumedTime = DateTime(
     DateTime.now().year,
     DateTime.now().month,
@@ -96,7 +95,8 @@ class _WeightWrepsProgressCardState
       }
     });
 
-    final remainSeconds = modifiedSetInfo.seconds! - recordSetInfo.seconds!;
+    int remainSeconds = modifiedSetInfo.seconds! - recordSetInfo.seconds!;
+    if (remainSeconds < 0) remainSeconds = 0;
 
     List<Widget> progressList = widget.exercise.setInfo.mapIndexed(
       (index, element) {
@@ -374,13 +374,37 @@ class _WeightWrepsProgressCardState
                   ],
                 ),
               ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: progressList,
+            if (widget.exercise.setInfo.length > 1)
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: progressList,
+                ),
+              )
+            else
+              Expanded(
+                child: Row(mainAxisSize: MainAxisSize.max, children: [
+                  SizedBox(
+                    width: !widget.isSwipeUp ? 100.w - 152 : 100.w - 56,
+                    height: 4,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(2),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                        child: LinearProgressIndicator(
+                          value:
+                              recordSetInfo.seconds! / modifiedSetInfo.seconds!,
+                          backgroundColor: LIGHT_GRAY_COLOR,
+                          valueColor: const AlwaysStoppedAnimation(POINT_COLOR),
+                        ),
+                      ),
+                    ),
+                  )
+                ]),
               ),
-            ),
             if (!widget.isSwipeUp)
               InkWell(
                 // 운동 진행

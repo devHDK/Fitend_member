@@ -12,8 +12,7 @@ import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_reps_card.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_timer_card.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_weight_reps_card.dart';
-import 'package:fitend_member/workout/component/timer_x_more_progress_card%20.dart';
-import 'package:fitend_member/workout/component/timer_x_one_progress_card.dart';
+import 'package:fitend_member/workout/component/timer_progress_card%20.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
@@ -286,7 +285,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         const SizedBox(
                           height: 20,
                         ),
-
                         if (model.modifiedExercises[model.exerciseIndex]
                                     .trackingFieldId ==
                                 1 ||
@@ -333,28 +331,21 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
                               setState(() {});
                             },
-
-                            //운동 변경
-                          ),
-
-                        // Timer X 1set
-                        if ((model.modifiedExercises[model.exerciseIndex]
-                                        .trackingFieldId ==
-                                    3 ||
-                                model.modifiedExercises[model.exerciseIndex]
-                                        .trackingFieldId ==
-                                    4) &&
-                            model.modifiedExercises[model.exerciseIndex].setInfo
-                                    .length ==
-                                1)
-                          TimerXOneProgressCard(
+                          )
+                        // Timer
+                        else if ((model.modifiedExercises[model.exerciseIndex]
+                                    .trackingFieldId ==
+                                3 ||
+                            model.modifiedExercises[model.exerciseIndex]
+                                    .trackingFieldId ==
+                                4))
+                          TimerProgressCard(
                             workoutScheduleId: widget.workoutScheduleId,
                             isSwipeUp: isSwipeUp,
                             exercise:
                                 model.modifiedExercises[model.exerciseIndex],
                             setInfoIndex:
                                 model.setInfoCompleteList[model.exerciseIndex],
-                            proccessOnTap: () {},
                             listOnTap: () async {
                               await Navigator.of(context)
                                   .push(CupertinoPageRoute(
@@ -379,58 +370,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 },
                               );
                             },
+                            proccessOnTap: () {},
+                            resetSet: () {},
                             refresh: () {
                               setState(() {});
                             },
                           ),
-
-                        // Timer X more
-                        if ((model.modifiedExercises[model.exerciseIndex]
-                                        .trackingFieldId ==
-                                    3 ||
-                                model.modifiedExercises[model.exerciseIndex]
-                                        .trackingFieldId ==
-                                    4) &&
-                            model.modifiedExercises[model.exerciseIndex].setInfo
-                                    .length >
-                                1)
-                          TimerXMoreProgressCard(
-                              workoutScheduleId: widget.workoutScheduleId,
-                              isSwipeUp: isSwipeUp,
-                              exercise:
-                                  model.modifiedExercises[model.exerciseIndex],
-                              setInfoIndex: model
-                                  .setInfoCompleteList[model.exerciseIndex],
-                              listOnTap: () async {
-                                await Navigator.of(context)
-                                    .push(CupertinoPageRoute(
-                                  builder: (context) => WorkoutChangeScreen(
-                                    exerciseIndex: model.exerciseIndex,
-                                    workout: widget.workout,
-                                  ),
-                                ))
-                                    .then(
-                                  (value) {
-                                    if (value != null) {
-                                      ref
-                                          .read(workoutProcessProvider(
-                                                  widget.workoutScheduleId)
-                                              .notifier)
-                                          .exerciseChange(value);
-                                      // isTooltipVisible = false;
-                                      // tooltipCount = 0;
-                                      // onTooltipPressed();
-                                      setState(() {});
-                                    }
-                                  },
-                                );
-                              },
-                              proccessOnTap: () {},
-                              resetSet: () {},
-                              refresh: () {
-                                setState(() {});
-                              }),
-
                         const SizedBox(
                           height: 20,
                         ),

@@ -179,39 +179,44 @@ class WorkoutProcessStateNotifier
       _saveCompleteSet(workoutRecordSimpleBox);
     }
 
+    //setInfoCompleteList 업데이트
     if (pstate.setInfoCompleteList[pstate.exerciseIndex] <
         pstate.maxSetInfoList[pstate.exerciseIndex]) {
       pstate.setInfoCompleteList[pstate.exerciseIndex] += 1;
     }
 
-    //운동 변경
-    if (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
-            pstate.maxSetInfoList[pstate.exerciseIndex] &&
-        pstate.exerciseIndex < pstate.maxExerciseIndex) {
-      //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
-
-      pstate.exerciseIndex += 1; // 운동 변경
-      exerciseIndexBox.whenData(
-        (value) {
-          value.put(id, pstate.exerciseIndex);
-        },
-      );
-
-      while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
+    if (pstate.exercises[pstate.exerciseIndex].setType != null) {
+    } else {
+      //운동 변경
+      if (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
               pstate.maxSetInfoList[pstate.exerciseIndex] &&
           pstate.exerciseIndex < pstate.maxExerciseIndex) {
-        if (pstate.exerciseIndex == pstate.maxExerciseIndex) {
-          break;
-        }
+        //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
 
-        pstate.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+        pstate.exerciseIndex += 1; // 운동 변경
         exerciseIndexBox.whenData(
           (value) {
             value.put(id, pstate.exerciseIndex);
           },
         );
+
+        while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
+                pstate.maxSetInfoList[pstate.exerciseIndex] &&
+            pstate.exerciseIndex < pstate.maxExerciseIndex) {
+          if (pstate.exerciseIndex == pstate.maxExerciseIndex) {
+            break;
+          }
+
+          pstate.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+          exerciseIndexBox.whenData(
+            (value) {
+              value.put(id, pstate.exerciseIndex);
+            },
+          );
+        }
       }
     }
+
     //끝났는지 체크!
     if (!pstate.workoutFinished) {
       state = pstate;

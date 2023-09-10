@@ -23,6 +23,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:collection/collection.dart';
@@ -202,9 +203,38 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               color: Colors.black,
             ),
           ),
-          actions: const [
+          actions: [
             Padding(
-              padding: EdgeInsets.only(right: 18.0),
+              padding: const EdgeInsets.only(right: 18.0),
+              child: IconButton.filled(
+                  onPressed: () {
+                    showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (_) {
+                        return DialogWidgets.confirmDialog(
+                          message: '오늘의 운동을 종료할까요?\n종료 후에는 다시 진행할 수 없어요 🙉',
+                          confirmText: '아니요, 계속 할게요',
+                          cancelText: '네, 종료할게요',
+                          confirmOnTap: () {
+                            context.pop();
+                          },
+                          cancelOnTap: () async {
+                            await ref
+                                .read(workoutProcessProvider(
+                                        widget.workoutScheduleId)
+                                    .notifier)
+                                .quitWorkout();
+                            //완료!!!!!!!!!
+                          },
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.close_sharp,
+                    color: Colors.black,
+                  )),
             ),
           ],
           title: Container(

@@ -10,6 +10,7 @@ import 'package:fitend_member/common/utils/hive_box_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
+import 'package:fitend_member/workout/model/schedule_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
@@ -437,14 +438,18 @@ class WorkoutProcessStateNotifier
         },
       );
 
+      pstate.workoutFinished = true;
       state = pstate;
 
       try {
         //운동 기록 서버로
         await repository.postWorkoutRecords(
             body: PostWorkoutRecordModel(
-          records: tempRecordList,
-        ));
+                records: tempRecordList,
+                scheduleRecords: ScheduleRecordsModel(
+                  workoutScheduleId: id,
+                  workoutDuration: pstate.totalTime,
+                )));
       } on DioException catch (e) {
         throw DioException(
           requestOptions: e.requestOptions,

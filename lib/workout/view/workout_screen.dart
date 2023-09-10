@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/component/guide_video_player.dart';
 import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
@@ -430,14 +431,18 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     ? (100.h) * 9 / 16
                     : 100.w,
                 height: 100.w > 600 ? 100.h : 100.w * 16 / 9,
-                child: WorkoutVideoPlayer(
-                  video: ExerciseVideo(
+                child: GuideVideoPlayer(
+                  isGuide: false,
+                  videos: [
+                    ExerciseVideo(
                       url:
                           '$s3Url${widget.exercises[model.exerciseIndex].videos.first.url}',
                       index: widget
                           .exercises[model.exerciseIndex].videos.first.index,
                       thumbnail:
-                          '$s3Url${widget.exercises[model.exerciseIndex].videos.first.thumbnail}'),
+                          '$s3Url${widget.exercises[model.exerciseIndex].videos.first.thumbnail}',
+                    )
+                  ],
                 ),
               ),
             ),

@@ -10,10 +10,12 @@ import 'package:video_player/video_player.dart';
 
 class GuideVideoPlayer extends StatefulWidget {
   final List<ExerciseVideo> videos;
+  final bool isGuide;
 
   const GuideVideoPlayer({
     super.key,
     required this.videos,
+    this.isGuide = true,
   });
 
   @override
@@ -347,7 +349,7 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                 ),
               ),
 
-            if (isShowControlls) _videoSpeedControlButton()
+            if (isShowControlls && widget.isGuide) _videoSpeedControlButton()
 
             // if (showControlls)
             //   _Controls(

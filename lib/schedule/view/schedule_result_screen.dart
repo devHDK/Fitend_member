@@ -4,6 +4,7 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
@@ -11,6 +12,7 @@ import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_result_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
@@ -151,57 +153,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
 
     var state = pstate as WorkoutResultModel;
 
-    // else {
-    //   hasLocal = true;
-
-    //   startDate = feedback!.startDate;
-    //   workoutResultBox.whenData(
-    //     (value) {
-    //       workoutResults = [];
-
-    //       for (var i = 0; i < widget.exercises.length; i++) {
-    //         final record = value.get(widget.exercises[i].workoutPlanId);
-    //         if (record != null && record is WorkoutRecordResult) {
-    //           workoutResults.add(record);
-    //         } else {
-    //           hasLocal = false;
-    //         }
-    //       }
-    //     },
-    //   );
-
-    //   workoutRecordBox.whenData(
-    //     (value) {
-    //       workoutRecords = [];
-
-    //       for (var i = 0; i < widget.exercises.length; i++) {
-    //         final record = value.get(widget.exercises[i].workoutPlanId);
-    //         if (record != null && record is WorkoutRecordModel) {
-    //           workoutRecords.add(record);
-    //         } else {
-    //           hasLocal = false;
-    //         }
-    //       }
-    //     },
-    //   );
-
-    //   for (var i = 0; i < workoutResults.length; i++) {
-    //     for (var j = 0; j < workoutResults[i].setInfo.length; j++) {
-    //       workoutResults[i].setInfo[j] = workoutRecords[i].setInfo[j];
-    //     }
-    //   }
-
-    //   state = WorkoutResultModel(
-    //     startDate:
-    //         '${DateFormat('M월 dd일').format(feedback!.startDate)} ${weekday[feedback!.startDate.weekday - 1]}요일',
-    //     strengthIndex: feedback!.strengthIndex!,
-    //     issueIndexes:
-    //         feedback!.issueIndexes != null ? feedback!.issueIndexes! : [],
-    //     contents: feedback!.contents != null ? feedback!.contents! : '',
-    //     workoutRecords: workoutResults,
-    //   );
-    // }
-
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
@@ -260,7 +211,58 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
               ),
             ),
           ),
-          _renderWorkoutResultTitle(),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 28,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '오늘의 운동결과 🎯',
+                        style: h4Headline.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                      if (state.scheduleRecords != null &&
+                          state.scheduleRecords!.workoutDuration != null)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            SvgPicture.asset('asset/img/icon_timer.svg'),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              DataUtils.getTimeStringHour(
+                                  state.scheduleRecords!.workoutDuration!),
+                              style: s2SubTitle.copyWith(
+                                color: Colors.white,
+                                height: 1.3,
+                              ),
+                            )
+                          ],
+                        )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  const Divider(
+                    color: GRAY_COLOR,
+                    height: 1,
+                  )
+                ],
+              ),
+            ),
+          ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 28),
             sliver: SliverList.separated(
@@ -386,37 +388,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     );
   }
 
-  SliverToBoxAdapter _renderWorkoutResultTitle() {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 28,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 24,
-            ),
-            Text(
-              '오늘의 운동결과 🎯',
-              style: h4Headline.copyWith(
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            const Divider(
-              color: GRAY_COLOR,
-              height: 1,
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
   Column _renderExerciseResult(
       WorkoutRecord model, int index, WorkoutResultModel state) {
     return Column(
@@ -475,7 +446,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                 if (model.trackingFieldId == 3 || model.trackingFieldId == 4)
                   Text(
                     e.seconds != null
-                        ? '${(e.seconds! / 3600).floor().toString().padLeft(2, '0')} : ${(e.seconds! / 60).floor().toString().padLeft(2, '0')} : ${(e.seconds! % 60).toString().padLeft(2, '0')}  '
+                        ? DataUtils.getTimeStringHour(e.seconds!)
                         : '-',
                     style: s2SubTitle.copyWith(
                       color: Colors.white,

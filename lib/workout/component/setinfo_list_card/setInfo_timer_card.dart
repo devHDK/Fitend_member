@@ -3,6 +3,7 @@ import 'package:fitend_member/common/component/hexagon_container.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/workout/component/custom_timer_picker.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
@@ -139,7 +140,8 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                           ),
                           InkWell(
                             child: AutoSizeText(
-                              '${(widget.initialSeconds / 60).floor().toString().padLeft(2, '0')} : ${(widget.initialSeconds % 60).toString().padLeft(2, '0')} ',
+                              DataUtils.getTimeStringMinutes(
+                                  widget.initialSeconds),
                               style: s2SubTitle.copyWith(
                                 color: GRAY_COLOR,
                                 height: 1.1,

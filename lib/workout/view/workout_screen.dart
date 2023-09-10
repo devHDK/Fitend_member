@@ -7,6 +7,7 @@ import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
@@ -352,7 +353,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             ),
             child: Center(
               child: Text(
-                '${(model.totalTime / 60).floor().toString().padLeft(2, '0')} : ${(model.totalTime % 60).floor().toString().padLeft(2, '0')}',
+                DataUtils.getTimeStringMinutes(model.totalTime),
                 style: s1SubTitle.copyWith(
                   color: Colors.black,
                   fontSize: 20,

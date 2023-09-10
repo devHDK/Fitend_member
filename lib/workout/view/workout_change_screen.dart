@@ -5,6 +5,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -112,7 +113,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
               width: 5,
             ),
             Text(
-              '${(state.totalTime / 3600).floor().toString().padLeft(2, '0')} : ${((state.totalTime % 3600) / 60).floor().toString().padLeft(2, '0')} : ${(state.totalTime % 60).floor().toString().padLeft(2, '0')}',
+              DataUtils.getTimeStringHour(state.totalTime),
               style: h4Headline.copyWith(
                 color: Colors.white,
                 height: 1.1,

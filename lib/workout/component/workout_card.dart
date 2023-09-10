@@ -5,6 +5,7 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
@@ -150,7 +151,8 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                       Positioned(
                         left: 92,
                         child: Text(
-                          '${(widget.exercise.setInfo[index].seconds! / 60).floor().toString().padLeft(2, '0')}:${(widget.exercise.setInfo[index].seconds! % 60).toString().padLeft(2, '0')}',
+                          DataUtils.getTimeStringMinutes(
+                              widget.exercise.setInfo[index].seconds!),
                           style: s2SubTitle.copyWith(
                             fontSize: 10,
                             color: index <= widget.completeSetCount - 1

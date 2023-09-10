@@ -41,4 +41,18 @@ class DataUtils {
       default:
     }
   }
+
+  static String getTimeStringHour(int seconds) {
+    String ret =
+        '${(seconds / 3600).floor().toString().padLeft(2, '0')} : ${((seconds % 3600) / 60).floor().toString().padLeft(2, '0')} : ${(seconds % 60).floor().toString().padLeft(2, '0')}';
+
+    return ret;
+  }
+
+  static String getTimeStringMinutes(int seconds) {
+    String ret =
+        '${(seconds / 60).floor().toString().padLeft(2, '0')} : ${(seconds % 60).floor().toString().padLeft(2, '0')}';
+
+    return ret;
+  }
 }

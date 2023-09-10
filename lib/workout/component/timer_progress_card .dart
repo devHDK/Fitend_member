@@ -6,6 +6,7 @@ import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
@@ -301,7 +302,7 @@ class _WeightWrepsProgressCardState extends ConsumerState<TimerProgressCard> {
                         child: Text(
                           recordSetInfo.seconds == 0
                               ? '타이머'
-                              : '${(remainSeconds / 60).floor().toString().padLeft(2, '0')} : ${(remainSeconds % 60).toString().padLeft(2, '0')} ',
+                              : DataUtils.getTimeStringMinutes(remainSeconds),
                           style: s1SubTitle.copyWith(
                             color: recordSetInfo.seconds == 0
                                 ? Colors.white

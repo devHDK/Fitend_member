@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
 import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:flutter/material.dart';
@@ -262,7 +263,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                           ? '$count'
                           : count == 0 && isRunning && isReady
                               ? 'Go!'
-                              : '${(totalSeconds / 60).floor().toString().padLeft(2, '0')} : ${(totalSeconds % 60).toString().padLeft(2, '0')}',
+                              : DataUtils.getTimeStringMinutes(totalSeconds),
                       style: h1Headline.copyWith(fontSize: 40),
                     ),
                   ),

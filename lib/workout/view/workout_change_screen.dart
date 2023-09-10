@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -6,6 +8,8 @@ import 'package:fitend_member/common/provider/hive_workout_record_provider.dart'
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
+import 'package:fitend_member/workout/model/workout_process_model.dart';
+import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -36,6 +40,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
     super.initState();
 
     selectedIndex = widget.exerciseIndex;
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
   }
 
   @override
@@ -44,6 +51,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
         ref.watch(hiveWorkoutRecordSimpleProvider);
     final AsyncValue<Box> modifiedExerciseBox =
         ref.read(hiveModifiedExerciseProvider);
+
+    final state = ref
+        .watch(
+            workoutProcessProvider(widget.workout.workoutScheduleId).notifier)
+        .state as WorkoutProcessModel;
 
     var model = widget.workout;
 
@@ -92,10 +104,23 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
               icon: const Icon(Icons.arrow_back)),
         ),
         centerTitle: true,
-        title: Text(
-          '운동리스트',
-          style: h4Headline,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset('asset/img/icon_red_dot.svg'),
+            const SizedBox(
+              width: 5,
+            ),
+            Text(
+              '${(state.totalTime / 3600).floor().toString().padLeft(2, '0')} : ${((state.totalTime % 3600) / 60).floor().toString().padLeft(2, '0')} : ${(state.totalTime % 60).floor().toString().padLeft(2, '0')}',
+              style: h4Headline.copyWith(
+                color: Colors.white,
+                height: 1.1,
+              ),
+            ),
+          ],
         ),
+        actions: const [Padding(padding: EdgeInsets.symmetric(horizontal: 28))],
       ),
       body: CustomScrollView(
         slivers: [

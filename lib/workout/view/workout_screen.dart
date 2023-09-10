@@ -51,16 +51,31 @@ class WorkoutScreen extends ConsumerStatefulWidget {
 }
 
 class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   bool isSwipeUp = false;
   bool isTooltipVisible = false;
   int tooltipCount = 0;
   late Timer timer;
+  late Timer totalTimeTimer;
   final panelController = PanelController();
+
+  bool isBackground = false;
+  DateTime resumedTime = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  DateTime pausedTime = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     initData();
   }
@@ -72,15 +87,44 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
             .init(ref.read(workoutProvider(widget.workoutScheduleId).notifier));
 
-        Timer.periodic(const Duration(seconds: 1), (timer) {
-          ref
-              .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
-              .putProcessTotalTime();
-
-          setState(() {});
-        });
+        totalTimerStart();
       }
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (isBackground) {
+          resumedTime = DateTime.now();
+          debugPrint(
+              "time substraction ${resumedTime.difference(pausedTime).inSeconds}");
+
+          int addSeconds = resumedTime.difference(pausedTime).inSeconds;
+
+          ref
+              .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+              .addProcessTotalTime(addSeconds);
+
+          totalTimerStart();
+
+          setState(() {});
+        }
+
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        pausedTime = DateTime.now();
+        isBackground = true;
+        totalTimeTimer.cancel();
+
+        break;
+      case AppLifecycleState.detached:
+        // print("app in detached");
+        break;
+    }
   }
 
   @override
@@ -123,6 +167,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         tooltipCount -= 1;
       });
     }
+  }
+
+  void totalTimerStart() {
+    totalTimeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      ref
+          .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+          .putProcessTotalTime();
+
+      setState(() {});
+    });
   }
 
   @override

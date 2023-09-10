@@ -674,4 +674,12 @@ class WorkoutProcessStateNotifier
 
     state = pstate;
   }
+
+  void addProcessTotalTime(int seconds) {
+    final pstate = state as WorkoutProcessModel;
+    pstate.totalTime += seconds;
+    processTotalTimeBox.whenData((value) => value.put(id, pstate.totalTime));
+
+    state = pstate;
+  }
 }

@@ -97,6 +97,8 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
       if (response.isWorkoutComplete) {
         //운동이 완료 상태일때
         bool hasLocal = false;
+        response.isProcessing = false;
+
         WorkoutResultModel tempResultModel = WorkoutResultModel(
           startDate: '',
           strengthIndex: 0,
@@ -140,60 +142,58 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
             final workoutResultState =
                 workoutResultProvider.state as WorkoutResultModel;
 
-            List<WorkoutRecordSimple> tempRecordList = [];
-
             //기록에 저장
+            List<WorkoutRecordSimple> tempRecordList = [];
             workoutRecordSimpleBox.whenData((value) {
-              workoutResultState.workoutRecords.mapIndexed((index, e) {
-                value.put(
-                    e.workoutPlanId,
-                    WorkoutRecordSimple(
-                        workoutPlanId: e.workoutPlanId, setInfo: e.setInfo));
-                tempRecordList.add(WorkoutRecordSimple(
-                    workoutPlanId: e.workoutPlanId, setInfo: e.setInfo));
-              });
-            });
+              for (int i = 0; i < response.exercises.length; i++) {
+                final record = value.get(response.exercises[i].workoutPlanId);
+                if (record != null && record is WorkoutRecordSimple) {
+                  print(record);
+                  tempRecordList.add(record);
+                }
+              }
 
-            response.recordedExercises = tempRecordList; // 기록 목록 업데이트
+              response.recordedExercises = tempRecordList;
+            }); // 기록 목록 업데이트
           }
         }
-      } else {
-        processingExerciseIndexBox.whenData((value) {
-          final record = value.get(id);
+      }
 
-          if (record != null) {
-            response.isProcessing = true;
-          } else {
-            response.isProcessing = false;
+      processingExerciseIndexBox.whenData((value) {
+        final record = value.get(id);
+
+        if (record != null) {
+          response.isProcessing = true;
+        } else {
+          response.isProcessing = false;
+        }
+      });
+
+      if (response.isProcessing != null && response.isProcessing!) {
+        //진행중이던 운동일경우
+        List<WorkoutRecordSimple> tempRecordList = [];
+        workoutRecordSimpleBox.whenData((value) {
+          for (int i = 0; i < response.exercises.length; i++) {
+            final record = value.get(response.exercises[i].workoutPlanId);
+            if (record != null && record is WorkoutRecordSimple) {
+              print(record);
+              tempRecordList.add(record);
+            }
           }
+
+          response.recordedExercises = tempRecordList;
         });
 
-        if (response.isProcessing != null && response.isProcessing!) {
-          //진행중이던 운동일경우
-          List<WorkoutRecordSimple> tempRecordList = [];
-          workoutRecordSimpleBox.whenData((value) {
-            for (int i = 0; i < response.exercises.length; i++) {
-              final record = value.get(response.exercises[i].workoutPlanId);
-              if (record != null && record is WorkoutRecordSimple) {
-                print(record);
-                tempRecordList.add(record);
-              }
+        List<Exercise> tempModifiedExercises = [];
+        modifiedExerciseBox.whenData((value) {
+          for (int i = 0; i < response.exercises.length; i++) {
+            final record = value.get(response.exercises[i].workoutPlanId);
+            if (record != null && record is Exercise) {
+              tempModifiedExercises.add(record);
             }
-
-            response.recordedExercises = tempRecordList;
-          });
-
-          List<Exercise> tempModifiedExercises = [];
-          modifiedExerciseBox.whenData((value) {
-            for (int i = 0; i < response.exercises.length; i++) {
-              final record = value.get(response.exercises[i].workoutPlanId);
-              if (record != null && record is Exercise) {
-                tempModifiedExercises.add(record);
-              }
-            }
-            response.modifiedExercises = tempModifiedExercises;
-          });
-        }
+          }
+          response.modifiedExercises = tempModifiedExercises;
+        });
       }
 
       print(response.toJson());

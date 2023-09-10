@@ -41,6 +41,8 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
     final AsyncValue<Box> recordSimpleBox =
         ref.watch(hiveWorkoutRecordSimpleProvider);
 
+    print('completeSetCount ${widget.completeSetCount}');
+
     List<Widget> countList = [];
     List<Widget> firstList = [];
     List<Widget> secondList = [];

@@ -290,11 +290,47 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             context.pop();
                           },
                           cancelOnTap: () async {
-                            await ref
-                                .read(workoutProcessProvider(
-                                        widget.workoutScheduleId)
-                                    .notifier)
-                                .quitWorkout();
+                            try {
+                              await ref
+                                  .read(workoutProcessProvider(
+                                          widget.workoutScheduleId)
+                                      .notifier)
+                                  .quitWorkout()
+                                  .then((value) {
+                                context.pop(); // workout screen 닫기
+
+                                GoRouter.of(context).pushNamed(
+                                  WorkoutFeedbackScreen.routeName,
+                                  pathParameters: {
+                                    'workoutScheduleId':
+                                        widget.workoutScheduleId.toString(),
+                                  },
+                                  extra: widget.exercises,
+                                  queryParameters: {
+                                    'startDate': DateFormat('yyyy-MM-dd')
+                                        .format(widget.date),
+                                  },
+                                );
+                              });
+                            } on DioException catch (e) {
+                              print(e);
+                              if (e.response!.statusCode == 409) {
+                                context.pop(); // workout screen 닫기
+                                GoRouter.of(context).pushNamed(
+                                  WorkoutFeedbackScreen.routeName,
+                                  pathParameters: {
+                                    'workoutScheduleId':
+                                        widget.workoutScheduleId.toString(),
+                                  },
+                                  extra: widget.exercises,
+                                  queryParameters: {
+                                    'startDate': DateFormat('yyyy-MM-dd')
+                                        .format(widget.date),
+                                  },
+                                );
+                              }
+                            }
+
                             //완료!!!!!!!!!
                           },
                         );

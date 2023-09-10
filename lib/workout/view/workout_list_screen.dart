@@ -12,6 +12,8 @@ import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
+import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
+import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/provider/workout_result_provider.dart';
@@ -300,8 +302,14 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                   workoutRecordbox.when(
                     data: (data) {
                       final record = data.get(exerciseModel.workoutPlanId);
-                      if (record != null) {
-                        completeSetCount = record.setInfo.length;
+                      if (record != null && record is WorkoutRecordSimple) {
+                        for (var e in record.setInfo) {
+                          if (e.reps != null ||
+                              e.weight != null ||
+                              (e.seconds != 0 && e.seconds != null)) {
+                            completeSetCount += 1;
+                          }
+                        }
                       } else {
                         completeSetCount = 0;
                       }

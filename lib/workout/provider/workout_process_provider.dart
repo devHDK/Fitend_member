@@ -453,6 +453,12 @@ class WorkoutProcessStateNotifier
       } on DioException catch (e) {
         throw DioException(
           requestOptions: e.requestOptions,
+          type: DioExceptionType.badResponse,
+          error: DioException.badResponse(
+            statusCode: 409,
+            requestOptions: e.requestOptions,
+            response: e.response!,
+          ),
           response: e.response,
         );
       }

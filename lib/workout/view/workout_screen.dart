@@ -217,79 +217,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 children: [
                   TextButton(
                     onPressed: () async {
-                      await ref
-                          .read(workoutProcessProvider(widget.workoutScheduleId)
-                              .notifier)
-                          .nextWorkout()
-                          .then((value) {
-                        if (value != null) {
-                          if (value == -1) {
-                          } else {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) {
-                                return DialogWidgets.confirmDialog(
-                                  dismissable: false,
-                                  message: '완료하지 않은 운동이 있어요🤓\n 마저 진행할까요?',
-                                  confirmText: '네, 마저할게요',
-                                  cancelText: '아니요, 그만할래요',
-                                  confirmOnTap: () {
-                                    setState(() {});
-                                    context.pop();
-                                  },
-                                  cancelOnTap: () async {
-                                    //완료!!!
-                                    try {
-                                      context.pop(); //dialog 닫기
-
-                                      await ref
-                                          .read(workoutProcessProvider(
-                                                  widget.workoutScheduleId)
-                                              .notifier)
-                                          .quitWorkout()
-                                          .then((value) {
-                                        context.pop(); // workout screen 닫기
-
-                                        GoRouter.of(context).pushNamed(
-                                          WorkoutFeedbackScreen.routeName,
-                                          pathParameters: {
-                                            'workoutScheduleId': widget
-                                                .workoutScheduleId
-                                                .toString(),
-                                          },
-                                          extra: widget.exercises,
-                                          queryParameters: {
-                                            'startDate':
-                                                DateFormat('yyyy-MM-dd')
-                                                    .format(widget.date),
-                                          },
-                                        );
-                                      });
-                                    } on Error catch (e) {
-                                      print(e);
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (context) =>
-                                            DialogWidgets.errorDialog(
-                                          message: '다시 시도해주세요',
-                                          confirmText: '확인',
-                                          confirmOnTap: () {
-                                            context.pop();
-                                          },
-                                        ),
-                                      );
-                                    }
-                                  },
-                                );
-                              },
-                            );
-                          }
-                        }
-                      });
-
-                      setState(() {});
+                      await _onTapNext(context, model);
                     },
                     child: Container(
                       width: size.width - 56,
@@ -546,21 +474,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               );
                             },
                             proccessOnTap: () async {
-                              await ref
-                                  .read(workoutProcessProvider(
-                                          widget.workoutScheduleId)
-                                      .notifier)
-                                  .nextWorkout()
-                                  .then((value) {
-                                if (value != null) {
-                                  if (value == -1) {
-                                  } else {
-                                    _uncompleteExerciseConfirmDialog(context);
-                                  }
-                                }
-                              });
-
-                              setState(() {});
+                              await _onTapNext(context, model);
                             },
                           )
                         // Timer
@@ -602,84 +516,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               );
                             },
                             proccessOnTap: () async {
-                              await ref
-                                  .read(workoutProcessProvider(
-                                          widget.workoutScheduleId)
-                                      .notifier)
-                                  .nextWorkout()
-                                  .then((value) {
-                                if (value != null) {
-                                  if (value == -1) {
-                                  } else {
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (context) {
-                                        return DialogWidgets.confirmDialog(
-                                          dismissable: false,
-                                          message:
-                                              '완료하지 않은 운동이 있어요🤓\n 마저 진행할까요?',
-                                          confirmText: '네, 마저할게요',
-                                          cancelText: '아니요, 그만할래요',
-                                          confirmOnTap: () {
-                                            setState(() {});
-                                            context.pop();
-                                          },
-                                          cancelOnTap: () async {
-                                            //완료!!!
-                                            try {
-                                              context.pop(); //dialog 닫기
-
-                                              await ref
-                                                  .read(workoutProcessProvider(
-                                                          widget
-                                                              .workoutScheduleId)
-                                                      .notifier)
-                                                  .quitWorkout()
-                                                  .then((value) {
-                                                context
-                                                    .pop(); // workout screen 닫기
-
-                                                GoRouter.of(context).pushNamed(
-                                                  WorkoutFeedbackScreen
-                                                      .routeName,
-                                                  pathParameters: {
-                                                    'workoutScheduleId': widget
-                                                        .workoutScheduleId
-                                                        .toString(),
-                                                  },
-                                                  extra: widget.exercises,
-                                                  queryParameters: {
-                                                    'startDate': DateFormat(
-                                                            'yyyy-MM-dd')
-                                                        .format(widget.date),
-                                                  },
-                                                );
-                                              });
-                                            } on Error catch (e) {
-                                              print(e);
-                                              showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder: (context) =>
-                                                    DialogWidgets.errorDialog(
-                                                  message: '다시 시도해주세요',
-                                                  confirmText: '확인',
-                                                  confirmOnTap: () {
-                                                    context.pop();
-                                                  },
-                                                ),
-                                              );
-                                            }
-                                          },
-                                        );
-                                      },
-                                    );
-                                  }
-                                }
-                              });
-
-                              setState(() {});
+                              await _onTapNext(context, model);
                             },
                             resetSet: () {},
                             refresh: () {
@@ -887,7 +724,48 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     );
   }
 
-  Future<dynamic> _uncompleteExerciseConfirmDialog(BuildContext context) {
+  Future<void> _onTapNext(
+      BuildContext context, WorkoutProcessModel model) async {
+    await ref
+        .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+        .nextWorkout()
+        .then((value) async {
+      if (value != null) {
+        if (value == -1) {
+          await ref
+              .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+              .quitWorkout()
+              .then((value) {
+            context.pop(); // workout screen 닫기
+
+            GoRouter.of(context).pushNamed(
+              WorkoutFeedbackScreen.routeName,
+              pathParameters: {
+                'workoutScheduleId': widget.workoutScheduleId.toString(),
+              },
+              extra: widget.exercises,
+              queryParameters: {
+                'startDate': DateFormat('yyyy-MM-dd').format(widget.date),
+              },
+            );
+          });
+        } else {
+          if (value == model.maxExerciseIndex &&
+              model.setInfoCompleteList[value] == model.maxSetInfoList[value]) {
+            for (int i = 0; i <= model.maxExerciseIndex; i++) {
+              if (model.setInfoCompleteList[i] != model.maxSetInfoList[i]) {
+                _showUncompleteExerciseDialog(context);
+              }
+            }
+          }
+        }
+      }
+    });
+
+    setState(() {});
+  }
+
+  Future<dynamic> _showUncompleteExerciseDialog(BuildContext context) {
     return showDialog(
       barrierDismissible: false,
       context: context,
@@ -925,9 +803,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 );
               });
             } on DioException catch (e) {
+              print(e);
               if (e.response!.statusCode == 409) {
                 context.pop(); // workout screen 닫기
-
                 GoRouter.of(context).pushNamed(
                   WorkoutFeedbackScreen.routeName,
                   pathParameters: {

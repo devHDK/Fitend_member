@@ -131,7 +131,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
     final model = state;
 
-    print(model.toJson());
+    // print(model.toJson());
 
     return WillPopScope(
       onWillPop: () async {

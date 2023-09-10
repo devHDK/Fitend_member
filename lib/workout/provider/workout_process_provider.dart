@@ -253,6 +253,7 @@ class WorkoutProcessStateNotifier
         //슈퍼세트 마지막 운동 X
         while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
             pstate.maxSetInfoList[pstate.exerciseIndex]) {
+          pstate.exerciseIndex += 1;
           print('exerciseIndex :: ${pstate.exerciseIndex}');
           if (pstate.groupCounts[
                   pstate.exercises[pstate.exerciseIndex].circuitGroupNum] ==
@@ -260,11 +261,11 @@ class WorkoutProcessStateNotifier
             final index = getUnCompleteSuperSet(
                 pstate.exercises[pstate.exerciseIndex].circuitGroupNum!);
 
-            print('index : $index');
-
             if (index != null) {
               pstate.exerciseIndex = index;
+              break;
             } else {
+              //superSet완료
               if (pstate.exerciseIndex < pstate.maxExerciseIndex) {
                 //마지막 운동이 아니라면
                 pstate.exerciseIndex += 1;
@@ -280,8 +281,7 @@ class WorkoutProcessStateNotifier
                 }
               }
             }
-            break;
-          }
+          } else {}
         }
       }
     } else {

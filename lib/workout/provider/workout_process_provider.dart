@@ -209,7 +209,7 @@ class WorkoutProcessStateNotifier
   // 다음 운동
   // return <= -1  => 모든 운동 완료,
   // return > -1 => exerciseIndex
-  int? nextWorkout() {
+  Future<int?> nextWorkout() async {
     final pstate = state as WorkoutProcessModel;
 
     if (pstate.exerciseIndex <= pstate.maxExerciseIndex &&

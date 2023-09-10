@@ -817,6 +817,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         BoxUtils.deleteTimerBox(timerWorkoutBox, widget.exercises);
         BoxUtils.deleteTimerBox(timerXMoreBox, widget.exercises);
         BoxUtils.deleteBox(workoutResultBox, widget.exercises);
+        
 
         processingExerciseIndexBox.whenData(
           (value) {

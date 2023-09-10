@@ -7,8 +7,8 @@ final hiveTimerXMoreRecordProvider = FutureProvider<Box>((ref) async {
   // final appDocumentDirectory = await getApplicationDocumentsDirectory();
   // await Hive.initFlutter(appDocumentDirectory.path);
 
-  await Hive.openBox<WorkoutRecordSimple>(timerXMoreRecordBox);
-  Box box = Hive.box<WorkoutRecordSimple>(timerXMoreRecordBox);
+  await Hive.openBox<WorkoutRecordSimple>(timerXMoreRecord);
+  Box box = Hive.box<WorkoutRecordSimple>(timerXMoreRecord);
 
   return box;
 });

@@ -54,8 +54,9 @@ final s3Url = F.appFlavor != Flavor.production
 const muscleImageUrl = 'public/targetMuscles/';
 
 String workoutRecordSimple = 'WorkoutRecords';
-String timerXOneRecordBox = 'timerXoneRecords';
-String timerXMoreRecordBox = 'timerXMoreRecords';
+String timerXOneRecord = 'timerXoneRecords';
+String timerXMoreRecord = 'timerXMoreRecords';
+String timerTotalTimeRecord = 'timerProcessTimeRecord';
 String workoutResult = 'workoutResult';
 String modifiedExercise = 'modifiedExercise';
 String workoutFeedback = 'WorkoutFeedback';

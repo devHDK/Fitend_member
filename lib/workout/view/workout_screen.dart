@@ -66,6 +66,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         ref
             .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
             .init(ref.read(workoutProvider(widget.workoutScheduleId).notifier));
+
+        Timer.periodic(const Duration(seconds: 1), (timer) {
+          ref
+              .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+              .putProcessTotalTime();
+
+          setState(() {});
+        });
       }
     });
   }
@@ -126,6 +134,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     }
 
     if (state is! WorkoutProcessModel) {
+      print('WorkoutProcessModel $state');
       return const Scaffold();
     }
 
@@ -198,6 +207,24 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               padding: EdgeInsets.only(right: 18.0),
             ),
           ],
+          title: Container(
+            width: 80,
+            height: 27,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white.withOpacity(0.8),
+            ),
+            child: Center(
+              child: Text(
+                '${(model.totalTime / 60).floor().toString().padLeft(2, '0')} : ${(model.totalTime % 60).floor().toString().padLeft(2, '0')}',
+                style: s1SubTitle.copyWith(
+                  color: Colors.black,
+                  fontSize: 20,
+                  height: 1.1,
+                ),
+              ),
+            ),
+          ),
         ),
         extendBodyBehindAppBar: true,
         body: Stack(

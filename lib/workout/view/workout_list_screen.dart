@@ -61,7 +61,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     Future.delayed(const Duration(milliseconds: 300), () {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
-          if (initial) {
+          if (initial && mounted) {
             if ((workoutModel.isProcessing != null &&
                     workoutModel.isProcessing!) &&
                 !isPoped &&

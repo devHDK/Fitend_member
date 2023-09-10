@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_record.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/utils/hive_box_utils.dart';
@@ -38,6 +40,8 @@ final workoutProvider =
   final AsyncValue<Box> exerciseIndexBox = ref.watch(hiveExerciseIndexProvider);
   final AsyncValue<Box> processingExerciseIndexBox =
       ref.watch(hiveExerciseIndexProvider);
+  final AsyncValue<Box> processTotalTimeBox =
+      ref.watch(hiveProcessTotalTimeBox);
 
   return WorkoutStateNotifier(
     workoutResultProvider: provider,
@@ -51,6 +55,7 @@ final workoutProvider =
     exerciseIndexBox: exerciseIndexBox,
     workoutFeedbackBox: workoutFeedbackBox,
     processingExerciseIndexBox: processingExerciseIndexBox,
+    processTotalTimeBox: processTotalTimeBox,
   );
 });
 
@@ -66,6 +71,7 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
   final AsyncValue<Box> exerciseIndexBox;
   final AsyncValue<Box> workoutFeedbackBox;
   final AsyncValue<Box> processingExerciseIndexBox;
+  final AsyncValue<Box> processTotalTimeBox;
 
   WorkoutStateNotifier({
     required this.repository,
@@ -79,6 +85,7 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
     required this.exerciseIndexBox,
     required this.workoutFeedbackBox,
     required this.processingExerciseIndexBox,
+    required this.processTotalTimeBox,
   }) : super(WorkoutModelLoading()) {
     getWorkout(id: id);
   }
@@ -189,6 +196,8 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
         }
       }
 
+      print(response.toJson());
+
       state = response;
     } on DioException {
       state = WorkoutModelError(message: '데이터를 불러올수없습니다');
@@ -295,6 +304,12 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
     BoxUtils.deleteBox(workoutRecordForResultBox, pstate.exercises);
 
     exerciseIndexBox.whenData((value) {
+      value.delete(
+        id,
+      );
+    });
+
+    processTotalTimeBox.whenData((value) {
       value.delete(
         id,
       );

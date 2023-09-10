@@ -17,6 +17,7 @@ class WorkoutProcessModel extends WorkoutProcessModelBase {
   List<Exercise> modifiedExercises;
   bool workoutFinished;
   Map<int, int> groupCounts;
+  int totalTime;
 
   WorkoutProcessModel({
     required this.exerciseIndex,
@@ -27,6 +28,7 @@ class WorkoutProcessModel extends WorkoutProcessModelBase {
     required this.modifiedExercises,
     required this.workoutFinished,
     required this.groupCounts,
+    required this.totalTime,
   });
 
   WorkoutProcessModel copyWith({
@@ -39,6 +41,7 @@ class WorkoutProcessModel extends WorkoutProcessModelBase {
     List<Exercise>? modifiedExercises,
     bool? workoutFinished,
     Map<int, int>? groupCounts,
+    int? totalTime,
   }) =>
       WorkoutProcessModel(
         exerciseIndex: exerciseIndex ?? this.exerciseIndex,
@@ -49,6 +52,7 @@ class WorkoutProcessModel extends WorkoutProcessModelBase {
         modifiedExercises: modifiedExercises ?? this.modifiedExercises,
         workoutFinished: workoutFinished ?? this.workoutFinished,
         groupCounts: groupCounts ?? this.groupCounts,
+        totalTime: totalTime ?? this.totalTime,
       );
 
   factory WorkoutProcessModel.fromJson(Map<String, dynamic> json) =>

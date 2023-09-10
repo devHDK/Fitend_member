@@ -8,9 +8,9 @@ final hiveTimerRecordProvider = FutureProvider<Box>((ref) async {
   // await Hive.initFlutter(appDocumentDirectory.path);
   // Hive.registerAdapter<SetInfo>(SetInfoAdapter());
 
-  await Hive.openBox<SetInfo>(timerXOneRecordBox);
+  await Hive.openBox<SetInfo>(timerXOneRecord);
 
-  Box box = Hive.box<SetInfo>(timerXOneRecordBox);
+  Box box = Hive.box<SetInfo>(timerXOneRecord);
 
   return box;
 });

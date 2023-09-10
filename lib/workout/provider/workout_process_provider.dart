@@ -3,6 +3,7 @@ import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart'
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_record.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
 import 'package:fitend_member/common/utils/hive_box_utils.dart';
@@ -30,6 +31,8 @@ final workoutProcessProvider = StateNotifierProvider.family<
   final AsyncValue<Box> modifiedExerciseBox =
       ref.watch(hiveModifiedExerciseProvider);
   final AsyncValue<Box> exerciseIndexBox = ref.watch(hiveExerciseIndexProvider);
+  final AsyncValue<Box> processTotalTimeBox =
+      ref.watch(hiveProcessTotalTimeBox);
 
   return WorkoutProcessStateNotifier(
     repository: repository,
@@ -41,6 +44,7 @@ final workoutProcessProvider = StateNotifierProvider.family<
     timerXMoreBox: timerXMoreBox,
     modifiedExerciseBox: modifiedExerciseBox,
     exerciseIndexBox: exerciseIndexBox,
+    processTotalTimeBox: processTotalTimeBox,
   );
 });
 
@@ -55,6 +59,7 @@ class WorkoutProcessStateNotifier
   final AsyncValue<Box> timerXMoreBox;
   final AsyncValue<Box> modifiedExerciseBox;
   final AsyncValue<Box> exerciseIndexBox;
+  final AsyncValue<Box> processTotalTimeBox;
 
   WorkoutProcessStateNotifier({
     required this.repository,
@@ -66,6 +71,7 @@ class WorkoutProcessStateNotifier
     required this.timerXMoreBox,
     required this.modifiedExerciseBox,
     required this.exerciseIndexBox,
+    required this.processTotalTimeBox,
   }) : super(null) {
     // init(workoutProvider);
   }
@@ -86,6 +92,7 @@ class WorkoutProcessStateNotifier
       modifiedExercises: [],
       workoutFinished: false,
       groupCounts: {},
+      totalTime: 0,
     );
     List<Exercise> tempExercises = [];
     final workoutProviderState = workoutProvider.state as WorkoutModel;
@@ -164,7 +171,7 @@ class WorkoutProcessStateNotifier
       }
     }
 
-    Map<int, int> groupCounts =
+    tempState.groupCounts =
         circuitGroupNumList.fold({}, (Map<int, int> map, element) {
       if (!map.containsKey(element)) {
         map[element] = 1;
@@ -174,7 +181,16 @@ class WorkoutProcessStateNotifier
       return map;
     });
 
+    processTotalTimeBox.whenData((value) {
+      final record = value.get(id);
+      if (record != null) {
+        tempState.totalTime = record;
+      }
+    });
+
     workoutProvider.state = workoutProviderState.copyWith(isProcessing: true);
+
+    print('tempState ${tempState.toJson()}');
 
     state = WorkoutProcessModel(
       exerciseIndex: tempState.exerciseIndex,
@@ -184,7 +200,8 @@ class WorkoutProcessStateNotifier
       exercises: tempState.exercises,
       modifiedExercises: tempState.modifiedExercises,
       workoutFinished: tempState.workoutFinished,
-      groupCounts: groupCounts,
+      groupCounts: tempState.groupCounts,
+      totalTime: tempState.totalTime,
     );
   }
 
@@ -454,6 +471,12 @@ class WorkoutProcessStateNotifier
       );
     });
 
+    processTotalTimeBox.whenData((value) {
+      value.delete(
+        id,
+      );
+    });
+
     if (workoutProvider.state is WorkoutModel) {
       final tempWorkoutState = workoutProvider.state as WorkoutModel;
 
@@ -630,6 +653,14 @@ class WorkoutProcessStateNotifier
     return null;
   }
 
-  // 총 운동 시간 추가
-  // 이전에 수행하지 않은 운동 이동
+  // 총 운동 시간 ++
+  void putProcessTotalTime() {
+    final pstate = state as WorkoutProcessModel;
+    pstate.totalTime += 1;
+
+    print(pstate.totalTime);
+    processTotalTimeBox.whenData((value) => value.put(id, pstate.totalTime));
+
+    state = pstate;
+  }
 }

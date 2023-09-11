@@ -351,7 +351,7 @@ class WorkoutProcessStateNotifier
             workoutPlanId: pstate.exercises[pstate.exerciseIndex].workoutPlanId,
             setInfo: [
               ...record.setInfo,
-              pstate.exercises[pstate.exerciseIndex]
+              pstate.modifiedExercises[pstate.exerciseIndex]
                   .setInfo[pstate.setInfoCompleteList[pstate.exerciseIndex]],
             ],
           ),
@@ -363,7 +363,7 @@ class WorkoutProcessStateNotifier
           WorkoutRecordSimple(
             workoutPlanId: pstate.exercises[pstate.exerciseIndex].workoutPlanId,
             setInfo: [
-              pstate.exercises[pstate.exerciseIndex]
+              pstate.modifiedExercises[pstate.exerciseIndex]
                   .setInfo[pstate.setInfoCompleteList[pstate.exerciseIndex]],
             ],
           ),
@@ -388,6 +388,9 @@ class WorkoutProcessStateNotifier
   void exerciseChange(int exerciseIndex) {
     final pstate = state as WorkoutProcessModel;
     pstate.exerciseIndex = exerciseIndex;
+
+    exerciseIndexBox.whenData((value) => value.put(id, exerciseIndex));
+
     state = pstate;
   }
 
@@ -470,6 +473,8 @@ class WorkoutProcessStateNotifier
   void resetWorkoutProcess() {
     final pstate = state as WorkoutProcessModel;
 
+    print(pstate.exercises[0].setInfo[0].toJson());
+
     BoxUtils.deleteBox(workoutRecordSimpleBox, pstate.exercises);
     BoxUtils.deleteBox(modifiedExerciseBox, pstate.exercises);
     BoxUtils.deleteTimerBox(timerWorkoutBox, pstate.exercises);
@@ -510,9 +515,10 @@ class WorkoutProcessStateNotifier
     pstate.modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex]
         .weight = weight;
 
-    print(pstate
-        .modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex].weight);
-
+    print(
+        'modifiedWeight ${pstate.modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex].weight}');
+    print(
+        'Weight ${pstate.exercises[pstate.exerciseIndex].setInfo[setInfoIndex].weight}');
     //로컬 저장
     modifiedExerciseBox.whenData((value) {
       final record =
@@ -572,7 +578,7 @@ class WorkoutProcessStateNotifier
     state = pstate;
   }
 
-  void modifiedSecondsGoal(int seconds, int setInfoIndex) {
+  void modifiedSecondsTarget(int seconds, int setInfoIndex) {
     final pstate = state as WorkoutProcessModel;
 
     pstate.modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex]
@@ -584,7 +590,7 @@ class WorkoutProcessStateNotifier
           value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
 
       if (record is Exercise) {
-        record.setInfo[setInfoIndex].reps = seconds;
+        record.setInfo[setInfoIndex].seconds = seconds;
         value.put(pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
       }
     });
@@ -594,8 +600,6 @@ class WorkoutProcessStateNotifier
 
   void modifiedSecondsRecord(int seconds, int setInfoIndex) {
     final pstate = state as WorkoutProcessModel;
-    print(seconds);
-
     timerXMoreBox.whenData((value) {
       final record =
           value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
@@ -669,7 +673,7 @@ class WorkoutProcessStateNotifier
     final pstate = state as WorkoutProcessModel;
     pstate.totalTime += 1;
 
-    print(pstate.totalTime);
+    // print(pstate.totalTime);
     processTotalTimeBox.whenData((value) => value.put(id, pstate.totalTime));
 
     state = pstate;

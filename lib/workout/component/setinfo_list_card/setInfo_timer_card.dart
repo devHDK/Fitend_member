@@ -163,7 +163,7 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                                       .read(workoutProcessProvider(
                                               widget.workoutScheduleId)
                                           .notifier)
-                                      .modifiedSecondsGoal(
+                                      .modifiedSecondsTarget(
                                           seconds, widget.setInfoIndex);
 
                                   widget.refresh();

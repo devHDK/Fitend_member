@@ -49,7 +49,7 @@ class _HexagonPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_HexagonPainter oldDelegate) {
-    return oldDelegate.color != color;
+    return oldDelegate.color != color || oldDelegate.lineColor != lineColor;
   }
 
   @override

@@ -4,6 +4,7 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
+import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -37,12 +38,11 @@ class WorkoutCard extends ConsumerStatefulWidget {
 class _WorkoutCardState extends ConsumerState<WorkoutCard> {
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<Box> timerRecordBox = ref.watch(hiveTimerRecordProvider);
+    final AsyncValue<Box> timerRecordBox =
+        ref.watch(hiveTimerXMoreRecordProvider);
     final AsyncValue<Box> modifiedBox = ref.watch(hiveModifiedExerciseProvider);
     final AsyncValue<Box> recordSimpleBox =
         ref.watch(hiveWorkoutRecordSimpleProvider);
-
-    print('completeSetCount ${widget.completeSetCount}');
 
     List<Widget> countList = [];
     List<Widget> firstList = [];
@@ -55,11 +55,14 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
     if ((widget.exercise.trackingFieldId == 3 ||
             widget.exercise.trackingFieldId == 4) &&
         widget.exercise.setInfo.length == 1) {
+      print(
+          'widget.exercise.setInfo[0].seconds : ${widget.exercise.setInfo[0].seconds}');
+
       timerRecordBox.whenData(
         (value) {
           final record = value.get(widget.exercise.workoutPlanId);
-          if (record != null && record is SetInfo) {
-            timerSetInfo = record;
+          if (record != null && record is WorkoutRecordSimple) {
+            timerSetInfo = record.setInfo[0];
           } else {
             timerSetInfo = SetInfo(index: 1, seconds: 0);
           }
@@ -141,7 +144,9 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                             value: timerSetInfo.seconds == null
                                 ? 0.0
                                 : (timerSetInfo.seconds! /
-                                    widget.exercise.setInfo[0].seconds!),
+                                    (modifiedSetInfo.seconds == 0
+                                        ? widget.exercise.setInfo[0].seconds!
+                                        : modifiedSetInfo.seconds!)),
                             backgroundColor: LIGHT_GRAY_COLOR,
                             valueColor: const AlwaysStoppedAnimation<Color>(
                                 POINT_COLOR),
@@ -151,8 +156,11 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                       Positioned(
                         left: 92,
                         child: Text(
-                          DataUtils.getTimeStringMinutes(
-                              widget.exercise.setInfo[index].seconds!),
+                          modifiedSetInfo.seconds! == 0
+                              ? DataUtils.getTimeStringMinutes(
+                                  widget.exercise.setInfo[0].seconds!)
+                              : DataUtils.getTimeStringMinutes(
+                                  modifiedSetInfo.seconds!),
                           style: s2SubTitle.copyWith(
                             fontSize: 10,
                             color: index <= widget.completeSetCount - 1
@@ -293,6 +301,8 @@ class _RenderBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print('Renderbody : ${exercise.setInfo[0].seconds}');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -311,36 +321,22 @@ class _RenderBody extends StatelessWidget {
         const SizedBox(
           height: 8,
         ),
-        if (modifiedSetInfo!.seconds == 0 || modifiedSetInfo!.seconds == null)
-          Text(
-            exercise.setInfo.length > 1 ||
-                    exercise.trackingFieldId == 1 ||
-                    exercise.trackingFieldId == 2
-                ? '${exercise.setInfo.length} SET'
-                : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
-                        (exercise.setInfo[0].seconds! % 60) > 0
-                    ? '${(exercise.setInfo[0].seconds! / 60).floor()}분 ${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초'
-                    : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
-                            (exercise.setInfo[0].seconds! % 60) == 0
-                        ? '${(exercise.setInfo[0].seconds! / 60).floor()}분'
-                        : '${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초',
-            style: s2SubTitle.copyWith(
-              color: LIGHT_GRAY_COLOR,
-            ),
+        Text(
+          exercise.setInfo.length > 1 ||
+                  exercise.trackingFieldId == 1 ||
+                  exercise.trackingFieldId == 2
+              ? '${exercise.setInfo.length} SET'
+              : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
+                      (exercise.setInfo[0].seconds! % 60) > 0
+                  ? '${(exercise.setInfo[0].seconds! / 60).floor()}분 ${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초'
+                  : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
+                          (exercise.setInfo[0].seconds! % 60) == 0
+                      ? '${(exercise.setInfo[0].seconds! / 60).floor()}분'
+                      : '${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초',
+          style: s2SubTitle.copyWith(
+            color: LIGHT_GRAY_COLOR,
           ),
-        if (modifiedSetInfo!.seconds != null && modifiedSetInfo!.seconds! > 0)
-          Text(
-            (modifiedSetInfo!.seconds! / 60).floor() > 0 &&
-                    (modifiedSetInfo!.seconds! % 60) > 0
-                ? '${(modifiedSetInfo!.seconds! / 60).floor()}분 ${(modifiedSetInfo!.seconds! % 60).toString().padLeft(2, '0')}초'
-                : (modifiedSetInfo!.seconds! / 60).floor() > 0 &&
-                        (modifiedSetInfo!.seconds! % 60) == 0
-                    ? '${(modifiedSetInfo!.seconds! / 60).floor()}분'
-                    : '${(modifiedSetInfo!.seconds! % 60).toString().padLeft(2, '0')}초',
-            style: s2SubTitle.copyWith(
-              color: LIGHT_GRAY_COLOR,
-            ),
-          ),
+        ),
         const SizedBox(
           height: 12,
         ),

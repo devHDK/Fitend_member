@@ -108,7 +108,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
               .addProcessTotalTime(addSeconds);
 
-          totalTimerStart();
+          totalTimeTimer = Timer.periodic(
+            const Duration(seconds: 1),
+            onTickTotalTimer,
+          );
 
           setState(() {});
         }
@@ -171,13 +174,18 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 
   void totalTimerStart() {
-    totalTimeTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      ref
-          .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
-          .putProcessTotalTime();
+    totalTimeTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      onTickTotalTimer,
+    );
+  }
 
-      setState(() {});
-    });
+  void onTickTotalTimer(timer) {
+    ref
+        .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+        .putProcessTotalTime();
+
+    setState(() {});
   }
 
   @override
@@ -573,7 +581,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   .trackingFieldId ==
                               1) {
                             return SetInfoBoxForWeightReps(
-                              key: ValueKey(index),
                               workoutScheduleId: widget.workoutScheduleId,
                               initialReps: element.reps!,
                               initialWeight: element.weight!,
@@ -588,7 +595,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   .trackingFieldId ==
                               2) {
                             return SetInfoBoxForReps(
-                              key: ValueKey(index),
                               workoutScheduleId: widget.workoutScheduleId,
                               initialReps: element.reps!,
                               model: model,
@@ -599,7 +605,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             );
                           } else {
                             return SetInfoBoxForTimer(
-                              key: ValueKey(index),
                               workoutScheduleId: widget.workoutScheduleId,
                               initialSeconds: element.seconds!,
                               model: model,

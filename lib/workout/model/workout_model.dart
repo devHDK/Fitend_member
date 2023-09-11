@@ -1,4 +1,5 @@
 import 'package:fitend_member/exercise/model/exercise_model.dart';
+import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'workout_model.g.dart';
@@ -81,7 +82,26 @@ class WorkoutModel extends WorkoutModelBase {
       targetMuscleTypes: model.targetMuscleTypes,
       workoutTotalTime: model.workoutTotalTime,
       isWorkoutComplete: model.isWorkoutComplete,
-      exercises: model.exercises,
+      exercises: model.exercises.map((exercise) {
+        return Exercise(
+          workoutPlanId: exercise.workoutPlanId,
+          name: exercise.name,
+          description: exercise.description,
+          trackingFieldId: exercise.trackingFieldId,
+          trainerNickname: exercise.trainerNickname,
+          trainerProfileImage: exercise.trainerProfileImage,
+          targetMuscles: exercise.targetMuscles,
+          videos: exercise.videos,
+          setInfo: exercise.setInfo.map((e) {
+            return SetInfo(
+              index: e.index,
+              reps: e.reps,
+              seconds: e.seconds,
+              weight: e.weight,
+            );
+          }).toList(),
+        );
+      }).toList(),
       modifiedExercises: model.modifiedExercises,
       recordedExercises: model.recordedExercises,
       isRecord: model.isRecord,

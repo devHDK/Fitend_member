@@ -198,7 +198,28 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
 
       print(response.toJson());
 
-      state = response;
+      state = response.copyWith(
+        exercises: response.exercises.map((exercise) {
+          return Exercise(
+            workoutPlanId: exercise.workoutPlanId,
+            name: exercise.name,
+            description: exercise.description,
+            trackingFieldId: exercise.trackingFieldId,
+            trainerNickname: exercise.trainerNickname,
+            trainerProfileImage: exercise.trainerProfileImage,
+            targetMuscles: exercise.targetMuscles,
+            videos: exercise.videos,
+            setInfo: exercise.setInfo.map((e) {
+              return SetInfo(
+                index: e.index,
+                reps: e.reps,
+                seconds: e.seconds,
+                weight: e.weight,
+              );
+            }).toList(),
+          );
+        }).toList(),
+      );
     } on DioException {
       state = WorkoutModelError(message: '데이터를 불러올수없습니다');
     }
@@ -212,8 +233,26 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
       for (int i = 0; i < pstate.exercises.length; i++) {
         final exercise = value.get(pstate.exercises[i].workoutPlanId);
         if (exercise == null) {
+          final tempExercise = Exercise(
+            workoutPlanId: pstate.exercises[i].workoutPlanId,
+            name: pstate.exercises[i].name,
+            description: pstate.exercises[i].description,
+            trackingFieldId: pstate.exercises[i].trackingFieldId,
+            trainerNickname: pstate.exercises[i].trainerNickname,
+            trainerProfileImage: pstate.exercises[i].trainerProfileImage,
+            targetMuscles: pstate.exercises[i].targetMuscles,
+            videos: pstate.exercises[i].videos,
+            setInfo: pstate.exercises[i].setInfo.map((e) {
+              return SetInfo(
+                index: e.index,
+                reps: e.reps,
+                seconds: e.seconds,
+                weight: e.weight,
+              );
+            }).toList(),
+          );
           //저장된게 없으면 저장
-          value.put(pstate.exercises[i].workoutPlanId, pstate.exercises[i]);
+          value.put(pstate.exercises[i].workoutPlanId, tempExercise);
         }
       }
     });
@@ -285,8 +324,27 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
 
     modifiedExerciseBox.whenData(
       (value) {
-        for (var element in pstate.exercises) {
-          value.put(element.workoutPlanId, element);
+        for (var exercise in pstate.exercises) {
+          final tempExercise = Exercise(
+            workoutPlanId: exercise.workoutPlanId,
+            name: exercise.name,
+            description: exercise.description,
+            trackingFieldId: exercise.trackingFieldId,
+            trainerNickname: exercise.trainerNickname,
+            trainerProfileImage: exercise.trainerProfileImage,
+            targetMuscles: exercise.targetMuscles,
+            videos: exercise.videos,
+            setInfo: exercise.setInfo.map((e) {
+              return SetInfo(
+                index: e.index,
+                reps: e.reps,
+                seconds: e.seconds,
+                weight: e.weight,
+              );
+            }).toList(),
+          );
+
+          value.put(exercise.workoutPlanId, tempExercise);
         }
       },
     );

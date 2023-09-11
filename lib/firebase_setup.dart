@@ -62,5 +62,5 @@ Future<void> getToken() async {
   else {
     token = await FirebaseMessaging.instance.getToken();
   }
-  print("fcmToken : $token");
+  debugPrint("fcmToken : $token");
 }

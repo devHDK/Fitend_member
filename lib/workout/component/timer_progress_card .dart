@@ -1,11 +1,7 @@
-import 'dart:async';
-
-import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
-import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
@@ -92,7 +88,6 @@ class _WeightWrepsProgressCardState extends ConsumerState<TimerProgressCard> {
 
       if (record is WorkoutRecordSimple) {
         recordSetInfo = record.setInfo[widget.setInfoIndex];
-        print(recordSetInfo.seconds);
       }
     });
 

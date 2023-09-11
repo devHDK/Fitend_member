@@ -2,7 +2,6 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class SetInfoTextField extends StatefulWidget {
   final TextEditingController? controller;
@@ -66,7 +65,9 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
         fillColor: Colors.white,
         border: InputBorder.none,
       ),
-      onTapOutside: (event) => focusNode.unfocus(),
+      onTapOutside: (event) {
+        focusNode.unfocus();
+      },
       keyboardType: widget.textInputType,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(widget.allowedDigits)),

@@ -92,6 +92,9 @@ class WorkoutModel extends WorkoutModelBase {
           trainerProfileImage: exercise.trainerProfileImage,
           targetMuscles: exercise.targetMuscles,
           videos: exercise.videos,
+          circuitGroupNum: exercise.circuitGroupNum,
+          circuitSeq: exercise.circuitSeq,
+          setType: exercise.setType,
           setInfo: exercise.setInfo.map((e) {
             return SetInfo(
               index: e.index,

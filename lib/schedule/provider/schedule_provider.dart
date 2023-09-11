@@ -6,6 +6,7 @@ import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_pagenate_params.dart';
 import 'package:fitend_member/schedule/repository/reservation_schedule_repository.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final scheduleProvider =
@@ -70,7 +71,7 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
           ),
         );
       } on DioException catch (e) {
-        print('getReservationSchedule error : $e');
+        debugPrint('getReservationSchedule error : $e');
       }
 
       WorkoutScheduleModel? workoutResponse;
@@ -83,7 +84,7 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
           ),
         );
       } on DioException catch (e) {
-        print('getWorkoutSchedule error : $e');
+        debugPrint('getWorkoutSchedule error : $e');
       }
 
       List<ScheduleData> tempScheduleList = List.generate(
@@ -171,7 +172,7 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
         }
       }
     } catch (e) {
-      print('e : ScheduleModelError');
+      debugPrint('e : ScheduleModelError');
       state = ScheduleModelError(message: '데이터를 불러오지 못했습니다.');
     }
   }

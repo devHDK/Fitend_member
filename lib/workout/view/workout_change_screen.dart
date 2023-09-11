@@ -140,7 +140,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
                     }
                   },
                   error: (error, stackTrace) => completeSetCount = 0,
-                  loading: () => print('loading...'),
+                  loading: () => debugPrint('loading...'),
                 );
 
                 return GestureDetector(

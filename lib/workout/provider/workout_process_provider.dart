@@ -16,6 +16,7 @@ import 'package:fitend_member/workout/model/workout_process_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -191,8 +192,6 @@ class WorkoutProcessStateNotifier
 
     workoutProvider.state = workoutProviderState.copyWith(isProcessing: true);
 
-    print('tempState ${tempState.toJson()}');
-
     state = WorkoutProcessModel(
       exerciseIndex: tempState.exerciseIndex,
       maxExerciseIndex: tempState.maxExerciseIndex,
@@ -214,11 +213,7 @@ class WorkoutProcessStateNotifier
 
     if (pstate.exerciseIndex <= pstate.maxExerciseIndex &&
         pstate.setInfoCompleteList[pstate.exerciseIndex] <
-            pstate.maxSetInfoList[pstate.exerciseIndex] &&
-        (pstate.exercises[pstate.exerciseIndex].trackingFieldId == 1 ||
-            pstate.exercises[pstate.exerciseIndex].trackingFieldId == 2)) {
-      //timer 운동 제외! 0초로 이미 저장되있음
-
+            pstate.maxSetInfoList[pstate.exerciseIndex]) {
       _saveCompleteSet(workoutRecordSimpleBox);
     }
 
@@ -228,19 +223,17 @@ class WorkoutProcessStateNotifier
       pstate.setInfoCompleteList[pstate.exerciseIndex] += 1;
     }
 
-    print('setType : ${pstate.exercises[pstate.exerciseIndex].setType}');
-
     if (pstate.exercises[pstate.exerciseIndex].setType == 'superSet') {
       //슈퍼세트
-      print('superSet 진행');
+      debugPrint('superSet 진행');
       if (pstate.exercises[pstate.exerciseIndex].circuitSeq ==
           pstate.groupCounts[
               pstate.exercises[pstate.exerciseIndex].circuitGroupNum]) {
         //슈퍼세트 마지막 운동
-        print('superSet 마지막 운동');
+        debugPrint('superSet 마지막 운동');
         final index = getUnCompleteSuperSet(
             pstate.exercises[pstate.exerciseIndex].circuitGroupNum!);
-        print('index $index');
+        debugPrint('index $index');
 
         if (index != null) {
           pstate.exerciseIndex = index; //
@@ -258,13 +251,15 @@ class WorkoutProcessStateNotifier
                 break;
               }
             }
+          } else {
+            return pstate.maxExerciseIndex;
           }
         }
       } else {
         if (pstate.groupCounts[
                 pstate.exercises[pstate.exerciseIndex].circuitGroupNum] !=
             pstate.exercises[pstate.exerciseIndex].circuitSeq) {
-          print('superSet 진행');
+          debugPrint('superSet 진행');
           pstate.exerciseIndex += 1;
         }
 
@@ -272,7 +267,7 @@ class WorkoutProcessStateNotifier
         while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
             pstate.maxSetInfoList[pstate.exerciseIndex]) {
           pstate.exerciseIndex += 1;
-          print('exerciseIndex :: ${pstate.exerciseIndex}');
+          debugPrint('exerciseIndex :: ${pstate.exerciseIndex}');
           if (pstate.groupCounts[
                   pstate.exercises[pstate.exerciseIndex].circuitGroupNum] ==
               pstate.exercises[pstate.exerciseIndex].circuitSeq) {
@@ -297,9 +292,11 @@ class WorkoutProcessStateNotifier
                     break;
                   }
                 }
+              } else {
+                return pstate.maxExerciseIndex;
               }
             }
-          } else {}
+          }
         }
       }
     } else {
@@ -331,7 +328,10 @@ class WorkoutProcessStateNotifier
     //끝났는지 체크!
     if (!pstate.workoutFinished) {
       state = pstate;
-      return _checkLastExerciseRegular();
+
+      final ret = _checkLastExerciseRegular();
+
+      return ret;
     }
 
     return null;
@@ -442,6 +442,13 @@ class WorkoutProcessStateNotifier
       );
 
       pstate.workoutFinished = true;
+      if (workoutProvider.state is WorkoutModel) {
+        final tempWorkoutState = workoutProvider.state as WorkoutModel;
+
+        workoutProvider.state = tempWorkoutState.copyWith(
+          isProcessing: false,
+        );
+      }
       state = pstate;
 
       try {
@@ -466,14 +473,12 @@ class WorkoutProcessStateNotifier
         );
       }
     } on Error catch (e) {
-      print(e);
+      debugPrint('$e');
     }
   }
 
   void resetWorkoutProcess() {
     final pstate = state as WorkoutProcessModel;
-
-    print(pstate.exercises[0].setInfo[0].toJson());
 
     BoxUtils.deleteBox(workoutRecordSimpleBox, pstate.exercises);
     BoxUtils.deleteBox(modifiedExerciseBox, pstate.exercises);
@@ -515,10 +520,6 @@ class WorkoutProcessStateNotifier
     pstate.modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex]
         .weight = weight;
 
-    print(
-        'modifiedWeight ${pstate.modifiedExercises[pstate.exerciseIndex].setInfo[setInfoIndex].weight}');
-    print(
-        'Weight ${pstate.exercises[pstate.exerciseIndex].setInfo[setInfoIndex].weight}');
     //로컬 저장
     modifiedExerciseBox.whenData((value) {
       final record =
@@ -567,7 +568,6 @@ class WorkoutProcessStateNotifier
         final record =
             value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
         if (record is WorkoutRecordSimple) {
-          print(record.setInfo[0].reps);
           record.setInfo[setInfoIndex].reps = reps;
           value.put(
               pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
@@ -672,8 +672,6 @@ class WorkoutProcessStateNotifier
   void putProcessTotalTime() {
     final pstate = state as WorkoutProcessModel;
     pstate.totalTime += 1;
-
-    // print(pstate.totalTime);
     processTotalTimeBox.whenData((value) => value.put(id, pstate.totalTime));
 
     state = pstate;

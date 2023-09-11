@@ -4,7 +4,6 @@ import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/guide_video_player.dart';
-import 'package:fitend_member/common/component/workout_video_player.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -94,13 +93,17 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 
   @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
         if (isBackground) {
           resumedTime = DateTime.now();
-          debugPrint(
-              "time substraction ${resumedTime.difference(pausedTime).inSeconds}");
 
           int addSeconds = resumedTime.difference(pausedTime).inSeconds;
 
@@ -108,12 +111,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
               .addProcessTotalTime(addSeconds);
 
+          isBackground = false;
+
           totalTimeTimer = Timer.periodic(
             const Duration(seconds: 1),
             onTickTotalTimer,
           );
-
-          setState(() {});
         }
 
         break;
@@ -128,16 +131,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       case AppLifecycleState.detached:
         // print("app in detached");
         break;
+      case AppLifecycleState.hidden:
+        break;
     }
-  }
-
-  @override
-  void dispose() {
-    if (timer.isActive) {
-      timer.cancel();
-    }
-
-    super.dispose();
   }
 
   void onTooltipPressed() {
@@ -202,7 +198,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     }
 
     if (state is! WorkoutProcessModel) {
-      print('WorkoutProcessModel $state');
       return const Scaffold();
     }
 
@@ -305,7 +300,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 );
                               });
                             } on DioException catch (e) {
-                              print(e);
+                              debugPrint('$e');
                               if (e.response!.statusCode == 409) {
                                 context.pop(); // workout screen 닫기
                                 GoRouter.of(context).pushNamed(
@@ -581,6 +576,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   .trackingFieldId ==
                               1) {
                             return SetInfoBoxForWeightReps(
+                              key: ValueKey(
+                                  '${model.modifiedExercises[model.exerciseIndex].workoutPlanId}_$index'),
                               workoutScheduleId: widget.workoutScheduleId,
                               initialReps: element.reps!,
                               initialWeight: element.weight!,
@@ -595,6 +592,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   .trackingFieldId ==
                               2) {
                             return SetInfoBoxForReps(
+                              key: ValueKey(
+                                  '${model.modifiedExercises[model.exerciseIndex].workoutPlanId}_$index'),
                               workoutScheduleId: widget.workoutScheduleId,
                               initialReps: element.reps!,
                               model: model,
@@ -605,6 +604,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             );
                           } else {
                             return SetInfoBoxForTimer(
+                              key: ValueKey(
+                                  '${model.modifiedExercises[model.exerciseIndex].workoutPlanId}_$index'),
                               workoutScheduleId: widget.workoutScheduleId,
                               initialSeconds: element.seconds!,
                               model: model,
@@ -759,7 +760,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               model.setInfoCompleteList[value] == model.maxSetInfoList[value]) {
             for (int i = 0; i <= model.maxExerciseIndex; i++) {
               if (model.setInfoCompleteList[i] != model.maxSetInfoList[i]) {
-                _showUncompleteExerciseDialog(context);
+                _showUncompleteExerciseDialog(context, i);
+                break;
               }
             }
           }
@@ -770,7 +772,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     setState(() {});
   }
 
-  Future<dynamic> _showUncompleteExerciseDialog(BuildContext context) {
+  Future<dynamic> _showUncompleteExerciseDialog(
+      BuildContext context, int index) {
     return showDialog(
       barrierDismissible: false,
       context: context,
@@ -781,7 +784,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           confirmText: '네, 마저할게요',
           cancelText: '아니요, 그만할래요',
           confirmOnTap: () {
-            setState(() {});
+            ref
+                .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+                .exerciseChange(index);
+
             context.pop();
           },
           cancelOnTap: () async {
@@ -808,7 +814,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 );
               });
             } on DioException catch (e) {
-              print(e);
+              debugPrint('$e');
               if (e.response!.statusCode == 409) {
                 context.pop(); // workout screen 닫기
                 GoRouter.of(context).pushNamed(

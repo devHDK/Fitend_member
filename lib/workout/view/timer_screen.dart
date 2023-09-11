@@ -151,8 +151,6 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
       case AppLifecycleState.resumed:
         if (isBackground) {
           resumedTime = DateTime.now();
-          debugPrint(
-              "time substraction ${resumedTime.difference(pausedTime).inSeconds}");
 
           if (totalSeconds <= resumedTime.difference(pausedTime).inSeconds) {
             setState(() {
@@ -188,7 +186,6 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
       case AppLifecycleState.paused:
         if (isRunning) {
           pausedTime = DateTime.now();
-          print(pausedTime);
           isBackground = true;
 
           timer.cancel();
@@ -198,6 +195,8 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
         break;
       case AppLifecycleState.detached:
         // print("app in detached");
+        break;
+      case AppLifecycleState.hidden:
         break;
     }
   }

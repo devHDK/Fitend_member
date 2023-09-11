@@ -3,7 +3,6 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
-import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -55,9 +54,6 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
     if ((widget.exercise.trackingFieldId == 3 ||
             widget.exercise.trackingFieldId == 4) &&
         widget.exercise.setInfo.length == 1) {
-      print(
-          'widget.exercise.setInfo[0].seconds : ${widget.exercise.setInfo[0].seconds}');
-
       timerRecordBox.whenData(
         (value) {
           final record = value.get(widget.exercise.workoutPlanId);

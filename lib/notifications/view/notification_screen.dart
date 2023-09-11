@@ -62,7 +62,6 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
     final pref = await ref.read(sharedPrefsProvider);
     final isNeedUpdateNoti = SharedPrefUtils.getIsNeedUpdateNotification(pref);
 
-    print(isNeedUpdateNoti);
     if (isNeedUpdateNoti) {
       await ref.read(notificationProvider.notifier).paginate();
       await SharedPrefUtils.updateIsNeedUpdateNotification(pref, false);
@@ -80,6 +79,8 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
       case AppLifecycleState.paused:
         break;
       case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.hidden:
         break;
     }
   }

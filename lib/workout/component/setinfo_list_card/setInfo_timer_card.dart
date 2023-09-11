@@ -62,7 +62,6 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
 
       if (record is WorkoutRecordSimple) {
         recordSetInfo = record.setInfo[widget.setInfoIndex];
-        print(recordSetInfo.seconds);
       }
     });
 

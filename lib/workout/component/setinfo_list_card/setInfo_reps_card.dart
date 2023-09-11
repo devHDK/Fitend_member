@@ -40,7 +40,7 @@ class _SetInfoBoxForRepsState extends ConsumerState<SetInfoBoxForReps> {
 
       widget.refresh();
     } catch (e) {
-      print(e);
+      debugPrint('$e');
     }
   }
 

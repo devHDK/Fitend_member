@@ -63,7 +63,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   getMe() async {
     try {
       checkStoreVersion().then((storeVersion) async {
-        print(storeVersion);
+        debugPrint('$storeVersion');
         if (storeVersion != null) {
           bool isNeedStoreUpdate = storeVersion['needUpdate'];
           if (isNeedStoreUpdate) {

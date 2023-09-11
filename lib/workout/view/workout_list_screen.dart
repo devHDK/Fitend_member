@@ -6,17 +6,14 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
-import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
-import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
-import 'package:fitend_member/workout/provider/workout_result_provider.dart';
 import 'package:fitend_member/workout/view/workout_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -103,6 +100,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
       case AppLifecycleState.paused:
         break;
       case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.hidden:
         break;
     }
   }
@@ -315,7 +314,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                       }
                     },
                     error: (error, stackTrace) => completeSetCount = 0,
-                    loading: () => print('loading...'),
+                    loading: () => debugPrint('loading...'),
                   );
 
                   return GestureDetector(
@@ -543,11 +542,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             });
           },
           cancelOnTap: () async {
-            ref.read(workoutProvider(widget.id).notifier).resetWorkoutProcess();
+            // ref.read(workoutProvider(widget.id).notifier).resetWorkoutProcess();
             ref
-                .read(workoutProvider(widget.id).notifier)
-                .modifiedBoxDuplicate();
-
+                .read(workoutProcessProvider(widget.id).notifier)
+                .resetWorkoutProcess();
             ref.read(workoutProvider(widget.id).notifier).workoutSaveForStart();
 
             Navigator.of(context).pop();

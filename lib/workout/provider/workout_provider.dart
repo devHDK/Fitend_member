@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
@@ -16,10 +15,10 @@ import 'package:fitend_member/schedule/repository/workout_schedule_repository.da
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
+
 import 'package:fitend_member/workout/provider/workout_result_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:collection/collection.dart';
 
 final workoutProvider =
     StateNotifierProvider.family<WorkoutStateNotifier, WorkoutModelBase, int>(
@@ -148,7 +147,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
               for (int i = 0; i < response.exercises.length; i++) {
                 final record = value.get(response.exercises[i].workoutPlanId);
                 if (record != null && record is WorkoutRecordSimple) {
-                  print(record);
                   tempRecordList.add(record);
                 }
               }
@@ -176,7 +174,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
           for (int i = 0; i < response.exercises.length; i++) {
             final record = value.get(response.exercises[i].workoutPlanId);
             if (record != null && record is WorkoutRecordSimple) {
-              print(record);
               tempRecordList.add(record);
             }
           }
@@ -196,8 +193,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
         });
       }
 
-      print(response.toJson());
-
       state = response.copyWith(
         exercises: response.exercises.map((exercise) {
           return Exercise(
@@ -209,6 +204,9 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
             trainerProfileImage: exercise.trainerProfileImage,
             targetMuscles: exercise.targetMuscles,
             videos: exercise.videos,
+            circuitGroupNum: exercise.circuitGroupNum,
+            circuitSeq: exercise.circuitSeq,
+            setType: exercise.setType,
             setInfo: exercise.setInfo.map((e) {
               return SetInfo(
                 index: e.index,
@@ -229,6 +227,10 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
   void workoutSaveForStart() async {
     final pstate = state as WorkoutModel;
 
+    exerciseIndexBox.whenData((value) {
+      value.put(id, 0);
+    });
+
     modifiedExerciseBox.whenData((value) {
       for (int i = 0; i < pstate.exercises.length; i++) {
         final exercise = value.get(pstate.exercises[i].workoutPlanId);
@@ -242,6 +244,9 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
             trainerProfileImage: pstate.exercises[i].trainerProfileImage,
             targetMuscles: pstate.exercises[i].targetMuscles,
             videos: pstate.exercises[i].videos,
+            circuitGroupNum: pstate.exercises[i].circuitGroupNum,
+            circuitSeq: pstate.exercises[i].circuitSeq,
+            setType: pstate.exercises[i].setType,
             setInfo: pstate.exercises[i].setInfo.map((e) {
               return SetInfo(
                 index: e.index,
@@ -315,43 +320,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
     });
   }
 
-  void modifiedBoxDuplicate() {
-    final pstate = state as WorkoutModel;
-
-    exerciseIndexBox.whenData((value) {
-      value.put(id, 0);
-    });
-
-    modifiedExerciseBox.whenData(
-      (value) {
-        for (var exercise in pstate.exercises) {
-          final tempExercise = Exercise(
-            workoutPlanId: exercise.workoutPlanId,
-            name: exercise.name,
-            description: exercise.description,
-            trackingFieldId: exercise.trackingFieldId,
-            trainerNickname: exercise.trainerNickname,
-            trainerProfileImage: exercise.trainerProfileImage,
-            targetMuscles: exercise.targetMuscles,
-            videos: exercise.videos,
-            setInfo: exercise.setInfo.map((e) {
-              return SetInfo(
-                index: e.index,
-                reps: e.reps,
-                seconds: e.seconds,
-                weight: e.weight,
-              );
-            }).toList(),
-          );
-
-          value.put(exercise.workoutPlanId, tempExercise);
-        }
-      },
-    );
-
-    // state = pstate.copyWith(isProcessing: true);
-  }
-
   void resetWorkoutProcess() {
     final pstate = state as WorkoutModel;
 
@@ -372,10 +340,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
         id,
       );
     });
-
-    // state = pstate.copyWith(isProcessing: true);
-
-    // init(workoutProvider);
   }
 
   void updateWorkoutStateDate({

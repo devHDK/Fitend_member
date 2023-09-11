@@ -43,7 +43,7 @@ class _SetInfoBoxForWeightRepsState
         repsController.text = 99.toString();
       }
     } catch (e) {
-      print(e);
+      debugPrint('$e');
     }
   }
 
@@ -54,7 +54,7 @@ class _SetInfoBoxForWeightRepsState
         weightController.text = (999.0).toString();
       }
     } catch (e) {
-      print(e);
+      debugPrint('$e');
     }
   }
 

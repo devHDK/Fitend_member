@@ -6,7 +6,6 @@ import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import 'flavors.dart';
 
 class App extends ConsumerStatefulWidget {
@@ -17,7 +16,7 @@ class App extends ConsumerStatefulWidget {
 }
 
 class _AppState extends ConsumerState<App> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
@@ -42,13 +41,13 @@ class _AppState extends ConsumerState<App> {
         .getInitialMessage()
         .then((RemoteMessage? message) {
       if (message != null) {
-        print("getInitialMessage: ${message.messageId}");
+        debugPrint("getInitialMessage: ${message.messageId}");
         ref.read(routerProvider).goNamed(NotificationScreen.routeName);
       }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      print("onMessageOpenedApp: ${message.messageId}");
+      debugPrint("onMessageOpenedApp: ${message.messageId}");
       ref.read(routerProvider).goNamed(NotificationScreen.routeName);
     });
   }

@@ -122,7 +122,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
       setState(() {});
     } catch (e) {
-      print('e : getNotificationsConfirm');
+      debugPrint('e : getNotificationsConfirm');
     }
   }
 
@@ -148,6 +148,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
       case AppLifecycleState.paused:
         break;
       case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.hidden:
         break;
     }
   }

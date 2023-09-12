@@ -522,6 +522,18 @@ class WorkoutProcessStateNotifier
         BoxUtils.deleteTimerBox(timerXMoreBox, tempWorkoutState.exercises);
         BoxUtils.deleteBox(
             workoutRecordForResultBox, tempWorkoutState.exercises);
+
+        exerciseIndexBox.whenData((value) {
+          value.delete(
+            id,
+          );
+        });
+
+        processTotalTimeBox.whenData((value) {
+          value.delete(
+            id,
+          );
+        });
       }
     }
 

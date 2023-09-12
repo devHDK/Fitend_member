@@ -65,6 +65,28 @@ class _GetMeRepository implements GetMeRepository {
   }
 
   @override
+  Future<void> putFCMToken({required PutFcmToken putFcmToken}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'accessToken': 'true'};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(putFcmToken.toJson());
+    await _dio.fetch<void>(_setStreamType<void>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/users/fcmToken',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+  }
+
+  @override
   Future<void> changePassword({required PostChangePassword password}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

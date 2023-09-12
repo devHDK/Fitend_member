@@ -171,7 +171,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         isTooltipVisible = false;
       });
     } else {
-      debugPrint('onTick');
       setState(() {
         tooltipCount -= 1;
       });
@@ -211,10 +210,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     }
 
     final model = state;
-
-    // print(model.toJson());
-
-    print('tooltipSeq $tooltipSeq');
 
     return WillPopScope(
       onWillPop: () async {

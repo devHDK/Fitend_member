@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/update_checker.dart';
 import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
+import 'package:fitend_member/user/model/put_fcm_token.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/repository/auth_repository.dart';
 import 'package:fitend_member/user/repository/get_me_repository.dart';
@@ -83,6 +85,19 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
             // await FirebaseMessaging.instance
             //     .subscribeToTopic('user_${response.user.id}');
 
+            final diviceId = await _getDeviceInfo();
+            final token = await FirebaseMessaging.instance.getToken();
+
+            debugPrint('diviceId : $diviceId');
+            debugPrint('fcm token : $token');
+
+            await repository.putFCMToken(
+                putFcmToken: PutFcmToken(
+              deviceId: diviceId,
+              token: token!,
+              platform: Platform.isIOS ? 'ios' : 'android',
+            ));
+
             state = response;
           }
         }
@@ -126,6 +141,8 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
       final userResp = await repository.getMe();
 
       state = userResp;
+
+      //TODO: deviceId, fcm token update
 
       return userResp;
     } on DioException catch (e) {

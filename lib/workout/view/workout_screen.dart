@@ -29,6 +29,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:collection/collection.dart';
 
@@ -72,6 +73,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     DateTime.now().month,
     DateTime.now().day,
   );
+
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
 
   @override
   void initState() {
@@ -236,6 +241,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       onTooltipPressed();
                       tooltipSeq = 0;
                       setState(() {});
+
+                      if (isSwipeUp) {
+                        final index = model
+                                    .setInfoCompleteList[model.exerciseIndex] ==
+                                model.maxSetInfoList[model.exerciseIndex]
+                            ? model.setInfoCompleteList[model.exerciseIndex] - 1
+                            : model.setInfoCompleteList[model.exerciseIndex];
+
+                        itemScrollController.jumpTo(index: index);
+                      }
                     },
                     child: Container(
                       width: size.width - 56,
@@ -424,6 +439,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               }),
               onPanelOpened: () => setState(() {
                 isSwipeUp = true;
+
+                final index = model.setInfoCompleteList[model.exerciseIndex] ==
+                        model.maxSetInfoList[model.exerciseIndex]
+                    ? model.setInfoCompleteList[model.exerciseIndex] - 1
+                    : model.setInfoCompleteList[model.exerciseIndex];
+
+                itemScrollController.jumpTo(index: index);
               }),
               panel: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,6 +505,20 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     onTooltipPressed();
                                     tooltipSeq = 0;
                                     setState(() {});
+
+                                    if (isSwipeUp) {
+                                      final index = model.setInfoCompleteList[
+                                                  model.exerciseIndex] ==
+                                              model.maxSetInfoList[
+                                                  model.exerciseIndex]
+                                          ? model.setInfoCompleteList[
+                                                  model.exerciseIndex] -
+                                              1
+                                          : model.setInfoCompleteList[
+                                              model.exerciseIndex];
+
+                                      itemScrollController.jumpTo(index: index);
+                                    }
                                   }
                                 },
                               );
@@ -495,6 +531,19 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               onTooltipPressed();
                               tooltipSeq = 0;
                               setState(() {});
+                              if (isSwipeUp) {
+                                final index = model.setInfoCompleteList[
+                                            model.exerciseIndex] ==
+                                        model
+                                            .maxSetInfoList[model.exerciseIndex]
+                                    ? model.setInfoCompleteList[
+                                            model.exerciseIndex] -
+                                        1
+                                    : model.setInfoCompleteList[
+                                        model.exerciseIndex];
+
+                                itemScrollController.jumpTo(index: index);
+                              }
                             },
                           )
                         // Timer
@@ -532,6 +581,20 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     onTooltipPressed();
                                     tooltipSeq = 0;
                                     setState(() {});
+
+                                    if (isSwipeUp) {
+                                      final index = model.setInfoCompleteList[
+                                                  model.exerciseIndex] ==
+                                              model.maxSetInfoList[
+                                                  model.exerciseIndex]
+                                          ? model.setInfoCompleteList[
+                                                  model.exerciseIndex] -
+                                              1
+                                          : model.setInfoCompleteList[
+                                              model.exerciseIndex];
+
+                                      itemScrollController.jumpTo(index: index);
+                                    }
                                   }
                                 },
                               );
@@ -544,6 +607,19 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               onTooltipPressed();
                               tooltipSeq = 0;
                               setState(() {});
+                              if (isSwipeUp) {
+                                final index = model.setInfoCompleteList[
+                                            model.exerciseIndex] ==
+                                        model
+                                            .maxSetInfoList[model.exerciseIndex]
+                                    ? model.setInfoCompleteList[
+                                            model.exerciseIndex] -
+                                        1
+                                    : model.setInfoCompleteList[
+                                        model.exerciseIndex];
+
+                                itemScrollController.jumpTo(index: index);
+                              }
                             },
                             resetSet: () {},
                             refresh: () {
@@ -591,11 +667,26 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             kToolbarHeight +
                             195 +
                             5), // (appbar + toolbar + bottomSlide mini)
-                    child: ListView(
+                    child: ScrollablePositionedList.builder(
                       padding: EdgeInsets.zero,
-                      children: [
-                        ...model.modifiedExercises[model.exerciseIndex].setInfo
-                            .mapIndexed((index, element) {
+                      itemScrollController: itemScrollController,
+                      itemPositionsListener: itemPositionsListener,
+                      initialScrollIndex:
+                          model.setInfoCompleteList[model.exerciseIndex] ==
+                                  model.maxSetInfoList[model.exerciseIndex]
+                              ? model.maxSetInfoList[model.exerciseIndex] - 1
+                              : model.setInfoCompleteList[model.exerciseIndex],
+                      itemCount: model.modifiedExercises[model.exerciseIndex]
+                              .setInfo.length +
+                          1,
+                      itemBuilder: (context, index) {
+                        if (index !=
+                            model.modifiedExercises[model.exerciseIndex].setInfo
+                                .length) {
+                          final element = model
+                              .modifiedExercises[model.exerciseIndex]
+                              .setInfo[index];
+
                           if (model.modifiedExercises[model.exerciseIndex]
                                   .trackingFieldId ==
                               1) {
@@ -626,7 +717,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 setState(() {});
                               },
                             );
-                          } else {
+                          } else if (model
+                                      .modifiedExercises[model.exerciseIndex]
+                                      .trackingFieldId ==
+                                  3 ||
+                              model.modifiedExercises[model.exerciseIndex]
+                                      .trackingFieldId ==
+                                  4) {
                             return SetInfoBoxForTimer(
                               key: ValueKey(
                                   '${model.modifiedExercises[model.exerciseIndex].workoutPlanId}_$index'),
@@ -639,111 +736,132 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               },
                             );
                           }
-                        }).toList(),
-                        Container(
-                          color: LIGHT_GRAY_COLOR.withOpacity(0.15),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 28,
-                            ),
-                            child: Column(
-                              children: [
-                                SvgPicture.asset('asset/img/icon_more.svg'),
-                                InkWell(
-                                  onTap: () async {
-                                    Navigator.of(context)
-                                        .push(CupertinoPageRoute(
-                                      builder: (context) => WorkoutChangeScreen(
-                                        exerciseIndex: model.exerciseIndex,
-                                        workout: widget.workout,
+                        } else {
+                          return Container(
+                            color: LIGHT_GRAY_COLOR.withOpacity(0.15),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 28,
+                              ),
+                              child: Column(
+                                children: [
+                                  SvgPicture.asset('asset/img/icon_more.svg'),
+                                  InkWell(
+                                    onTap: () async {
+                                      Navigator.of(context)
+                                          .push(CupertinoPageRoute(
+                                        builder: (context) =>
+                                            WorkoutChangeScreen(
+                                          exerciseIndex: model.exerciseIndex,
+                                          workout: widget.workout,
+                                        ),
+                                      ))
+                                          .then(
+                                        (value) {
+                                          if (value != null) {
+                                            ref
+                                                .read(workoutProcessProvider(
+                                                        widget
+                                                            .workoutScheduleId)
+                                                    .notifier)
+                                                .exerciseChange(value);
+                                            isTooltipVisible = false;
+                                            tooltipCount = 0;
+                                            onTooltipPressed();
+                                            tooltipSeq = 0;
+                                            setState(() {});
+
+                                            if (isSwipeUp) {
+                                              final index = model
+                                                              .setInfoCompleteList[
+                                                          model
+                                                              .exerciseIndex] ==
+                                                      model.maxSetInfoList[
+                                                          model.exerciseIndex]
+                                                  ? model.setInfoCompleteList[
+                                                          model.exerciseIndex] -
+                                                      1
+                                                  : model.setInfoCompleteList[
+                                                      model.exerciseIndex];
+
+                                              itemScrollController.jumpTo(
+                                                  index: index);
+                                            }
+                                          }
+                                        },
+                                      );
+                                    },
+                                    child: SizedBox(
+                                      height: 55,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          SvgPicture.asset(
+                                              'asset/img/icon_list.svg'),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            '운동 리스트',
+                                            style: h5Headline.copyWith(
+                                              height: 1,
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                    ))
-                                        .then(
-                                      (value) {
-                                        if (value != null) {
-                                          ref
-                                              .read(workoutProcessProvider(
-                                                      widget.workoutScheduleId)
-                                                  .notifier)
-                                              .exerciseChange(value);
-                                          isTooltipVisible = false;
-                                          tooltipCount = 0;
-                                          onTooltipPressed();
-                                          tooltipSeq = 0;
-                                          setState(() {});
-                                        }
-                                      },
-                                    );
-                                  },
-                                  child: SizedBox(
-                                    height: 55,
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        SvgPicture.asset(
-                                            'asset/img/icon_list.svg'),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          '운동 리스트',
-                                          style: h5Headline.copyWith(
-                                            height: 1,
-                                          ),
-                                        )
-                                      ],
                                     ),
                                   ),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.of(context)
-                                        .push(CupertinoPageRoute(
-                                      builder: (context) => ExerciseScreen(
-                                          exercise: widget
-                                              .exercises[model.exerciseIndex]),
-                                    ));
-                                  },
-                                  child: SizedBox(
-                                    height: 55,
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: SvgPicture.asset(
-                                              'asset/img/icon_guide.svg'),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          '운동 가이드',
-                                          style: h5Headline.copyWith(
-                                            height: 1,
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(CupertinoPageRoute(
+                                        builder: (context) => ExerciseScreen(
+                                            exercise: widget.exercises[
+                                                model.exerciseIndex]),
+                                      ));
+                                    },
+                                    child: SizedBox(
+                                      height: 55,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          const SizedBox(
+                                            width: 10,
                                           ),
-                                        )
-                                      ],
+                                          SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: SvgPicture.asset(
+                                                'asset/img/icon_guide.svg'),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            '운동 가이드',
+                                            style: h5Headline.copyWith(
+                                              height: 1,
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 50,
-                                ),
-                              ],
+                                  const SizedBox(
+                                    height: 50,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
+                          );
+                        }
+                        return const SizedBox();
+                      },
                     ),
                   ),
                 ],

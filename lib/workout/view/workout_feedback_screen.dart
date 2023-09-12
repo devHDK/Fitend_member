@@ -306,7 +306,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                     width: 15,
                                     height: 15,
                                     child: CircularProgressIndicator(
-                                      color: POINT_COLOR,
+                                      color: Colors.white,
                                     ),
                                   ),
                           ),

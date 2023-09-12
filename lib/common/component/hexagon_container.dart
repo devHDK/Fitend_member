@@ -27,7 +27,7 @@ class HexagonContainer extends StatelessWidget {
           size: Size(size, size),
         ),
         Positioned(
-          left: 14,
+          left: label.length >= 2 ? 9 : 14,
           top: 2.5,
           child: Text(
             label,

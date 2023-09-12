@@ -5,6 +5,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:video_player/video_player.dart';
 
@@ -25,7 +26,6 @@ class GuideVideoPlayer extends StatefulWidget {
 class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
   VideoPlayerController? firstVideoController;
   VideoPlayerController? secondVideoController;
-  VideoPlayerController? thirdVideoController;
 
   Duration currentPosition = const Duration();
   bool isShowControlls = true;
@@ -36,15 +36,12 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
   void initState() {
     super.initState();
 
-    firstVideoInit();
-
-    firstVideoController!.play();
+    firstVideoInit().then((value) {
+      firstVideoController!.play();
+    });
 
     if (widget.videos.length > 1) {
       secondVideoInit();
-    }
-    if (widget.videos.length > 2) {
-      thirdVideoInit();
     }
   }
 
@@ -56,10 +53,6 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
       secondVideoController!.removeListener(secondVideoListener);
       secondVideoController!.dispose();
     }
-    if (widget.videos.length > 2) {
-      thirdVideoController!.removeListener(thirdVideoListener);
-      thirdVideoController!.dispose();
-    }
     super.dispose();
   }
 
@@ -68,17 +61,23 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.videos[0].url != widget.videos[0].url) {
-      firstVideoInit();
-      firstVideoController!.setVolume(0);
-      firstVideoController!.play();
-      firstVideoController!.setLooping(true);
+      firstVideoController!.removeListener(firstVideoListener);
+      firstVideoController!.dispose();
+
+      firstVideoInit().then((value) {
+        firstVideoController!.play();
+      });
     }
   }
 
-  void firstVideoInit() async {
+  Future<void> firstVideoInit() async {
     currentPosition = const Duration();
-    firstVideoController = VideoPlayerController.networkUrl(
-      Uri.parse(widget.videos[0].url),
+
+    final file = await DefaultCacheManager()
+        .getSingleFile(widget.videos[0].url, key: widget.videos[0].url);
+
+    firstVideoController = VideoPlayerController.file(
+      file,
       videoPlayerOptions: VideoPlayerOptions(
         mixWithOthers: true,
       ),
@@ -87,8 +86,8 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
       firstVideoController!.initialize(),
     ]);
 
-    firstVideoController!.setLooping(true);
-    firstVideoController!.setVolume(0.0);
+    await firstVideoController!.setLooping(true);
+    await firstVideoController!.setVolume(0.0);
 
     // slider 변경
 
@@ -109,9 +108,11 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
   }
 
   Future<void> secondVideoInit() async {
+    final file = await DefaultCacheManager()
+        .getSingleFile(widget.videos[1].url, key: widget.videos[1].url);
     //2번째 영상
-    secondVideoController = VideoPlayerController.networkUrl(
-      Uri.parse(widget.videos[1].url),
+    secondVideoController = VideoPlayerController.file(
+      file,
       videoPlayerOptions: VideoPlayerOptions(
         mixWithOthers: true,
       ),
@@ -138,40 +139,18 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
     }
   }
 
-  Future<void> thirdVideoInit() async {
-    //3번째 영상
-    thirdVideoController = VideoPlayerController.networkUrl(
-      Uri.parse(widget.videos[2].url),
-      videoPlayerOptions: VideoPlayerOptions(
-        mixWithOthers: true,
-      ),
-    );
-
-    await Future.wait([
-      thirdVideoController!.initialize(),
-    ]);
-
-    thirdVideoController!.setLooping(true);
-    thirdVideoController!.setVolume(0.0);
-
-    secondVideoController!.addListener(thirdVideoListener);
-  }
-
-  void thirdVideoListener() {
-    if (Platform.isAndroid &&
-        thirdVideoController!.value.duration > const Duration(seconds: 1) &&
-        thirdVideoController!.value.position >
-            (thirdVideoController!.value.duration -
-                const Duration(milliseconds: 500)) &&
-        thirdVideoController!.value.isPlaying) {
-      thirdVideoController!.seekTo(const Duration(milliseconds: 100));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (firstVideoController == null) {
-      return const CircularProgressIndicator();
+      return Container(
+        color: BACKGROUND_COLOR,
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: POINT_COLOR,
+            backgroundColor: BACKGROUND_COLOR,
+          ),
+        ),
+      );
     }
 
     return AspectRatio(
@@ -202,41 +181,26 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                       child: VideoPlayer(firstVideoController!),
                     ),
             ),
-            AnimatedOpacity(
-              opacity: isPlaying[1] ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 500),
-              child: widget.videos.length > 1 &&
-                      secondVideoController!.value.isInitialized
-                  ? Container(
-                      color: BACKGROUND_COLOR,
-                      child: VideoPlayer(secondVideoController!),
-                    )
-                  : Container(
-                      color: BACKGROUND_COLOR,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          color: POINT_COLOR,
-                          backgroundColor: BACKGROUND_COLOR,
+            if ((widget.videos.length > 1 && secondVideoController != null))
+              AnimatedOpacity(
+                opacity: isPlaying[1] ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 500),
+                child: widget.videos.length > 1 &&
+                        secondVideoController!.value.isInitialized
+                    ? Container(
+                        color: BACKGROUND_COLOR,
+                        child: VideoPlayer(secondVideoController!),
+                      )
+                    : Container(
+                        color: BACKGROUND_COLOR,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: POINT_COLOR,
+                            backgroundColor: BACKGROUND_COLOR,
+                          ),
                         ),
                       ),
-                    ),
-            ),
-            AnimatedOpacity(
-              opacity: isPlaying[2] ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 500),
-              child: widget.videos.length > 2 &&
-                      thirdVideoController!.value.isInitialized
-                  ? VideoPlayer(thirdVideoController!)
-                  : Container(
-                      color: BACKGROUND_COLOR,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          color: POINT_COLOR,
-                          backgroundColor: BACKGROUND_COLOR,
-                        ),
-                      ),
-                    ),
-            ),
+              ),
 
             if (isShowControlls)
               Positioned(
@@ -248,38 +212,6 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        if (widget.videos.length > 2)
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                for (int i = 0; i < isPlaying.length; i++) {
-                                  isPlaying[i] = false;
-                                }
-                                isPlaying[2] = true;
-                                firstVideoController!.pause();
-                                secondVideoController!.pause();
-                                thirdVideoController!.play();
-                              });
-                            },
-                            child: Container(
-                              height: 87,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
-                                color: isPlaying[2] ? POINT_COLOR : null,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(2),
-                                child: CustomNetworkImage(
-                                  imageUrl: widget.videos[2].thumbnail,
-                                  boxFit: BoxFit.fill,
-                                ),
-                              ),
-                            ),
-                          ),
-                        const SizedBox(
-                          height: 10,
-                        ),
                         if (widget.videos.length > 1)
                           GestureDetector(
                             onTap: () {
@@ -289,9 +221,6 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                                 }
                                 isPlaying[1] = true;
                                 firstVideoController!.pause();
-                                if (widget.videos.length > 2) {
-                                  thirdVideoController!.pause();
-                                }
                                 secondVideoController!.play();
                               });
                             },
@@ -324,10 +253,7 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                                 isPlaying[0] = true;
 
                                 if (widget.videos.length > 1) {
-                                  secondVideoController!.play();
-                                }
-                                if (widget.videos.length > 2) {
-                                  thirdVideoController!.pause();
+                                  secondVideoController!.pause();
                                 }
                                 firstVideoController!.play();
                               });
@@ -395,9 +321,6 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
 
                 if (widget.videos.length > 1) {
                   secondVideoController!.setPlaybackSpeed(doubleSpeed);
-                }
-                if (widget.videos.length > 2) {
-                  thirdVideoController!.setPlaybackSpeed(doubleSpeed);
                 }
               },
             );

@@ -70,8 +70,8 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
     if (oldWidget.videos[0].url != widget.videos[0].url) {
       firstVideoInit();
       firstVideoController!.setVolume(0);
-      firstVideoController!.setLooping(true);
       firstVideoController!.play();
+      firstVideoController!.setLooping(true);
     }
   }
 

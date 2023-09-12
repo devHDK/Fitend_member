@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
@@ -31,7 +32,6 @@ import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:collection/collection.dart';
 
 class WorkoutScreen extends ConsumerStatefulWidget {
   final List<Exercise> exercises;
@@ -276,6 +276,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButtonAnimator: null,
         appBar: AppBar(
+          centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           leading: Padding(
@@ -1082,7 +1083,7 @@ class _ShowTipState extends ConsumerState<_ShowTip> {
                   const SizedBox(
                     height: 8,
                   ),
-                  Text(
+                  AutoSizeText(
                     widget.tooltipSeq == 0 &&
                             model.setInfoCompleteList[model.exerciseIndex] == 0
                         ? '이번운동은 ${model.modifiedExercises[model.exerciseIndex].name} 입니다.\n$setInfoString'

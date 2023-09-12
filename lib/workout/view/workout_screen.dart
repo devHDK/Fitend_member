@@ -55,6 +55,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   bool isSwipeUp = false;
   bool isTooltipVisible = false;
   int tooltipCount = 0;
+  int tooltipSeq = 0;
   late Timer timer;
   late Timer totalTimeTimer;
   final panelController = PanelController();
@@ -88,6 +89,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             .init(ref.read(workoutProvider(widget.workoutScheduleId).notifier));
 
         totalTimerStart();
+
+        isTooltipVisible = false;
+        tooltipCount = 0;
+        onTooltipPressed();
+        tooltipSeq = 0;
       }
     });
   }
@@ -137,8 +143,15 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 
   void onTooltipPressed() {
+    if (tooltipSeq == 0) {
+      timer = Timer.periodic(
+        const Duration(seconds: 1),
+        onTick,
+      );
+      tooltipSeq++;
+    }
+
     if (isTooltipVisible) {
-      timer.cancel();
       setState(() {
         isTooltipVisible = !isTooltipVisible;
         tooltipCount = 0;
@@ -146,23 +159,19 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     } else {
       setState(() {
         isTooltipVisible = !isTooltipVisible;
-        tooltipCount = 3;
+        tooltipCount = 8;
       });
-      timer = Timer.periodic(
-        const Duration(seconds: 1),
-        onTick,
-      );
     }
   }
 
   void onTick(Timer timer) {
     if (tooltipCount == 0) {
-      //0초가 됬을때 저장
       timer.cancel();
       setState(() {
         isTooltipVisible = false;
       });
     } else {
+      debugPrint('onTick');
       setState(() {
         tooltipCount -= 1;
       });
@@ -205,6 +214,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
     // print(model.toJson());
 
+    print('tooltipSeq $tooltipSeq');
+
     return WillPopScope(
       onWillPop: () async {
         _pagePop();
@@ -221,6 +232,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   TextButton(
                     onPressed: () async {
                       await _onTapNext(context, model);
+
+                      isTooltipVisible = false;
+                      tooltipCount = 0;
+                      onTooltipPressed();
+                      tooltipSeq = 0;
+                      setState(() {});
                     },
                     child: Container(
                       width: size.width - 56,
@@ -401,7 +418,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               _ShowTip(
                 size: size,
                 widget: widget,
-                exerciseIndex: model.exerciseIndex,
+                tooltipSeq: tooltipSeq,
+                workoutScheduleId: widget.workoutScheduleId,
               ),
             SlidingUpPanel(
               key: ValueKey(widget.workoutScheduleId),
@@ -468,9 +486,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                                 widget.workoutScheduleId)
                                             .notifier)
                                         .exerciseChange(value);
-                                    // isTooltipVisible = false;
-                                    // tooltipCount = 0;
-                                    // onTooltipPressed();
+                                    isTooltipVisible = false;
+                                    tooltipCount = 0;
+                                    onTooltipPressed();
+                                    tooltipSeq = 0;
                                     setState(() {});
                                   }
                                 },
@@ -478,6 +497,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             },
                             proccessOnTap: () async {
                               await _onTapNext(context, model);
+
+                              isTooltipVisible = false;
+                              tooltipCount = 0;
+                              onTooltipPressed();
+                              tooltipSeq = 0;
+                              setState(() {});
                             },
                           )
                         // Timer
@@ -510,9 +535,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                                 widget.workoutScheduleId)
                                             .notifier)
                                         .exerciseChange(value);
-                                    // isTooltipVisible = false;
-                                    // tooltipCount = 0;
-                                    // onTooltipPressed();
+                                    isTooltipVisible = false;
+                                    tooltipCount = 0;
+                                    onTooltipPressed();
+                                    tooltipSeq = 0;
                                     setState(() {});
                                   }
                                 },
@@ -520,6 +546,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             },
                             proccessOnTap: () async {
                               await _onTapNext(context, model);
+
+                              isTooltipVisible = false;
+                              tooltipCount = 0;
+                              onTooltipPressed();
+                              tooltipSeq = 0;
+                              setState(() {});
                             },
                             resetSet: () {},
                             refresh: () {
@@ -642,9 +674,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                                       widget.workoutScheduleId)
                                                   .notifier)
                                               .exerciseChange(value);
-                                          // isTooltipVisible = false;
-                                          // tooltipCount = 0;
-                                          // onTooltipPressed();
+                                          isTooltipVisible = false;
+                                          tooltipCount = 0;
+                                          onTooltipPressed();
+                                          tooltipSeq = 0;
                                           setState(() {});
                                         }
                                       },
@@ -861,19 +894,46 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 }
 
-class _ShowTip extends StatelessWidget {
+class _ShowTip extends ConsumerStatefulWidget {
   const _ShowTip({
     required this.size,
     required this.widget,
-    required this.exerciseIndex,
+    required this.workoutScheduleId,
+    required this.tooltipSeq,
   });
 
   final Size size;
   final WorkoutScreen widget;
-  final int exerciseIndex;
+  final int workoutScheduleId;
+  final int tooltipSeq;
 
   @override
+  ConsumerState<_ShowTip> createState() => _ShowTipState();
+}
+
+class _ShowTipState extends ConsumerState<_ShowTip> {
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(workoutProcessProvider(widget.workoutScheduleId));
+
+    final model = state as WorkoutProcessModel;
+
+    String setInfoString = '';
+    final setInfo = model.modifiedExercises[model.exerciseIndex]
+        .setInfo[model.setInfoCompleteList[model.exerciseIndex]];
+    final setSeq = model.setInfoCompleteList[model.exerciseIndex] + 1;
+
+    if (model.modifiedExercises[model.exerciseIndex].trackingFieldId == 1) {
+      setInfoString =
+          '$setSeq세트는 ${setInfo.weight}kg으로 ${setInfo.reps}회 진행해주세요!';
+    } else if (model.modifiedExercises[model.exerciseIndex].trackingFieldId ==
+        2) {
+      setInfoString = '$setSeq세트는 ${setInfo.reps}회 진행해주세요!';
+    } else {
+      setInfoString =
+          '$setSeq세트는 ${DataUtils.getTimerString(setInfo.seconds!)} 진행해주세요!';
+    }
+
     return Positioned(
       left: 28,
       bottom: 250,
@@ -882,7 +942,7 @@ class _ShowTip extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
-            width: size.width,
+            width: widget.size.width,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: Colors.black.withOpacity(0.8),
@@ -893,7 +953,9 @@ class _ShowTip extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Tip 📣',
+                    widget.tooltipSeq == 0
+                        ? '${state.exercises[state.exerciseIndex].trainerNickname} 🗣️'
+                        : 'Tip 📣',
                     style: h5Headline.copyWith(
                       color: Colors.white,
                     ),
@@ -902,7 +964,15 @@ class _ShowTip extends StatelessWidget {
                     height: 8,
                   ),
                   Text(
-                    widget.exercises[exerciseIndex].description,
+                    widget.tooltipSeq == 0 &&
+                            model.setInfoCompleteList[model.exerciseIndex] == 0
+                        ? '이번운동은 ${model.modifiedExercises[model.exerciseIndex].name} 입니다.\n$setInfoString'
+                        : widget.tooltipSeq == 0 &&
+                                model.setInfoCompleteList[model.exerciseIndex] >
+                                    0
+                            ? setInfoString
+                            : model.modifiedExercises[model.exerciseIndex]
+                                .description,
                     style: const TextStyle(
                       color: Colors.white,
                     ),

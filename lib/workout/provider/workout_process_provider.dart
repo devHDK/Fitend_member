@@ -478,35 +478,52 @@ class WorkoutProcessStateNotifier
   }
 
   void resetWorkoutProcess() {
-    final pstate = state as WorkoutProcessModel;
+    if (state != null) {
+      final pstate = state as WorkoutProcessModel;
 
-    BoxUtils.deleteBox(workoutRecordSimpleBox, pstate.exercises);
-    BoxUtils.deleteBox(modifiedExerciseBox, pstate.exercises);
-    BoxUtils.deleteTimerBox(timerWorkoutBox, pstate.exercises);
-    BoxUtils.deleteTimerBox(timerXMoreBox, pstate.exercises);
-    BoxUtils.deleteBox(workoutRecordForResultBox, pstate.exercises);
+      BoxUtils.deleteBox(workoutRecordSimpleBox, pstate.exercises);
+      BoxUtils.deleteBox(modifiedExerciseBox, pstate.exercises);
+      BoxUtils.deleteTimerBox(timerWorkoutBox, pstate.exercises);
+      BoxUtils.deleteTimerBox(timerXMoreBox, pstate.exercises);
+      BoxUtils.deleteBox(workoutRecordForResultBox, pstate.exercises);
 
-    exerciseIndexBox.whenData((value) {
-      value.delete(
-        id,
-      );
-    });
+      exerciseIndexBox.whenData((value) {
+        value.delete(
+          id,
+        );
+      });
 
-    processTotalTimeBox.whenData((value) {
-      value.delete(
-        id,
-      );
-    });
+      processTotalTimeBox.whenData((value) {
+        value.delete(
+          id,
+        );
+      });
 
-    if (workoutProvider.state is WorkoutModel) {
-      final tempWorkoutState = workoutProvider.state as WorkoutModel;
+      if (workoutProvider.state is WorkoutModel) {
+        final tempWorkoutState = workoutProvider.state as WorkoutModel;
 
-      workoutProvider.state = tempWorkoutState.copyWith(
-        isProcessing: false,
-      );
+        workoutProvider.state = tempWorkoutState.copyWith(
+          isProcessing: false,
+        );
+      }
+
+      state = null;
+    } else {
+      if (workoutProvider.state is WorkoutModel) {
+        final tempWorkoutState = workoutProvider.state as WorkoutModel;
+
+        workoutProvider.state = tempWorkoutState.copyWith(
+          isProcessing: false,
+        );
+
+        BoxUtils.deleteBox(workoutRecordSimpleBox, tempWorkoutState.exercises);
+        BoxUtils.deleteBox(modifiedExerciseBox, tempWorkoutState.exercises);
+        BoxUtils.deleteTimerBox(timerWorkoutBox, tempWorkoutState.exercises);
+        BoxUtils.deleteTimerBox(timerXMoreBox, tempWorkoutState.exercises);
+        BoxUtils.deleteBox(
+            workoutRecordForResultBox, tempWorkoutState.exercises);
+      }
     }
-
-    state = null;
 
     // init(workoutProvider);
   }

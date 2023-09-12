@@ -55,4 +55,22 @@ class DataUtils {
 
     return ret;
   }
+
+  static String getTimerString(int seconds) {
+    String ret = '';
+
+    if ((seconds / 3600).floor() > 0) {
+      ret += '${(seconds / 3600).floor()}시간 ';
+    }
+
+    if (((seconds % 3600) / 60).floor() > 0) {
+      ret += '${((seconds % 3600) / 60).floor()}분 ';
+    }
+
+    if ((seconds % 60) > 0) {
+      ret += '${seconds % 60}초';
+    }
+
+    return ret;
+  }
 }

@@ -263,9 +263,16 @@ class WorkoutProcessStateNotifier
           pstate.exerciseIndex += 1;
         }
 
+        if (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
+                pstate.maxSetInfoList[pstate.exerciseIndex] &&
+            pstate.exerciseIndex == pstate.maxExerciseIndex) {
+          return pstate.maxExerciseIndex;
+        }
+
         //슈퍼세트 마지막 운동 X
         while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
-            pstate.maxSetInfoList[pstate.exerciseIndex]) {
+                pstate.maxSetInfoList[pstate.exerciseIndex] &&
+            pstate.exerciseIndex < pstate.maxExerciseIndex) {
           pstate.exerciseIndex += 1;
           debugPrint('exerciseIndex :: ${pstate.exerciseIndex}');
           if (pstate.groupCounts[
@@ -442,6 +449,7 @@ class WorkoutProcessStateNotifier
       );
 
       pstate.workoutFinished = true;
+
       if (workoutProvider.state is WorkoutModel) {
         final tempWorkoutState = workoutProvider.state as WorkoutModel;
 
@@ -461,6 +469,7 @@ class WorkoutProcessStateNotifier
                   workoutDuration: pstate.totalTime,
                 )));
       } on DioException catch (e) {
+        debugPrint('$e');
         throw DioException(
           requestOptions: e.requestOptions,
           type: DioExceptionType.badResponse,

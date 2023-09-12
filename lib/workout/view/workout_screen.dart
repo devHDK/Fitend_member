@@ -101,6 +101,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+
+    totalTimeTimer.cancel();
+
     super.dispose();
   }
 
@@ -296,38 +299,32 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       .notifier)
                                   .quitWorkout()
                                   .then((value) {
-                                context.pop(); // workout screen 닫기
+                                final pstate = ref
+                                    .read(workoutProvider(
+                                            widget.workoutScheduleId)
+                                        .notifier)
+                                    .state as WorkoutModel;
+
+                                final id = pstate.workoutScheduleId;
+                                final date = pstate.startDate;
+
+                                context.pop();
+                                context.pop();
 
                                 GoRouter.of(context).pushNamed(
                                   WorkoutFeedbackScreen.routeName,
                                   pathParameters: {
-                                    'workoutScheduleId':
-                                        widget.workoutScheduleId.toString(),
+                                    'workoutScheduleId': id.toString(),
                                   },
                                   extra: widget.exercises,
                                   queryParameters: {
                                     'startDate': DateFormat('yyyy-MM-dd')
-                                        .format(widget.date),
+                                        .format(DateTime.parse(date)),
                                   },
                                 );
                               });
                             } on DioException catch (e) {
                               debugPrint('$e');
-                              if (e.response!.statusCode == 409) {
-                                context.pop(); // workout screen 닫기
-                                GoRouter.of(context).pushNamed(
-                                  WorkoutFeedbackScreen.routeName,
-                                  pathParameters: {
-                                    'workoutScheduleId':
-                                        widget.workoutScheduleId.toString(),
-                                  },
-                                  extra: widget.exercises,
-                                  queryParameters: {
-                                    'startDate': DateFormat('yyyy-MM-dd')
-                                        .format(widget.date),
-                                  },
-                                );
-                              }
                             }
 
                             //완료!!!!!!!!!
@@ -770,16 +767,23 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
               .quitWorkout()
               .then((value) {
-            context.pop(); // workout screen 닫기
+            final pstate = ref
+                .read(workoutProvider(widget.workoutScheduleId).notifier)
+                .state as WorkoutModel;
+
+            final id = pstate.workoutScheduleId;
+            final date = pstate.startDate;
+            context.pop();
 
             GoRouter.of(context).pushNamed(
               WorkoutFeedbackScreen.routeName,
               pathParameters: {
-                'workoutScheduleId': widget.workoutScheduleId.toString(),
+                'workoutScheduleId': id.toString(),
               },
               extra: widget.exercises,
               queryParameters: {
-                'startDate': DateFormat('yyyy-MM-dd').format(widget.date),
+                'startDate':
+                    DateFormat('yyyy-MM-dd').format(DateTime.parse(date)),
               },
             );
           });
@@ -788,7 +792,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               model.setInfoCompleteList[value] == model.maxSetInfoList[value]) {
             for (int i = 0; i <= model.maxExerciseIndex; i++) {
               if (model.setInfoCompleteList[i] != model.maxSetInfoList[i]) {
-                _showUncompleteExerciseDialog(context, i);
+                _showUncompleteExerciseDialog(
+                  context,
+                  i,
+                );
                 break;
               }
             }
@@ -801,7 +808,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 
   Future<dynamic> _showUncompleteExerciseDialog(
-      BuildContext context, int index) {
+    BuildContext context,
+    int index,
+  ) {
     return showDialog(
       barrierDismissible: false,
       context: context,
@@ -821,41 +830,35 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           cancelOnTap: () async {
             //완료!!!
             try {
-              context.pop(); //dialog 닫기
-
               await ref
                   .read(
                       workoutProcessProvider(widget.workoutScheduleId).notifier)
                   .quitWorkout()
                   .then((value) {
-                context.pop(); // workout screen 닫기
+                final pstate = ref
+                    .read(workoutProvider(widget.workoutScheduleId).notifier)
+                    .state as WorkoutModel;
 
-                GoRouter.of(context).pushNamed(
+                final id = pstate.workoutScheduleId;
+                final date = pstate.startDate;
+
+                context.pop();
+                context.pop();
+
+                GoRouter.of(context).goNamed(
                   WorkoutFeedbackScreen.routeName,
                   pathParameters: {
-                    'workoutScheduleId': widget.workoutScheduleId.toString(),
+                    'workoutScheduleId': id.toString(),
                   },
                   extra: widget.exercises,
                   queryParameters: {
-                    'startDate': DateFormat('yyyy-MM-dd').format(widget.date),
+                    'startDate':
+                        DateFormat('yyyy-MM-dd').format(DateTime.parse(date)),
                   },
                 );
               });
             } on DioException catch (e) {
               debugPrint('$e');
-              if (e.response!.statusCode == 409) {
-                context.pop(); // workout screen 닫기
-                GoRouter.of(context).pushNamed(
-                  WorkoutFeedbackScreen.routeName,
-                  pathParameters: {
-                    'workoutScheduleId': widget.workoutScheduleId.toString(),
-                  },
-                  extra: widget.exercises,
-                  queryParameters: {
-                    'startDate': DateFormat('yyyy-MM-dd').format(widget.date),
-                  },
-                );
-              }
             }
           },
         );
@@ -912,10 +915,13 @@ class _ShowTipState extends ConsumerState<_ShowTip> {
     final state = ref.watch(workoutProcessProvider(widget.workoutScheduleId));
 
     final model = state as WorkoutProcessModel;
+    final index = model.setInfoCompleteList[model.exerciseIndex] ==
+            model.maxSetInfoList[model.exerciseIndex]
+        ? model.setInfoCompleteList[model.exerciseIndex] - 1
+        : model.setInfoCompleteList[model.exerciseIndex];
 
     String setInfoString = '';
-    final setInfo = model.modifiedExercises[model.exerciseIndex]
-        .setInfo[model.setInfoCompleteList[model.exerciseIndex]];
+    final setInfo = model.modifiedExercises[model.exerciseIndex].setInfo[index];
     final setSeq = model.setInfoCompleteList[model.exerciseIndex] + 1;
 
     if (model.modifiedExercises[model.exerciseIndex].trackingFieldId == 1) {

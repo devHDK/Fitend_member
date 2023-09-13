@@ -62,10 +62,10 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
 
     if (oldWidget.videos[0].url != widget.videos[0].url) {
       firstVideoController!.removeListener(firstVideoListener);
-      firstVideoController!.dispose();
-
-      firstVideoInit().then((value) {
-        firstVideoController!.play();
+      firstVideoController!.dispose().then((value) {
+        firstVideoInit().then((value) {
+          firstVideoController!.play();
+        });
       });
     }
   }
@@ -141,7 +141,8 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    if (firstVideoController == null) {
+    if (firstVideoController == null ||
+        firstVideoController!.value.isBuffering) {
       return Container(
         color: BACKGROUND_COLOR,
         child: const Center(
@@ -166,7 +167,8 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
             AnimatedOpacity(
               opacity: isPlaying[0] ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 500),
-              child: !firstVideoController!.value.isInitialized
+              child: !firstVideoController!.value.isInitialized ||
+                      firstVideoController!.value.isBuffering
                   ? Container(
                       color: BACKGROUND_COLOR,
                       child: const Center(
@@ -181,7 +183,8 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                       child: VideoPlayer(firstVideoController!),
                     ),
             ),
-            if ((widget.videos.length > 1 && secondVideoController != null))
+            if ((widget.videos.length > 1 && secondVideoController != null) &&
+                widget.isGuide)
               AnimatedOpacity(
                 opacity: isPlaying[1] ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 500),
@@ -202,7 +205,7 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                       ),
               ),
 
-            if (isShowControlls)
+            if (isShowControlls && widget.isGuide)
               Positioned(
                 left: 28,
                 bottom: 10,
@@ -212,7 +215,8 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        if (widget.videos.length > 1)
+                        if (widget.videos.length > 1 &&
+                            secondVideoController != null)
                           GestureDetector(
                             onTap: () {
                               setState(() {

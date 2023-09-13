@@ -236,94 +236,18 @@ class WorkoutProcessStateNotifier
         debugPrint('index $index');
 
         if (index != null) {
+          debugPrint('미완료 super세트');
           pstate.exerciseIndex = index; //
         } else {
-          if (pstate.exerciseIndex < pstate.maxExerciseIndex) {
-            //마지막 운동이 아니라면
-            pstate.exerciseIndex += 1;
-
-            while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
-                    pstate.maxSetInfoList[pstate.exerciseIndex] &&
-                pstate.exerciseIndex < pstate.maxExerciseIndex) {
-              pstate.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
-
-              if (pstate.exerciseIndex == pstate.maxExerciseIndex) {
-                break;
-              }
-            }
-          } else {
-            return pstate.maxExerciseIndex;
-          }
+          updateExerciseIndexRegular();
         }
       } else {
-        if (pstate.groupCounts[
-                pstate.exercises[pstate.exerciseIndex].circuitGroupNum] !=
-            pstate.exercises[pstate.exerciseIndex].circuitSeq) {
-          debugPrint('superSet 진행');
-          pstate.exerciseIndex += 1;
-        }
-
-        if (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
-                pstate.maxSetInfoList[pstate.exerciseIndex] &&
-            pstate.exerciseIndex == pstate.maxExerciseIndex) {
-          return pstate.maxExerciseIndex;
-        }
-
-        //슈퍼세트 마지막 운동 X
-        while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
-                pstate.maxSetInfoList[pstate.exerciseIndex] &&
-            pstate.exerciseIndex < pstate.maxExerciseIndex) {
-          pstate.exerciseIndex += 1;
-          debugPrint('exerciseIndex :: ${pstate.exerciseIndex}');
-          if (pstate.groupCounts[
-                  pstate.exercises[pstate.exerciseIndex].circuitGroupNum] ==
-              pstate.exercises[pstate.exerciseIndex].circuitSeq) {
-            final index = getUnCompleteSuperSet(
-                pstate.exercises[pstate.exerciseIndex].circuitGroupNum!);
-
-            if (index != null) {
-              pstate.exerciseIndex = index;
-              break;
-            } else {
-              //superSet완료
-              if (pstate.exerciseIndex < pstate.maxExerciseIndex) {
-                //마지막 운동이 아니라면
-                pstate.exerciseIndex += 1;
-
-                while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
-                        pstate.maxSetInfoList[pstate.exerciseIndex] &&
-                    pstate.exerciseIndex < pstate.maxExerciseIndex) {
-                  pstate.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
-
-                  if (pstate.exerciseIndex == pstate.maxExerciseIndex) {
-                    break;
-                  }
-                }
-              } else {
-                return pstate.maxExerciseIndex;
-              }
-            }
-          }
-        }
+        //superset 마지막 운동이 아닐경우
+        handleNonLastSuperSetExercise();
       }
     } else {
       //레귤러
-      if (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
-              pstate.maxSetInfoList[pstate.exerciseIndex] &&
-          pstate.exerciseIndex < pstate.maxExerciseIndex) {
-        //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
-
-        pstate.exerciseIndex += 1; //운동 변경
-        while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
-                pstate.maxSetInfoList[pstate.exerciseIndex] &&
-            pstate.exerciseIndex < pstate.maxExerciseIndex) {
-          pstate.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
-
-          if (pstate.exerciseIndex == pstate.maxExerciseIndex) {
-            break;
-          }
-        }
-      }
+      updateExerciseIndexRegular();
     }
 
     exerciseIndexBox.whenData(
@@ -332,16 +256,72 @@ class WorkoutProcessStateNotifier
       },
     );
 
-    //끝났는지 체크!
     if (!pstate.workoutFinished) {
-      state = pstate;
-
-      final ret = _checkLastExerciseRegular();
-
-      return ret;
+      if (pstate.exerciseIndex == pstate.maxExerciseIndex &&
+          pstate.setInfoCompleteList[pstate.exerciseIndex] ==
+              pstate.maxSetInfoList[pstate.exerciseIndex]) {
+        final ret =
+            _checkLastExercise(); //마지막 exercise를 완료했을때 완료안된 세트를 반환 전부 완료됬으면 -1 반환
+        return ret;
+      }
     }
 
+    state = pstate;
     return null;
+  }
+
+  void updateExerciseIndexRegular() {
+    final pstate = state as WorkoutProcessModel;
+
+    if (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
+            pstate.maxSetInfoList[pstate.exerciseIndex] &&
+        pstate.exerciseIndex < pstate.maxExerciseIndex) {
+      //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
+
+      pstate.exerciseIndex += 1; //운동 변경
+      while (pstate.setInfoCompleteList[pstate.exerciseIndex] ==
+              pstate.maxSetInfoList[pstate.exerciseIndex] &&
+          pstate.exerciseIndex < pstate.maxExerciseIndex) {
+        pstate.exerciseIndex += 1; // 완료된 세트라면 건너뛰기
+
+        if (pstate.exerciseIndex == pstate.maxExerciseIndex) {
+          break;
+        }
+      }
+    }
+  }
+
+  void handleNonLastSuperSetExercise() {
+    final pstate = state as WorkoutProcessModel;
+    bool done = false;
+
+    // 해당 운동 그룹 내에서 다음 순서의 운동을 찾는다.
+
+    final seq = pstate.exercises[pstate.exerciseIndex].circuitSeq!;
+    final groupNum = pstate.exercises[pstate.exerciseIndex].circuitGroupNum!;
+
+    int groupFirstIndex = getExerciseIndexByGroupNumSeq(groupNum, 1);
+    int index = getExerciseIndexByGroupNumSeq(groupNum, seq);
+    debugPrint('superset index : $index');
+    for (int i = index + 1;
+        i < groupFirstIndex + pstate.groupCounts[groupNum]!;
+        i++) {
+      if (pstate.setInfoCompleteList[i] != pstate.maxSetInfoList[i]) {
+        pstate.exerciseIndex = i;
+        done = true;
+        break;
+      }
+    }
+
+    if (!done) {
+      int? uncompleteIndex = getUnCompleteSuperSet(groupNum);
+
+      if (uncompleteIndex != null) {
+        pstate.exerciseIndex = uncompleteIndex;
+      } else {
+        updateExerciseIndexRegular();
+      }
+    }
   }
 
   //완료 운동 저장
@@ -381,7 +361,7 @@ class WorkoutProcessStateNotifier
   }
 
   //완료안된 운동이 있는지 체크후 수행하지 않은 운동인덱스 return
-  int _checkLastExerciseRegular() {
+  int _checkLastExercise() {
     final pstate = state as WorkoutProcessModel;
     for (int i = 0; i <= pstate.maxExerciseIndex; i++) {
       if (pstate.setInfoCompleteList[i] != pstate.maxSetInfoList[i]) {
@@ -389,6 +369,24 @@ class WorkoutProcessStateNotifier
       }
     }
     return -1;
+  }
+
+  //미완료 슈퍼세트
+  int? getUnCompleteSuperSet(int groupNum) {
+    final pstate = state as WorkoutProcessModel;
+
+    List<Exercise> superSetList = pstate.modifiedExercises
+        .where((element) => element.circuitGroupNum == groupNum)
+        .toList();
+
+    for (var exercise in superSetList) {
+      final index = getExerciseIndexByGroupNumSeq(
+          exercise.circuitGroupNum!, exercise.circuitSeq!);
+      if (pstate.setInfoCompleteList[index] < pstate.maxSetInfoList[index]) {
+        return index;
+      }
+    }
+    return null;
   }
 
   //운동 변경
@@ -686,24 +684,6 @@ class WorkoutProcessStateNotifier
         exercise.circuitGroupNum == groupNum && exercise.circuitSeq == seq);
 
     return exerciseIndex;
-  }
-
-  //미완료 슈퍼세트
-  int? getUnCompleteSuperSet(int groupNum) {
-    final pstate = state as WorkoutProcessModel;
-
-    List<Exercise> superSetList = pstate.modifiedExercises
-        .where((element) => element.circuitGroupNum == groupNum)
-        .toList();
-
-    for (var exercise in superSetList) {
-      final index = getExerciseIndexByGroupNumSeq(
-          exercise.circuitGroupNum!, exercise.circuitSeq!);
-      if (pstate.setInfoCompleteList[index] < pstate.maxSetInfoList[index]) {
-        return index;
-      }
-    }
-    return null;
   }
 
   // 총 운동 시간 ++

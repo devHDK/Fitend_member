@@ -559,8 +559,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             isSwipeUp: isSwipeUp,
                             exercise:
                                 model.modifiedExercises[model.exerciseIndex],
-                            setInfoIndex:
-                                model.setInfoCompleteList[model.exerciseIndex],
+                            setInfoIndex: model.setInfoCompleteList[
+                                        model.exerciseIndex] ==
+                                    model.maxSetInfoList[model.exerciseIndex]
+                                ? model.setInfoCompleteList[
+                                        model.exerciseIndex] -
+                                    1
+                                : model
+                                    .setInfoCompleteList[model.exerciseIndex],
                             listOnTap: () async {
                               await Navigator.of(context)
                                   .push(CupertinoPageRoute(
@@ -885,7 +891,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           await ref
               .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
               .quitWorkout()
-              .then((value) {
+              .then((_) {
             final pstate = ref
                 .read(workoutProvider(widget.workoutScheduleId).notifier)
                 .state as WorkoutModel;
@@ -907,18 +913,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             );
           });
         } else {
-          if (value == model.maxExerciseIndex &&
-              model.setInfoCompleteList[value] == model.maxSetInfoList[value]) {
-            for (int i = 0; i <= model.maxExerciseIndex; i++) {
-              if (model.setInfoCompleteList[i] != model.maxSetInfoList[i]) {
-                _showUncompleteExerciseDialog(
-                  context,
-                  i,
-                );
-                break;
-              }
-            }
-          }
+          _showUncompleteExerciseDialog(
+            context,
+            value,
+          );
         }
       }
     });

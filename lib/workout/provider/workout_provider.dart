@@ -17,6 +17,7 @@ import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 
 import 'package:fitend_member/workout/provider/workout_result_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -118,6 +119,8 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
           }
         });
 
+        debugPrint('hasLocal $hasLocal');
+
         if (hasLocal) {
           List<WorkoutRecord> tempRecordList = [];
           workoutRecordForResultBox.whenData((value) {
@@ -134,15 +137,31 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
 
           workoutResultProvider.state = tempResultModel;
         } else {
-          //TODO:  getWorkoutResults 에서 local db 저장
           await workoutResultProvider.getWorkoutResults(workoutScheduleId: id);
 
           if (workoutResultProvider.state is WorkoutResultModel) {
             final workoutResultState =
                 workoutResultProvider.state as WorkoutResultModel;
 
+            debugPrint('${workoutResultState.workoutRecords[0].setInfo[0]}');
+
             //기록에 저장
             List<WorkoutRecordSimple> tempRecordList = [];
+
+            workoutRecordSimpleBox.whenData((value) {
+              for (var workoutRecord in workoutResultState.workoutRecords) {
+                final record = value.get(workoutRecord.workoutPlanId);
+                debugPrint('record : $record');
+                if (record == null) {
+                  value.put(
+                      workoutRecord.workoutPlanId,
+                      WorkoutRecordSimple(
+                          workoutPlanId: workoutRecord.workoutPlanId,
+                          setInfo: workoutRecord.setInfo));
+                }
+              }
+            });
+
             workoutRecordSimpleBox.whenData((value) {
               for (int i = 0; i < response.exercises.length; i++) {
                 final record = value.get(response.exercises[i].workoutPlanId);
@@ -150,7 +169,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
                   tempRecordList.add(record);
                 }
               }
-
               response.recordedExercises = tempRecordList;
             }); // 기록 목록 업데이트
           }

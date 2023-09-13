@@ -74,6 +74,11 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
             modifiedSetInfo = SetInfo(
                 index: record.setInfo[0].index,
                 seconds: record.setInfo[0].seconds);
+          } else {
+            modifiedSetInfo = SetInfo(
+              index: widget.exercise.setInfo[0].index,
+              seconds: widget.exercise.setInfo[0].seconds,
+            );
           }
         }
       });
@@ -152,11 +157,10 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                       Positioned(
                         left: 92,
                         child: Text(
-                          modifiedSetInfo.seconds! == 0
-                              ? DataUtils.getTimeStringMinutes(
-                                  widget.exercise.setInfo[0].seconds!)
+                          timerSetInfo.seconds == null
+                              ? DataUtils.getTimeStringMinutes(0)
                               : DataUtils.getTimeStringMinutes(
-                                  modifiedSetInfo.seconds!),
+                                  timerSetInfo.seconds!),
                           style: s2SubTitle.copyWith(
                             fontSize: 10,
                             color: index <= widget.completeSetCount - 1
@@ -322,13 +326,13 @@ class _RenderBody extends StatelessWidget {
                   exercise.trackingFieldId == 1 ||
                   exercise.trackingFieldId == 2
               ? '${exercise.setInfo.length} SET'
-              : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
-                      (exercise.setInfo[0].seconds! % 60) > 0
-                  ? '${(exercise.setInfo[0].seconds! / 60).floor()}분 ${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초'
-                  : (exercise.setInfo[0].seconds! / 60).floor() > 0 &&
-                          (exercise.setInfo[0].seconds! % 60) == 0
-                      ? '${(exercise.setInfo[0].seconds! / 60).floor()}분'
-                      : '${(exercise.setInfo[0].seconds! % 60).toString().padLeft(2, '0')}초',
+              : (modifiedSetInfo!.seconds! / 60).floor() > 0 &&
+                      (modifiedSetInfo!.seconds! % 60) > 0
+                  ? '${(modifiedSetInfo!.seconds! / 60).floor()}분 ${(modifiedSetInfo!.seconds! % 60).toString().padLeft(2, '0')}초'
+                  : (modifiedSetInfo!.seconds! / 60).floor() > 0 &&
+                          (modifiedSetInfo!.seconds! % 60) == 0
+                      ? '${(modifiedSetInfo!.seconds! / 60).floor()}분'
+                      : '${(modifiedSetInfo!.seconds! % 60).toString().padLeft(2, '0')}초',
           style: s2SubTitle.copyWith(
             color: LIGHT_GRAY_COLOR,
           ),

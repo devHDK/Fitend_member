@@ -53,6 +53,8 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
 
     final isNowSet = widget.setInfoIndex ==
         widget.model.setInfoCompleteList[widget.model.exerciseIndex];
+    final isDone = widget.setInfoIndex <
+        widget.model.setInfoCompleteList[widget.model.exerciseIndex];
 
     SetInfo recordSetInfo = SetInfo(index: widget.setInfoIndex + 1);
 
@@ -83,9 +85,16 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                   ),
                   HexagonContainer(
                     label: (widget.setInfoIndex + 1).toString(),
+                    iconFile:
+                        isDone ? 'asset/img/icon_check_setInfo.svg' : null,
                     labelColor: isNowSet ? Colors.black : GRAY_COLOR,
-                    color: isNowSet ? Colors.white : LIGHT_GRAY_COLOR,
-                    lineColor: isNowSet ? POINT_COLOR : LIGHT_GRAY_COLOR,
+                    color: isNowSet
+                        ? Colors.white
+                        : isDone
+                            ? POINT_COLOR
+                            : LIGHT_GRAY_COLOR,
+                    lineColor:
+                        isNowSet || isDone ? POINT_COLOR : LIGHT_GRAY_COLOR,
                     size: 39,
                   ),
                   const SizedBox(

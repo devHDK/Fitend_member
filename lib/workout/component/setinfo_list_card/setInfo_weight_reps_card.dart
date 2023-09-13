@@ -79,6 +79,8 @@ class _SetInfoBoxForWeightRepsState
   Widget build(BuildContext context) {
     final isNowSet = widget.setInfoIndex ==
         widget.model.setInfoCompleteList[widget.model.exerciseIndex];
+    final isDone = widget.setInfoIndex <
+        widget.model.setInfoCompleteList[widget.model.exerciseIndex];
 
     return Column(
       children: [
@@ -98,9 +100,16 @@ class _SetInfoBoxForWeightRepsState
                   ),
                   HexagonContainer(
                     label: (widget.setInfoIndex + 1).toString(),
+                    iconFile:
+                        isDone ? 'asset/img/icon_check_setInfo.svg' : null,
                     labelColor: isNowSet ? Colors.black : GRAY_COLOR,
-                    color: isNowSet ? Colors.white : LIGHT_GRAY_COLOR,
-                    lineColor: isNowSet ? POINT_COLOR : LIGHT_GRAY_COLOR,
+                    color: isNowSet
+                        ? Colors.white
+                        : isDone
+                            ? POINT_COLOR
+                            : LIGHT_GRAY_COLOR,
+                    lineColor:
+                        isNowSet || isDone ? POINT_COLOR : LIGHT_GRAY_COLOR,
                     size: 39,
                   ),
                   const SizedBox(

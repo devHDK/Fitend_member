@@ -63,6 +63,9 @@ class _SetInfoBoxForRepsState extends ConsumerState<SetInfoBoxForReps> {
     final isNowSet = widget.setInfoIndex ==
         widget.model.setInfoCompleteList[widget.model.exerciseIndex];
 
+    final isDone = widget.setInfoIndex <
+        widget.model.setInfoCompleteList[widget.model.exerciseIndex];
+
     return Column(
       children: [
         SizedBox(
@@ -81,9 +84,16 @@ class _SetInfoBoxForRepsState extends ConsumerState<SetInfoBoxForReps> {
                   ),
                   HexagonContainer(
                     label: (widget.setInfoIndex + 1).toString(),
+                    iconFile:
+                        isDone ? 'asset/img/icon_check_setInfo.svg' : null,
                     labelColor: isNowSet ? Colors.black : GRAY_COLOR,
-                    color: isNowSet ? Colors.white : LIGHT_GRAY_COLOR,
-                    lineColor: isNowSet ? POINT_COLOR : LIGHT_GRAY_COLOR,
+                    color: isNowSet
+                        ? Colors.white
+                        : isDone
+                            ? POINT_COLOR
+                            : LIGHT_GRAY_COLOR,
+                    lineColor:
+                        isNowSet || isDone ? POINT_COLOR : LIGHT_GRAY_COLOR,
                     size: 39,
                   ),
                   const SizedBox(

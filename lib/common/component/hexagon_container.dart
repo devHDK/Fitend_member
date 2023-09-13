@@ -2,12 +2,15 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:flutter_svg/svg.dart';
+
 class HexagonContainer extends StatelessWidget {
   final Color color;
   final Color lineColor;
   final Color labelColor;
   final double size;
   final String label;
+  final String? iconFile;
 
   const HexagonContainer({
     super.key,
@@ -16,6 +19,7 @@ class HexagonContainer extends StatelessWidget {
     required this.lineColor,
     required this.label,
     required this.labelColor,
+    this.iconFile,
   });
 
   @override
@@ -26,16 +30,23 @@ class HexagonContainer extends StatelessWidget {
           painter: _HexagonPainter(color, lineColor),
           size: Size(size, size),
         ),
-        Positioned(
-          left: label.length >= 2 ? 9 : 14,
-          top: 2.5,
-          child: Text(
-            label,
-            style: h3Headline.copyWith(
-              color: labelColor,
+        if (iconFile != null)
+          Positioned(
+            left: 11,
+            top: 15,
+            child: SvgPicture.asset(iconFile!),
+          )
+        else
+          Positioned(
+            left: label.length >= 2 ? 9 : 14,
+            top: 2.5,
+            child: Text(
+              label,
+              style: h3Headline.copyWith(
+                color: labelColor,
+              ),
             ),
-          ),
-        )
+          )
       ],
     );
   }

@@ -214,7 +214,7 @@ class WorkoutProcessStateNotifier
     if (pstate.exerciseIndex <= pstate.maxExerciseIndex &&
         pstate.setInfoCompleteList[pstate.exerciseIndex] <
             pstate.maxSetInfoList[pstate.exerciseIndex]) {
-      _saveCompleteSet(workoutRecordSimpleBox);
+      _saveCompleteSet();
     }
 
     //setInfoCompleteList 업데이트 => 세트 +1
@@ -325,21 +325,53 @@ class WorkoutProcessStateNotifier
   }
 
   //완료 운동 저장
-  void _saveCompleteSet(AsyncValue<Box<dynamic>> workoutRecordBox) {
+  void _saveCompleteSet() {
     final pstate = state as WorkoutProcessModel;
-    workoutRecordBox.whenData((value) {
+
+    SetInfo timerSetInfo = SetInfo(index: 0);
+    bool isTimerExercise =
+        pstate.exercises[pstate.exerciseIndex].trackingFieldId == 3 ||
+            pstate.exercises[pstate.exerciseIndex].trackingFieldId == 4;
+
+    if (isTimerExercise) {
+      timerXMoreBox.whenData((value) {
+        final record =
+            value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
+
+        if (record != null && record is WorkoutRecordSimple) {
+          timerSetInfo = SetInfo(
+            index: pstate.setInfoCompleteList[pstate.exerciseIndex] + 1,
+            seconds: record
+                .setInfo[pstate.setInfoCompleteList[pstate.exerciseIndex]]
+                .seconds,
+          );
+        } else {
+          timerSetInfo = SetInfo(
+            index: pstate.setInfoCompleteList[pstate.exerciseIndex] + 1,
+            seconds: 0,
+          );
+        }
+      });
+
+      debugPrint('${timerSetInfo.toJson()}');
+    }
+
+    workoutRecordSimpleBox.whenData((value) {
       final record =
           value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
       if (record != null && record.setInfo.length > 0) {
         //local DB에 데이터가 있을때
+
         value.put(
           pstate.exercises[pstate.exerciseIndex].workoutPlanId,
           WorkoutRecordSimple(
             workoutPlanId: pstate.exercises[pstate.exerciseIndex].workoutPlanId,
             setInfo: [
               ...record.setInfo,
-              pstate.modifiedExercises[pstate.exerciseIndex]
-                  .setInfo[pstate.setInfoCompleteList[pstate.exerciseIndex]],
+              isTimerExercise
+                  ? timerSetInfo
+                  : pstate.modifiedExercises[pstate.exerciseIndex].setInfo[
+                      pstate.setInfoCompleteList[pstate.exerciseIndex]],
             ],
           ),
         );
@@ -350,8 +382,10 @@ class WorkoutProcessStateNotifier
           WorkoutRecordSimple(
             workoutPlanId: pstate.exercises[pstate.exerciseIndex].workoutPlanId,
             setInfo: [
-              pstate.modifiedExercises[pstate.exerciseIndex]
-                  .setInfo[pstate.setInfoCompleteList[pstate.exerciseIndex]],
+              isTimerExercise
+                  ? timerSetInfo
+                  : pstate.modifiedExercises[pstate.exerciseIndex].setInfo[
+                      pstate.setInfoCompleteList[pstate.exerciseIndex]],
             ],
           ),
         );
@@ -598,6 +632,7 @@ class WorkoutProcessStateNotifier
         value.put(pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
       }
     });
+
     //완료된 세트의 경우 수정후 저장
     if (setInfoIndex < pstate.setInfoCompleteList[pstate.exerciseIndex]) {
       workoutRecordSimpleBox.whenData((value) {

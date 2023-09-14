@@ -58,7 +58,7 @@ android {
         production {
             dimension "flavor-type"
             applicationId "com.raid.fitend"
-            resValue "string", "app_name", "fitend"
+            resValue "string", "app_name", "FITEND"
         }
     }
     compileSdk 33

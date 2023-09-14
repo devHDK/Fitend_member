@@ -195,7 +195,7 @@ class _SetInfoBoxForWeightRepsState
                             ),
                           ),
                           const SizedBox(
-                            width: 20,
+                            width: 10,
                           ),
                           Text(
                             '/',
@@ -204,7 +204,7 @@ class _SetInfoBoxForWeightRepsState
                             ),
                           ),
                           const SizedBox(
-                            width: 20,
+                            width: 10,
                           ),
                           Expanded(
                             child: SetInfoTextField(

@@ -287,7 +287,11 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
               children: [
                 Column(
                   children: [
-                    TextButton(
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                          shadowColor: Colors.transparent),
                       onPressed: () => isReady
                           ? onStopPressed()
                           : isRunning
@@ -320,14 +324,18 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                               ? 'Pause'
                               : totalSeconds == 0
                                   ? 'Reset'
-                                  : 'play',
+                                  : 'start',
                       style: s2SubTitle,
                     ),
                   ],
                 ),
                 Column(
                   children: [
-                    TextButton(
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                          shadowColor: Colors.transparent),
                       onPressed: () {
                         widget.refresh();
                         context.pop();

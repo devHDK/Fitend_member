@@ -45,12 +45,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
   bool hasLocal = false;
   bool changedDate = false;
 
-  final today = DateTime(
-    DateTime.now().year,
-    DateTime.now().month,
-    DateTime.now().day,
-  );
-
   @override
   void initState() {
     super.initState();
@@ -65,7 +59,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                     workoutModel.isProcessing!) &&
                 !isPoped &&
                 !workoutModel.isRecord &&
-                today.compareTo(DateTime.parse(workoutModel.startDate)) == 0) {
+                DateTime.now().isBefore(DateTime.parse(workoutModel.startDate)
+                    .add(const Duration(days: 1, hours: 8))) &&
+                DateTime.now()
+                    .isAfter(DateTime.parse(workoutModel.startDate))) {
               _showConfirmDialog();
             }
             initial = false;
@@ -173,6 +170,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
       }
       return map;
     });
+
+    final isTodayWorkout = DateTime.now().isBefore(
+            DateTime.parse(model.startDate)
+                .add(const Duration(days: 1, hours: 8))) &&
+        DateTime.now().isAfter(DateTime.parse(model.startDate));
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -393,9 +395,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
           ),
         ],
       ),
-      floatingActionButton: today.compareTo(DateTime.parse(model.startDate)) !=
-                  0 &&
-              !model.isWorkoutComplete
+      floatingActionButton: !isTodayWorkout && !model.isWorkoutComplete
           ? null
           : TextButton(
               onPressed: model.isWorkoutComplete
@@ -408,7 +408,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                         extra: model.exercises,
                       );
                     }
-                  : today.compareTo(DateTime.parse(model.startDate)) == 0
+                  : isTodayWorkout
                       ? () async {
                           ref
                               .read(workoutProvider(widget.id).notifier)
@@ -460,9 +460,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                   height: 44,
                   width: 100.w,
                   decoration: BoxDecoration(
-                    color: model.isWorkoutComplete ||
-                            today.compareTo(DateTime.parse(model.startDate)) ==
-                                0
+                    color: model.isWorkoutComplete || isTodayWorkout
                         ? POINT_COLOR
                         : POINT_COLOR.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(10),
@@ -471,8 +469,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                     child: Text(
                       model.isWorkoutComplete
                           ? '결과보기 📝'
-                          : today.compareTo(DateTime.parse(model.startDate)) ==
-                                  0
+                          : isTodayWorkout
                               ? '운동 시작하기 💪'
                               : '오늘의 운동만 수행할 수 있어요!',
                       style: h6Headline.copyWith(

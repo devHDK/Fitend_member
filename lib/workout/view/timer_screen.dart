@@ -243,7 +243,11 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
               height: 5,
             ),
             Text(
-              '${(widget.model.modifiedExercises[widget.model.exerciseIndex].setInfo[widget.setInfoIndex].seconds! / 60).floor()} 분 ${(widget.model.modifiedExercises[widget.model.exerciseIndex].setInfo[widget.setInfoIndex].seconds! % 60).toString().padLeft(2, '0')} 초',
+              DataUtils.getTimerStringMinuteSeconds(widget
+                  .model
+                  .modifiedExercises[widget.model.exerciseIndex]
+                  .setInfo[widget.setInfoIndex]
+                  .seconds!),
               style: s1SubTitle.copyWith(
                 color: GRAY_COLOR,
               ),
@@ -375,7 +379,9 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                 },
                 child: Text(
                   '다음 운동',
-                  style: h3Headline.copyWith(color: POINT_COLOR),
+                  style: h5Headline.copyWith(
+                    color: POINT_COLOR,
+                  ),
                 ),
               )
           ],

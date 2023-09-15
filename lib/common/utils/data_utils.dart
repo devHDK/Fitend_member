@@ -73,4 +73,18 @@ class DataUtils {
 
     return ret;
   }
+
+  static String getTimerStringMinuteSeconds(int seconds) {
+    String ret = '';
+
+    if ((seconds / 60).floor() > 0) {
+      ret += '${(seconds / 60).floor()}분 ';
+    }
+
+    if ((seconds % 60) > 0) {
+      ret += '${seconds % 60}초';
+    }
+
+    return ret;
+  }
 }

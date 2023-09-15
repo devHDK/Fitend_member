@@ -366,8 +366,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               child: Text(
                 DataUtils.getTimeStringMinutes(model.totalTime),
                 style: s1SubTitle.copyWith(
-                  color: Colors.black,
-                  fontSize: 20,
+                  color: DARK_GRAY_COLOR,
+                  fontSize: 18,
                   height: 1.1,
                 ),
               ),
@@ -859,8 +859,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 50,
+                                  SizedBox(
+                                    height: ((11 -
+                                                model.maxSetInfoList[
+                                                    model.exerciseIndex]) *
+                                            30)
+                                        .toDouble(),
                                   ),
                                 ],
                               ),
@@ -1043,7 +1047,7 @@ class _ShowTipState extends ConsumerState<_ShowTip> {
 
     if (model.modifiedExercises[model.exerciseIndex].trackingFieldId == 1) {
       setInfoString =
-          '$setSeq세트는 ${setInfo.weight}kg으로 ${setInfo.reps}회 진행해주세요!';
+          '$setSeq세트는 ${setInfo.weight! % 1 == 0 ? setInfo.weight!.toInt() : setInfo.weight}kg으로 ${setInfo.reps}회 진행해주세요!';
     } else if (model.modifiedExercises[model.exerciseIndex].trackingFieldId ==
         2) {
       setInfoString = '$setSeq세트는 ${setInfo.reps}회 진행해주세요!';

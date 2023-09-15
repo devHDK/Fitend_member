@@ -51,7 +51,7 @@ class _SetInfoBoxForWeightRepsState
     try {
       if (weightController.text.isNotEmpty &&
           double.parse(weightController.text) > 999.0) {
-        weightController.text = (999.0).toString();
+        weightController.text = (999).toString();
       }
     } catch (e) {
       debugPrint('$e');
@@ -65,7 +65,9 @@ class _SetInfoBoxForWeightRepsState
     weightController.addListener(weightControllerListener);
 
     repsController.text = widget.initialReps.toString();
-    weightController.text = widget.initialWeight.toString();
+    weightController.text = widget.initialWeight % 1 == 0
+        ? widget.initialWeight.toInt().toString()
+        : widget.initialWeight.toString();
   }
 
   @override

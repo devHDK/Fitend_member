@@ -43,7 +43,12 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
 
   void _onFocusChanged() {
     if (focusNode.hasFocus) {
-      // setState(() {});
+      if (focusNode.hasFocus) {
+        if (widget.controller != null) {
+          widget.controller!.selection = TextSelection(
+              baseOffset: 0, extentOffset: widget.controller!.text.length);
+        }
+      }
     } else {
       setState(() {
         focusNode.unfocus();

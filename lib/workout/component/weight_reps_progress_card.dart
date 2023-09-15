@@ -188,7 +188,7 @@ class _WeightWrepsProgressCardState
             children: [
               Text(
                 widget.exercise.trackingFieldId == 1
-                    ? '${widget.exercise.setInfo[length].weight}kg ∙ ${widget.exercise.setInfo[length].reps}회'
+                    ? '${widget.exercise.setInfo[length].weight! % 1 == 0 ? widget.exercise.setInfo[length].weight!.toInt() : widget.exercise.setInfo[length].weight}kg ∙ ${widget.exercise.setInfo[length].reps}회'
                     : widget.exercise.trackingFieldId == 2
                         ? '${widget.exercise.setInfo[length].reps}회'
                         : '${(widget.exercise.setInfo[length].seconds! / 60).floor()}분 ${widget.exercise.setInfo[length].seconds! % 60}초',

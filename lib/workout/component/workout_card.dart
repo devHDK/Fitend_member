@@ -113,8 +113,10 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                         widget.exercise.trackingFieldId == 1
                             ? '${index <= widget.completeSetCount - 1 ? recordedSetInfoList[index].weight!.floor() : widget.exercise.setInfo[index].weight!.floor()} ∙ ${index <= widget.completeSetCount - 1 ? recordedSetInfoList[index].reps : widget.exercise.setInfo[index].reps}'
                             : widget.exercise.trackingFieldId == 2
-                                ? '${index <= widget.completeSetCount - 1 ? recordedSetInfoList[index].reps : widget.exercise.setInfo[index].reps}'
-                                : '${index <= widget.completeSetCount - 1 ? (recordedSetInfoList[index].seconds! / 60).floor().toString().padLeft(2, '0') : (widget.exercise.setInfo[index].seconds! / 60).floor().toString().padLeft(2, '0')}:${index <= widget.completeSetCount - 1 ? (recordedSetInfoList[index].seconds! % 60).toString().padLeft(2, '0') : (widget.exercise.setInfo[index].seconds! % 60).toString().padLeft(2, '0')}',
+                                ? index <= widget.completeSetCount - 1
+                                    ? '${recordedSetInfoList[index].reps}'
+                                    : '${widget.exercise.setInfo[index].reps}'
+                                : '${index <= widget.completeSetCount - 1 ? (recordedSetInfoList[index].seconds! / 60).floor().toString().padLeft(2, '0') : (widget.exercise.setInfo[index].seconds! / 60).floor().toString().padLeft(2, '0')} : ${index <= widget.completeSetCount - 1 ? (recordedSetInfoList[index].seconds! % 60).toString().padLeft(2, '0') : (widget.exercise.setInfo[index].seconds! % 60).toString().padLeft(2, '0')}',
                         style: s1SubTitle.copyWith(
                           color: index <= widget.completeSetCount - 1
                               ? Colors.white
@@ -326,13 +328,8 @@ class _RenderBody extends StatelessWidget {
                   exercise.trackingFieldId == 1 ||
                   exercise.trackingFieldId == 2
               ? '${exercise.setInfo.length} SET'
-              : (modifiedSetInfo!.seconds! / 60).floor() > 0 &&
-                      (modifiedSetInfo!.seconds! % 60) > 0
-                  ? '${(modifiedSetInfo!.seconds! / 60).floor()}분 ${(modifiedSetInfo!.seconds! % 60).toString().padLeft(2, '0')}초'
-                  : (modifiedSetInfo!.seconds! / 60).floor() > 0 &&
-                          (modifiedSetInfo!.seconds! % 60) == 0
-                      ? '${(modifiedSetInfo!.seconds! / 60).floor()}분'
-                      : '${(modifiedSetInfo!.seconds! % 60).toString().padLeft(2, '0')}초',
+              : DataUtils.getTimerStringMinuteSeconds(
+                  modifiedSetInfo!.seconds!),
           style: s2SubTitle.copyWith(
             color: LIGHT_GRAY_COLOR,
           ),

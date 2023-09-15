@@ -292,7 +292,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 28),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -410,9 +410,16 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                     }
                   : isTodayWorkout
                       ? () async {
-                          ref
-                              .read(workoutProvider(widget.id).notifier)
-                              .workoutSaveForStart();
+                          if (model.isProcessing != null &&
+                              !model.isProcessing!) {
+                            ref
+                                .read(
+                                    workoutProcessProvider(widget.id).notifier)
+                                .resetWorkoutProcess();
+                            ref
+                                .read(workoutProvider(widget.id).notifier)
+                                .workoutSaveForStart();
+                          }
 
                           await Navigator.of(context)
                               .push(

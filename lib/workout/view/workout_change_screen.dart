@@ -222,7 +222,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Container(
           width: 100.w,
           height: 45,

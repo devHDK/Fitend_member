@@ -197,16 +197,7 @@ class _SetInfoBoxForWeightRepsState
                             ),
                           ),
                           const SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            '/',
-                            style: s1SubTitle.copyWith(
-                              color: isNowSet ? Colors.black : GRAY_COLOR,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
+                            width: 10,
                           ),
                           Expanded(
                             child: SetInfoTextField(

@@ -65,6 +65,7 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
       cursorColor: POINT_COLOR,
       textAlign: TextAlign.center,
       style: h3Headline.copyWith(color: widget.textColor),
+      selectionControls: EmptyTextSelectionControls(),
       decoration: const InputDecoration(
         filled: true,
         fillColor: Colors.white,

@@ -1088,7 +1088,7 @@ class _ShowTipState extends ConsumerState<_ShowTip> {
                   AutoSizeText(
                     widget.tooltipSeq == 0 &&
                             model.setInfoCompleteList[model.exerciseIndex] == 0
-                        ? '이번운동은 ${model.modifiedExercises[model.exerciseIndex].name} 입니다.\n$setInfoString'
+                        ? '이번 운동은 ${model.modifiedExercises[model.exerciseIndex].name} 입니다.\n$setInfoString'
                         : widget.tooltipSeq == 0 &&
                                 model.setInfoCompleteList[model.exerciseIndex] >
                                     0

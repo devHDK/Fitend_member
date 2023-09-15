@@ -150,15 +150,13 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
 
             workoutRecordSimpleBox.whenData((value) {
               for (var workoutRecord in workoutResultState.workoutRecords) {
-                final record = value.get(workoutRecord.workoutPlanId);
-                debugPrint('record : $record');
-                if (record == null) {
-                  value.put(
-                      workoutRecord.workoutPlanId,
-                      WorkoutRecordSimple(
-                          workoutPlanId: workoutRecord.workoutPlanId,
-                          setInfo: workoutRecord.setInfo));
-                }
+                // final record = value.get(workoutRecord.workoutPlanId);
+
+                value.put(
+                    workoutRecord.workoutPlanId,
+                    WorkoutRecordSimple(
+                        workoutPlanId: workoutRecord.workoutPlanId,
+                        setInfo: workoutRecord.setInfo));
               }
             });
 
@@ -210,6 +208,8 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
           response.modifiedExercises = tempModifiedExercises;
         });
       }
+
+      print(response);
 
       state = response.copyWith(
         exercises: response.exercises.map((exercise) {

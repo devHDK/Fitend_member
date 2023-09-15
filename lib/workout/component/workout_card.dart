@@ -39,6 +39,8 @@ class WorkoutCard extends ConsumerStatefulWidget {
 class _WorkoutCardState extends ConsumerState<WorkoutCard> {
   @override
   Widget build(BuildContext context) {
+    print(widget.completeSetCount);
+
     final AsyncValue<Box> timerRecordBox =
         ref.watch(hiveTimerXMoreRecordProvider);
     final AsyncValue<Box> modifiedBox = ref.watch(hiveModifiedExerciseProvider);
@@ -113,7 +115,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                     child: Center(
                       child: Text(
                         widget.exercise.trackingFieldId == 1
-                            ? '${index <= widget.completeSetCount - 1 ? recordedSetInfoList[index].weight!.floor() : widget.exercise.setInfo[index].weight!.floor()} ∙ ${index <= widget.completeSetCount - 1 ? recordedSetInfoList[index].reps : widget.exercise.setInfo[index].reps}'
+                            ? '${index <= widget.completeSetCount - 1 && recordedSetInfoList.isNotEmpty ? recordedSetInfoList[index].weight!.floor() : widget.exercise.setInfo[index].weight!.floor()} ∙ ${index <= widget.completeSetCount - 1 ? recordedSetInfoList[index].reps : widget.exercise.setInfo[index].reps}'
                             : widget.exercise.trackingFieldId == 2
                                 ? index <= widget.completeSetCount - 1
                                     ? '${recordedSetInfoList[index].reps}'

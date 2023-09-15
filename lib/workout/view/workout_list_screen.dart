@@ -307,10 +307,17 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                     data: (data) {
                       final record = data.get(exerciseModel.workoutPlanId);
                       if (record != null && record is WorkoutRecordSimple) {
-                        completeSetCount = record.setInfo.length;
+                        completeSetCount = record.setInfo
+                            .where((element) =>
+                                element.reps != null ||
+                                element.weight != null ||
+                                element.seconds != null)
+                            .length;
                       } else {
                         completeSetCount = 0;
                       }
+
+                      print(completeSetCount);
                     },
                     error: (error, stackTrace) => completeSetCount = 0,
                     loading: () => debugPrint('loading...'),

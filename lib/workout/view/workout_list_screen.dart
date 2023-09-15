@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -176,6 +178,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                 .add(const Duration(days: 1, hours: 8))) &&
         DateTime.now().isAfter(DateTime.parse(model.startDate));
 
+    print(100.w);
+
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
@@ -292,7 +296,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
+            padding:
+                EdgeInsets.symmetric(horizontal: Platform.isIOS ? 7.w : 5.w),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {

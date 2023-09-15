@@ -17,6 +17,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class WorkoutChangeScreen extends ConsumerStatefulWidget {
   static String get routeName => 'workoutChange';
@@ -35,6 +36,7 @@ class WorkoutChangeScreen extends ConsumerStatefulWidget {
 
 class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
   late int selectedIndex;
+  final ItemScrollController itemScrollController = ItemScrollController();
 
   @override
   void initState() {
@@ -43,6 +45,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
     selectedIndex = widget.exerciseIndex;
     Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {});
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      itemScrollController.jumpTo(index: widget.exerciseIndex);
     });
   }
 
@@ -123,102 +129,91 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
         ),
         actions: const [Padding(padding: EdgeInsets.symmetric(horizontal: 28))],
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final exerciseModel = model.exercises[index];
-                int completeSetCount = 0;
-                recordSimplebox.when(
-                  data: (data) {
-                    final record = data.get(exerciseModel.workoutPlanId);
-                    if (record != null) {
-                      completeSetCount = record.setInfo.length;
-                    } else {
-                      completeSetCount = 0;
-                    }
-                  },
-                  error: (error, stackTrace) => completeSetCount = 0,
-                  loading: () => debugPrint('loading...'),
-                );
+      body: ScrollablePositionedList.builder(
+        itemCount: model.exercises.length,
+        itemScrollController: itemScrollController,
+        itemBuilder: (context, index) {
+          final exerciseModel = model.exercises[index];
+          int completeSetCount = 0;
+          recordSimplebox.when(
+            data: (data) {
+              final record = data.get(exerciseModel.workoutPlanId);
+              if (record != null) {
+                completeSetCount = record.setInfo.length;
+              } else {
+                completeSetCount = 0;
+              }
+            },
+            error: (error, stackTrace) => completeSetCount = 0,
+            loading: () => debugPrint('loading...'),
+          );
 
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedIndex = index;
-                    });
-                  },
-                  child: Column(
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedIndex = index;
+              });
+            },
+            child: Column(
+              children: [
+                if (exerciseModel.circuitGroupNum != null &&
+                    exerciseModel.circuitSeq == 1)
+                  Column(
                     children: [
-                      if (exerciseModel.circuitGroupNum != null &&
-                          exerciseModel.circuitSeq == 1)
-                        Column(
-                          children: [
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 58,
-                                ),
-                                SvgPicture.asset(
-                                    'asset/img/icon_turn_down.svg'),
-                              ],
-                            ),
-                          ],
-                        )
-                      else if (exerciseModel.circuitGroupNum != null)
-                        Row(children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
                           const SizedBox(
                             width: 58,
                           ),
-                          SvgPicture.asset('asset/img/icon_turn_line.svg'),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          SvgPicture.asset('asset/img/icon_turn_line.svg'),
-                        ]),
-                      WorkoutCard(
-                        exercise: exerciseModel,
-                        completeSetCount: completeSetCount,
-                        exerciseIndex: widget.exerciseIndex == index
-                            ? widget.exerciseIndex
-                            : null,
-                        isSelected: selectedIndex == index ? true : false,
+                          SvgPicture.asset('asset/img/icon_turn_down.svg'),
+                        ],
                       ),
-                      if (exerciseModel.circuitGroupNum != null &&
-                          groupCounts[exerciseModel.circuitGroupNum!] ==
-                              exerciseModel.circuitSeq!)
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 58,
-                                ),
-                                SvgPicture.asset('asset/img/icon_turn_up.svg'),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                          ],
-                        )
                     ],
-                  ),
-                );
-              },
-              childCount: model.exercises.length,
+                  )
+                else if (exerciseModel.circuitGroupNum != null)
+                  Row(children: [
+                    const SizedBox(
+                      width: 58,
+                    ),
+                    SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                  ]),
+                WorkoutCard(
+                  exercise: exerciseModel,
+                  completeSetCount: completeSetCount,
+                  exerciseIndex: widget.exerciseIndex == index
+                      ? widget.exerciseIndex
+                      : null,
+                  isSelected: selectedIndex == index ? true : false,
+                ),
+                if (exerciseModel.circuitGroupNum != null &&
+                    groupCounts[exerciseModel.circuitGroupNum!] ==
+                        exerciseModel.circuitSeq!)
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          const SizedBox(
+                            width: 58,
+                          ),
+                          SvgPicture.asset('asset/img/icon_turn_up.svg'),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  )
+              ],
             ),
-          ),
-          const SliverToBoxAdapter(
-            child: SizedBox(
-              height: 100,
-            ),
-          ),
-        ],
+          );
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(

@@ -276,26 +276,19 @@ class _WeightWrepsProgressCardState extends ConsumerState<TimerProgressCard> {
                         ),
                       ),
                       const SizedBox(
-                        width: 8,
+                        width: 12,
                       ),
-                      Center(
-                        child: Text(
-                          recordSetInfo.seconds == 0
-                              ? '타이머'
-                              : DataUtils.getTimeStringMinutes(remainSeconds),
-                          style: s1SubTitle.copyWith(
-                            color: recordSetInfo.seconds == 0
-                                ? Colors.white
-                                : POINT_COLOR,
-                            fontWeight: recordSetInfo.seconds == 0
-                                ? FontWeight.w700
-                                : FontWeight.w400,
-                            height: 1.2,
-                          ),
+                      Text(
+                        recordSetInfo.seconds == 0
+                            ? '타이머'
+                            : DataUtils.getTimeStringMinutes(remainSeconds),
+                        textAlign: TextAlign.center,
+                        style: s1SubTitle.copyWith(
+                          color: recordSetInfo.seconds == 0
+                              ? Colors.white
+                              : POINT_COLOR,
+                          height: 1.2,
                         ),
-                      ),
-                      const SizedBox(
-                        width: 8,
                       ),
                     ],
                   ),

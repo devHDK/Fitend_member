@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
@@ -186,7 +188,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
 
     return Container(
       padding: widget.isSelected != null
-          ? const EdgeInsets.symmetric(horizontal: 14)
+          ? EdgeInsets.symmetric(horizontal: Platform.isIOS ? 7.w : 5.w)
           : null,
       width: 100.w,
       height: widget.exercise.circuitGroupNum != null ? 137 : 157,

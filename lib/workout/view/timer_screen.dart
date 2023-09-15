@@ -277,7 +277,9 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                   backColor: POINT_COLOR.withOpacity(0.1),
                   backStrokeWidth: 20,
                   progressStrokeWidth: 20,
-                  progressColors: [POINT_COLOR, POINT_COLOR.withOpacity(0.3)],
+                  progressColors: !isReady && count > 0
+                      ? [POINT_COLOR]
+                      : [POINT_COLOR, POINT_COLOR.withOpacity(0.3)],
                   valueNotifier: valueNotifier,
                   maxValue: 1,
                 ),

@@ -62,7 +62,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                 !isPoped &&
                 !workoutModel.isRecord &&
                 DateTime.now().isBefore(DateTime.parse(workoutModel.startDate)
-                    .add(const Duration(days: 1, hours: 8))) &&
+                    .add(const Duration(days: 1, hours: 4))) &&
                 DateTime.now()
                     .isAfter(DateTime.parse(workoutModel.startDate))) {
               _showConfirmDialog();
@@ -175,7 +175,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
 
     final isTodayWorkout = DateTime.now().isBefore(
             DateTime.parse(model.startDate)
-                .add(const Duration(days: 1, hours: 8))) &&
+                .add(const Duration(days: 1, hours: 4))) &&
         DateTime.now().isAfter(DateTime.parse(model.startDate));
 
     return Scaffold(

@@ -248,8 +248,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 model.maxSetInfoList[model.exerciseIndex]
                             ? model.setInfoCompleteList[model.exerciseIndex] - 1
                             : model.setInfoCompleteList[model.exerciseIndex];
-
-                        itemScrollController.jumpTo(index: index);
+                        if (model.setInfoCompleteList[model.exerciseIndex] >
+                            5) {
+                          _movetoRecentSetInfo(index);
+                        }
                       }
                     },
                     child: Container(
@@ -446,7 +448,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     ? model.setInfoCompleteList[model.exerciseIndex] - 1
                     : model.setInfoCompleteList[model.exerciseIndex];
 
-                itemScrollController.jumpTo(index: index);
+                _movetoRecentSetInfo(index);
               }),
               panel: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -518,7 +520,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                           : model.setInfoCompleteList[
                                               model.exerciseIndex];
 
-                                      itemScrollController.jumpTo(index: index);
+                                      _movetoRecentSetInfo(index);
                                     }
                                   }
                                 },
@@ -543,7 +545,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     : model.setInfoCompleteList[
                                         model.exerciseIndex];
 
-                                itemScrollController.jumpTo(index: index);
+                                if (model.setInfoCompleteList[
+                                        model.exerciseIndex] >
+                                    5) {
+                                  _movetoRecentSetInfo(index);
+                                }
                               }
                             },
                           )
@@ -600,7 +606,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                           : model.setInfoCompleteList[
                                               model.exerciseIndex];
 
-                                      itemScrollController.jumpTo(index: index);
+                                      _movetoRecentSetInfo(index);
                                     }
                                   }
                                 },
@@ -625,7 +631,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     : model.setInfoCompleteList[
                                         model.exerciseIndex];
 
-                                itemScrollController.jumpTo(index: index);
+                                if (model.setInfoCompleteList[
+                                        model.exerciseIndex] >
+                                    5) {
+                                  _movetoRecentSetInfo(index);
+                                }
                               }
                             },
                             resetSet: () {},
@@ -882,6 +892,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         ),
       ),
     );
+  }
+
+  void _movetoRecentSetInfo(int index) {
+    int tempIndex = index < 2 ? index : index - 2;
+
+    itemScrollController.jumpTo(index: tempIndex);
   }
 
   Future<void> _onTapNext(

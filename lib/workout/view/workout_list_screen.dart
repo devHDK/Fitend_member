@@ -178,8 +178,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                 .add(const Duration(days: 1, hours: 8))) &&
         DateTime.now().isAfter(DateTime.parse(model.startDate));
 
-    print(100.w);
-
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
@@ -296,8 +294,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             ),
           ),
           SliverPadding(
-            padding:
-                EdgeInsets.symmetric(horizontal: Platform.isIOS ? 7.w : 5.w),
+            padding: EdgeInsets.symmetric(
+                horizontal: Platform.isIOS ? 7.w : (3.8).w),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {

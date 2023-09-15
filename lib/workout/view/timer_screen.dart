@@ -126,6 +126,8 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
       if (totalSeconds == 0) {
         //0초가 됬을때 저장
         timer.cancel();
+        valueNotifier.value = (widget.secondsGoal - totalSeconds).toDouble() /
+            widget.secondsGoal.toDouble();
         setState(() {
           isRunning = false;
         });
@@ -277,9 +279,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                   backColor: POINT_COLOR.withOpacity(0.1),
                   backStrokeWidth: 20,
                   progressStrokeWidth: 20,
-                  progressColors: !isReady && count > 0
-                      ? [POINT_COLOR]
-                      : [POINT_COLOR, POINT_COLOR.withOpacity(0.3)],
+                  progressColors: [POINT_COLOR, POINT_COLOR.withOpacity(0.3)],
                   valueNotifier: valueNotifier,
                   maxValue: 1,
                 ),

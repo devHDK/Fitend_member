@@ -188,7 +188,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
 
     return Container(
       padding: widget.isSelected != null
-          ? EdgeInsets.symmetric(horizontal: Platform.isIOS ? 7.w : 5.w)
+          ? EdgeInsets.symmetric(horizontal: Platform.isIOS ? 7.w : (3.8).w)
           : null,
       width: 100.w,
       height: widget.exercise.circuitGroupNum != null ? 137 : 157,

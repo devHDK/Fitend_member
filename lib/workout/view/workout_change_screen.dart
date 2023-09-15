@@ -48,7 +48,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      itemScrollController.jumpTo(index: widget.exerciseIndex);
+      int index = widget.exerciseIndex > 0
+          ? widget.exerciseIndex - 1
+          : widget.exerciseIndex;
+
+      itemScrollController.jumpTo(index: index);
     });
   }
 
@@ -209,6 +213,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
                         height: 20,
                       ),
                     ],
+                  ),
+                if (model.exercises.length - 1 == index)
+                  const SizedBox(
+                    height: 100,
                   )
               ],
             ),

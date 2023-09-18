@@ -39,7 +39,11 @@ class _WorkoutScheduleRepository implements WorkoutScheduleRepository {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = WorkoutScheduleModel.fromJson(_result.data!);
     return value;
   }
@@ -63,7 +67,11 @@ class _WorkoutScheduleRepository implements WorkoutScheduleRepository {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = WorkoutModel.fromJson(_result.data!);
     return value;
   }
@@ -90,7 +98,11 @@ class _WorkoutScheduleRepository implements WorkoutScheduleRepository {
           queryParameters: queryParameters,
           data: _data,
         )
-        .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
   }
 
   @override
@@ -115,7 +127,11 @@ class _WorkoutScheduleRepository implements WorkoutScheduleRepository {
           queryParameters: queryParameters,
           data: _data,
         )
-        .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
@@ -129,5 +145,22 @@ class _WorkoutScheduleRepository implements WorkoutScheduleRepository {
       }
     }
     return requestOptions;
+  }
+
+  String _combineBaseUrls(
+    String dioBaseUrl,
+    String? baseUrl,
+  ) {
+    if (baseUrl == null || baseUrl.trim().isEmpty) {
+      return dioBaseUrl;
+    }
+
+    final url = Uri.parse(baseUrl);
+
+    if (url.isAbsolute) {
+      return url.toString();
+    }
+
+    return Uri.parse(dioBaseUrl).resolveUri(url).toString();
   }
 }

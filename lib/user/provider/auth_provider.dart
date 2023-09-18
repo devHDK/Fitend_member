@@ -113,7 +113,7 @@ class AuthProvider extends ChangeNotifier {
                   workoutScheduleId:
                       int.parse(state.pathParameters['workoutScheduleId']!),
                   exercises: state.extra as List<Exercise>,
-                  startdate: state.queryParameters['startDate'] as String,
+                  startdate: state.uri.queryParameters['startDate'] as String,
                 ),
               ),
             ),
@@ -194,7 +194,7 @@ class AuthProvider extends ChangeNotifier {
       BuildContext context, GoRouterState state) async {
     final UserModelBase? user = ref.read(getMeProvider);
 
-    final loginIn = state.location == '/splash/login';
+    final loginIn = state.uri.toString() == '/splash/login';
 
     if (user == null) {
       return loginIn ? null : '/splash';
@@ -205,7 +205,7 @@ class AuthProvider extends ChangeNotifier {
     //UserModel
     //로그인 중이거나 현재 위치가 onboardScreen이면 홈으로 이동
     if (user is UserModel) {
-      return loginIn || state.location == '/onboard' ? '/schedule' : null;
+      return loginIn || state.uri.toString() == '/onboard' ? '/schedule' : null;
     }
 
     if (user is UserModelError && user.statusCode == 444) {

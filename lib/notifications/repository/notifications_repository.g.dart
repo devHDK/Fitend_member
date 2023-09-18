@@ -39,7 +39,11 @@ class _NotificationsRepository implements NotificationsRepository {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = NotificationModel.fromJson(_result.data!);
     return value;
   }
@@ -63,7 +67,11 @@ class _NotificationsRepository implements NotificationsRepository {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = NotificationConfirmResponse.fromJson(_result.data!);
     return value;
   }
@@ -86,7 +94,11 @@ class _NotificationsRepository implements NotificationsRepository {
           queryParameters: queryParameters,
           data: _data,
         )
-        .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
   }
 
   @override
@@ -109,7 +121,11 @@ class _NotificationsRepository implements NotificationsRepository {
           queryParameters: queryParameters,
           data: _data,
         )
-        .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
@@ -123,5 +139,22 @@ class _NotificationsRepository implements NotificationsRepository {
       }
     }
     return requestOptions;
+  }
+
+  String _combineBaseUrls(
+    String dioBaseUrl,
+    String? baseUrl,
+  ) {
+    if (baseUrl == null || baseUrl.trim().isEmpty) {
+      return dioBaseUrl;
+    }
+
+    final url = Uri.parse(baseUrl);
+
+    if (url.isAbsolute) {
+      return url.toString();
+    }
+
+    return Uri.parse(dioBaseUrl).resolveUri(url).toString();
   }
 }

@@ -39,14 +39,13 @@ dependencies:
   retrofit: ^4.0.1
   json_serializable: ^6.6.1
   json_annotation: ^4.8.0
-  flutter_riverpod: ^2.3.6
-  go_router: ^7.0.0
-  logger: ^1.3.0  #for logging purpose
+  flutter_riverpod: ^2.4.0
+  go_router: ^10.1.2
+  logger: ^2.0.2  #for logging purpose
   video_player: ^2.7.1
   flutter_cache_manager: ^3.3.1
-  flutter_secure_storage: ^8.0.0
+  flutter_secure_storage: ^9.0.0
   pretty_dio_logger: ^1.3.1
-  rive: ^0.10.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   icons_launcher: ^2.1.1
@@ -56,24 +55,24 @@ dependencies:
   firebase_crashlytics: ^3.3.3
   url_launcher: ^6.1.10
   shared_preferences: ^2.2.0
-  uuid: ^3.0.7
+  uuid: ^4.0.0
   flutter_app_badger: ^1.5.0
   
   change_app_package_name: ^1.1.0
   path_provider: ^2.0.14
-  bottom_sheet: ^3.1.2
+  bottom_sheet: ^4.0.0
   animated_text_kit: ^4.2.2
   ndialog: ^4.3.0
   badges: ^3.1.1
-  upgrader: ^6.2.0
+  upgrader: ^8.1.0
   cached_network_image: ^3.2.3
-  permission_handler: ^10.4.2
-  device_info_plus: ^8.2.2
-  flutter_local_notifications: ^14.0.0+1
-  dots_indicator: ^2.1.0
+  permission_handler: ^11.0.0
+  device_info_plus: ^9.0.3
+  flutter_local_notifications: ^15.1.1
+  dots_indicator: ^3.0.0
   package_rename: ^1.2.0
   flutter_flavorizr: ^2.1.6
-  google_fonts: ^4.0.4
+  google_fonts: ^6.0.0
   flutter_keyboard_visibility: ^5.4.1
   flutter_native_splash: ^2.2.19
   intl: ^0.18.1
@@ -103,7 +102,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.1
-  retrofit_generator: ^6.0.0+3
+  retrofit_generator: ^7.0.8
   build_runner: ^2.3.3 
   hive_generator: ^2.0.0
   
@@ -121,7 +120,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - asset/img/
-    - asset/rive/
     - asset/launcher/
 
   

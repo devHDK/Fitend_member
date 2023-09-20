@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/const/data.dart';
@@ -123,6 +124,9 @@ void main() async {
   // FirebaseMessaging.onMessage.listen(showFlutterNotification);
   // background 수신처리
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  //firebase analystic 설정
+  await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
 
   //hive 세팅
   final appDocumentDirectory = await getApplicationDocumentsDirectory();

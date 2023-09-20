@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -410,6 +411,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
           : TextButton(
               onPressed: model.isWorkoutComplete
                   ? () {
+                      FirebaseAnalytics.instance
+                          .logEvent(name: 'click_result_screen');
+
                       context.pushNamed(
                         ScheduleResultScreen.routeName,
                         pathParameters: {

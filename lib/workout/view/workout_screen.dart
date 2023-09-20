@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
@@ -234,6 +235,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 children: [
                   TextButton(
                     onPressed: () async {
+                      FirebaseAnalytics.instance
+                          .logEvent(name: 'click_large_next_button');
+
                       await _onTapNext(context, model);
 
                       isTooltipVisible = false;
@@ -527,12 +531,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               );
                             },
                             proccessOnTap: () async {
+                              FirebaseAnalytics.instance
+                                  .logEvent(name: 'click_small_next_button');
+
                               await _onTapNext(context, model);
 
                               isTooltipVisible = false;
                               tooltipCount = 0;
                               onTooltipPressed();
                               tooltipSeq = 0;
+
                               setState(() {});
                               if (isSwipeUp) {
                                 final index = model.setInfoCompleteList[
@@ -613,12 +621,15 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               );
                             },
                             proccessOnTap: () async {
+                              FirebaseAnalytics.instance
+                                  .logEvent(name: 'click_small_next_button');
                               await _onTapNext(context, model);
 
                               isTooltipVisible = false;
                               tooltipCount = 0;
                               onTooltipPressed();
                               tooltipSeq = 0;
+
                               setState(() {});
                               if (isSwipeUp) {
                                 final index = model.setInfoCompleteList[

@@ -4,11 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final GestureTapCallback? tapLogo;
+  final String title;
 
   const LogoAppbar({
     super.key,
     this.actions,
     this.tapLogo,
+    required this.title,
   });
 
   @override
@@ -23,7 +25,7 @@ class LogoAppbar extends StatelessWidget implements PreferredSizeWidget {
         child: InkWell(
           onTap: tapLogo != null ? () => tapLogo!() : null,
           child: Text(
-            'F I T E N D',
+            title,
             style: GoogleFonts.audiowide(
               color: Colors.white,
               fontSize: 20,

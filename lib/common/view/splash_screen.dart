@@ -21,7 +21,9 @@ class SplashScreen extends StatelessWidget {
       ),
       child: const Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: LogoAppbar(),
+        appBar: LogoAppbar(
+          title: 'F I T E N D',
+        ),
         body: _BottomView(),
       ),
     );

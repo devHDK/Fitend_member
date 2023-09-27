@@ -84,10 +84,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     int itemCount = scheduleListGlobal.length;
 
-    // print('minIndex : $minIndex');
-    // print('itemCount : $itemCount');
-    // print('maxIndex : $maxIndex');
-
     if (maxIndex == itemCount - 1 && !isLoading) {
       //스크롤을 아래로 내렸을때
       isLoading = true;
@@ -225,6 +221,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
       child: Scaffold(
         backgroundColor: BACKGROUND_COLOR,
         appBar: LogoAppbar(
+          title: 'P L A N',
           tapLogo: () async {
             await _resetScheduleList();
           },

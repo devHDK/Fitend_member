@@ -10,6 +10,7 @@ import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
+import 'package:fitend_member/workout/view/home_screen.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +58,11 @@ class AuthProvider extends ChangeNotifier {
               ),
             ),
           ],
+        ),
+        GoRoute(
+          path: '/',
+          name: HomeScreen.routeName,
+          builder: (context, state) => const HomeScreen(),
         ),
         GoRoute(
           path: '/schedule',
@@ -205,7 +211,7 @@ class AuthProvider extends ChangeNotifier {
     //UserModel
     //로그인 중이거나 현재 위치가 onboardScreen이면 홈으로 이동
     if (user is UserModel) {
-      return loginIn || state.uri.toString() == '/onboard' ? '/schedule' : null;
+      return loginIn || state.uri.toString() == '/onboard' ? '/' : null;
     }
 
     if (user is UserModelError && user.statusCode == 444) {

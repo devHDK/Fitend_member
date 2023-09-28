@@ -27,10 +27,10 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
   ScheduleStateNotifier({
     required this.workoutRepository,
     required this.reservationRepository,
-  }) : super(ScheduleModelLoading());
-  // {
-  //   // paginate(startDate: startDate);
-  // }
+  }) : super(ScheduleModelLoading()) {
+    DateTime fifteenDaysAgo = DateTime.now().subtract(const Duration(days: 15));
+    paginate(startDate: fifteenDaysAgo);
+  }
 
   Future<void> paginate({
     required DateTime startDate,

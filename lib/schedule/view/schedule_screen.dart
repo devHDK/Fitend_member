@@ -61,7 +61,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (initial) {
-        _getScheduleInitial();
+        // _getScheduleInitial();
+        _checkHasData(scheduleListGlobal, context);
+        initial = false;
       }
     });
   }

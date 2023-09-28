@@ -124,16 +124,16 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     }
   }
 
-  void _getScheduleInitial() async {
-    await ref
-        .read(scheduleProvider.notifier)
-        .paginate(startDate: DataUtils.getDate(fifteenDaysAgo))
-        .then((value) {
-      _checkHasData(scheduleListGlobal, context);
-    });
+  // void _getScheduleInitial() async {
+  //   await ref
+  //       .read(scheduleProvider.notifier)
+  //       .paginate(startDate: DataUtils.getDate(fifteenDaysAgo))
+  //       .then((value) {
+  //     _checkHasData(scheduleListGlobal, context);
+  //   });
 
-    initial = false;
-  }
+  //   initial = false;
+  // }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {

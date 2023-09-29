@@ -3,7 +3,6 @@ import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/thread/view/thread_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 
 class HomeScreen extends StatefulWidget {
   static String get routeName => 'home_screen';
@@ -45,14 +44,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       horizontal: 40,
                       vertical: 10,
                     ),
-                    child: SvgPicture.asset(_currentIndex == 0
-                        ? 'asset/img/icon_schedule_active.svg'
-                        : 'asset/img/icon_schedule.svg'),
+                    child: SvgPicture.asset(
+                      _currentIndex == 0
+                          ? 'asset/img/icon_schedule_active.svg'
+                          : 'asset/img/icon_schedule.svg',
+                    ),
                   ),
                 ),
                 const VerticalDivider(
-                  width: 1,
                   color: GRAY_COLOR,
+                  width: 1, // specify the width of the divider
                 ),
                 InkWell(
                   onTap: () => setState(() {

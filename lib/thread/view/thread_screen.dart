@@ -63,49 +63,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
           children: [
             EmojiButton(
               onTap: () {
-                showCupertinoModalPopup(
-                  context: context,
-                  builder: (context) => SizedBox(
-                    height: 250,
-                    child: EmojiPicker(
-                      onEmojiSelected: (category, emoji) {
-                        // Do something when emoji is tapped (optional)
-                      },
-                      config: Config(
-                        columns: 7,
-                        emojiSizeMax: 32 *
-                            (foundation.defaultTargetPlatform ==
-                                    TargetPlatform.iOS
-                                ? 1.30
-                                : 1.0),
-                        verticalSpacing: 0,
-                        horizontalSpacing: 0,
-                        gridPadding: EdgeInsets.zero,
-                        initCategory: Category.RECENT,
-                        bgColor: BACKGROUND_COLOR,
-                        indicatorColor: Colors.blue,
-                        iconColor: Colors.grey,
-                        iconColorSelected: Colors.blue,
-                        backspaceColor: Colors.blue,
-                        skinToneDialogBgColor: Colors.white,
-                        skinToneIndicatorColor: Colors.grey,
-                        enableSkinTones: true,
-                        recentTabBehavior: RecentTabBehavior.RECENT,
-                        recentsLimit: 28,
-                        noRecents: const Text(
-                          'No Recents',
-                          style: TextStyle(fontSize: 20, color: Colors.black26),
-                          textAlign: TextAlign.center,
-                        ), // Needs to be const Widget
-                        loadingIndicator:
-                            const SizedBox.shrink(), // Needs to be const Widget
-                        tabIndicatorAnimDuration: kTabScrollDuration,
-                        categoryIcons: const CategoryIcons(),
-                        buttonMode: ButtonMode.MATERIAL,
-                      ),
-                    ),
-                  ),
-                );
+                _showEmojiPicker(context);
               },
             ),
             EmojiButton(
@@ -120,6 +78,51 @@ class _ThreadScreenState extends State<ThreadScreen> {
               onTap: () {},
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Future<dynamic> _showEmojiPicker(BuildContext context) {
+    return showCupertinoModalPopup(
+      context: context,
+      builder: (context) => SizedBox(
+        height: 250,
+        child: EmojiPicker(
+          onEmojiSelected: (category, emoji) {
+            // Do something when emoji is tapped (optional)
+          },
+          config: Config(
+            columns: 7,
+            emojiSizeMax: 32 *
+                (foundation.defaultTargetPlatform == TargetPlatform.iOS
+                    ? 1.30
+                    : 1.0),
+            verticalSpacing: 0,
+            horizontalSpacing: 0,
+            gridPadding: EdgeInsets.zero,
+            initCategory: Category.RECENT,
+            bgColor: BACKGROUND_COLOR,
+            indicatorColor: POINT_COLOR,
+            iconColor: Colors.grey,
+            iconColorSelected: POINT_COLOR,
+            backspaceColor: POINT_COLOR,
+            skinToneDialogBgColor: Colors.white,
+            skinToneIndicatorColor: Colors.grey,
+            enableSkinTones: true,
+            recentTabBehavior: RecentTabBehavior.RECENT,
+            recentsLimit: 28,
+            noRecents: const Text(
+              'No Recents',
+              style: TextStyle(fontSize: 20, color: Colors.white),
+              textAlign: TextAlign.center,
+            ), // Needs to be const Widget
+            loadingIndicator:
+                const SizedBox.shrink(), // Needs to be const Widget
+            tabIndicatorAnimDuration: kTabScrollDuration,
+            categoryIcons: const CategoryIcons(),
+            buttonMode: ButtonMode.MATERIAL,
+          ),
         ),
       ),
     );

@@ -3,6 +3,8 @@ import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
+import 'package:fitend_member/thread/component/profile_image.dart';
+import 'package:fitend_member/thread/component/thread_cell.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -59,39 +61,64 @@ class _ThreadScreenState extends State<ThreadScreen> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            EmojiButton(
-              onTap: () {
-                _showEmojiPicker(context);
-              },
-            ),
-            EmojiButton(
-              emoji: '🔥',
-              count: 1,
-              onTap: () {},
-            ),
-            EmojiButton(
-              emoji: '🔥',
-              count: 1,
-              color: POINT_COLOR,
-              onTap: () {},
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // EmojiButton(
+              //   onTap: () {
+              //     _showEmojiPicker(
+              //       context: context,
+              //       onEmojiSelect: (category, emoji) {
+              //         context.pop();
+              //       },
+              //     );
+              //   },
+              // ),
+              // EmojiButton(
+              //   emoji: '🔥',
+              //   count: 1,
+              //   onTap: () {},
+              // ),
+              // EmojiButton(
+              //   emoji: '🔥',
+              //   count: 1,
+              //   color: POINT_COLOR,
+              //   onTap: () {},
+              // ),
+              ThreadCell(
+                id: 1,
+                profileImage: Image.asset(
+                  'asset/img/couple-training-together-gym2.png',
+                  fit: BoxFit.cover,
+                  height: 34,
+                  width: 34,
+                ),
+                nickname: '김시현',
+                dateTime: DateTime.now(),
+                title: 'title',
+                content:
+                    'fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고',
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Future<dynamic> _showEmojiPicker(BuildContext context) {
+  Future<dynamic> _showEmojiPicker({
+    required BuildContext context,
+    required Function(Category? category, Emoji? emoji) onEmojiSelect,
+  }) {
     return showCupertinoModalPopup(
       context: context,
       builder: (context) => SizedBox(
         height: 250,
         child: EmojiPicker(
-          onEmojiSelected: (category, emoji) {
-            // Do something when emoji is tapped (optional)
-          },
+          onEmojiSelected: onEmojiSelect,
           config: Config(
             columns: 7,
             emojiSizeMax: 32 *
@@ -116,7 +143,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
               'No Recents',
               style: TextStyle(fontSize: 20, color: Colors.white),
               textAlign: TextAlign.center,
-            ), // Needs to be const Widget
+            ),
             loadingIndicator:
                 const SizedBox.shrink(), // Needs to be const Widget
             tabIndicatorAnimDuration: kTabScrollDuration,

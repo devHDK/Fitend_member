@@ -5,6 +5,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -74,24 +75,34 @@ class _ThreadCellState extends State<ThreadCell> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
                 children: [
-                  Text(
-                    widget.nickname,
-                    style: s1SubTitle.copyWith(
-                      color: LIGHT_GRAY_COLOR,
-                      height: 1,
+                  SizedBox(
+                    width: 70.w,
+                    child: Row(
+                      children: [
+                        Text(
+                          widget.nickname,
+                          style: s1SubTitle.copyWith(
+                            color: LIGHT_GRAY_COLOR,
+                            height: 1,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 9,
+                        ),
+                        Text(
+                          intl.DateFormat('h:mm a')
+                              .format(widget.dateTime)
+                              .toString(),
+                          style:
+                              s2SubTitle.copyWith(color: GRAY_COLOR, height: 1),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(
-                    width: 9,
-                  ),
-                  Text(
-                    intl.DateFormat('h:mm a')
-                        .format(widget.dateTime)
-                        .toString(),
-                    style: s2SubTitle.copyWith(color: GRAY_COLOR, height: 1),
-                  )
+                  SvgPicture.asset('asset/img/icon_edit.svg')
                 ],
               ),
               if (widget.title != null)

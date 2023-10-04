@@ -98,9 +98,9 @@ class _ThreadScreenState extends State<ThreadScreen> {
                 ),
                 nickname: '김시현',
                 dateTime: DateTime.now(),
-                title: 'title',
+                title: '오늘 점심 식단인증 합니다!',
                 content:
-                    'fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고fitend최고',
+                    'fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 ',
               )
             ],
           ),

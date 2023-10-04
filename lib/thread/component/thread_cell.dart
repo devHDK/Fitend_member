@@ -1,13 +1,18 @@
 import 'dart:ffi';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 class ThreadCell extends StatefulWidget {
   const ThreadCell({
@@ -43,7 +48,10 @@ class _ThreadCellState extends State<ThreadCell> {
       //TODO: gallery, url, 댓글, emoji 추가시 높이 조정 필요
       height: 16 +
           (widget.title != null ? 24 : 0) +
-          _calculateLines(widget.content, s1SubTitle, 74.w).toInt() * 24,
+          _calculateLines(widget.content, s1SubTitle, 74.w).toInt() * 24 +
+          10 +
+          28,
+
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
@@ -122,6 +130,40 @@ class _ThreadCellState extends State<ThreadCell> {
                   ),
                 ),
               ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  EmojiButton(
+                    emoji: '😂',
+                    count: 1,
+                    onTap: () {},
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  EmojiButton(
+                    emoji: '🔥',
+                    count: 1,
+                    color: POINT_COLOR,
+                    onTap: () {},
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  EmojiButton(
+                    onTap: () {
+                      _showEmojiPicker(
+                        context: context,
+                        onEmojiSelect: (category, emoji) {
+                          context.pop();
+                        },
+                      );
+                    },
+                  ),
+                ],
+              )
             ],
           )
         ],
@@ -137,5 +179,51 @@ class _ThreadCellState extends State<ThreadCell> {
     )..layout(minWidth: 0, maxWidth: width);
 
     return textPainter.computeLineMetrics().length;
+  }
+
+  Future<dynamic> _showEmojiPicker({
+    required BuildContext context,
+    required Function(Category? category, Emoji? emoji) onEmojiSelect,
+  }) {
+    return showCupertinoModalPopup(
+      context: context,
+      builder: (context) => SizedBox(
+        height: 250,
+        child: EmojiPicker(
+          onEmojiSelected: onEmojiSelect,
+          config: Config(
+            columns: 7,
+            emojiSizeMax: 32 *
+                (foundation.defaultTargetPlatform == TargetPlatform.iOS
+                    ? 1.30
+                    : 1.0),
+            verticalSpacing: 0,
+            horizontalSpacing: 0,
+            gridPadding: EdgeInsets.zero,
+            initCategory: Category.RECENT,
+            bgColor: BACKGROUND_COLOR,
+            indicatorColor: POINT_COLOR,
+            iconColor: Colors.grey,
+            iconColorSelected: POINT_COLOR,
+            backspaceColor: POINT_COLOR,
+            skinToneDialogBgColor: Colors.white,
+            skinToneIndicatorColor: Colors.grey,
+            enableSkinTones: true,
+            recentTabBehavior: RecentTabBehavior.RECENT,
+            recentsLimit: 28,
+            noRecents: const Text(
+              'No Recents',
+              style: TextStyle(fontSize: 20, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            loadingIndicator:
+                const SizedBox.shrink(), // Needs to be const Widget
+            tabIndicatorAnimDuration: kTabScrollDuration,
+            categoryIcons: const CategoryIcons(),
+            buttonMode: ButtonMode.MATERIAL,
+          ),
+        ),
+      ),
+    );
   }
 }

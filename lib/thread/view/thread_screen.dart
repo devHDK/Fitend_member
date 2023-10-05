@@ -7,6 +7,7 @@ import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/component/thread_cell.dart';
 import 'package:fitend_member/thread/component/thread_detail.dart';
+import 'package:fitend_member/thread/view/thread_create_screen.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +62,15 @@ class _ThreadScreenState extends State<ThreadScreen> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.small(
+        onPressed: () {
+          Navigator.of(context).push(CupertinoPageRoute(
+            builder: (context) => const ThreadCreateScreen(),
+          ));
+        },
+        backgroundColor: Colors.transparent,
+        child: SvgPicture.asset('asset/img/icon_thread_create_button.svg'),
       ),
       body: SingleChildScrollView(
         child: Padding(

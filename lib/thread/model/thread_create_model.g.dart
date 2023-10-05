@@ -6,7 +6,8 @@ part of 'thread_create_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ThreadCreate _$ThreadCreateFromJson(Map<String, dynamic> json) => ThreadCreate(
+ThreadCreateModel _$ThreadCreateModelFromJson(Map<String, dynamic> json) =>
+    ThreadCreateModel(
       trainerId: json['trainerId'] as int,
       title: json['title'] as String?,
       content: json['content'] as String,
@@ -15,7 +16,7 @@ ThreadCreate _$ThreadCreateFromJson(Map<String, dynamic> json) => ThreadCreate(
           .toList(),
     );
 
-Map<String, dynamic> _$ThreadCreateToJson(ThreadCreate instance) =>
+Map<String, dynamic> _$ThreadCreateModelToJson(ThreadCreateModel instance) =>
     <String, dynamic>{
       'trainerId': instance.trainerId,
       'title': instance.title,

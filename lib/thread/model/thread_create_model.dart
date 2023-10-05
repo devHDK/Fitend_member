@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'thread_create_model.g.dart';
 
 @JsonSerializable()
-class ThreadCreate {
+class ThreadCreateModel {
   @JsonKey(name: "trainerId")
   final int trainerId;
   @JsonKey(name: "title")
@@ -14,28 +14,28 @@ class ThreadCreate {
   @JsonKey(name: "gallery")
   final List<GalleryModel> gallery;
 
-  ThreadCreate({
+  ThreadCreateModel({
     required this.trainerId,
     required this.title,
     required this.content,
     required this.gallery,
   });
 
-  ThreadCreate copyWith({
+  ThreadCreateModel copyWith({
     int? trainerId,
     String? title,
     String? content,
     List<GalleryModel>? gallery,
   }) =>
-      ThreadCreate(
+      ThreadCreateModel(
         trainerId: trainerId ?? this.trainerId,
         title: title ?? this.title,
         content: content ?? this.content,
         gallery: gallery ?? this.gallery,
       );
 
-  factory ThreadCreate.fromJson(Map<String, dynamic> json) =>
-      _$ThreadCreateFromJson(json);
+  factory ThreadCreateModel.fromJson(Map<String, dynamic> json) =>
+      _$ThreadCreateModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ThreadCreateToJson(this);
+  Map<String, dynamic> toJson() => _$ThreadCreateModelToJson(this);
 }

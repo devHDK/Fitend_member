@@ -172,7 +172,7 @@ class DialogWidgets {
     );
   }
 
-  Future<dynamic> emojiPickerDialog({
+  static Future<dynamic> emojiPickerDialog({
     required BuildContext context,
     required Function(Category? category, Emoji? emoji) onEmojiSelect,
   }) {

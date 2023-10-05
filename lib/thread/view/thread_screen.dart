@@ -2,6 +2,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
+import 'package:fitend_member/thread/component/comment_cell.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/component/thread_cell.dart';
@@ -119,6 +120,21 @@ class _ThreadScreenState extends State<ThreadScreen> {
                 title: '오늘 점심 식단인증 합니다!',
                 content:
                     'fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 fitend최고 ',
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+              CommentCell(
+                profileImage: Image.asset(
+                  'asset/img/couple-training-together-gym2.png',
+                  fit: BoxFit.cover,
+                  height: 34,
+                  width: 34,
+                ),
+                content:
+                    '오늘 운동도 고생많으셨어요!데드리프트는 자세가 많이 좋아지셨는데, 힙힌지를 조금만 더 신경써주시면 좋을것 같아요 👍',
+                nickname: 'Kelly',
+                dateTime: DateTime.now(),
               )
             ],
           ),

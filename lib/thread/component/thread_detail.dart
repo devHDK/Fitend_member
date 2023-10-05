@@ -40,46 +40,47 @@ class _ThreadDetailState extends State<ThreadDetail> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
+        Stack(
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
               children: [
-                CircleProfileImage(
-                  borderRadius: 17,
-                  image: widget.profileImage,
-                ),
-                const SizedBox(
-                  width: 9,
-                ),
-                Text(
-                  widget.nickname,
-                  style: s1SubTitle.copyWith(
-                    color: LIGHT_GRAY_COLOR,
-                    height: 1,
-                  ),
-                ),
-                const SizedBox(
-                  width: 9,
-                ),
-                Text(
-                  intl.DateFormat('h:mm a').format(widget.dateTime).toString(),
-                  style: s2SubTitle.copyWith(color: GRAY_COLOR, height: 1),
-                ),
-                const SizedBox(),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    SizedBox(
-                      width: 44.w,
+                    CircleProfileImage(
+                      borderRadius: 17,
+                      image: widget.profileImage,
                     ),
-                    SvgPicture.asset('asset/img/icon_edit.svg')
+                    const SizedBox(
+                      width: 9,
+                    ),
+                    Text(
+                      widget.nickname,
+                      style: s1SubTitle.copyWith(
+                        color: LIGHT_GRAY_COLOR,
+                        height: 1,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 9,
+                    ),
+                    Text(
+                      intl.DateFormat('h:mm a')
+                          .format(widget.dateTime)
+                          .toString(),
+                      style: s2SubTitle.copyWith(color: GRAY_COLOR, height: 1),
+                    ),
+                    const SizedBox(),
                   ],
                 ),
               ],
             ),
+            Positioned(
+              top: 15,
+              right: 0,
+              child: SvgPicture.asset('asset/img/icon_edit.svg'),
+            )
           ],
         ),
         const SizedBox(

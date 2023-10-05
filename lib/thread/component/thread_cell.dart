@@ -42,130 +42,134 @@ class _ThreadCellState extends State<ThreadCell> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      //TODO: gallery, url, 댓글, emoji 추가시 높이 조정 필요
-      height: 16 +
-          (widget.title != null ? 24 : 0) +
-          _calculateLines(widget.content, s1SubTitle, 74.w).toInt() * 24 +
-          10 +
-          28,
+    return Stack(
+      children: [
+        SizedBox(
+          //TODO: gallery, url, 댓글, emoji 추가시 높이 조정 필요
+          height: 16 +
+              (widget.title != null ? 24 : 0) +
+              _calculateLines(widget.content, s1SubTitle, 74.w).toInt() * 24 +
+              10 +
+              28,
 
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          SizedBox(
-            child: Stack(
-              children: [
-                SizedBox(
-                  width: 34,
-                  child: Center(
-                    child: Container(
-                      width: 0.5,
-                      color: GRAY_COLOR,
-                    ),
-                  ),
-                ),
-                CircleProfileImage(
-                  borderRadius: 17,
-                  image: widget.profileImage,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            width: 9,
-          ),
-          Column(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  SizedBox(
-                    width: 70.w,
-                    child: Row(
-                      children: [
-                        Text(
-                          widget.nickname,
-                          style: s1SubTitle.copyWith(
-                            color: LIGHT_GRAY_COLOR,
-                            height: 1,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 9,
-                        ),
-                        Text(
-                          intl.DateFormat('h:mm a')
-                              .format(widget.dateTime)
-                              .toString(),
-                          style:
-                              s2SubTitle.copyWith(color: GRAY_COLOR, height: 1),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SvgPicture.asset('asset/img/icon_edit.svg')
-                ],
-              ),
-              if (widget.title != null)
-                Text(
-                  widget.title!,
-                  style: h5Headline.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
               SizedBox(
-                width: 100.w - 56 - 34 - 9,
-                child: AutoSizeText(
-                  widget.content,
-                  maxLines: 50,
-                  style: s1SubTitle.copyWith(
-                    color: Colors.white,
-                  ),
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      width: 34,
+                      child: Center(
+                        child: Container(
+                          width: 0.5,
+                          color: GRAY_COLOR,
+                        ),
+                      ),
+                    ),
+                    CircleProfileImage(
+                      borderRadius: 17,
+                      image: widget.profileImage,
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(
-                height: 10,
+                width: 9,
               ),
-              Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  EmojiButton(
-                    emoji: '😂',
-                    count: 1,
-                    onTap: () {},
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            widget.nickname,
+                            style: s1SubTitle.copyWith(
+                              color: LIGHT_GRAY_COLOR,
+                              height: 1,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 9,
+                          ),
+                          Text(
+                            intl.DateFormat('h:mm a')
+                                .format(widget.dateTime)
+                                .toString(),
+                            style: s2SubTitle.copyWith(
+                                color: GRAY_COLOR, height: 1),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  if (widget.title != null)
+                    Text(
+                      widget.title!,
+                      style: h5Headline.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  SizedBox(
+                    width: 100.w - 56 - 34 - 9,
+                    child: AutoSizeText(
+                      widget.content,
+                      maxLines: 50,
+                      style: s1SubTitle.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                   const SizedBox(
-                    width: 5,
+                    height: 10,
                   ),
-                  EmojiButton(
-                    emoji: '🔥',
-                    count: 1,
-                    color: POINT_COLOR,
-                    onTap: () {},
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  EmojiButton(
-                    onTap: () {
-                      _showEmojiPicker(
-                        context: context,
-                        onEmojiSelect: (category, emoji) {
-                          context.pop();
+                  Row(
+                    children: [
+                      EmojiButton(
+                        emoji: '😂',
+                        count: 1,
+                        onTap: () {},
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      EmojiButton(
+                        emoji: '🔥',
+                        count: 1,
+                        color: POINT_COLOR,
+                        onTap: () {},
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      EmojiButton(
+                        onTap: () {
+                          _showEmojiPicker(
+                            context: context,
+                            onEmojiSelect: (category, emoji) {
+                              context.pop();
+                            },
+                          );
                         },
-                      );
-                    },
-                  ),
+                      ),
+                    ],
+                  )
                 ],
               )
             ],
-          )
-        ],
-      ),
+          ),
+        ),
+        Positioned(
+          top: 5,
+          right: 0,
+          child: SvgPicture.asset('asset/img/icon_edit.svg'),
+        )
+      ],
     );
   }
 

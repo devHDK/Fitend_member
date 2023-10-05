@@ -8,8 +8,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'thread_comment_repository.g.dart';
 
-final reservaionScheduleRepositoryProvider =
-    Provider<ThreadCommentRepository>((ref) {
+final commentRepositoryProvider = Provider<ThreadCommentRepository>((ref) {
   final dio = ref.watch(dioProvider);
 
   return ThreadCommentRepository(dio);

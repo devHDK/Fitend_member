@@ -3,6 +3,18 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'thread_list_model.g.dart';
 
+abstract class ThreadListModelBase {}
+
+class ThreadListModelError extends ThreadListModelBase {
+  final String message;
+
+  ThreadListModelError({
+    required this.message,
+  });
+}
+
+class ThreadListModelLoading extends ThreadListModelBase {}
+
 @JsonSerializable()
 class ThreadListModel {
   @JsonKey(name: "data")

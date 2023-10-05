@@ -8,6 +8,18 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'thread_model.g.dart';
 
+abstract class ThreadModelBase {}
+
+class ThreadModelError extends ThreadModelBase {
+  final String message;
+
+  ThreadModelError({
+    required this.message,
+  });
+}
+
+class ThreadModelLoading extends ThreadModelBase {}
+
 @JsonSerializable()
 class ThreadModel {
   @JsonKey(name: "id")

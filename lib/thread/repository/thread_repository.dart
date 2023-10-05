@@ -9,7 +9,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'thread_repository.g.dart';
 
-final reservaionScheduleRepositoryProvider = Provider<ThreadRepository>((ref) {
+final threadRepositoryProvider = Provider<ThreadRepository>((ref) {
   final dio = ref.watch(dioProvider);
 
   return ThreadRepository(dio);

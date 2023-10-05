@@ -1,4 +1,3 @@
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:fitend_member/thread/model/emoji_model.dart';
 import 'package:fitend_member/thread/model/gallery_model.dart';
 import 'package:fitend_member/thread/model/thread_trainer_model.dart';

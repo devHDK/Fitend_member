@@ -1,3 +1,4 @@
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:fitend_member/common/component/calendar.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -6,11 +7,13 @@ import 'package:fitend_member/schedule/model/put_workout_schedule_date_model.dar
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:ndialog/ndialog.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 class DialogWidgets {
   static DialogBackground confirmDialog({
@@ -168,6 +171,52 @@ class DialogWidgets {
       ),
     );
   }
+
+  Future<dynamic> emojiPickerDialog({
+    required BuildContext context,
+    required Function(Category? category, Emoji? emoji) onEmojiSelect,
+  }) {
+    return showCupertinoModalPopup(
+      context: context,
+      builder: (context) => SizedBox(
+        height: 250,
+        child: EmojiPicker(
+          onEmojiSelected: onEmojiSelect,
+          config: Config(
+            columns: 7,
+            emojiSizeMax: 32 *
+                (foundation.defaultTargetPlatform == TargetPlatform.iOS
+                    ? 1.30
+                    : 1.0),
+            verticalSpacing: 0,
+            horizontalSpacing: 0,
+            gridPadding: EdgeInsets.zero,
+            initCategory: Category.RECENT,
+            bgColor: BACKGROUND_COLOR,
+            indicatorColor: POINT_COLOR,
+            iconColor: Colors.grey,
+            iconColorSelected: POINT_COLOR,
+            backspaceColor: POINT_COLOR,
+            skinToneDialogBgColor: Colors.white,
+            skinToneIndicatorColor: Colors.grey,
+            enableSkinTones: true,
+            recentTabBehavior: RecentTabBehavior.RECENT,
+            recentsLimit: 28,
+            noRecents: const Text(
+              'No Recents',
+              style: TextStyle(fontSize: 20, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            loadingIndicator:
+                const SizedBox.shrink(), // Needs to be const Widget
+            tabIndicatorAnimDuration: kTabScrollDuration,
+            categoryIcons: const CategoryIcons(),
+            buttonMode: ButtonMode.MATERIAL,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class CalendarDialog extends ConsumerStatefulWidget {
@@ -222,7 +271,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
       await ref.read(workoutScheduleRepositoryProvider).putworkoutScheduleDate(
             id: widget.workoutScheduleId,
             body: PutWorkoutScheduleModel(
-              startDate: DateFormat('yyyy-MM-dd').format(selectedDay!),
+              startDate: intl.DateFormat('yyyy-MM-dd').format(selectedDay!),
               seq:
                   dateData!["${selectedDay!.month}-${selectedDay!.day}"] == null
                       ? 1
@@ -252,7 +301,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
       //변경할 날짜의 스케줄 인덱스
       final afterCahngeSchdedulIndex = scheduleListGlobal.indexWhere((element) {
         final localTime =
-            DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(selectedDay!);
+            intl.DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(selectedDay!);
         return element.startDate == DateTime.parse(localTime);
       });
 

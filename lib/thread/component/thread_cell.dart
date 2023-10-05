@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -121,7 +119,7 @@ class _ThreadCellState extends State<ThreadCell> {
                   ),
                 ),
               SizedBox(
-                width: 74.w,
+                width: 100.w - 56 - 34 - 9,
                 child: AutoSizeText(
                   widget.content,
                   maxLines: 50,

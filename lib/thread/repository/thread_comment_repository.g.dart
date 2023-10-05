@@ -9,7 +9,10 @@ part of 'thread_comment_repository.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
 class _ThreadCommentRepository implements ThreadCommentRepository {
-  _ThreadCommentRepository(this._dio);
+  _ThreadCommentRepository(
+    this._dio, {
+    this.baseUrl,
+  });
 
   final Dio _dio;
 
@@ -49,7 +52,7 @@ class _ThreadCommentRepository implements ThreadCommentRepository {
     queryParameters.addAll(model.toJson());
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<ThreadListModel>(Options(
       method: 'GET',
@@ -106,7 +109,7 @@ class _ThreadCommentRepository implements ThreadCommentRepository {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'DELETE',
       headers: _headers,

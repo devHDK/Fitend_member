@@ -19,12 +19,13 @@ class _ThreadRepository implements ThreadRepository {
   String? baseUrl;
 
   @override
-  Future<void> postThread({required InvalidType model}) async {
+  Future<void> postThread({required ThreadCreateModel model}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
-    final _data = model;
+    final _data = <String, dynamic>{};
+    _data.addAll(model.toJson());
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'POST',
       headers: _headers,
@@ -44,7 +45,8 @@ class _ThreadRepository implements ThreadRepository {
   }
 
   @override
-  Future<InvalidType> getThreads({required InvalidType params}) async {
+  Future<ThreadListModel> getThreads(
+      {required ThreadGetListParamsModel params}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.addAll(params.toJson());
@@ -52,7 +54,7 @@ class _ThreadRepository implements ThreadRepository {
     _headers.removeWhere((k, v) => v == null);
     final Map<String, dynamic>? _data = null;
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<InvalidType>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<ThreadListModel>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -68,19 +70,19 @@ class _ThreadRepository implements ThreadRepository {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = InvalidType.fromJson(_result.data!);
+    final value = ThreadListModel.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<InvalidType> getThreadWithId({required int id}) async {
+  Future<ThreadModel> getThreadWithId({required int id}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
     final Map<String, dynamic>? _data = null;
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<InvalidType>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<ThreadModel>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -96,20 +98,21 @@ class _ThreadRepository implements ThreadRepository {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = InvalidType.fromJson(_result.data!);
+    final value = ThreadModel.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<void> putThreadWithId({
     required int id,
-    required InvalidType model,
+    required ThreadCreateModel model,
   }) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
-    final _data = model;
+    final _data = <String, dynamic>{};
+    _data.addAll(model.toJson());
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'PUT',
       headers: _headers,

@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
-import 'package:fitend_member/thread/model/thread_create_model.dart';
-import 'package:fitend_member/thread/model/thread_list_model.dart';
-import 'package:fitend_member/thread/model/thread_model.dart';
-import 'package:fitend_member/thread/model/thread_get_list_params_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_get_list_params_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:retrofit/retrofit.dart';
 

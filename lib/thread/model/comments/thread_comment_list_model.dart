@@ -1,4 +1,4 @@
-import 'package:fitend_member/thread/model/thread_comment_model.dart';
+import 'package:fitend_member/thread/model/comments/thread_comment_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'thread_comment_list_model.g.dart';

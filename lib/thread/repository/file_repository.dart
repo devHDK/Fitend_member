@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
-import 'package:fitend_member/thread/model/file_upload_request_model.dart';
-import 'package:fitend_member/thread/model/file_upload_response_model.dart';
+import 'package:fitend_member/thread/model/files/file_upload_request_model.dart';
+import 'package:fitend_member/thread/model/files/file_upload_response_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:retrofit/retrofit.dart';
 

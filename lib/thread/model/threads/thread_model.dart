@@ -1,9 +1,8 @@
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:fitend_member/thread/model/emoji_model.dart';
-import 'package:fitend_member/thread/model/gallery_model.dart';
-import 'package:fitend_member/thread/model/thread_trainer_model.dart';
-import 'package:fitend_member/thread/model/thread_user_model.dart';
-import 'package:fitend_member/thread/model/thread_workout_info_model.dart';
+import 'package:fitend_member/thread/model/common/gallery_model.dart';
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
+import 'package:fitend_member/thread/model/common/thread_workout_info_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'thread_model.g.dart';

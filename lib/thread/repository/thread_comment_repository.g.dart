@@ -45,7 +45,7 @@ class _ThreadCommentRepository implements ThreadCommentRepository {
   }
 
   @override
-  Future<ThreadListModel> getComments(
+  Future<ThreadCommentListModel> getComments(
       {required CommentGetListParamsModel model}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -53,8 +53,8 @@ class _ThreadCommentRepository implements ThreadCommentRepository {
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<ThreadListModel>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ThreadCommentListModel>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -70,7 +70,7 @@ class _ThreadCommentRepository implements ThreadCommentRepository {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = ThreadListModel.fromJson(_result.data!);
+    final value = ThreadCommentListModel.fromJson(_result.data!);
     return value;
   }
 

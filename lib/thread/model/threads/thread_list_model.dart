@@ -1,4 +1,4 @@
-import 'package:fitend_member/thread/model/thread_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'thread_list_model.g.dart';

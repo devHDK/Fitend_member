@@ -9,10 +9,7 @@ part of 'file_repository.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
 class _FileRepository implements FileRepository {
-  _FileRepository(
-    this._dio, {
-    this.baseUrl,
-  });
+  _FileRepository(this._dio);
 
   final Dio _dio;
 
@@ -26,7 +23,7 @@ class _FileRepository implements FileRepository {
     queryParameters.addAll(model.toJson());
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<FileResponseModel>(Options(
       method: 'GET',

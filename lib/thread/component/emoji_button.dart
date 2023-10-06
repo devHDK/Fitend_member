@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class EmojiButton extends StatefulWidget {
-  int? count;
-  String? emoji;
-  Color? color;
+  final int? count;
+  final String? emoji;
+  final Color? color;
   final GestureTapCallback onTap;
 
-  EmojiButton({
+  const EmojiButton({
     super.key,
     this.count,
     this.emoji,

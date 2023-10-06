@@ -185,8 +185,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     ref.read(routeObserverProvider).unsubscribe(this);
+    WidgetsBinding.instance.removeObserver(this);
     itemPositionsListener.itemPositions
         .removeListener(_handleItemPositionChange);
     super.dispose();

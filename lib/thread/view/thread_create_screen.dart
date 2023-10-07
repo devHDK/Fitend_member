@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class ThreadCreateScreen extends ConsumerStatefulWidget {
   const ThreadCreateScreen({super.key});
@@ -19,8 +20,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
   final titleController = TextEditingController();
   final contentsController = TextEditingController();
 
-  final ScrollController scrollController = ScrollController();
-  double _scrollOffset = 0.0;
+  // final ScrollController scrollController = ScrollController();
+  final double _scrollOffset = 0.0;
   double keyboardHeight = 0;
 
   final baseBorder = const OutlineInputBorder(
@@ -37,7 +38,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     titleFocusNode.addListener(_titleFocusnodeListner);
     contentFocusNode.addListener(_contentFocusnodeListner);
 
-    scrollController.addListener(_scrollListener);
+    // scrollController.addListener(_scrollListener);
   }
 
   @override
@@ -46,8 +47,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     contentFocusNode.removeListener(_contentFocusnodeListner);
     titleFocusNode.dispose();
     contentFocusNode.dispose();
-    scrollController.removeListener(_scrollListener);
-    scrollController.dispose();
+    // scrollController.removeListener(_scrollListener);
+    // scrollController.dispose();
     contentsController.dispose();
 
     super.dispose();
@@ -58,11 +59,11 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
       setState(() {
         titleFocusNode.requestFocus();
         addKeyboardHeightListener();
-        scrollController.animateTo(
-          _scrollOffset + 325,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.ease,
-        );
+        // scrollController.animateTo(
+        //   _scrollOffset + 325,
+        //   duration: const Duration(milliseconds: 200),
+        //   curve: Curves.ease,
+        // );
       });
     } else {
       setState(() {
@@ -77,11 +78,11 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
       setState(() {
         contentFocusNode.requestFocus();
         addKeyboardHeightListener();
-        scrollController.animateTo(
-          _scrollOffset + 325,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.ease,
-        );
+        // scrollController.animateTo(
+        //   _scrollOffset + 325,
+        //   duration: const Duration(milliseconds: 200),
+        //   curve: Curves.ease,
+        // );
       });
     } else {
       setState(() {
@@ -105,11 +106,11 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     setState(() => keyboardHeight = 0);
   }
 
-  void _scrollListener() {
-    setState(() {
-      _scrollOffset = scrollController.offset;
-    });
-  }
+  // void _scrollListener() {
+  //   setState(() {
+  //     _scrollOffset = scrollController.offset;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -172,13 +173,25 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                   ),
                   InkWell(
                     onTap: () async {
-                      final assets = await ref
+                      await ref
                           .read(threadProvider.notifier)
-                          .pickImage(context);
-
-                      if (assets != null && assets.isNotEmpty) {
-                        print(assets);
-                      }
+                          .pickImage(context)
+                          .then((assets) async {
+                        if (assets != null && assets.isNotEmpty) {
+                          for (var asset in assets) {
+                            print(asset.size);
+                            print(await asset.thumbnailDataWithSize(
+                                const ThumbnailSize(720, 480)));
+                            print(asset.isLivePhoto);
+                            print(await asset.mimeTypeAsync);
+                            if (await asset.file != null) {
+                              print(await asset.file);
+                            }
+                          }
+                        } else {
+                          print('assets: $assets');
+                        }
+                      });
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),

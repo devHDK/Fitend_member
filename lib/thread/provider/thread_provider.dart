@@ -48,34 +48,36 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
 
   Future<List<AssetEntity>?> pickImage(BuildContext context) async {
     try {
-      await AssetPicker.permissionCheck().then((value) async {
-        if (!value.hasAccess) {
-          openAppSettings();
-        } else {
-          final List<AssetEntity>? result =
-              await AssetPicker.pickAssets(context,
-                  pickerConfig: AssetPickerConfig(
-                    themeColor: POINT_COLOR,
-                    maxAssets: 10,
-                    loadingIndicatorBuilder: (context, isAssetsEmpty) =>
-                        const Center(
-                      child: CircularProgressIndicator(
-                        color: POINT_COLOR,
-                      ),
-                    ),
-                  ));
+      final permission = await AssetPicker.permissionCheck();
 
-          if (result != null && result.isNotEmpty) {
-            print(result);
-            return result;
-          }
+      print(permission.hasAccess);
+
+      if (!permission.hasAccess) {
+        openAppSettings();
+        return null;
+      } else {
+        final result = await AssetPicker.pickAssets(
+          context,
+          pickerConfig: AssetPickerConfig(
+            themeColor: POINT_COLOR,
+            maxAssets: 10,
+            loadingIndicatorBuilder: (context, isAssetsEmpty) => const Center(
+              child: CircularProgressIndicator(
+                color: POINT_COLOR,
+              ),
+            ),
+          ),
+        );
+
+        if (result != null && result.isNotEmpty) {
+          return result;
+        } else {
           return null;
         }
-      });
+      }
     } catch (e) {
       print(e);
       return null;
     }
-    return null;
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
@@ -20,9 +22,10 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
   final titleController = TextEditingController();
   final contentsController = TextEditingController();
 
+  final List<AssetEntity> _assets = [];
+
   // final ScrollController scrollController = ScrollController();
-  final double _scrollOffset = 0.0;
-  double keyboardHeight = 0;
+  // double keyboardHeight = 0;
 
   final baseBorder = const OutlineInputBorder(
     borderSide: BorderSide(
@@ -58,7 +61,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     if (titleFocusNode.hasFocus) {
       setState(() {
         titleFocusNode.requestFocus();
-        addKeyboardHeightListener();
+        // addKeyboardHeightListener();
         // scrollController.animateTo(
         //   _scrollOffset + 325,
         //   duration: const Duration(milliseconds: 200),
@@ -68,7 +71,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     } else {
       setState(() {
         titleFocusNode.unfocus();
-        removeKeyboardHeightListener();
+        // removeKeyboardHeightListener();
       });
     }
   }
@@ -77,7 +80,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     if (contentFocusNode.hasFocus) {
       setState(() {
         contentFocusNode.requestFocus();
-        addKeyboardHeightListener();
+        // addKeyboardHeightListener();
         // scrollController.animateTo(
         //   _scrollOffset + 325,
         //   duration: const Duration(milliseconds: 200),
@@ -87,24 +90,24 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     } else {
       setState(() {
         contentFocusNode.unfocus();
-        removeKeyboardHeightListener();
+        // removeKeyboardHeightListener();
       });
     }
   }
 
-  void addKeyboardHeightListener() {
-    final viewInsets = MediaQuery.paddingOf(context);
-    final newKeyboardHeight = viewInsets.bottom;
-    if (newKeyboardHeight > 0) {
-      setState(() => keyboardHeight = newKeyboardHeight);
-    } else {
-      removeKeyboardHeightListener();
-    }
-  }
+  // void addKeyboardHeightListener() {
+  //   final viewInsets = MediaQuery.paddingOf(context);
+  //   final newKeyboardHeight = viewInsets.bottom;
+  //   if (newKeyboardHeight > 0) {
+  //     setState(() => keyboardHeight = newKeyboardHeight);
+  //   } else {
+  //     removeKeyboardHeightListener();
+  //   }
+  // }
 
-  void removeKeyboardHeightListener() {
-    setState(() => keyboardHeight = 0);
-  }
+  // void removeKeyboardHeightListener() {
+  //   setState(() => keyboardHeight = 0);
+  // }
 
   // void _scrollListener() {
   //   setState(() {
@@ -180,14 +183,15 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                         if (assets != null && assets.isNotEmpty) {
                           for (var asset in assets) {
                             print(asset.size);
-                            print(await asset.thumbnailDataWithSize(
-                                const ThumbnailSize(720, 480)));
-                            print(asset.isLivePhoto);
                             print(await asset.mimeTypeAsync);
                             if (await asset.file != null) {
                               print(await asset.file);
                             }
                           }
+
+                          setState(() {
+                            _assets.addAll(assets);
+                          });
                         } else {
                           print('assets: $assets');
                         }
@@ -259,7 +263,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
               ),
             ),
             TextFormField(
-              maxLines: 30,
+              maxLines: 20,
               style: const TextStyle(color: Colors.white),
               controller: contentsController,
               cursorColor: POINT_COLOR,
@@ -286,13 +290,33 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                   contentFocusNode.hasFocus ||
                           contentsController.text.isNotEmpty
                       ? ''
-                      : '여기를 눌러 시작해주세요\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',
+                      : '여기를 눌러 시작해주세요\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',
                   style: s1SubTitle.copyWith(
                     color: contentFocusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
                   ),
                 ),
               ),
             ),
+            SizedBox(
+              height: 200,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                physics: const ScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return FutureBuilder<File?>(
+                      future: _assets[index].file,
+                      builder: (context, snapshot) {
+                        return Row(children: [
+                          Image.file(snapshot.data!),
+                          const SizedBox(
+                            width: 10,
+                          )
+                        ]);
+                      });
+                },
+                itemCount: _assets.length,
+              ),
+            )
           ],
         ),
       ),

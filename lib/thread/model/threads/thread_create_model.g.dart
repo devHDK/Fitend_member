@@ -11,12 +11,32 @@ ThreadCreateModel _$ThreadCreateModelFromJson(Map<String, dynamic> json) =>
       trainerId: json['trainerId'] as int,
       title: json['title'] as String?,
       content: json['content'] as String,
-      gallery: (json['gallery'] as List<dynamic>)
-          .map((e) => GalleryModel.fromJson(e as Map<String, dynamic>))
+      gallery: (json['gallery'] as List<dynamic>?)
+          ?.map((e) => GalleryModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
 Map<String, dynamic> _$ThreadCreateModelToJson(ThreadCreateModel instance) =>
+    <String, dynamic>{
+      'trainerId': instance.trainerId,
+      'title': instance.title,
+      'content': instance.content,
+      'gallery': instance.gallery,
+    };
+
+ThreadCreateTempModel _$ThreadCreateTempModelFromJson(
+        Map<String, dynamic> json) =>
+    ThreadCreateTempModel(
+      trainerId: json['trainerId'] as int?,
+      title: json['title'] as String?,
+      content: json['content'] as String?,
+      gallery: (json['gallery'] as List<dynamic>?)
+          ?.map((e) => GalleryModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$ThreadCreateTempModelToJson(
+        ThreadCreateTempModel instance) =>
     <String, dynamic>{
       'trainerId': instance.trainerId,
       'title': instance.title,

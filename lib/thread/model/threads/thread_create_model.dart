@@ -12,7 +12,7 @@ class ThreadCreateModel {
   @JsonKey(name: "content")
   final String content;
   @JsonKey(name: "gallery")
-  final List<GalleryModel> gallery;
+  final List<GalleryModel>? gallery;
 
   ThreadCreateModel({
     required this.trainerId,
@@ -38,4 +38,41 @@ class ThreadCreateModel {
       _$ThreadCreateModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ThreadCreateModelToJson(this);
+}
+
+@JsonSerializable()
+class ThreadCreateTempModel {
+  @JsonKey(name: "trainerId")
+  final int? trainerId;
+  @JsonKey(name: "title")
+  String? title;
+  @JsonKey(name: "content")
+  final String? content;
+  @JsonKey(name: "gallery")
+  final List<GalleryModel>? gallery;
+
+  ThreadCreateTempModel({
+    this.trainerId,
+    this.title,
+    this.content,
+    this.gallery,
+  });
+
+  ThreadCreateTempModel copyWith({
+    int? trainerId,
+    String? title,
+    String? content,
+    List<GalleryModel>? gallery,
+  }) =>
+      ThreadCreateTempModel(
+        trainerId: trainerId ?? this.trainerId,
+        title: title ?? this.title,
+        content: content ?? this.content,
+        gallery: gallery ?? this.gallery,
+      );
+
+  factory ThreadCreateTempModel.fromJson(Map<String, dynamic> json) =>
+      _$ThreadCreateTempModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ThreadCreateTempModelToJson(this);
 }

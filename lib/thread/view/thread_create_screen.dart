@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/thread/component/preview_image.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -298,21 +299,37 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
               ),
             ),
             SizedBox(
-              height: 200,
+              height: 130,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const ScrollPhysics(),
                 itemBuilder: (context, index) {
                   return FutureBuilder<File?>(
-                      future: _assets[index].file,
-                      builder: (context, snapshot) {
-                        return Row(children: [
-                          Image.file(snapshot.data!),
-                          const SizedBox(
-                            width: 10,
-                          )
-                        ]);
-                      });
+                    future: _assets[index].file,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasError) {
+                          // 오류가 발생한 경우에 대한 UI.
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          // 데이터가 성공적으로 로드된 경우.
+                          return PreviewImage(
+                            file: snapshot.data!,
+                          );
+                        }
+                      } else {
+                        return const SizedBox(
+                          width: 140,
+                          height: 120,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: POINT_COLOR,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
                 },
                 itemCount: _assets.length,
               ),

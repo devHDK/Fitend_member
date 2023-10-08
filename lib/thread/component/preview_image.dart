@@ -16,6 +16,14 @@ class PreviewImage extends StatefulWidget {
 
 class _PreviewImageState extends State<PreviewImage> {
   @override
+  void didUpdateWidget(covariant PreviewImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.file.path != widget.file.path) {
+      setState(() {});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Row(children: [
       SizedBox(

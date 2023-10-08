@@ -279,7 +279,11 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                             highlightColor: Colors.transparent,
                             onTap: () => Navigator.of(context).push(
                               CupertinoPageRoute(
-                                builder: (context) => const AssetEditScreen(),
+                                builder: (context) => AssetEditScreen(
+                                  parentUpdate: () {
+                                    setState(() {});
+                                  },
+                                ),
                               ),
                             ),
                             child: PreviewImage(

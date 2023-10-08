@@ -5,28 +5,44 @@ import 'package:fitend_member/thread/repository/thread_comment_repository.dart';
 import 'package:fitend_member/thread/repository/thread_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final threadDetailProvider =
-    StateNotifierProvider<ThreadDetailStateNotifier, ThreadCreateTempModel>(
+final threadCreateProvider =
+    StateNotifierProvider<ThreadCreateStateNotifier, ThreadCreateTempModel>(
         (ref) {
   final threadRepository = ref.watch(threadRepositoryProvider);
   final commentRepository = ref.watch(commentRepositoryProvider);
   final dioUpload = ref.watch(dioUploadProvider);
 
-  return ThreadDetailStateNotifier(
+  return ThreadCreateStateNotifier(
     threadRepository: threadRepository,
     commentRepository: commentRepository,
     dioUpload: dioUpload,
   );
 });
 
-class ThreadDetailStateNotifier extends StateNotifier<ThreadCreateTempModel> {
+class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
   final ThreadRepository threadRepository;
   final ThreadCommentRepository commentRepository;
   final Dio dioUpload;
 
-  ThreadDetailStateNotifier({
+  ThreadCreateStateNotifier({
     required this.threadRepository,
     required this.commentRepository,
     required this.dioUpload,
-  }) : super(ThreadCreateTempModel());
+  }) : super(ThreadCreateTempModel()) {
+    init();
+  }
+
+  void init() {
+    state = ThreadCreateTempModel(
+      assetsPaths: [],
+    );
+  }
+
+  void addAssets(String assetPath) {
+    state.assetsPaths!.add(assetPath);
+  }
+
+  void removeAsset(int index) {
+    state.assetsPaths!.removeAt(index);
+  }
 }

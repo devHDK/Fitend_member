@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
+import 'package:fitend_member/thread/view/asset_edit_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,11 +28,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
   final titleController = TextEditingController();
   final contentsController = TextEditingController();
 
-  final List<AssetEntity> _assets = [];
-
-  // final ScrollController scrollController = ScrollController();
-  // double keyboardHeight = 0;
-
   final baseBorder = const OutlineInputBorder(
     borderSide: BorderSide(
       color: Colors.transparent,
@@ -41,8 +41,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
 
     titleFocusNode.addListener(_titleFocusnodeListner);
     contentFocusNode.addListener(_contentFocusnodeListner);
-
-    // scrollController.addListener(_scrollListener);
   }
 
   @override
@@ -51,8 +49,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     contentFocusNode.removeListener(_contentFocusnodeListner);
     titleFocusNode.dispose();
     contentFocusNode.dispose();
-    // scrollController.removeListener(_scrollListener);
-    // scrollController.dispose();
     contentsController.dispose();
 
     super.dispose();
@@ -62,17 +58,10 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     if (titleFocusNode.hasFocus) {
       setState(() {
         titleFocusNode.requestFocus();
-        // addKeyboardHeightListener();
-        // scrollController.animateTo(
-        //   _scrollOffset + 325,
-        //   duration: const Duration(milliseconds: 200),
-        //   curve: Curves.ease,
-        // );
       });
     } else {
       setState(() {
         titleFocusNode.unfocus();
-        // removeKeyboardHeightListener();
       });
     }
   }
@@ -81,44 +70,17 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     if (contentFocusNode.hasFocus) {
       setState(() {
         contentFocusNode.requestFocus();
-        // addKeyboardHeightListener();
-        // scrollController.animateTo(
-        //   _scrollOffset + 325,
-        //   duration: const Duration(milliseconds: 200),
-        //   curve: Curves.ease,
-        // );
       });
     } else {
       setState(() {
         contentFocusNode.unfocus();
-        // removeKeyboardHeightListener();
       });
     }
   }
 
-  // void addKeyboardHeightListener() {
-  //   final viewInsets = MediaQuery.paddingOf(context);
-  //   final newKeyboardHeight = viewInsets.bottom;
-  //   if (newKeyboardHeight > 0) {
-  //     setState(() => keyboardHeight = newKeyboardHeight);
-  //   } else {
-  //     removeKeyboardHeightListener();
-  //   }
-  // }
-
-  // void removeKeyboardHeightListener() {
-  //   setState(() => keyboardHeight = 0);
-  // }
-
-  // void _scrollListener() {
-  //   setState(() {
-  //     _scrollOffset = scrollController.offset;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // final state = ref.watch(threadProvider);
+    final state = ref.watch(threadCreateProvider);
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -183,16 +145,16 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                           .then((assets) async {
                         if (assets != null && assets.isNotEmpty) {
                           for (var asset in assets) {
-                            print(asset.size);
-                            print(await asset.mimeTypeAsync);
                             if (await asset.file != null) {
-                              print(await asset.file);
+                              final file = await asset.file;
+
+                              ref
+                                  .read(threadCreateProvider.notifier)
+                                  .addAssets(file!.path);
                             }
                           }
 
-                          setState(() {
-                            _assets.addAll(assets);
-                          });
+                          setState(() {});
                         } else {
                           print('assets: $assets');
                         }
@@ -299,39 +261,56 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
               ),
             ),
             SizedBox(
-              height: 130,
+              height: 140,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                physics: const ScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return FutureBuilder<File?>(
-                    future: _assets[index].file,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        if (snapshot.hasError) {
-                          // 오류가 발생한 경우에 대한 UI.
-                          return Text('Error: ${snapshot.error}');
-                        } else {
-                          // 데이터가 성공적으로 로드된 경우.
-                          return PreviewImage(
-                            file: snapshot.data!,
-                          );
-                        }
-                      } else {
-                        return const SizedBox(
-                          width: 140,
-                          height: 120,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: POINT_COLOR,
+                  final intPath = utf8.encode(state.assetsPaths![index]);
+                  final path = Uint8List.fromList(intPath);
+
+                  final file = File.fromRawPath(path);
+
+                  return Stack(
+                    children: [
+                      SizedBox(
+                        child: Center(
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () => Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (context) => const AssetEditScreen(),
+                              ),
+                            ),
+                            child: PreviewImage(
+                              file: file,
                             ),
                           ),
-                        );
-                      }
-                    },
+                        ),
+                      ),
+                      Positioned(
+                        right: -13,
+                        top: -13,
+                        child: IconButton(
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          onPressed: () {
+                            setState(() {
+                              ref
+                                  .read(threadCreateProvider.notifier)
+                                  .removeAsset(index);
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.cancel,
+                            color: LIGHT_GRAY_COLOR,
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 },
-                itemCount: _assets.length,
+                itemCount: state.assetsPaths!.length,
               ),
             )
           ],

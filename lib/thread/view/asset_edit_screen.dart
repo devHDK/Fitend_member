@@ -36,7 +36,7 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
       ),
       body: SizedBox(
         width: 100.w,
-        height: 70.h,
+        height: 60.h,
         child: PageView.builder(
           itemBuilder: (context, index) {
             final intPath = utf8.encode(state.assetsPaths![index]);

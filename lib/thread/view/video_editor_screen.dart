@@ -96,21 +96,13 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
         _isExporting.value = false;
         if (!mounted) return;
 
-        print(widget.parentUpdate != null);
-
         if (widget.parentUpdate != null) {
-          print('update Parent');
           widget.parentUpdate!();
         }
 
         setState(() {
           ref.read(threadCreateProvider.notifier).changeAsset(index, file.path);
         });
-
-        // showDialog(
-        //   context: context,
-        //   builder: (_) => VideoResultPopup(video: file),
-        // );
       },
     ).then((value) {
       setState(() {

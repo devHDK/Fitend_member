@@ -8,9 +8,15 @@ class PreviewVideoThumbNail extends StatefulWidget {
   const PreviewVideoThumbNail({
     super.key,
     required this.file,
+    this.isCircle = true,
+    this.isBorder = false,
+    this.width = 140,
   });
 
   final File file;
+  final bool? isCircle;
+  final bool? isBorder;
+  final int? width;
 
   @override
   State<PreviewVideoThumbNail> createState() => _PreviewVideoThumbNailState();
@@ -45,11 +51,21 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SizedBox(
-          width: 140,
-          height: 120,
+        Container(
+          decoration: widget.isBorder!
+              ? BoxDecoration(
+                  border: Border.all(
+                    color: POINT_COLOR,
+                    width: 2,
+                  ),
+                )
+              : null,
+          width: widget.width!.toDouble(),
+          height: widget.width!.toDouble() * 0.8,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: widget.isCircle!
+                ? BorderRadius.circular(20)
+                : BorderRadius.circular(0),
             child: thumbNail != null
                 ? Image.file(
                     thumbNail!,
@@ -73,7 +89,7 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
     final filePath = await MediaUtils.getVideoThumbNail(widget.file.path);
     if (filePath != null) {
       thumbNail = File(filePath);
-      print('thumbnail path ===> ${thumbNail!.path}');
+      // print('thumbnail path ===> ${thumbNail!.path}');
     }
 
     setState(() {});

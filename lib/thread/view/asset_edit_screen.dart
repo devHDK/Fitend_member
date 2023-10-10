@@ -4,6 +4,8 @@ import 'dart:typed_data';
 
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/thread/component/edit_video_player.dart';
+import 'package:fitend_member/thread/component/preview_image.dart';
+import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
@@ -12,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class AssetEditScreen extends ConsumerStatefulWidget {
   const AssetEditScreen({
@@ -27,6 +30,8 @@ class AssetEditScreen extends ConsumerStatefulWidget {
 }
 
 class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
+  final ItemScrollController itemScrollController = ItemScrollController();
+
   int fileIndex = 0;
   PageController? _pageController;
   bool? pause;
@@ -68,11 +73,11 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
         ),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
             width: 100.w,
-            height: 100.h - kToolbarHeight - 70,
+            height: 85.h - kToolbarHeight - 70,
             child: PageView.builder(
               controller: _pageController,
               itemBuilder: (context, index) {
@@ -90,13 +95,59 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
                       );
               },
               itemCount: state.assetsPaths!.length,
-              onPageChanged: (value) => setState(
-                () {
-                  fileIndex = value;
-                },
-              ),
+              onPageChanged: (value) {
+                print('value : $value');
+
+                setState(
+                  () {
+                    itemScrollController.jumpTo(index: value);
+                    fileIndex = value;
+                  },
+                );
+              },
             ),
           ),
+          SizedBox(
+            height: 10.h,
+            child: ScrollablePositionedList.builder(
+              scrollDirection: Axis.horizontal,
+              itemScrollController: itemScrollController,
+              initialScrollIndex: fileIndex,
+              itemBuilder: (context, index) {
+                final intPath = utf8.encode(state.assetsPaths![index]);
+                final path = Uint8List.fromList(intPath);
+                final file = File.fromRawPath(path);
+                final type = MediaUtils.getMediaType(file.path);
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      fileIndex = index;
+                      _pageController!.jumpToPage(
+                        index,
+                      );
+                    });
+                  },
+                  child: Container(
+                    decoration: const BoxDecoration(),
+                    child: type == MediaType.image
+                        ? PreviewImage(
+                            file: file,
+                            isCircle: false,
+                            isBorder: fileIndex == index,
+                            width: 100,
+                          )
+                        : PreviewVideoThumbNail(
+                            file: file,
+                            isCircle: false,
+                            isBorder: fileIndex == index,
+                            width: 100,
+                          ),
+                  ),
+                );
+              },
+              itemCount: state.assetsPaths!.length,
+            ),
+          )
         ],
       ),
     );

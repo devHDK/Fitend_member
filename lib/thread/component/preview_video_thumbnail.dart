@@ -5,8 +5,8 @@ import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class PreviewVideo extends StatefulWidget {
-  const PreviewVideo({
+class PreviewVideoThumbNail extends StatefulWidget {
+  const PreviewVideoThumbNail({
     super.key,
     required this.file,
   });
@@ -14,15 +14,15 @@ class PreviewVideo extends StatefulWidget {
   final File file;
 
   @override
-  State<PreviewVideo> createState() => _PreviewVideoState();
+  State<PreviewVideoThumbNail> createState() => _PreviewVideoThumbNailState();
 }
 
-class _PreviewVideoState extends State<PreviewVideo> {
+class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
   // VideoPlayerController? _videoController;
   File? thumbNail;
 
   @override
-  void didUpdateWidget(covariant PreviewVideo oldWidget) {
+  void didUpdateWidget(covariant PreviewVideoThumbNail oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.file.path != widget.file.path) {
       setState(() {});

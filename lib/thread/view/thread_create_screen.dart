@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
-import 'package:fitend_member/thread/component/preview_video.dart';
+import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
@@ -15,8 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-import 'package:path/path.dart' as path;
 
 class ThreadCreateScreen extends ConsumerStatefulWidget {
   const ThreadCreateScreen({super.key});
@@ -306,7 +304,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                       ? PreviewImage(
                                           file: file,
                                         )
-                                      : PreviewVideo(file: file),
+                                      : PreviewVideoThumbNail(file: file),
                                 ),
                               ),
                             ),

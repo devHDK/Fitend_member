@@ -3,7 +3,9 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/thread/component/edit_video_player.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
+import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -52,11 +54,16 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
                 final intPath = utf8.encode(state.assetsPaths![index]);
                 final path = Uint8List.fromList(intPath);
                 final file = File.fromRawPath(path);
+                final type = MediaUtils.getMediaType(file.path);
 
-                return Image.file(
-                  file,
-                  fit: BoxFit.contain,
-                );
+                return type == MediaType.image
+                    ? Image.file(
+                        file,
+                        fit: BoxFit.contain,
+                      )
+                    : EditVideoPlayer(
+                        file: file,
+                      );
               },
               itemCount: state.assetsPaths!.length,
               onPageChanged: (value) {

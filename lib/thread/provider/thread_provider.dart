@@ -1,4 +1,3 @@
-import 'package:devicelocale/devicelocale.dart';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';

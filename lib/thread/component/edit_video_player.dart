@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/view/video_edit_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:video_player/video_player.dart';
 
-class EditVideoPlayer extends StatefulWidget {
+class EditVideoPlayer extends ConsumerStatefulWidget {
   final File file;
 
   const EditVideoPlayer({
@@ -15,10 +17,10 @@ class EditVideoPlayer extends StatefulWidget {
   });
 
   @override
-  State<EditVideoPlayer> createState() => _EditVideoPlayerState();
+  ConsumerState<EditVideoPlayer> createState() => _EditVideoPlayerState();
 }
 
-class _EditVideoPlayerState extends State<EditVideoPlayer> {
+class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
   VideoPlayerController? _videoController;
 
   Duration currentPosition = const Duration();
@@ -28,6 +30,8 @@ class _EditVideoPlayerState extends State<EditVideoPlayer> {
   @override
   void initState() {
     super.initState();
+
+    print(widget.file.path);
 
     videoInit();
   }
@@ -83,6 +87,8 @@ class _EditVideoPlayerState extends State<EditVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(threadCreateProvider);
+
     if (_videoController == null || _videoController!.value.isBuffering) {
       return Container(
         color: BACKGROUND_COLOR,
@@ -111,30 +117,30 @@ class _EditVideoPlayerState extends State<EditVideoPlayer> {
                   },
                   child: Stack(
                     children: [
-                      !_videoController!.value.isInitialized ||
-                              _videoController!.value.isBuffering
-                          ? Container(
-                              color: BACKGROUND_COLOR,
-                              child: const Center(
-                                child: CircularProgressIndicator(
-                                  color: POINT_COLOR,
-                                  backgroundColor: Colors.black,
-                                ),
-                              ),
-                            )
-                          : Container(
-                              color: BACKGROUND_COLOR,
-                              child: Center(
-                                child: AspectRatio(
-                                  aspectRatio:
-                                      _videoController!.value.aspectRatio,
-                                  child: Hero(
-                                    tag: widget.file.path,
-                                    child: VideoPlayer(_videoController!),
-                                  ),
-                                ),
-                              ),
+                      // !_videoController!.value.isInitialized ||
+                      //         _videoController!.value.isBuffering
+                      // ? Container(
+                      //     color: BACKGROUND_COLOR,
+                      //     child: const Center(
+                      //       child: CircularProgressIndicator(
+                      //         color: POINT_COLOR,
+                      //         backgroundColor: Colors.black,
+                      //       ),
+                      //     ),
+                      //   )
+                      // :
+                      Hero(
+                        tag: widget.file.path,
+                        child: Container(
+                          color: BACKGROUND_COLOR,
+                          child: Center(
+                            child: AspectRatio(
+                              aspectRatio: _videoController!.value.aspectRatio,
+                              child: VideoPlayer(_videoController!),
                             ),
+                          ),
+                        ),
+                      ),
                       if (isShowControlls)
                         _Controls(
                           onForwarPressed: onForwarPressed,

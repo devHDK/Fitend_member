@@ -1,18 +1,15 @@
 import 'dart:io';
-
-import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/exercise/model/exercise_video_model.dart';
+import 'package:fitend_member/thread/view/video_edit_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:video_player/video_player.dart';
 
 class EditVideoPlayer extends StatefulWidget {
-  File file;
+  final File file;
 
-  EditVideoPlayer({
+  const EditVideoPlayer({
     super.key,
     required this.file,
   });
@@ -25,14 +22,14 @@ class _EditVideoPlayerState extends State<EditVideoPlayer> {
   VideoPlayerController? _videoController;
 
   Duration currentPosition = const Duration();
-  bool isShowControlls = true;
+  bool isShowControlls = false;
   bool isPlaying = false;
 
   @override
   void initState() {
     super.initState();
 
-    firstVideoInit();
+    videoInit();
   }
 
   @override
@@ -45,9 +42,16 @@ class _EditVideoPlayerState extends State<EditVideoPlayer> {
   @override
   void didUpdateWidget(covariant EditVideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.file != widget.file) {
+      _videoController!.removeListener(videoListener);
+      _videoController!.dispose().then((value) {
+        videoInit();
+      });
+    }
   }
 
-  Future<void> firstVideoInit() async {
+  Future<void> videoInit() async {
     currentPosition = const Duration();
 
     _videoController = VideoPlayerController.file(
@@ -91,47 +95,97 @@ class _EditVideoPlayerState extends State<EditVideoPlayer> {
       );
     }
 
-    return AspectRatio(
-      aspectRatio: _videoController!.value.aspectRatio,
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            isShowControlls = !isShowControlls;
-          });
-        },
-        child: Stack(
-          children: [
-            !_videoController!.value.isInitialized ||
-                    _videoController!.value.isBuffering
-                ? Container(
-                    color: BACKGROUND_COLOR,
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        color: POINT_COLOR,
-                        backgroundColor: BACKGROUND_COLOR,
-                      ),
-                    ),
-                  )
-                : Container(
-                    color: BACKGROUND_COLOR,
-                    child: VideoPlayer(_videoController!),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: SizedBox(
+            child: Center(
+              child: AspectRatio(
+                aspectRatio: _videoController!.value.aspectRatio,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isShowControlls = !isShowControlls;
+                    });
+                  },
+                  child: Stack(
+                    children: [
+                      !_videoController!.value.isInitialized ||
+                              _videoController!.value.isBuffering
+                          ? Container(
+                              color: BACKGROUND_COLOR,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: POINT_COLOR,
+                                  backgroundColor: Colors.black,
+                                ),
+                              ),
+                            )
+                          : Container(
+                              color: BACKGROUND_COLOR,
+                              child: Center(
+                                child: AspectRatio(
+                                  aspectRatio:
+                                      _videoController!.value.aspectRatio,
+                                  child: VideoPlayer(_videoController!),
+                                ),
+                              ),
+                            ),
+                      if (isShowControlls)
+                        _Controls(
+                          onForwarPressed: onForwarPressed,
+                          onPlayPressed: onPlayPressed,
+                          onReversePressed: onReversePressed,
+                          isPlaying: _videoController!.value.isPlaying,
+                        ),
+                      if (isShowControlls)
+                        _Slider(
+                          currentPosition: currentPosition,
+                          maxPpsition: _videoController!.value.duration,
+                          onSlideChanged: onSlideChanged,
+                        )
+                    ],
                   ),
-            if (isShowControlls)
-              _Controls(
-                onForwarPressed: onForwarPressed,
-                onPlayPressed: onPlayPressed,
-                onReversePressed: onReversePressed,
-                isPlaying: _videoController!.value.isPlaying,
+                ),
               ),
-            if (isShowControlls)
-              _Slider(
-                currentPosition: currentPosition,
-                maxPpsition: _videoController!.value.duration,
-                onSlideChanged: onSlideChanged,
-              )
-          ],
+            ),
+          ),
         ),
-      ),
+        const SizedBox(
+          height: 20,
+        ),
+        SafeArea(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                onPressed: () {
+                  _videoController!.pause();
+
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          VideoEditScreen(
+                        file: widget.file,
+                      ),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        return FadeTransition(opacity: animation, child: child);
+                      },
+                    ),
+                  );
+                },
+                icon: const Icon(
+                  LineIcons.cut,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 

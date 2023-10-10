@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 
 class PreviewVideoThumbNail extends StatefulWidget {
   const PreviewVideoThumbNail({

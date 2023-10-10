@@ -1,9 +1,10 @@
+import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:fraction/fraction.dart';
 import 'package:video_editor/video_editor.dart';
 
-class CropPage extends StatelessWidget {
-  const CropPage({super.key, required this.controller});
+class VideoCropScreen extends StatelessWidget {
+  const VideoCropScreen({super.key, required this.controller});
 
   final VideoEditorController controller;
 
@@ -43,12 +44,15 @@ class CropPage extends StatelessWidget {
             Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(
                 flex: 2,
-                child: IconButton(
+                child: TextButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Center(
+                  child: Center(
                     child: Text(
-                      "cancel",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      "취소",
+                      style: h5Headline.copyWith(
+                        color: const Color(0xff0474f1),
+                        height: 1,
+                      ),
                     ),
                   ),
                 ),
@@ -105,7 +109,7 @@ class CropPage extends StatelessWidget {
               ),
               Expanded(
                 flex: 2,
-                child: IconButton(
+                child: TextButton(
                   onPressed: () {
                     // WAY 1: validate crop parameters set in the crop view
                     controller.applyCacheCrop();
@@ -113,12 +117,12 @@ class CropPage extends StatelessWidget {
                     // controller.updateCrop(const Offset(0.2, 0.2), const Offset(0.8, 0.8));
                     Navigator.pop(context);
                   },
-                  icon: Center(
+                  child: Center(
                     child: Text(
-                      "done",
-                      style: TextStyle(
-                        color: const CropGridStyle().selectedBoundariesColor,
-                        fontWeight: FontWeight.bold,
+                      "확인",
+                      style: h5Headline.copyWith(
+                        color: const Color(0xffffcc00),
+                        height: 1,
                       ),
                     ),
                   ),

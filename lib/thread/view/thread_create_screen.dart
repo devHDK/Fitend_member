@@ -293,11 +293,14 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                   highlightColor: Colors.transparent,
                                   onTap: () => Navigator.of(context).push(
                                     CupertinoPageRoute(
-                                      builder: (context) => AssetEditScreen(
-                                        parentUpdate: () {
-                                          setState(() {});
-                                        },
-                                      ),
+                                      builder: (context) {
+                                        return AssetEditScreen(
+                                          pageIndex: index,
+                                          parentUpdate: () {
+                                            setState(() {});
+                                          },
+                                        );
+                                      },
                                     ),
                                   ),
                                   child: type == MediaType.image

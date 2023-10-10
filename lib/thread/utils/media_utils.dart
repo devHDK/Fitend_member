@@ -1,14 +1,25 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:ffmpeg_kit_flutter_min/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_min/ffmpeg_kit_config.dart';
 import 'package:ffmpeg_kit_flutter_min/ffmpeg_session.dart';
+import 'package:ffmpeg_kit_flutter_min/ffprobe_kit.dart';
 import 'package:ffmpeg_kit_flutter_min/return_code.dart';
 import 'package:ffmpeg_kit_flutter_min/statistics.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:video_editor/video_editor.dart';
+import 'package:path/path.dart' as path;
+import 'package:video_thumbnail/video_thumbnail.dart';
 
-class VideoExportUtils {
+enum MediaType {
+  image,
+  video,
+  other,
+}
+
+class MediaUtils {
   static Future<void> dispose() async {
     final executions = await FFmpegKit.listSessions();
     if (executions.isNotEmpty) await FFmpegKit.cancel();
@@ -44,5 +55,51 @@ class VideoExportUtils {
       null,
       onProgress,
     );
+  }
+
+  static Future<String?> getVideoThumbNail(String filePath) async {
+    final path = await VideoThumbnail.thumbnailFile(
+      video: filePath,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: ImageFormat.JPEG,
+      maxWidth:
+          256, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+      quality: 50,
+    );
+
+    if (path != null) {
+      return path;
+    }
+
+    return null;
+  }
+
+  static MediaType getMediaType(String filePath) {
+    String ext = path.extension(filePath).toLowerCase();
+
+    switch (ext) {
+      case '.jpg':
+      case '.jpeg':
+      case '.png':
+      case '.gif':
+      case '.bmp':
+      case '.webp':
+      case '.tiff':
+      case '.tif':
+      case '.ico':
+        return MediaType.image;
+
+      case '.mp4':
+      case '.mov':
+      case '.avi':
+      case '.mkv':
+      case '.flv':
+      case '.wmv':
+      case '.webm':
+        return MediaType.video;
+
+      default:
+        return MediaType.other;
+    }
   }
 }

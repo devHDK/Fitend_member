@@ -5,8 +5,10 @@ import 'dart:typed_data';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
+import 'package:fitend_member/thread/component/preview_video.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
+import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/asset_edit_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+import 'package:path/path.dart' as path;
 
 class ThreadCreateScreen extends ConsumerStatefulWidget {
   const ThreadCreateScreen({super.key});
@@ -23,6 +26,8 @@ class ThreadCreateScreen extends ConsumerStatefulWidget {
 }
 
 class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
+  bool isLoading = false;
+
   FocusNode titleFocusNode = FocusNode();
   FocusNode contentFocusNode = FocusNode();
   final titleController = TextEditingController();
@@ -144,6 +149,10 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                           .pickImage(context)
                           .then((assets) async {
                         if (assets != null && assets.isNotEmpty) {
+                          setState(() {
+                            isLoading = true;
+                          });
+
                           for (var asset in assets) {
                             if (await asset.file != null) {
                               final file = await asset.file;
@@ -154,7 +163,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                             }
                           }
 
-                          setState(() {});
+                          setState(() {
+                            isLoading = false;
+                          });
                         } else {
                           print('assets: $assets');
                         }
@@ -262,60 +273,67 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
             ),
             SizedBox(
               height: 140,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  final intPath = utf8.encode(state.assetsPaths![index]);
-                  final path = Uint8List.fromList(intPath);
-
-                  final file = File.fromRawPath(path);
-
-                  return Stack(
-                    children: [
-                      SizedBox(
-                        child: Center(
-                          child: InkWell(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onTap: () => Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (context) => AssetEditScreen(
-                                  parentUpdate: () {
-                                    setState(() {});
-                                  },
+              child: isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: POINT_COLOR,
+                      ),
+                    )
+                  : ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final intPath = utf8.encode(state.assetsPaths![index]);
+                        final path = Uint8List.fromList(intPath);
+                        final file = File.fromRawPath(path);
+                        final type = MediaUtils.getMediaType(file.path);
+                        return Stack(
+                          children: [
+                            SizedBox(
+                              child: Center(
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () => Navigator.of(context).push(
+                                    CupertinoPageRoute(
+                                      builder: (context) => AssetEditScreen(
+                                        parentUpdate: () {
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  child: type == MediaType.image
+                                      ? PreviewImage(
+                                          file: file,
+                                        )
+                                      : PreviewVideo(file: file),
                                 ),
                               ),
                             ),
-                            child: PreviewImage(
-                              file: file,
+                            Positioned(
+                              right: -13,
+                              top: -13,
+                              child: IconButton(
+                                highlightColor: Colors.transparent,
+                                splashColor: Colors.transparent,
+                                onPressed: () {
+                                  setState(() {
+                                    ref
+                                        .read(threadCreateProvider.notifier)
+                                        .removeAsset(index);
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.cancel,
+                                  color: LIGHT_GRAY_COLOR,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        right: -13,
-                        top: -13,
-                        child: IconButton(
-                          highlightColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                          onPressed: () {
-                            setState(() {
-                              ref
-                                  .read(threadCreateProvider.notifier)
-                                  .removeAsset(index);
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.cancel,
-                            color: LIGHT_GRAY_COLOR,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-                itemCount: state.assetsPaths!.length,
-              ),
+                          ],
+                        );
+                      },
+                      itemCount: state.assetsPaths!.length,
+                    ),
             )
           ],
         ),

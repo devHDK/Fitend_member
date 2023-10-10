@@ -25,21 +25,23 @@ class _PreviewImageState extends State<PreviewImage> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
-      SizedBox(
-        width: 140,
-        height: 120,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Image.file(
-            widget.file,
-            fit: BoxFit.cover,
+    return Row(
+      children: [
+        SizedBox(
+          width: 140,
+          height: 120,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.file(
+              widget.file,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
-      ),
-      const SizedBox(
-        width: 10,
-      )
-    ]);
+        const SizedBox(
+          width: 10,
+        )
+      ],
+    );
   }
 }

@@ -7,14 +7,11 @@ import 'package:fitend_member/thread/component/edit_video_player.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
-import 'package:fitend_member/thread/view/video_edit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:video_player/video_player.dart';
 
 class AssetEditScreen extends ConsumerStatefulWidget {
   const AssetEditScreen({
@@ -83,6 +80,13 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
                     ? _editImageView(file, state)
                     : EditVideoPlayer(
                         file: file,
+                        index: index,
+                        parentUpdate: () {
+                          if (widget.parentUpdate != null) {
+                            widget.parentUpdate!();
+                          }
+                          setState(() {});
+                        },
                       );
               },
               itemCount: state.assetsPaths!.length,

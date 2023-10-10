@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/thread/provider/thread_create_provider.dart';
-import 'package:fitend_member/thread/view/video_edit_screen.dart';
+import 'package:fitend_member/thread/view/video_editor_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
@@ -10,10 +9,14 @@ import 'package:video_player/video_player.dart';
 
 class EditVideoPlayer extends ConsumerStatefulWidget {
   final File file;
+  final int index;
+  final Function? parentUpdate;
 
   const EditVideoPlayer({
     super.key,
     required this.file,
+    required this.index,
+    this.parentUpdate,
   });
 
   @override
@@ -30,8 +33,6 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
   @override
   void initState() {
     super.initState();
-
-    print(widget.file.path);
 
     videoInit();
   }
@@ -87,8 +88,6 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(threadCreateProvider);
-
     if (_videoController == null || _videoController!.value.isBuffering) {
       return Container(
         color: BACKGROUND_COLOR,
@@ -175,9 +174,15 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
                   Navigator.of(context).push(
                     PageRouteBuilder(
                       pageBuilder: (context, animation, secondaryAnimation) =>
-                          VideoEditScreen(
-                        file: widget.file,
-                      ),
+                          VideoEditorScreen(
+                              file: widget.file,
+                              index: widget.index,
+                              parentUpdate: () {
+                                if (widget.parentUpdate != null) {
+                                  widget.parentUpdate!();
+                                }
+                                setState(() {});
+                              }),
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {
                         return FadeTransition(opacity: animation, child: child);

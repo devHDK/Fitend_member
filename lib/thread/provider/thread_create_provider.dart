@@ -43,6 +43,20 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
   }
 
   void removeAsset(int index) {
-    state.assetsPaths!.removeAt(index);
+    final pstate = state;
+
+    print('index $index');
+
+    pstate.assetsPaths!.removeAt(index);
+
+    state = pstate;
+  }
+
+  void changeAsset(int index, String path) {
+    final pstate = state;
+
+    pstate.assetsPaths![index] = path;
+
+    state = pstate;
   }
 }

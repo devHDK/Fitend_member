@@ -2,29 +2,38 @@ import 'dart:io';
 
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/video_crop_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:video_editor/video_editor.dart';
 
-class VideoEditScreen extends StatefulWidget {
-  const VideoEditScreen({
+class VideoEditorScreen extends ConsumerStatefulWidget {
+  const VideoEditorScreen({
     super.key,
     required this.file,
+    required this.index,
+    this.parentUpdate,
   });
 
   final File file;
+  final int index;
+  final Function? parentUpdate;
 
   @override
-  State<VideoEditScreen> createState() => _VideoEditScreenState();
+  ConsumerState<VideoEditorScreen> createState() => _VideoEditScreenState();
 }
 
-class _VideoEditScreenState extends State<VideoEditScreen> {
+class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
   final _exportingProgress = ValueNotifier<double>(0.0);
   final _isExporting = ValueNotifier<bool>(false);
   final double height = 60;
+
+  bool isLoading = false;
 
   late final VideoEditorController _controller = VideoEditorController.file(
     widget.file,
@@ -58,38 +67,57 @@ class _VideoEditScreenState extends State<VideoEditScreen> {
         ),
       );
 
-  // void _exportVideo() async {
-  //   _exportingProgress.value = 0;
-  //   _isExporting.value = true;
+  void _exportVideo(ThreadCreateTempModel state, int index) async {
+    _exportingProgress.value = 0;
+    _isExporting.value = true;
 
-  //   final config = VideoFFmpegVideoEditorConfig(
-  //     _controller,
-  //     // format: VideoExportFormat.gif,
-  //     // commandBuilder: (config, videoPath, outputPath) {
-  //     //   final List<String> filters = config.getExportFilters();
-  //     //   filters.add('hflip'); // add horizontal flip
+    final config = VideoFFmpegVideoEditorConfig(
+      _controller,
+      // format: VideoExportFormat.gif,
+      // commandBuilder: (config, videoPath, outputPath) {
+      //   final List<String> filters = config.getExportFilters();
+      //   filters.add('hflip'); // add horizontal flip
 
-  //     //   return '-i $videoPath ${config.filtersCmd(filters)} -preset ultrafast $outputPath';
-  //     // },
-  //   );
+      //   return '-i $videoPath ${config.filtersCmd(filters)} -preset ultrafast $outputPath';
+      // },
+    );
 
-  //   await MediaUtils.runFFmpegCommand(
-  //     await config.getExecuteConfig(),
-  //     onProgress: (stats) {
-  //       _exportingProgress.value = config.getFFmpegProgress(stats.getTime());
-  //     },
-  //     onError: (e, s) => _showErrorSnackBar("Error on export video :("),
-  //     onCompleted: (file) {
-  //       _isExporting.value = false;
-  //       if (!mounted) return;
+    setState(() {
+      isLoading = true;
+    });
 
-  //       showDialog(
-  //         context: context,
-  //         builder: (_) => VideoResultPopup(video: file),
-  //       );
-  //     },
-  //   );
-  // }
+    await MediaUtils.runFFmpegCommand(
+      await config.getExecuteConfig(),
+      onProgress: (stats) {
+        _exportingProgress.value = config.getFFmpegProgress(stats.getTime());
+      },
+      onError: (e, s) => _showErrorSnackBar("Error on export video :("),
+      onCompleted: (file) {
+        _isExporting.value = false;
+        if (!mounted) return;
+
+        print(widget.parentUpdate != null);
+
+        if (widget.parentUpdate != null) {
+          print('update Parent');
+          widget.parentUpdate!();
+        }
+
+        setState(() {
+          ref.read(threadCreateProvider.notifier).changeAsset(index, file.path);
+        });
+
+        // showDialog(
+        //   context: context,
+        //   builder: (_) => VideoResultPopup(video: file),
+        // );
+      },
+    ).then((value) {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
 
   // void _exportCover() async {
   //   final config = CoverFFmpegVideoEditorConfig(_controller);
@@ -115,6 +143,8 @@ class _VideoEditScreenState extends State<VideoEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(threadCreateProvider);
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -170,7 +200,7 @@ class _VideoEditScreenState extends State<VideoEditScreen> {
                         const SizedBox(
                           height: 10,
                         ),
-                        _bottomNavBar(),
+                        _bottomNavBar(state, widget.index),
                       ],
                     )
                   ],
@@ -181,7 +211,7 @@ class _VideoEditScreenState extends State<VideoEditScreen> {
     );
   }
 
-  Widget _bottomNavBar() {
+  Widget _bottomNavBar(ThreadCreateTempModel state, int index) {
     return SafeArea(
       child: SizedBox(
         height: height,
@@ -239,7 +269,11 @@ class _VideoEditScreenState extends State<VideoEditScreen> {
             ),
             Expanded(
               child: TextButton(
-                onPressed: () => context.pop(),
+                onPressed: () {
+                  _exportVideo(state, index);
+
+                  context.pop();
+                },
                 child: Text(
                   '저장',
                   style: h5Headline.copyWith(

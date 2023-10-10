@@ -23,8 +23,8 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
   @override
   void didUpdateWidget(covariant PreviewVideoThumbNail oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.file.path != widget.file.path) {
-      setState(() {});
+    if (oldWidget.file != widget.file) {
+      setThumbNail();
     }
   }
 
@@ -73,7 +73,7 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
     final filePath = await MediaUtils.getVideoThumbNail(widget.file.path);
     if (filePath != null) {
       thumbNail = File(filePath);
-      print(thumbNail!.path);
+      print('thumbnail path ===> ${thumbNail!.path}');
     }
 
     setState(() {});

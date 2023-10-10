@@ -312,8 +312,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                         )
                                       : Hero(
                                           tag: state.assetsPaths![index],
-                                          child:
-                                              PreviewVideoThumbNail(file: file),
+                                          child: PreviewVideoThumbNail(
+                                            file: file,
+                                          ),
                                         ),
                                 ),
                               ),

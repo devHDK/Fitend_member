@@ -304,10 +304,17 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                     ),
                                   ),
                                   child: type == MediaType.image
-                                      ? PreviewImage(
-                                          file: file,
+                                      ? Hero(
+                                          tag: file.path,
+                                          child: PreviewImage(
+                                            file: file,
+                                          ),
                                         )
-                                      : PreviewVideoThumbNail(file: file),
+                                      : Hero(
+                                          tag: file.path,
+                                          child:
+                                              PreviewVideoThumbNail(file: file),
+                                        ),
                                 ),
                               ),
                             ),

@@ -128,7 +128,10 @@ class _EditVideoPlayerState extends State<EditVideoPlayer> {
                                 child: AspectRatio(
                                   aspectRatio:
                                       _videoController!.value.aspectRatio,
-                                  child: VideoPlayer(_videoController!),
+                                  child: Hero(
+                                    tag: widget.file.path,
+                                    child: VideoPlayer(_videoController!),
+                                  ),
                                 ),
                               ),
                             ),

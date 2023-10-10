@@ -104,9 +104,12 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
         Expanded(
           child: SizedBox(
             child: Center(
-              child: Image.file(
-                file,
-                fit: BoxFit.contain,
+              child: Hero(
+                tag: file.path,
+                child: Image.file(
+                  file,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),

@@ -50,12 +50,15 @@ class ThreadCreateTempModel {
   final String? content;
   @JsonKey(name: "assets")
   final List<String>? assetsPaths;
+  @JsonKey(name: "isLoading")
+  bool isLoading;
 
   ThreadCreateTempModel({
     this.trainerId,
     this.title,
     this.content,
     this.assetsPaths,
+    required this.isLoading,
   });
 
   ThreadCreateTempModel copyWith({
@@ -63,12 +66,14 @@ class ThreadCreateTempModel {
     String? title,
     String? content,
     List<String>? assetsPaths,
+    bool? isLoading,
   }) =>
       ThreadCreateTempModel(
         trainerId: trainerId ?? this.trainerId,
         title: title ?? this.title,
         content: content ?? this.content,
         assetsPaths: assetsPaths ?? this.assetsPaths,
+        isLoading: isLoading ?? this.isLoading,
       );
 
   factory ThreadCreateTempModel.fromJson(Map<String, dynamic> json) =>

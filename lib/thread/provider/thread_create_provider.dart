@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:camerawesome/camerawesome_plugin.dart';
@@ -7,6 +8,7 @@ import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/repository/thread_comment_repository.dart';
 import 'package:fitend_member/thread/repository/thread_repository.dart';
+import 'package:fitend_member/thread/view/camera_awesome_screen.dart';
 import 'package:fitend_member/thread/view/camera_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,13 +41,14 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     required this.threadRepository,
     required this.commentRepository,
     required this.dioUpload,
-  }) : super(ThreadCreateTempModel()) {
+  }) : super(ThreadCreateTempModel(isLoading: false)) {
     init();
   }
 
   void init() {
     state = ThreadCreateTempModel(
       assetsPaths: [],
+      isLoading: false,
     );
   }
 
@@ -84,7 +87,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     }
   }
 
-  Future<void> pickCamera(BuildContext context) async {
+  Future<void> pickCamera(BuildContext context, Function? parentUpdate) async {
     try {
       bool isGotPermission = false;
 
@@ -102,12 +105,9 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         openAppSettings();
       }
 
-      final directory = await createAlbum('Fitend');
-
       Navigator.of(context).push(
         CupertinoPageRoute(
-          builder: (context) =>
-              CustomCameraScreen(diretoryPath: directory.path),
+          builder: (context) => const CameraScreen(),
         ),
       );
     } catch (e) {
@@ -122,8 +122,6 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
   void removeAsset(int index) {
     final pstate = state;
 
-    print('index $index');
-
     pstate.assetsPaths!.removeAt(index);
 
     state = pstate;
@@ -137,15 +135,22 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     state = pstate;
   }
 
+  void updateIsLoading(bool isLoading) {
+    final pstate = state;
+
+    pstate.isLoading = isLoading;
+
+    state = pstate;
+  }
+
   Future<Directory> createAlbum(String albumName) async {
     final extDir = await getApplicationDocumentsDirectory();
+
     final String dirPath = '${extDir.path}/$albumName';
 
     final savedDir = Directory(dirPath);
 
     bool hasExisted = await savedDir.exists();
-
-    print('hasExisted ===> $hasExisted');
 
     if (!hasExisted) {
       await savedDir.create();

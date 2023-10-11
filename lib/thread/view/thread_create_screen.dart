@@ -24,8 +24,6 @@ class ThreadCreateScreen extends ConsumerStatefulWidget {
 }
 
 class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
-  bool isLoading = false;
-
   FocusNode titleFocusNode = FocusNode();
   FocusNode contentFocusNode = FocusNode();
   final titleController = TextEditingController();
@@ -140,7 +138,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                     onTap: () async {
                       await ref
                           .read(threadCreateProvider.notifier)
-                          .pickCamera(context);
+                          .pickCamera(context, () {
+                        setState(() {});
+                      });
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -155,7 +155,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                           .then((assets) async {
                         if (assets != null && assets.isNotEmpty) {
                           setState(() {
-                            isLoading = true;
+                            ref
+                                .read(threadCreateProvider.notifier)
+                                .updateIsLoading(true);
                           });
 
                           for (var asset in assets) {
@@ -171,7 +173,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                           }
 
                           setState(() {
-                            isLoading = false;
+                            ref
+                                .read(threadCreateProvider.notifier)
+                                .updateIsLoading(false);
                           });
                         } else {
                           print('assets: $assets');
@@ -280,7 +284,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
             ),
             SizedBox(
               height: 140,
-              child: isLoading
+              child: state.isLoading
                   ? const Center(
                       child: CircularProgressIndicator(
                         color: POINT_COLOR,

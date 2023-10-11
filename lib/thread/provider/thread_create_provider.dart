@@ -89,22 +89,6 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
 
   Future<void> pickCamera(BuildContext context, Function? parentUpdate) async {
     try {
-      bool isGotPermission = false;
-
-      if (Platform.isAndroid) {
-        if (await Permission.storage.request().isGranted) {
-          isGotPermission = true;
-        }
-      } else if (Platform.isIOS) {
-        if (await Permission.photos.request().isGranted) {
-          isGotPermission = true;
-        }
-      }
-
-      if (isGotPermission) {
-        openAppSettings();
-      }
-
       Navigator.of(context).push(
         CupertinoPageRoute(
           builder: (context) => const CameraScreen(),

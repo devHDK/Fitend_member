@@ -136,14 +136,21 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
             children: [
               Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: SvgPicture.asset('asset/img/icon_camera.svg'),
+                  InkWell(
+                    onTap: () async {
+                      await ref
+                          .read(threadCreateProvider.notifier)
+                          .pickCamera(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: SvgPicture.asset('asset/img/icon_camera.svg'),
+                    ),
                   ),
                   InkWell(
                     onTap: () async {
                       await ref
-                          .read(threadProvider.notifier)
+                          .read(threadCreateProvider.notifier)
                           .pickImage(context)
                           .then((assets) async {
                         if (assets != null && assets.isNotEmpty) {
@@ -158,6 +165,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                               ref
                                   .read(threadCreateProvider.notifier)
                                   .addAssets(file!.path);
+
+                              print('file.path : ${file.path}');
                             }
                           }
 

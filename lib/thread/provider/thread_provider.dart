@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/repository/thread_comment_repository.dart';

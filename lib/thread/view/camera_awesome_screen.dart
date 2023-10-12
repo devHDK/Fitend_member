@@ -9,11 +9,9 @@ class CameraAwesomeScreen extends ConsumerStatefulWidget {
   const CameraAwesomeScreen({
     super.key,
     required this.diretoryPath,
-    this.parentUpdate,
   });
 
   final String diretoryPath;
-  final Function? parentUpdate;
 
   @override
   ConsumerState<CameraAwesomeScreen> createState() =>
@@ -118,13 +116,7 @@ class _CustomCameraScreenState extends ConsumerState<CameraAwesomeScreen> {
               .pickImage(context)
               .then((assets) async {
             if (assets != null && assets.isNotEmpty) {
-              setState(() {
-                ref.read(threadCreateProvider.notifier).updateIsLoading(true);
-
-                if (widget.parentUpdate != null) {
-                  widget.parentUpdate!();
-                }
-              });
+              ref.read(threadCreateProvider.notifier).updateIsLoading(true);
 
               for (var asset in assets) {
                 if (await asset.file != null) {
@@ -136,12 +128,7 @@ class _CustomCameraScreenState extends ConsumerState<CameraAwesomeScreen> {
                 }
               }
 
-              setState(() {
-                ref.read(threadCreateProvider.notifier).updateIsLoading(false);
-                if (widget.parentUpdate != null) {
-                  widget.parentUpdate!();
-                }
-              });
+              ref.read(threadCreateProvider.notifier).updateIsLoading(false);
             } else {
               print('assets: $assets');
             }

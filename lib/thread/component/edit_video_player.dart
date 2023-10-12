@@ -10,13 +10,10 @@ import 'package:video_player/video_player.dart';
 class EditVideoPlayer extends ConsumerStatefulWidget {
   final File file;
   final int index;
-  final Function? parentUpdate;
-
   const EditVideoPlayer({
     super.key,
     required this.file,
     required this.index,
-    this.parentUpdate,
   });
 
   @override
@@ -175,14 +172,9 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
                     PageRouteBuilder(
                       pageBuilder: (context, animation, secondaryAnimation) =>
                           VideoEditorScreen(
-                              file: widget.file,
-                              index: widget.index,
-                              parentUpdate: () {
-                                if (widget.parentUpdate != null) {
-                                  widget.parentUpdate!();
-                                }
-                                setState(() {});
-                              }),
+                        file: widget.file,
+                        index: widget.index,
+                      ),
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {
                         return FadeTransition(opacity: animation, child: child);

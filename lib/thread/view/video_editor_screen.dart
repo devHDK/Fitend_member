@@ -17,12 +17,10 @@ class VideoEditorScreen extends ConsumerStatefulWidget {
     super.key,
     required this.file,
     required this.index,
-    this.parentUpdate,
   });
 
   final File file;
   final int index;
-  final Function? parentUpdate;
 
   @override
   ConsumerState<VideoEditorScreen> createState() => _VideoEditScreenState();
@@ -82,9 +80,9 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
       // },
     );
 
-    setState(() {
-      isLoading = true;
-    });
+    // setState(() {
+    //   isLoading = true;
+    // });
 
     await MediaUtils.runFFmpegCommand(
       await config.getExecuteConfig(),
@@ -96,18 +94,12 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
         _isExporting.value = false;
         if (!mounted) return;
 
-        if (widget.parentUpdate != null) {
-          widget.parentUpdate!();
-        }
-
-        setState(() {
-          ref.read(threadCreateProvider.notifier).changeAsset(index, file.path);
-        });
+        ref.read(threadCreateProvider.notifier).changeAsset(index, file.path);
       },
     ).then((value) {
-      setState(() {
-        isLoading = false;
-      });
+      // setState(() {
+      //   isLoading = false;
+      // });
     });
   }
 

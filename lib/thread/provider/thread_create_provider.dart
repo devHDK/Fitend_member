@@ -1,21 +1,17 @@
-import 'dart:developer';
 import 'dart:io';
 
-import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/repository/thread_comment_repository.dart';
 import 'package:fitend_member/thread/repository/thread_repository.dart';
-import 'package:fitend_member/thread/view/camera_awesome_screen.dart';
 import 'package:fitend_member/thread/view/camera_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 final threadCreateProvider =
@@ -56,8 +52,6 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     try {
       final permission = await AssetPicker.permissionCheck();
 
-      print(permission.hasAccess);
-
       if (!permission.hasAccess) {
         openAppSettings();
         return null;
@@ -87,7 +81,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     }
   }
 
-  Future<void> pickCamera(BuildContext context, Function? parentUpdate) async {
+  Future<void> pickCamera(BuildContext context) async {
     try {
       Navigator.of(context).push(
         CupertinoPageRoute(
@@ -100,11 +94,15 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
   }
 
   void addAssets(String assetPath) {
-    state.assetsPaths!.add(assetPath);
+    ThreadCreateTempModel pstate = state.copyWith();
+
+    pstate.assetsPaths!.add(assetPath);
+
+    state = pstate;
   }
 
   void removeAsset(int index) {
-    final pstate = state;
+    final pstate = state.copyWith();
 
     pstate.assetsPaths!.removeAt(index);
 
@@ -112,7 +110,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
   }
 
   void changeAsset(int index, String path) {
-    final pstate = state;
+    final pstate = state.copyWith();
 
     pstate.assetsPaths![index] = path;
 
@@ -120,7 +118,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
   }
 
   void updateIsLoading(bool isLoading) {
-    final pstate = state;
+    final pstate = state.copyWith();
 
     pstate.isLoading = isLoading;
 

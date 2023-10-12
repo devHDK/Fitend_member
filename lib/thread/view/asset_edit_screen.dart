@@ -20,10 +20,8 @@ class AssetEditScreen extends ConsumerStatefulWidget {
   const AssetEditScreen({
     super.key,
     required this.pageIndex,
-    this.parentUpdate,
   });
   final int pageIndex;
-  final Function? parentUpdate;
 
   @override
   ConsumerState<AssetEditScreen> createState() => _AssetEditScreenState();
@@ -86,12 +84,6 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
                     : EditVideoPlayer(
                         file: file,
                         index: index,
-                        parentUpdate: () {
-                          if (widget.parentUpdate != null) {
-                            widget.parentUpdate!();
-                          }
-                          setState(() {});
-                        },
                       );
               },
               itemCount: state.assetsPaths!.length,
@@ -200,12 +192,9 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
                   );
 
                   if (croppedFile != null) {
-                    setState(() {
-                      state.assetsPaths![fileIndex] = croppedFile.path;
-                    });
-                    if (widget.parentUpdate != null) {
-                      widget.parentUpdate!();
-                    }
+                    ref
+                        .read(threadCreateProvider.notifier)
+                        .changeAsset(fileIndex, croppedFile.path);
                   }
                 },
                 icon: const Icon(

@@ -7,7 +7,6 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
 import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
-import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/asset_edit_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -138,9 +137,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                     onTap: () async {
                       await ref
                           .read(threadCreateProvider.notifier)
-                          .pickCamera(context, () {
-                        setState(() {});
-                      });
+                          .pickCamera(context);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -154,11 +151,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                           .pickImage(context)
                           .then((assets) async {
                         if (assets != null && assets.isNotEmpty) {
-                          setState(() {
-                            ref
-                                .read(threadCreateProvider.notifier)
-                                .updateIsLoading(true);
-                          });
+                          ref
+                              .read(threadCreateProvider.notifier)
+                              .updateIsLoading(true);
 
                           for (var asset in assets) {
                             if (await asset.file != null) {
@@ -172,11 +167,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                             }
                           }
 
-                          setState(() {
-                            ref
-                                .read(threadCreateProvider.notifier)
-                                .updateIsLoading(false);
-                          });
+                          ref
+                              .read(threadCreateProvider.notifier)
+                              .updateIsLoading(false);
                         } else {
                           print('assets: $assets');
                         }
@@ -309,9 +302,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                       builder: (context) {
                                         return AssetEditScreen(
                                           pageIndex: index,
-                                          parentUpdate: () {
-                                            setState(() {});
-                                          },
                                         );
                                       },
                                     ),
@@ -339,11 +329,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                 highlightColor: Colors.transparent,
                                 splashColor: Colors.transparent,
                                 onPressed: () {
-                                  setState(() {
-                                    ref
-                                        .read(threadCreateProvider.notifier)
-                                        .removeAsset(index);
-                                  });
+                                  ref
+                                      .read(threadCreateProvider.notifier)
+                                      .removeAsset(index);
                                 },
                                 icon: const Icon(
                                   Icons.cancel,

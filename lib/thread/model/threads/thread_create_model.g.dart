@@ -33,6 +33,7 @@ ThreadCreateTempModel _$ThreadCreateTempModelFromJson(
       assetsPaths:
           (json['assets'] as List<dynamic>?)?.map((e) => e as String).toList(),
       isLoading: json['isLoading'] as bool,
+      isUploading: json['isUploading'] as bool,
     );
 
 Map<String, dynamic> _$ThreadCreateTempModelToJson(
@@ -43,4 +44,5 @@ Map<String, dynamic> _$ThreadCreateTempModelToJson(
       'content': instance.content,
       'assets': instance.assetsPaths,
       'isLoading': instance.isLoading,
+      'isUploading': instance.isUploading,
     };

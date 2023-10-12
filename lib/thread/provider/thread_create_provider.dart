@@ -1,15 +1,22 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
+import 'package:fitend_member/thread/model/common/gallery_model.dart';
+import 'package:fitend_member/thread/model/files/file_upload_request_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
+import 'package:fitend_member/thread/repository/file_repository.dart';
 import 'package:fitend_member/thread/repository/thread_comment_repository.dart';
 import 'package:fitend_member/thread/repository/thread_repository.dart';
+import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/camera_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mime_type/mime_type.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,11 +26,13 @@ final threadCreateProvider =
         (ref) {
   final threadRepository = ref.watch(threadRepositoryProvider);
   final commentRepository = ref.watch(commentRepositoryProvider);
+  final fileRepository = ref.watch(fileRepositoryProvider);
   final dioUpload = ref.watch(dioUploadProvider);
 
   return ThreadCreateStateNotifier(
     threadRepository: threadRepository,
     commentRepository: commentRepository,
+    fileRepository: fileRepository,
     dioUpload: dioUpload,
   );
 });
@@ -31,13 +40,20 @@ final threadCreateProvider =
 class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
   final ThreadRepository threadRepository;
   final ThreadCommentRepository commentRepository;
+  final FileRepository fileRepository;
   final Dio dioUpload;
 
   ThreadCreateStateNotifier({
     required this.threadRepository,
     required this.commentRepository,
+    required this.fileRepository,
     required this.dioUpload,
-  }) : super(ThreadCreateTempModel(isLoading: false)) {
+  }) : super(
+          ThreadCreateTempModel(
+            isLoading: false,
+            isUploading: false,
+          ),
+        ) {
     init();
   }
 
@@ -45,7 +61,122 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     state = ThreadCreateTempModel(
       assetsPaths: [],
       isLoading: false,
+      isUploading: false,
     );
+  }
+
+  Future<void> createThread() async {
+    try {
+      if (state.isUploading || state.isLoading) {
+        return;
+      }
+
+      final pstate = state.copyWith();
+      pstate.isUploading = true;
+
+      state = pstate;
+
+      ThreadCreateModel model = ThreadCreateModel(
+        trainerId: 1,
+        title: state.title,
+        content: state.content!,
+        gallery: [],
+      );
+
+      if (state.assetsPaths != null && state.assetsPaths!.isNotEmpty) {
+        for (var filePath in state.assetsPaths!) {
+          final type = MediaUtils.getMediaType(filePath);
+
+          if (type == MediaType.image) {
+            final mimeType = mime(filePath);
+            final ret = await fileRepository.getFileUpload(
+              model: FileRequestModel(type: 'image', mimeType: mimeType!),
+            );
+
+            final file = File(filePath);
+            final bytes = await file.readAsBytes();
+
+            await dioUpload.put(
+              ret.url,
+              data: bytes,
+              options: Options(
+                headers: {
+                  "Content-Type": mimeType,
+                },
+              ),
+            );
+
+            model.gallery!.add(
+              GalleryModel(
+                type: 'image',
+                url: ret.path,
+              ),
+            );
+          } else if (type == MediaType.video) {
+            final mimeType = mime(filePath);
+
+            final thumbnail = await MediaUtils.getVideoThumbNail(filePath);
+            final thumbnailMimeType = mime(thumbnail);
+
+            final retVideo = await fileRepository.getFileUpload(
+              model: FileRequestModel(type: 'video', mimeType: mimeType!),
+            );
+
+            final file = File(filePath);
+            final bytes = await file.readAsBytes();
+
+            await dioUpload.put(
+              retVideo.url,
+              data: bytes,
+              options: Options(
+                headers: {
+                  "Content-Type": mimeType,
+                },
+              ),
+            );
+
+            final retThumbnail = await fileRepository.getFileUpload(
+              model:
+                  FileRequestModel(type: 'image', mimeType: thumbnailMimeType!),
+            );
+
+            final thumbnailFile = File(thumbnail!);
+            final thumbnailBytes = await thumbnailFile.readAsBytes();
+
+            await dioUpload.put(
+              retThumbnail.url,
+              data: thumbnailBytes,
+              options: Options(
+                headers: {
+                  "Content-Type": thumbnailMimeType,
+                },
+              ),
+            );
+
+            model.gallery!.add(
+              GalleryModel(
+                type: 'video',
+                url: retVideo.path,
+                thumbnail: retThumbnail.path,
+              ),
+            );
+          }
+        }
+      }
+
+      await threadRepository.postThread(model: model);
+
+      init();
+
+      final tstate = state.copyWith();
+      tstate.isUploading = false;
+      state = tstate;
+    } catch (e) {
+      debugPrint('thread create error : $e');
+      final tstate = state.copyWith();
+      tstate.isUploading = false;
+      state = tstate;
+    }
   }
 
   Future<List<AssetEntity>?> pickImage(BuildContext context) async {
@@ -76,7 +207,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         }
       }
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
       return null;
     }
   }
@@ -89,7 +220,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         ),
       );
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 
@@ -121,6 +252,22 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     final pstate = state.copyWith();
 
     pstate.isLoading = isLoading;
+
+    state = pstate;
+  }
+
+  void updateTitle(String? title) {
+    final pstate = state.copyWith();
+
+    pstate.title = title;
+
+    state = pstate;
+  }
+
+  void updateContent(String? content) {
+    final pstate = state.copyWith();
+
+    pstate.content = content;
 
     state = pstate;
   }

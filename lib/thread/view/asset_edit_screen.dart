@@ -88,7 +88,7 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
               },
               itemCount: state.assetsPaths!.length,
               onPageChanged: (value) {
-                print('value : $value');
+                debugPrint('value : $value');
 
                 setState(
                   () {

@@ -144,7 +144,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
         break;
       case AppLifecycleState.detached:
-        // print("app in detached");
+        // debugPrint("app in detached");
         break;
       case AppLifecycleState.hidden:
         break;

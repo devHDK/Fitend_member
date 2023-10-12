@@ -89,7 +89,7 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
     final filePath = await MediaUtils.getVideoThumbNail(widget.file.path);
     if (filePath != null) {
       thumbNail = File(filePath);
-      // print('thumbnail path ===> ${thumbNail!.path}');
+      // debugPrint('thumbnail path ===> ${thumbNail!.path}');
     }
 
     setState(() {});

@@ -196,7 +196,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
 
         break;
       case AppLifecycleState.detached:
-        // print("app in detached");
+        // debugPrint("app in detached");
         break;
       case AppLifecycleState.hidden:
         break;

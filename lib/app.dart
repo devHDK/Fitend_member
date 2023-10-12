@@ -25,13 +25,13 @@ class _AppState extends ConsumerState<App> {
     setupFirebaseMessagingHandlers();
     // FirebaseMessaging.instance.getInitialMessage().then((message) {
     //   if (message != null) {
-    //     print('FCM Click!!! terminated');
+    //     debugPrint('FCM Click!!! terminated');
     //     GoRouter.of(context).goNamed(NotificationScreen.routeName);
     //   }
     // });
 
     // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    //   print('FCM Click!!!');
+    //   debugPrint('FCM Click!!!');
     //   GoRouter.of(context).pushNamed(NotificationScreen.routeName);
     // });
   }

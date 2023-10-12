@@ -209,7 +209,7 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
         });
       }
 
-      print(response);
+      debugPrint(response.toString());
 
       state = response.copyWith(
         exercises: response.exercises.map((exercise) {

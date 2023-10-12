@@ -39,7 +39,7 @@ class WorkoutCard extends ConsumerStatefulWidget {
 class _WorkoutCardState extends ConsumerState<WorkoutCard> {
   @override
   Widget build(BuildContext context) {
-    print(widget.completeSetCount);
+    debugPrint(widget.completeSetCount.toString());
 
     final AsyncValue<Box> timerRecordBox =
         ref.watch(hiveTimerXMoreRecordProvider);
@@ -307,7 +307,7 @@ class _RenderBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print('Renderbody : ${exercise.setInfo[0].seconds}');
+    // debugPrint('Renderbody : ${exercise.setInfo[0].seconds}');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

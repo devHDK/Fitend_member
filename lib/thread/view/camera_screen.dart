@@ -65,7 +65,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   void onTick(Timer timer) {
     setState(() {
       recordingDuration++;
-      print(recordingDuration);
+      debugPrint(recordingDuration.toString());
     });
   }
 
@@ -90,7 +90,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       WidgetsFlutterBinding.ensureInitialized();
       cameras = await availableCameras();
     } on CameraException catch (e) {
-      print('Error in fetching the cameras: $e');
+      debugPrint('Error in fetching the cameras: $e');
     }
   }
 
@@ -106,7 +106,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       XFile file = await cameraController.takePicture();
       return file;
     } on CameraException catch (e) {
-      print('Error occured while taking picture: $e');
+      debugPrint('Error occured while taking picture: $e');
       return null;
     }
   }
@@ -126,7 +126,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
         recordingTimerStart();
       });
     } on CameraException catch (e) {
-      print('Error starting to record video: $e');
+      debugPrint('Error starting to record video: $e');
     }
   }
 
@@ -145,7 +145,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       });
       return file;
     } on CameraException catch (e) {
-      print('Error stopping video recording: $e');
+      debugPrint('Error stopping video recording: $e');
       return null;
     }
   }
@@ -160,7 +160,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       await controller!.pauseVideoRecording();
       recordingTimerStop();
     } on CameraException catch (e) {
-      print('Error pausing video recording: $e');
+      debugPrint('Error pausing video recording: $e');
     }
   }
 
@@ -174,7 +174,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       await controller!.resumeVideoRecording();
       recordingTimerStart();
     } on CameraException catch (e) {
-      print('Error resuming video recording: $e');
+      debugPrint('Error resuming video recording: $e');
     }
   }
 
@@ -222,7 +222,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
             .then((value) => _minAvailableZoom = value),
       ]);
     } on CameraException catch (e) {
-      print('Error initializing camera: $e');
+      debugPrint('Error initializing camera: $e');
     }
 
     if (mounted) {
@@ -588,9 +588,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                         isReturnPathOfIOS: true,
                                                       );
 
-                                                      print(path);
+                                                      debugPrint(path);
                                                     } else {
-                                                      print('save fail');
+                                                      debugPrint('save fail');
                                                     }
                                                   },
                                             child: Stack(
@@ -650,7 +650,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                             .addAssets(
                                                                 file!.path);
 
-                                                        print(
+                                                        debugPrint(
                                                             'file.path : ${file.path}');
                                                       }
                                                     }
@@ -661,7 +661,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                                 .notifier)
                                                         .updateIsLoading(false);
                                                   } else {
-                                                    print('assets: $assets');
+                                                    debugPrint(
+                                                        'assets: $assets');
                                                   }
                                                 });
                                               },

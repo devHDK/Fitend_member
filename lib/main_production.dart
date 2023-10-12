@@ -43,8 +43,8 @@ void processPushMessage(RemoteMessage message) async {
   final type = message.data['type'].toString();
   SharedPreferences pref = await SharedPreferences.getInstance();
 
-  print('type: $type');
-  print('message: ${message.toMap()}');
+  debugPrint('type: $type');
+  debugPrint('message: ${message.toMap()}');
 
   if (type.contains('reservation')) {
     await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);

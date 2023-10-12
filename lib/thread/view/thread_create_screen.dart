@@ -100,7 +100,13 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 18),
             child: TextButton(
-                onPressed: () async {},
+                onPressed: state.isLoading
+                    ? null
+                    : () async {
+                        await ref
+                            .read(threadCreateProvider.notifier)
+                            .createThread();
+                      },
                 child: Container(
                   width: 53,
                   height: 25,
@@ -111,15 +117,23 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                         : POINT_COLOR.withOpacity(0.5),
                   ),
                   child: Center(
-                    child: Text(
-                      '등록',
-                      style: h6Headline.copyWith(
-                        color: contentsController.text.isNotEmpty
-                            ? Colors.white
-                            : Colors.white.withOpacity(0.5),
-                        height: 1,
-                      ),
-                    ),
+                    child: state.isLoading || state.isUploading
+                        ? const SizedBox(
+                            height: 15,
+                            width: 15,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            '등록',
+                            style: h6Headline.copyWith(
+                              color: contentsController.text.isNotEmpty
+                                  ? Colors.white
+                                  : Colors.white.withOpacity(0.5),
+                              height: 1,
+                            ),
+                          ),
                   ),
                 )),
           )
@@ -163,7 +177,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                   .read(threadCreateProvider.notifier)
                                   .addAssets(file!.path);
 
-                              print('file.path : ${file.path}');
+                              debugPrint('file.path : ${file.path}');
                             }
                           }
 
@@ -171,7 +185,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                               .read(threadCreateProvider.notifier)
                               .updateIsLoading(false);
                         } else {
-                          print('assets: $assets');
+                          debugPrint('assets: $assets');
                         }
                       });
                     },
@@ -211,6 +225,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
         child: Column(
           children: [
             TextFormField(
+              onChanged: (value) {
+                ref.read(threadCreateProvider.notifier).updateTitle(value);
+              },
               maxLines: 1,
               style: const TextStyle(color: Colors.white),
               controller: titleController,
@@ -241,6 +258,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
               ),
             ),
             TextFormField(
+              onChanged: (value) {
+                ref.read(threadCreateProvider.notifier).updateContent(value);
+              },
               maxLines: 20,
               style: const TextStyle(color: Colors.white),
               controller: contentsController,

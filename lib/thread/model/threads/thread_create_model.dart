@@ -16,9 +16,9 @@ class ThreadCreateModel {
 
   ThreadCreateModel({
     required this.trainerId,
-    required this.title,
+    this.title,
     required this.content,
-    required this.gallery,
+    this.gallery,
   });
 
   ThreadCreateModel copyWith({
@@ -43,15 +43,17 @@ class ThreadCreateModel {
 @JsonSerializable()
 class ThreadCreateTempModel {
   @JsonKey(name: "trainerId")
-  final int? trainerId;
+  int? trainerId;
   @JsonKey(name: "title")
   String? title;
   @JsonKey(name: "content")
-  final String? content;
+  String? content;
   @JsonKey(name: "assets")
   final List<String>? assetsPaths;
   @JsonKey(name: "isLoading")
   bool isLoading;
+  @JsonKey(name: "isUploading")
+  bool isUploading;
 
   ThreadCreateTempModel({
     this.trainerId,
@@ -59,6 +61,7 @@ class ThreadCreateTempModel {
     this.content,
     this.assetsPaths,
     required this.isLoading,
+    required this.isUploading,
   });
 
   ThreadCreateTempModel copyWith({
@@ -67,6 +70,7 @@ class ThreadCreateTempModel {
     String? content,
     List<String>? assetsPaths,
     bool? isLoading,
+    bool? isUploading,
   }) =>
       ThreadCreateTempModel(
         trainerId: trainerId ?? this.trainerId,
@@ -74,6 +78,7 @@ class ThreadCreateTempModel {
         content: content ?? this.content,
         assetsPaths: assetsPaths ?? this.assetsPaths,
         isLoading: isLoading ?? this.isLoading,
+        isUploading: isUploading ?? this.isUploading,
       );
 
   factory ThreadCreateTempModel.fromJson(Map<String, dynamic> json) =>

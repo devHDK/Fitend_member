@@ -373,7 +373,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
       bool hasData = false;
 
       for (ScheduleData element in schedules) {
-        // print('element $element');
+        // debugPrint('element $element');
         if (element.schedule!.isNotEmpty) {
           hasData = true;
           break;

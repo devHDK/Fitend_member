@@ -315,7 +315,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
           .schedule!
           .removeAt(beforWorkoutIndex);
     } catch (e) {
-      // print(e);
+      // debugPrint(e);
 
       showDialog(
         context: context,
@@ -389,7 +389,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
                             changeScheduleDate();
                             context.pop({'changedDate': selectedDay});
                           } else {
-                            // print('오늘날짜 선택!');
+                            // debugPrint('오늘날짜 선택!');
                             showDialog(
                               context: context,
                               builder: (context) => DialogWidgets.errorDialog(

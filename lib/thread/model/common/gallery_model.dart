@@ -14,7 +14,7 @@ class GalleryModel {
   GalleryModel({
     required this.type,
     required this.url,
-    required this.thumbnail,
+    this.thumbnail,
   });
 
   GalleryModel copyWith({

@@ -67,9 +67,9 @@ dependencies:
   video_editor: ^3.0.0
   video_thumbnail: ^0.5.3
   fraction: ^4.1.4
-  camerawesome: ^1.4.0
   image_gallery_saver: ^2.0.3
   camera: ^0.10.5+5
+  mime_type: ^1.0.0
 
   change_app_package_name: ^1.1.0
   path_provider: ^2.0.14

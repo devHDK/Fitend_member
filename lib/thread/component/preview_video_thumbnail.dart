@@ -51,32 +51,44 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-          decoration: widget.isBorder!
-              ? BoxDecoration(
-                  border: Border.all(
-                    color: POINT_COLOR,
-                    width: 2,
-                  ),
-                )
-              : null,
-          width: widget.width!.toDouble(),
-          height: widget.width!.toDouble() * 0.8,
-          child: ClipRRect(
-            borderRadius: widget.isCircle!
-                ? BorderRadius.circular(20)
-                : BorderRadius.circular(0),
-            child: thumbNail != null
-                ? Image.file(
-                    thumbNail!,
-                    fit: BoxFit.cover,
-                  )
-                : const Center(
-                    child: CircularProgressIndicator(
-                      color: POINT_COLOR,
-                    ),
-                  ),
-          ),
+        Stack(
+          children: [
+            Container(
+              decoration: widget.isBorder!
+                  ? BoxDecoration(
+                      border: Border.all(
+                        color: POINT_COLOR,
+                        width: 2,
+                      ),
+                    )
+                  : null,
+              width: widget.width!.toDouble(),
+              height: widget.width!.toDouble() * 0.8,
+              child: ClipRRect(
+                borderRadius: widget.isCircle!
+                    ? BorderRadius.circular(20)
+                    : BorderRadius.circular(0),
+                child: thumbNail != null
+                    ? Image.file(
+                        thumbNail!,
+                        fit: BoxFit.cover,
+                      )
+                    : const Center(
+                        child: CircularProgressIndicator(
+                          color: POINT_COLOR,
+                        ),
+                      ),
+              ),
+            ),
+            const Positioned(
+              left: 5,
+              bottom: 5,
+              child: Icon(
+                Icons.videocam,
+                color: Colors.black,
+              ),
+            ),
+          ],
         ),
         const SizedBox(
           width: 10,

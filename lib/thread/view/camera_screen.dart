@@ -248,7 +248,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     getPermissionStatus();
     getAvailableCameras();
 

@@ -101,6 +101,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
           tapLogo: () async {
             await ref.read(threadProvider.notifier).paginate(
                   startIndex: 0,
+                  isRefetch: true,
                 );
           },
           actions: [
@@ -154,6 +155,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
           onRefresh: () async {
             await ref.read(threadProvider.notifier).paginate(
                   startIndex: 0,
+                  isRefetch: true,
                 );
           },
           child: ScrollablePositionedList.builder(
@@ -184,23 +186,33 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                 children: [
                   if (index == 0 ||
                       DataUtils.getDateFromDateTime(
-                              DateTime.parse(model.createdAt)) !=
+                              DateTime.parse(model.createdAt)
+                                  .toUtc()
+                                  .toLocal()) !=
                           DataUtils.getDateFromDateTime(
-                              DateTime.parse(model.createdAt)))
+                              DateTime.parse(state.data[index - 1].createdAt)
+                                  .toUtc()
+                                  .toLocal()))
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       child: Text(
                         DataUtils.getDateFromDateTime(
-                                    DateTime.parse(model.createdAt)) ==
+                                    DateTime.parse(model.createdAt)
+                                        .toUtc()
+                                        .toLocal()) ==
                                 DataUtils.getDateFromDateTime(DateTime.now())
                             ? '오늘'
                             : DataUtils.getDateFromDateTime(
-                                        DateTime.parse(model.createdAt)) ==
+                                        DateTime.parse(model.createdAt)
+                                            .toUtc()
+                                            .toLocal()) ==
                                     DataUtils.getDateFromDateTime(DateTime.now()
                                         .subtract(const Duration(days: 1)))
                                 ? '어제'
                                 : DataUtils.getMonthDayFromDateTime(
-                                    DateTime.parse(model.createdAt)),
+                                    DateTime.parse(model.createdAt)
+                                        .toUtc()
+                                        .toLocal()),
                         style: h4Headline.copyWith(color: Colors.white),
                       ),
                     ),
@@ -214,7 +226,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                             ? maleProfileUrl
                             : femaleProfileUrl,
                     nickname: model.user.nickname,
-                    dateTime: DateTime.parse(model.createdAt),
+                    dateTime: DateTime.parse(model.createdAt).toUtc().toLocal(),
                     gallery: model.gallery,
                     emojis: model.emojis,
                     userCommentCount: model.userCommentCount,

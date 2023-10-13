@@ -11,6 +11,7 @@ import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/asset_edit_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -88,22 +89,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(threadCreateProvider);
-
-    if (!state.isUploading &&
-        state.doneCount == state.totalCount &&
-        state.totalCount > 0) {
-      return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
-        body: Center(
-          child: Text(
-            '끝',
-            style: h4Headline.copyWith(
-              color: Colors.white,
-            ),
-          ),
-        ),
-      );
-    }
 
     if (state.isUploading && state.doneCount != state.totalCount) {
       return Scaffold(
@@ -315,7 +300,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
               onTapOutside: (event) {
                 titleFocusNode.unfocus();
               },
-              keyboardType: TextInputType.multiline,
+              keyboardType: TextInputType.text,
               decoration: InputDecoration(
                 focusColor: POINT_COLOR,
                 border: baseBorder,
@@ -369,7 +354,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                       ? ''
                       : '여기를 눌러 시작해주세요\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',
                   style: s1SubTitle.copyWith(
-                    color: contentFocusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
+                    color: GRAY_COLOR,
                   ),
                 ),
               ),

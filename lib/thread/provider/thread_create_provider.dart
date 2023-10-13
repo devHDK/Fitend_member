@@ -1,9 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/files/file_upload_request_model.dart';
@@ -52,6 +50,8 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
           ThreadCreateTempModel(
             isLoading: false,
             isUploading: false,
+            doneCount: 0,
+            totalCount: 0,
           ),
         ) {
     init();
@@ -62,6 +62,8 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       assetsPaths: [],
       isLoading: false,
       isUploading: false,
+      doneCount: 0,
+      totalCount: 0,
     );
   }
 
@@ -84,6 +86,12 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       );
 
       if (state.assetsPaths != null && state.assetsPaths!.isNotEmpty) {
+        final tempState0 = state.copyWith();
+
+        tempState0.totalCount = state.assetsPaths!.length;
+
+        state = tempState0;
+
         for (var filePath in state.assetsPaths!) {
           final type = MediaUtils.getMediaType(filePath);
 
@@ -161,11 +169,16 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
               ),
             );
           }
+
+          final tempState1 = state.copyWith();
+
+          tempState1.doneCount++;
+
+          state = tempState1;
         }
       }
 
       await threadRepository.postThread(model: model);
-
       init();
 
       final tstate = state.copyWith();

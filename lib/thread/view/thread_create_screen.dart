@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 
 class ThreadCreateScreen extends ConsumerStatefulWidget {
   const ThreadCreateScreen({super.key});
@@ -82,6 +84,36 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(threadCreateProvider);
 
+    if (!state.isUploading &&
+        state.doneCount == state.totalCount &&
+        state.totalCount > 0) {
+      return Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+          child: Text(
+            '끝',
+            style: h4Headline.copyWith(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (state.isUploading && state.doneCount != state.totalCount) {
+      return Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+          child: Text(
+            'uploading...',
+            style: h4Headline.copyWith(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
@@ -105,7 +137,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                     : () async {
                         await ref
                             .read(threadCreateProvider.notifier)
-                            .createThread();
+                            .createThread()
+                            .then((value) => context.pop());
                       },
                 child: Container(
                   width: 53,
@@ -364,7 +397,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                       },
                       itemCount: state.assetsPaths!.length,
                     ),
-            )
+            ),
           ],
         ),
       ),

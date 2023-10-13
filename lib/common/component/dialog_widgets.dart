@@ -172,6 +172,41 @@ class DialogWidgets {
     );
   }
 
+  static DialogBackground progressDialog({
+    required int totalCount,
+    required int doneCount,
+  }) {
+    return DialogBackground(
+      blur: 0.2,
+      dismissable: false,
+      dialog: SimpleDialog(
+        insetPadding: const EdgeInsets.symmetric(
+          vertical: 20,
+          horizontal: 20,
+        ),
+        backgroundColor: Colors.transparent,
+        children: [
+          Container(
+            width: 335,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              color: Colors.white,
+            ),
+            child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 20,
+                ),
+                child: CircularProgressIndicator(
+                  color: POINT_COLOR,
+                  value: doneCount / totalCount,
+                )),
+          ),
+        ],
+      ),
+    );
+  }
+
   static Future<dynamic> emojiPickerDialog({
     required BuildContext context,
     required Function(Category? category, Emoji? emoji) onEmojiSelect,

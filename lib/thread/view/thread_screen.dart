@@ -139,6 +139,8 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
         ),
         body: ScrollablePositionedList.builder(
           padding: const EdgeInsets.symmetric(horizontal: 28),
+          itemScrollController: itemScrollController,
+          itemPositionsListener: itemPositionsListener,
           itemCount: state.data.length + 1,
           itemBuilder: (context, index) {
             if (index == state.data.length) {
@@ -162,11 +164,12 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
               children: [
                 ThreadCell(
                   id: model.id,
+                  title: model.title,
+                  content: model.content,
                   profileImageUrl:
                       'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_7.jpg',
                   nickname: model.user.nickname,
                   dateTime: DateTime.parse(model.createdAt),
-                  content: model.content,
                   gallery: model.gallery,
                   emojis: model.emojis,
                   userCommentCount: model.userCommentCount,

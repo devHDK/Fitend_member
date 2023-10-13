@@ -47,7 +47,7 @@ class ThreadCreateTempModel {
   @JsonKey(name: "title")
   String? title;
   @JsonKey(name: "content")
-  String? content;
+  String content;
   @JsonKey(name: "assets")
   final List<String>? assetsPaths;
   @JsonKey(name: "isLoading")
@@ -62,7 +62,7 @@ class ThreadCreateTempModel {
   ThreadCreateTempModel({
     this.trainerId,
     this.title,
-    this.content,
+    required this.content,
     this.assetsPaths,
     required this.isLoading,
     required this.isUploading,

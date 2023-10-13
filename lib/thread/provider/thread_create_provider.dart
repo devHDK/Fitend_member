@@ -50,6 +50,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
           ThreadCreateTempModel(
             isLoading: false,
             isUploading: false,
+            content: '',
             doneCount: 0,
             totalCount: 0,
           ),
@@ -62,6 +63,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       assetsPaths: [],
       isLoading: false,
       isUploading: false,
+      content: '',
       doneCount: 0,
       totalCount: 0,
     );
@@ -80,8 +82,10 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
 
       ThreadCreateModel model = ThreadCreateModel(
         trainerId: 1,
-        title: state.title,
-        content: state.content!,
+        title: state.title != null && state.title!.isNotEmpty
+            ? state.title!
+            : null,
+        content: state.content,
         gallery: [],
       );
 
@@ -278,7 +282,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     state = pstate;
   }
 
-  void updateContent(String? content) {
+  void updateContent(String content) {
     final pstate = state.copyWith();
 
     pstate.content = content;

@@ -29,7 +29,7 @@ ThreadCreateTempModel _$ThreadCreateTempModelFromJson(
     ThreadCreateTempModel(
       trainerId: json['trainerId'] as int?,
       title: json['title'] as String?,
-      content: json['content'] as String?,
+      content: json['content'] as String,
       assetsPaths:
           (json['assets'] as List<dynamic>?)?.map((e) => e as String).toList(),
       isLoading: json['isLoading'] as bool,

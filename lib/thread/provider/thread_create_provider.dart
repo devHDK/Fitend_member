@@ -200,6 +200,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         openAppSettings();
         return null;
       } else {
+        // ignore: use_build_context_synchronously
         final result = await AssetPicker.pickAssets(
           context,
           pickerConfig: AssetPickerConfig(

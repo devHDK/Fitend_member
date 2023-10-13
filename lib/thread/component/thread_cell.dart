@@ -1,9 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
+import 'package:fitend_member/thread/model/common/gallery_model.dart';
+import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,19 +19,27 @@ class ThreadCell extends StatefulWidget {
   const ThreadCell({
     super.key,
     required this.id,
-    required this.profileImage,
+    required this.profileImageUrl,
     this.title,
     required this.nickname,
     required this.dateTime,
     required this.content,
+    this.gallery,
+    this.emojis,
+    required this.userCommentCount,
+    required this.trainerCommentCount,
   });
 
   final int id;
-  final Image profileImage;
+  final String profileImageUrl;
   final String? title;
   final String nickname;
   final DateTime dateTime;
   final String content;
+  final List<GalleryModel>? gallery;
+  final List<EmojiModel>? emojis;
+  final int userCommentCount;
+  final int trainerCommentCount;
 
   @override
   State<ThreadCell> createState() => _ThreadCellState();
@@ -50,7 +61,8 @@ class _ThreadCellState extends State<ThreadCell> {
               (widget.title != null ? 24 : 0) +
               _calculateLines(widget.content, s1SubTitle, 74.w).toInt() * 24 +
               10 +
-              28,
+              28 +
+              20,
 
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +82,11 @@ class _ThreadCellState extends State<ThreadCell> {
                     ),
                     CircleProfileImage(
                       borderRadius: 17,
-                      image: widget.profileImage,
+                      image: CachedNetworkImage(
+                        imageUrl: widget.profileImageUrl,
+                        width: 34,
+                        height: 34,
+                      ),
                     ),
                   ],
                 ),
@@ -158,6 +174,9 @@ class _ThreadCellState extends State<ThreadCell> {
                         },
                       ),
                     ],
+                  ),
+                  const SizedBox(
+                    height: 20,
                   )
                 ],
               )

@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
@@ -11,7 +12,7 @@ class ThreadDetail extends StatefulWidget {
   const ThreadDetail({
     super.key,
     required this.id,
-    required this.profileImage,
+    required this.profileImageUrl,
     this.title,
     required this.nickname,
     required this.dateTime,
@@ -19,7 +20,7 @@ class ThreadDetail extends StatefulWidget {
   });
 
   final int id;
-  final Image profileImage;
+  final String profileImageUrl;
   final String? title;
   final String nickname;
   final DateTime dateTime;
@@ -50,7 +51,11 @@ class _ThreadDetailState extends State<ThreadDetail> {
                   children: [
                     CircleProfileImage(
                       borderRadius: 17,
-                      image: widget.profileImage,
+                      image: CachedNetworkImage(
+                        imageUrl: widget.profileImageUrl,
+                        height: 34,
+                        width: 34,
+                      ),
                     ),
                     const SizedBox(
                       width: 9,

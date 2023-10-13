@@ -16,7 +16,7 @@ class ThreadListModelError extends ThreadListModelBase {
 class ThreadListModelLoading extends ThreadListModelBase {}
 
 @JsonSerializable()
-class ThreadListModel {
+class ThreadListModel extends ThreadListModelBase {
   @JsonKey(name: "data")
   final List<ThreadModel> data;
   @JsonKey(name: "total")
@@ -40,4 +40,18 @@ class ThreadListModel {
       _$ThreadListModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ThreadListModelToJson(this);
+}
+
+class ThreadListModelFetchingMore extends ThreadListModel {
+  ThreadListModelFetchingMore({
+    required super.data,
+    required super.total,
+  });
+}
+
+class ThreadListModelRefetching extends ThreadListModel {
+  ThreadListModelRefetching({
+    required super.data,
+    required super.total,
+  });
 }

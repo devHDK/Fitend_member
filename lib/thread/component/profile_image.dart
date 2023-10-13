@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 
 class CircleProfileImage extends StatelessWidget {
@@ -7,7 +8,7 @@ class CircleProfileImage extends StatelessWidget {
     required this.borderRadius,
   });
 
-  final Image image;
+  final CachedNetworkImage image;
   final double borderRadius;
 
   @override

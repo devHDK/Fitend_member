@@ -6,12 +6,12 @@ part 'thread_get_list_params_model.g.dart';
 class ThreadGetListParamsModel {
   @JsonKey(name: "start")
   final int start;
-  @JsonKey(name: "perpage")
-  final int perpage;
+  @JsonKey(name: "perPage")
+  final int perPage;
 
   ThreadGetListParamsModel({
     required this.start,
-    required this.perpage,
+    required this.perPage,
   });
 
   ThreadGetListParamsModel copyWith({
@@ -20,7 +20,7 @@ class ThreadGetListParamsModel {
   }) =>
       ThreadGetListParamsModel(
         start: start ?? this.start,
-        perpage: perpage ?? this.perpage,
+        perPage: perpage ?? perPage,
       );
 
   factory ThreadGetListParamsModel.fromJson(Map<String, dynamic> json) =>

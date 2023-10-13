@@ -10,12 +10,12 @@ ThreadGetListParamsModel _$ThreadGetListParamsModelFromJson(
         Map<String, dynamic> json) =>
     ThreadGetListParamsModel(
       start: json['start'] as int,
-      perpage: json['perpage'] as int,
+      perPage: json['perPage'] as int,
     );
 
 Map<String, dynamic> _$ThreadGetListParamsModelToJson(
         ThreadGetListParamsModel instance) =>
     <String, dynamic>{
       'start': instance.start,
-      'perpage': instance.perpage,
+      'perPage': instance.perPage,
     };

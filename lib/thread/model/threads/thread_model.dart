@@ -41,8 +41,10 @@ class ThreadModel {
   final ThreadTrainer trainer;
   @JsonKey(name: "emojis")
   List<EmojiModel>? emojis;
-  @JsonKey(name: "commentCount")
-  int? commentCount;
+  @JsonKey(name: "userCommentCount")
+  final int userCommentCount;
+  @JsonKey(name: "trainerCommentCount")
+  final int trainerCommentCount;
   @JsonKey(name: "createdAt")
   final String createdAt;
 
@@ -57,7 +59,8 @@ class ThreadModel {
     required this.user,
     required this.trainer,
     required this.emojis,
-    required this.commentCount,
+    required this.userCommentCount,
+    required this.trainerCommentCount,
     required this.createdAt,
   });
 
@@ -72,7 +75,8 @@ class ThreadModel {
     ThreadUser? user,
     ThreadTrainer? trainer,
     List<EmojiModel>? emojis,
-    int? commentCount,
+    int? userCommentCount,
+    int? trainerCommentCount,
     String? createdAt,
   }) =>
       ThreadModel(
@@ -86,7 +90,8 @@ class ThreadModel {
         user: user ?? this.user,
         trainer: trainer ?? this.trainer,
         emojis: emojis ?? this.emojis,
-        commentCount: commentCount ?? this.commentCount,
+        userCommentCount: userCommentCount ?? this.userCommentCount,
+        trainerCommentCount: trainerCommentCount ?? this.trainerCommentCount,
         createdAt: createdAt ?? this.createdAt,
       );
 

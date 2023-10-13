@@ -2,20 +2,26 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:flutter/foundation.dart' as foundation;
 
-class ThreadCell extends StatefulWidget {
+class ThreadCell extends ConsumerStatefulWidget {
   const ThreadCell({
     super.key,
     required this.id,
@@ -28,6 +34,8 @@ class ThreadCell extends StatefulWidget {
     this.emojis,
     required this.userCommentCount,
     required this.trainerCommentCount,
+    required this.user,
+    required this.trainer,
   });
 
   final int id;
@@ -40,12 +48,14 @@ class ThreadCell extends StatefulWidget {
   final List<EmojiModel>? emojis;
   final int userCommentCount;
   final int trainerCommentCount;
+  final ThreadUser user;
+  final ThreadTrainer trainer;
 
   @override
-  State<ThreadCell> createState() => _ThreadCellState();
+  ConsumerState<ThreadCell> createState() => _ThreadCellState();
 }
 
-class _ThreadCellState extends State<ThreadCell> {
+class _ThreadCellState extends ConsumerState<ThreadCell> {
   @override
   void initState() {
     super.initState();
@@ -53,6 +63,10 @@ class _ThreadCellState extends State<ThreadCell> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = ref.watch(getMeProvider);
+
+    final user = userState as UserModel;
+
     return Stack(
       children: [
         SizedBox(
@@ -62,7 +76,9 @@ class _ThreadCellState extends State<ThreadCell> {
               _calculateLines(widget.content, s1SubTitle, 74.w).toInt() * 24 +
               10 +
               28 +
-              20,
+              10 +
+              20 +
+              10,
 
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,23 +163,6 @@ class _ThreadCellState extends State<ThreadCell> {
                   Row(
                     children: [
                       EmojiButton(
-                        emoji: '😂',
-                        count: 1,
-                        onTap: () {},
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      EmojiButton(
-                        emoji: '🔥',
-                        count: 1,
-                        color: POINT_COLOR,
-                        onTap: () {},
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      EmojiButton(
                         onTap: () {
                           _showEmojiPicker(
                             context: context,
@@ -176,7 +175,63 @@ class _ThreadCellState extends State<ThreadCell> {
                     ],
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      if (widget.userCommentCount > 0)
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircleProfileImage(
+                                image: CachedNetworkImage(
+                                  imageUrl: widget.user.gender == 'male'
+                                      ? maleProfileUrl
+                                      : femaleProfileUrl,
+                                ),
+                                borderRadius: 12,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 3,
+                            )
+                          ],
+                        ),
+                      if (widget.trainerCommentCount > 0)
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircleProfileImage(
+                                image: CachedNetworkImage(
+                                  imageUrl:
+                                      '$s3Url${widget.trainer.profileImage}',
+                                ),
+                                borderRadius: 12,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 3,
+                            )
+                          ],
+                        ),
+                      Text(
+                        widget.userCommentCount == 0 &&
+                                widget.trainerCommentCount == 0
+                            ? '아직 댓글이 없어요 :)'
+                            : '${widget.userCommentCount + widget.trainerCommentCount} 개의 댓글이 있어요 :)',
+                        style: s2SubTitle.copyWith(
+                          color: GRAY_COLOR,
+                          height: 1,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
                   )
                 ],
               )

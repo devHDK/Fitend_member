@@ -69,7 +69,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     );
   }
 
-  Future<void> createThread() async {
+  Future<void> createThread(int trainerId) async {
     try {
       if (state.isUploading || state.isLoading) {
         return;
@@ -81,7 +81,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       state = pstate;
 
       ThreadCreateModel model = ThreadCreateModel(
-        trainerId: 1,
+        trainerId: trainerId,
         title: state.title != null && state.title!.isNotEmpty
             ? state.title!
             : null,

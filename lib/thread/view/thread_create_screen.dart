@@ -18,7 +18,12 @@ import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ThreadCreateScreen extends ConsumerStatefulWidget {
-  const ThreadCreateScreen({super.key});
+  const ThreadCreateScreen({
+    super.key,
+    required this.trainerId,
+  });
+
+  final int trainerId;
 
   @override
   ConsumerState<ThreadCreateScreen> createState() => _ThreadCreateScreenState();
@@ -178,7 +183,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                     : () async {
                         await ref
                             .read(threadCreateProvider.notifier)
-                            .createThread()
+                            .createThread(widget.trainerId)
                             .then((value) => context.pop());
                       },
                 child: Container(

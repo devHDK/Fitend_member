@@ -190,7 +190,8 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
                   }
 
                   return NotificationCell(
-                      notificationData: notification.data![index]);
+                    notificationData: notification.data![index],
+                  );
                 },
               ),
             ),

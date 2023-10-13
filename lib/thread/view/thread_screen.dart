@@ -3,6 +3,7 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/component/comment_cell.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
@@ -12,6 +13,8 @@ import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/view/thread_create_screen.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -74,6 +77,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(threadProvider);
+    final userState = ref.watch(getMeProvider);
 
     if (state is ThreadListModelLoading) {
       return const Center(
@@ -87,6 +91,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
       return ErrorDialog(error: state.message);
     }
 
+    final user = userState as UserModel;
     pstate = state as ThreadListModel;
     startIndex = state.data.length;
 
@@ -137,7 +142,9 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
         floatingActionButton: FloatingActionButton.small(
           onPressed: () {
             Navigator.of(context).push(CupertinoPageRoute(
-              builder: (context) => const ThreadCreateScreen(),
+              builder: (context) => ThreadCreateScreen(
+                trainerId: user.user.activeTrainers.first.id,
+              ),
             ));
           },
           backgroundColor: Colors.transparent,
@@ -181,14 +188,19 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                     id: model.id,
                     title: model.title,
                     content: model.content,
-                    profileImageUrl:
-                        'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_7.jpg',
+                    profileImageUrl: model.writerType == 'trainer'
+                        ? '$s3Url${model.trainer.profileImage}'
+                        : model.user.gender == 'male'
+                            ? maleProfileUrl
+                            : femaleProfileUrl,
                     nickname: model.user.nickname,
                     dateTime: DateTime.parse(model.createdAt),
                     gallery: model.gallery,
                     emojis: model.emojis,
                     userCommentCount: model.userCommentCount,
                     trainerCommentCount: model.trainerCommentCount,
+                    user: model.user,
+                    trainer: model.trainer,
                   ),
                 ],
               );

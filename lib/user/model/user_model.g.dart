@@ -19,8 +19,11 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       email: json['email'] as String,
       nickname: json['nickname'] as String,
       phone: json['phone'] as String?,
-      isNotification: json['isNotification'] as bool? ?? true,
+      isNotification: json['isNotification'] as bool?,
       deletedAt: json['deletedAt'] as String?,
+      activeTrainers: (json['activeTrainers'] as List<dynamic>)
+          .map((e) => ActiveTrainer.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -30,4 +33,17 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'phone': instance.phone,
       'isNotification': instance.isNotification,
       'deletedAt': instance.deletedAt,
+      'activeTrainers': instance.activeTrainers,
+    };
+
+ActiveTrainer _$ActiveTrainerFromJson(Map<String, dynamic> json) =>
+    ActiveTrainer(
+      id: json['id'] as int,
+      nickname: json['nickname'] as String,
+    );
+
+Map<String, dynamic> _$ActiveTrainerToJson(ActiveTrainer instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'nickname': instance.nickname,
     };

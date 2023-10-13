@@ -53,6 +53,11 @@ final s3Url = F.appFlavor != Flavor.production
     : 'https://djt0uuz3ub045.cloudfront.net/';
 const muscleImageUrl = 'public/targetMuscles/';
 
+const maleProfileUrl =
+    'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_7.jpg';
+const femaleProfileUrl =
+    'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_1.jpg';
+
 String workoutRecordSimple = 'WorkoutRecords';
 String timerXOneRecord = 'timerXoneRecords';
 String timerXMoreRecord = 'timerXMoreRecords';

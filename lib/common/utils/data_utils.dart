@@ -87,4 +87,16 @@ class DataUtils {
 
     return ret;
   }
+
+  static String getDateFromDateTime(DateTime dateTime) {
+    String date = '${dateTime.year}-${dateTime.month}-${dateTime.day}';
+
+    return date;
+  }
+
+  static String getMonthDayFromDateTime(DateTime dateTime) {
+    String date = '${dateTime.month}월 ${dateTime.day}일';
+
+    return date;
+  }
 }

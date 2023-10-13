@@ -1,16 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
-import 'package:fitend_member/thread/component/comment_cell.dart';
-import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/thread_cell.dart';
-import 'package:fitend_member/thread/component/thread_detail.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
-import 'package:fitend_member/thread/model/threads/thread_model.dart';
+
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/view/thread_create_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -183,7 +180,30 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
               final model = state.data[index];
 
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (index == 0 ||
+                      DataUtils.getDateFromDateTime(
+                              DateTime.parse(model.createdAt)) !=
+                          DataUtils.getDateFromDateTime(
+                              DateTime.parse(model.createdAt)))
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: Text(
+                        DataUtils.getDateFromDateTime(
+                                    DateTime.parse(model.createdAt)) ==
+                                DataUtils.getDateFromDateTime(DateTime.now())
+                            ? '오늘'
+                            : DataUtils.getDateFromDateTime(
+                                        DateTime.parse(model.createdAt)) ==
+                                    DataUtils.getDateFromDateTime(DateTime.now()
+                                        .subtract(const Duration(days: 1)))
+                                ? '어제'
+                                : DataUtils.getMonthDayFromDateTime(
+                                    DateTime.parse(model.createdAt)),
+                        style: h4Headline.copyWith(color: Colors.white),
+                      ),
+                    ),
                   ThreadCell(
                     id: model.id,
                     title: model.title,

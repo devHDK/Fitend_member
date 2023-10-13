@@ -5,6 +5,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
+import 'package:fitend_member/thread/component/preview_image_network.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
@@ -67,6 +68,9 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
     final user = userState as UserModel;
 
+    final galleryHeight =
+        widget.gallery != null && widget.gallery!.isNotEmpty ? 100 : 0;
+
     return Stack(
       children: [
         SizedBox(
@@ -77,8 +81,10 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
               10 +
               28 +
               10 +
+              10 +
               20 +
-              10,
+              10 +
+              galleryHeight.toDouble(),
 
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,6 +163,31 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       ),
                     ),
                   ),
+                  if (widget.gallery != null)
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  if (widget.gallery != null)
+                    SizedBox(
+                      height: 100,
+                      width: 100.w - 56 - 34 - 9,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return Stack(
+                            children: [
+                              PreviewImageNetwork(
+                                url: widget.gallery![index].type == 'video'
+                                    ? '$s3Url${widget.gallery![index].thumbnail!}'
+                                    : '$s3Url${widget.gallery![index].url}',
+                                width: 120,
+                              ),
+                            ],
+                          );
+                        },
+                        itemCount: widget.gallery!.length,
+                      ),
+                    ),
                   const SizedBox(
                     height: 10,
                   ),

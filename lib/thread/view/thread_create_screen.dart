@@ -16,6 +16,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ThreadCreateScreen extends ConsumerStatefulWidget {
   const ThreadCreateScreen({super.key});
@@ -103,11 +104,52 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     if (state.isUploading && state.doneCount != state.totalCount) {
       return Scaffold(
         backgroundColor: BACKGROUND_COLOR,
-        body: Center(
-          child: Text(
-            'uploading...',
-            style: h4Headline.copyWith(
-              color: Colors.white,
+        body: SizedBox(
+          height: 100.h,
+          width: 100.w,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  children: [
+                    SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: CircularProgressIndicator(
+                        color: POINT_COLOR,
+                        backgroundColor: Colors.transparent,
+                        value: state.doneCount / state.totalCount,
+                        strokeWidth: 9,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: Center(
+                        child: Text(
+                          '${(state.doneCount / state.totalCount * 100).toInt()}%',
+                          style: h4Headline.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'UPLOADING',
+                  style: h4Headline.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
             ),
           ),
         ),

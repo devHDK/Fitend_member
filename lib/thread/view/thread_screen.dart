@@ -46,16 +46,17 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   }
 
   void _handleItemPositionChange() {
-    int maxIndex = itemPositionsListener.itemPositions.value
-        .where((position) => position.itemLeadingEdge > 0)
-        .reduce((maxPosition, currPosition) =>
-            currPosition.itemLeadingEdge > maxPosition.itemLeadingEdge
+    int minIndex = itemPositionsListener.itemPositions.value
+        .where((position) => position.itemTrailingEdge < 1)
+        .reduce((minPosition, currPosition) =>
+            currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
                 ? currPosition
-                : maxPosition)
+                : minPosition)
         .index;
 
     if (pstate.data.isNotEmpty &&
-        maxIndex == pstate.data.length - 1 &&
+        minIndex == 1 &&
+        pstate.total > pstate.data.length &&
         !isLoading) {
       //스크롤을 아래로 내렸을때
       isLoading = true;
@@ -95,6 +96,11 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
         backgroundColor: BACKGROUND_COLOR,
         appBar: LogoAppbar(
           title: 'T H R E A D S',
+          tapLogo: () async {
+            await ref.read(threadProvider.notifier).paginate(
+                  startIndex: 0,
+                );
+          },
           actions: [
             InkWell(
               hoverColor: Colors.transparent,
@@ -137,47 +143,57 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
           backgroundColor: Colors.transparent,
           child: SvgPicture.asset('asset/img/icon_thread_create_button.svg'),
         ),
-        body: ScrollablePositionedList.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          itemScrollController: itemScrollController,
-          itemPositionsListener: itemPositionsListener,
-          itemCount: state.data.length + 1,
-          itemBuilder: (context, index) {
-            if (index == state.data.length) {
-              if (state.data.length == state.total) {
+        body: RefreshIndicator(
+          backgroundColor: BACKGROUND_COLOR,
+          color: POINT_COLOR,
+          semanticsLabel: '새로고침',
+          onRefresh: () async {
+            await ref.read(threadProvider.notifier).paginate(
+                  startIndex: 0,
+                );
+          },
+          child: ScrollablePositionedList.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 28),
+            itemScrollController: itemScrollController,
+            itemPositionsListener: itemPositionsListener,
+            itemCount: state.data.length + 1,
+            itemBuilder: (context, index) {
+              if (index == state.data.length) {
+                if (state.data.length == state.total) {
+                  return const SizedBox(
+                    height: 100,
+                  );
+                }
+
                 return const SizedBox(
                   height: 100,
+                  child: Center(
+                    child: CircularProgressIndicator(color: POINT_COLOR),
+                  ),
                 );
               }
 
-              return const SizedBox(
-                height: 100,
-                child: Center(
-                  child: CircularProgressIndicator(color: POINT_COLOR),
-                ),
+              final model = state.data[index];
+
+              return Column(
+                children: [
+                  ThreadCell(
+                    id: model.id,
+                    title: model.title,
+                    content: model.content,
+                    profileImageUrl:
+                        'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_7.jpg',
+                    nickname: model.user.nickname,
+                    dateTime: DateTime.parse(model.createdAt),
+                    gallery: model.gallery,
+                    emojis: model.emojis,
+                    userCommentCount: model.userCommentCount,
+                    trainerCommentCount: model.trainerCommentCount,
+                  ),
+                ],
               );
-            }
-
-            final model = state.data[index];
-
-            return Column(
-              children: [
-                ThreadCell(
-                  id: model.id,
-                  title: model.title,
-                  content: model.content,
-                  profileImageUrl:
-                      'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_7.jpg',
-                  nickname: model.user.nickname,
-                  dateTime: DateTime.parse(model.createdAt),
-                  gallery: model.gallery,
-                  emojis: model.emojis,
-                  userCommentCount: model.userCommentCount,
-                  trainerCommentCount: model.trainerCommentCount,
-                ),
-              ],
-            );
-          },
+            },
+          ),
         ),
       ),
     );

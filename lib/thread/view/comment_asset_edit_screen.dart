@@ -6,8 +6,8 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/thread/component/edit_video_player.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
 import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
-import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
-import 'package:fitend_member/thread/provider/thread_create_provider.dart';
+import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
+import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,18 +16,21 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-class AssetEditScreen extends ConsumerStatefulWidget {
-  const AssetEditScreen({
+class CommentAssetEditScreen extends ConsumerStatefulWidget {
+  const CommentAssetEditScreen({
     super.key,
     required this.pageIndex,
+    required this.threadId,
   });
   final int pageIndex;
+  final int threadId;
 
   @override
-  ConsumerState<AssetEditScreen> createState() => _AssetEditScreenState();
+  ConsumerState<CommentAssetEditScreen> createState() =>
+      _AssetEditScreenState();
 }
 
-class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
+class _AssetEditScreenState extends ConsumerState<CommentAssetEditScreen> {
   final ItemScrollController itemScrollController = ItemScrollController();
 
   int fileIndex = 0;
@@ -49,9 +52,9 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(threadCreateProvider);
+    final state = ref.watch(commentCreateProvider(widget.threadId));
 
-    final intPath = utf8.encode(state.assetsPaths![fileIndex]);
+    final intPath = utf8.encode(state.assetsPaths[fileIndex]);
     final path = Uint8List.fromList(intPath);
     final file = File.fromRawPath(path);
     final type = MediaUtils.getMediaType(file.path);
@@ -85,7 +88,7 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
                         index: index,
                       );
               },
-              itemCount: state.assetsPaths!.length,
+              itemCount: state.assetsPaths.length,
               onPageChanged: (value) {
                 debugPrint('value : $value');
 
@@ -105,7 +108,7 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
               itemScrollController: itemScrollController,
               initialScrollIndex: fileIndex,
               itemBuilder: (context, index) {
-                final intPath = utf8.encode(state.assetsPaths![index]);
+                final intPath = utf8.encode(state.assetsPaths[index]);
                 final path = Uint8List.fromList(intPath);
                 final file = File.fromRawPath(path);
                 final type = MediaUtils.getMediaType(file.path);
@@ -136,7 +139,7 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
                   ),
                 );
               },
-              itemCount: state.assetsPaths!.length,
+              itemCount: state.assetsPaths.length,
             ),
           )
         ],
@@ -144,7 +147,7 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
     );
   }
 
-  Column _editImageView(File file, ThreadCreateTempModel state) {
+  Column _editImageView(File file, ThreadCommentCreateTempModel state) {
     return Column(
       children: [
         Expanded(
@@ -170,7 +173,7 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
               IconButton(
                 onPressed: () async {
                   final croppedFile = await ImageCropper().cropImage(
-                    sourcePath: state.assetsPaths![fileIndex],
+                    sourcePath: state.assetsPaths[fileIndex],
                     compressFormat: ImageCompressFormat.jpg,
                     compressQuality: 100,
                     uiSettings: [
@@ -192,7 +195,7 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
 
                   if (croppedFile != null) {
                     ref
-                        .read(threadCreateProvider.notifier)
+                        .read(commentCreateProvider(widget.threadId).notifier)
                         .changeAsset(fileIndex, croppedFile.path);
                   }
                 },

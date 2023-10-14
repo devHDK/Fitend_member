@@ -2,10 +2,15 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
+import 'package:fitend_member/thread/component/network_video_player_mini.dart';
+import 'package:fitend_member/thread/component/preview_image_network.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
+import 'package:fitend_member/thread/view/media_page_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -85,6 +90,61 @@ class CommentCell extends StatelessWidget {
                 ),
               ],
             ),
+            if (gallery != null && gallery!.isNotEmpty)
+              const SizedBox(
+                height: 10,
+              ),
+            if (gallery != null && gallery!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(39, 0, 0, 0),
+                child: SizedBox(
+                  height: 130,
+                  width: 100.w - 56,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Stack(
+                        children: [
+                          InkWell(
+                            onTap: () => Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (context) => MediaPageScreen(
+                                  pageIndex: index,
+                                  gallery: gallery!,
+                                ),
+                                fullscreenDialog: true,
+                              ),
+                            ),
+                            child: gallery![index].type == 'video'
+                                ? Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: SizedBox(
+                                          height: 130,
+                                          width: 140,
+                                          child: NetworkVideoPlayerMini(
+                                            video: gallery![index],
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      )
+                                    ],
+                                  )
+                                : PreviewImageNetwork(
+                                    url: '$s3Url${gallery![index].url}',
+                                    width: 140,
+                                  ),
+                          ),
+                        ],
+                      );
+                    },
+                    itemCount: gallery!.length,
+                  ),
+                ),
+              ),
             const SizedBox(
               height: 10,
             ),

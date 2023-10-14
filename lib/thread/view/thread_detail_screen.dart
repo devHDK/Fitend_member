@@ -20,7 +20,8 @@ import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
-import 'package:fitend_member/thread/view/asset_edit_screen.dart';
+import 'package:fitend_member/thread/view/comment_asset_edit_screen.dart';
+import 'package:fitend_member/thread/view/thread_asset_edit_screen.dart';
 import 'package:fitend_member/thread/view/media_page_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -159,29 +160,36 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                   _emojiSection(context),
                   _commentsDivider(model),
                   if (model.comments != null && model.comments!.isNotEmpty)
-                    SliverFillRemaining(
-                      child: ListView.builder(
-                        itemBuilder: (context, index) {
-                          final commentModel = model.comments![index];
-
-                          return CommentCell(
-                            profileImageUrl: commentModel.trainer != null
-                                ? '$s3Url${commentModel.trainer!.profileImage}'
-                                : commentModel.user!.gender == 'male'
-                                    ? maleProfileUrl
-                                    : femaleProfileUrl,
-                            content: commentModel.content,
-                            dateTime: DateTime.parse(commentModel.createdAt)
-                                .toUtc()
-                                .toLocal(),
-                            nickname: commentModel.trainer != null
-                                ? commentModel.trainer!.nickname
-                                : commentModel.user!.nickname,
-                            gallery: commentModel.gallery,
+                    SliverList.separated(
+                      itemBuilder: (context, index) {
+                        if (index != 0 && index == model.comments!.length) {
+                          return const SizedBox(
+                            height: 200,
                           );
-                        },
-                        itemCount: model.comments!.length,
+                        }
+
+                        final commentModel = model.comments![index];
+
+                        return CommentCell(
+                          profileImageUrl: commentModel.trainer != null
+                              ? '$s3Url${commentModel.trainer!.profileImage}'
+                              : commentModel.user!.gender == 'male'
+                                  ? maleProfileUrl
+                                  : femaleProfileUrl,
+                          content: commentModel.content,
+                          dateTime: DateTime.parse(commentModel.createdAt)
+                              .toUtc()
+                              .toLocal(),
+                          nickname: commentModel.trainer != null
+                              ? commentModel.trainer!.nickname
+                              : commentModel.user!.nickname,
+                          gallery: commentModel.gallery,
+                        );
+                      },
+                      separatorBuilder: (context, index) => const SizedBox(
+                        height: 10,
                       ),
+                      itemCount: model.comments!.length + 1,
                     )
                   else
                     SliverToBoxAdapter(
@@ -288,8 +296,9 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                                       onTap: () => Navigator.of(context).push(
                                         CupertinoPageRoute(
                                           builder: (context) {
-                                            return AssetEditScreen(
+                                            return CommentAssetEditScreen(
                                               pageIndex: index,
+                                              threadId: widget.threadId,
                                             );
                                           },
                                         ),

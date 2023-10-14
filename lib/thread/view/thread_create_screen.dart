@@ -7,7 +7,7 @@ import 'package:fitend_member/thread/component/preview_image.dart';
 import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
-import 'package:fitend_member/thread/view/asset_edit_screen.dart';
+import 'package:fitend_member/thread/view/thread_asset_edit_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -315,7 +315,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                   onTap: () => Navigator.of(context).push(
                                     CupertinoPageRoute(
                                       builder: (context) {
-                                        return AssetEditScreen(
+                                        return ThreadAssetEditScreen(
                                           pageIndex: index,
                                         );
                                       },

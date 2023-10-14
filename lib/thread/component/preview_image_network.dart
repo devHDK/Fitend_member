@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fitend_member/thread/component/extended_image.dart';
 import 'package:flutter/material.dart';
 
 class PreviewImageNetwork extends StatefulWidget {
@@ -33,8 +34,8 @@ class _PreviewImageNetworkState extends State<PreviewImageNetwork> {
           height: widget.width!.toDouble() * 0.8,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: CachedNetworkImage(
-              imageUrl: widget.url,
+            child: CustomExtendImage(
+              url: widget.url,
               fit: BoxFit.cover,
             ),
           ),

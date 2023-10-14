@@ -32,7 +32,6 @@ class _AssetEditScreenState extends ConsumerState<AssetEditScreen> {
 
   int fileIndex = 0;
   PageController? _pageController;
-  bool? pause;
 
   @override
   void initState() {

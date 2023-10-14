@@ -12,6 +12,7 @@ import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
+import 'package:fitend_member/thread/view/media_page_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -179,11 +180,25 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                         itemBuilder: (context, index) {
                           return Stack(
                             children: [
-                              PreviewImageNetwork(
-                                url: widget.gallery![index].type == 'video'
-                                    ? '$s3Url${widget.gallery![index].thumbnail!}'
-                                    : '$s3Url${widget.gallery![index].url}',
-                                width: 120,
+                              InkWell(
+                                onTap: () => Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (context) => MediaPageScreen(
+                                      pageIndex: index,
+                                      gallery: widget.gallery!,
+                                    ),
+                                    fullscreenDialog: true,
+                                  ),
+                                ),
+                                child: Hero(
+                                  tag: widget.gallery![index].url,
+                                  child: PreviewImageNetwork(
+                                    url: widget.gallery![index].type == 'video'
+                                        ? '$s3Url${widget.gallery![index].thumbnail!}'
+                                        : '$s3Url${widget.gallery![index].url}',
+                                    width: 120,
+                                  ),
+                                ),
                               ),
                             ],
                           );

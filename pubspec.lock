@@ -386,7 +386,7 @@ packages:
     source: hosted
     version: "1.6.1"
   extended_image:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: extended_image
       sha256: b4d72a27851751cfadaf048936d42939db7cd66c08fdcfe651eeaa1179714ee6

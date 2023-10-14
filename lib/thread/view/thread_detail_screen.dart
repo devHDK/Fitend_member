@@ -2,6 +2,7 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/network_video_player.dart';
 import 'package:fitend_member/thread/component/network_video_player_mini.dart';
 import 'package:fitend_member/thread/component/preview_image_network.dart';
@@ -76,77 +77,165 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: ThreadDetail(
-                profileImageUrl: model.writerType == 'trainer'
-                    ? '$s3Url${model.trainer.profileImage}'
-                    : model.user.gender == 'male'
-                        ? maleProfileUrl
-                        : femaleProfileUrl,
-                nickname: model.writerType == 'trainer'
-                    ? model.trainer.nickname
-                    : model.user.nickname,
-                dateTime: DateTime.parse(model.createdAt),
-                content: model.content,
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: SizedBox(
-                  height: 100.w,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Stack(
-                        children: [
-                          InkWell(
-                            onTap: () => Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (context) => MediaPageScreen(
-                                  pageIndex: index,
-                                  gallery: model.gallery!,
-                                ),
-                                fullscreenDialog: true,
-                              ),
-                            ),
-                            child: Hero(
-                              tag: model.gallery![index].url,
-                              child: model.gallery![index].type == 'video'
-                                  ? Row(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: SizedBox(
-                                            height: (80.w - 56) * 0.8,
-                                            child: NetworkVideoPlayerMini(
-                                              video: model.gallery![index],
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        )
-                                      ],
-                                    )
-                                  : PreviewImageNetwork(
-                                      url: '$s3Url${model.gallery![index].url}',
-                                      width: 80.w.toInt() - 56,
-                                    ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                    itemCount: model.gallery!.length,
-                  ),
+        child: RefreshIndicator(
+          backgroundColor: BACKGROUND_COLOR,
+          color: POINT_COLOR,
+          semanticsLabel: '새로고침',
+          onRefresh: () async {
+            await ref
+                .read(threadDetailProvider(widget.threadId).notifier)
+                .getThreadDetail(
+                  threadId: widget.threadId,
+                );
+          },
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: ThreadDetail(
+                  profileImageUrl: model.writerType == 'trainer'
+                      ? '$s3Url${model.trainer.profileImage}'
+                      : model.user.gender == 'male'
+                          ? maleProfileUrl
+                          : femaleProfileUrl,
+                  nickname: model.writerType == 'trainer'
+                      ? model.trainer.nickname
+                      : model.user.nickname,
+                  dateTime: DateTime.parse(model.createdAt),
+                  content: model.content,
                 ),
               ),
-            )
-          ],
+              if (model.gallery != null && model.gallery!.isNotEmpty)
+                _mediaListView(model),
+              _emojiSection(context),
+              _commentsDivider(model),
+              if (model.comments != null && model.comments!.isNotEmpty)
+                const SizedBox()
+              else
+                SliverToBoxAdapter(
+                  child: Text(
+                    '아직 댓글이 없어요 :)',
+                    style: s2SubTitle.copyWith(
+                      color: GRAY_COLOR,
+                      height: 1,
+                    ),
+                  ),
+                )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _commentsDivider(ThreadModel model) {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                model.comments != null ? '${model.comments!.length}개의 댓글' : '',
+                style: s2SubTitle.copyWith(
+                  color: GRAY_COLOR,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              const Expanded(
+                child: Divider(
+                  thickness: 1,
+                  color: GRAY_COLOR,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _emojiSection(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              EmojiButton(
+                onTap: () {
+                  DialogWidgets.emojiPickerDialog(
+                    context: context,
+                    onEmojiSelect: (category, emoji) {
+                      context.pop();
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 25,
+          )
+        ],
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _mediaListView(ThreadModel model) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: SizedBox(
+          height: (80.w.toInt() - 56) * 0.8,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return Stack(
+                children: [
+                  InkWell(
+                    onTap: () => Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => MediaPageScreen(
+                          pageIndex: index,
+                          gallery: model.gallery!,
+                        ),
+                        fullscreenDialog: true,
+                      ),
+                    ),
+                    child: Hero(
+                      tag: model.gallery![index].url,
+                      child: model.gallery![index].type == 'video'
+                          ? Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: SizedBox(
+                                    height: (80.w - 56) * 0.8,
+                                    child: NetworkVideoPlayerMini(
+                                      video: model.gallery![index],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                )
+                              ],
+                            )
+                          : PreviewImageNetwork(
+                              url: '$s3Url${model.gallery![index].url}',
+                              width: 80.w.toInt() - 56,
+                            ),
+                    ),
+                  ),
+                ],
+              );
+            },
+            itemCount: model.gallery!.length,
+          ),
         ),
       ),
     );

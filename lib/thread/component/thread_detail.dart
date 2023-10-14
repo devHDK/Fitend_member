@@ -11,7 +11,6 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class ThreadDetail extends StatefulWidget {
   const ThreadDetail({
     super.key,
-    required this.id,
     required this.profileImageUrl,
     this.title,
     required this.nickname,
@@ -19,7 +18,6 @@ class ThreadDetail extends StatefulWidget {
     required this.content,
   });
 
-  final int id;
   final String profileImageUrl;
   final String? title;
   final String nickname;

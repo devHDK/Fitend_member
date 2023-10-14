@@ -10,6 +10,7 @@ import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/view/thread_create_screen.dart';
+import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
@@ -216,23 +217,35 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                         style: h4Headline.copyWith(color: Colors.white),
                       ),
                     ),
-                  ThreadCell(
-                    id: model.id,
-                    title: model.title,
-                    content: model.content,
-                    profileImageUrl: model.writerType == 'trainer'
-                        ? '$s3Url${model.trainer.profileImage}'
-                        : model.user.gender == 'male'
-                            ? maleProfileUrl
-                            : femaleProfileUrl,
-                    nickname: model.user.nickname,
-                    dateTime: DateTime.parse(model.createdAt).toUtc().toLocal(),
-                    gallery: model.gallery,
-                    emojis: model.emojis,
-                    userCommentCount: model.userCommentCount,
-                    trainerCommentCount: model.trainerCommentCount,
-                    user: model.user,
-                    trainer: model.trainer,
+                  InkWell(
+                    onTap: () => Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => ThreadDetailScreen(
+                        threadId: model.id,
+                      ),
+                    )),
+                    child: ThreadCell(
+                      id: model.id,
+                      title: model.title,
+                      content: model.content,
+                      profileImageUrl: model.writerType == 'trainer'
+                          ? '$s3Url${model.trainer.profileImage}'
+                          : model.user.gender == 'male'
+                              ? maleProfileUrl
+                              : femaleProfileUrl,
+                      nickname: model.user.nickname,
+                      dateTime:
+                          DateTime.parse(model.createdAt).toUtc().toLocal(),
+                      gallery: model.gallery,
+                      emojis: model.emojis,
+                      userCommentCount: model.userCommentCount != null
+                          ? model.userCommentCount!
+                          : 0,
+                      trainerCommentCount: model.trainerCommentCount != null
+                          ? model.trainerCommentCount!
+                          : 0,
+                      user: model.user,
+                      trainer: model.trainer,
+                    ),
                   ),
                 ],
               );

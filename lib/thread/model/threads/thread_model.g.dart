@@ -24,9 +24,12 @@ ThreadModel _$ThreadModelFromJson(Map<String, dynamic> json) => ThreadModel(
       emojis: (json['emojis'] as List<dynamic>?)
           ?.map((e) => EmojiModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      userCommentCount: json['userCommentCount'] as int,
-      trainerCommentCount: json['trainerCommentCount'] as int,
+      userCommentCount: json['userCommentCount'] as int?,
+      trainerCommentCount: json['trainerCommentCount'] as int?,
       createdAt: json['createdAt'] as String,
+      comments: (json['comments'] as List<dynamic>?)
+          ?.map((e) => ThreadCommentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$ThreadModelToJson(ThreadModel instance) =>
@@ -44,4 +47,5 @@ Map<String, dynamic> _$ThreadModelToJson(ThreadModel instance) =>
       'userCommentCount': instance.userCommentCount,
       'trainerCommentCount': instance.trainerCommentCount,
       'createdAt': instance.createdAt,
+      'comments': instance.comments,
     };

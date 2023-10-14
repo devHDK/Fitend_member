@@ -6,6 +6,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
+import 'package:fitend_member/thread/component/network_video_player_mini.dart';
 import 'package:fitend_member/thread/component/preview_image_network.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
@@ -190,15 +191,30 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                                     fullscreenDialog: true,
                                   ),
                                 ),
-                                child: Hero(
-                                  tag: widget.gallery![index].url,
-                                  child: PreviewImageNetwork(
-                                    url: widget.gallery![index].type == 'video'
-                                        ? '$s3Url${widget.gallery![index].thumbnail!}'
-                                        : '$s3Url${widget.gallery![index].url}',
-                                    width: 120,
-                                  ),
-                                ),
+                                child: widget.gallery![index].type == 'video'
+                                    ? Row(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: SizedBox(
+                                              height: 150 * 0.8,
+                                              width: 150,
+                                              child: NetworkVideoPlayerMini(
+                                                video: widget.gallery![index],
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          )
+                                        ],
+                                      )
+                                    : PreviewImageNetwork(
+                                        url:
+                                            '$s3Url${widget.gallery![index].url}',
+                                        width: 150,
+                                      ),
                               ),
                             ],
                           );

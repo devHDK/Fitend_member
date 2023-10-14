@@ -25,12 +25,14 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
   Duration currentPosition = const Duration();
   bool isShowControlls = false;
   bool isPlaying = false;
+  double volume = 50.0;
+  bool mute = true;
 
   @override
   void initState() {
     super.initState();
 
-    videoInit().then((value) => _videoController!.play());
+    videoInit();
   }
 
   @override
@@ -47,7 +49,7 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
     if (oldWidget.video != widget.video) {
       _videoController!.removeListener(videoListener);
       _videoController!.dispose().then((value) {
-        videoInit().then((value) => _videoController!.play());
+        videoInit();
       });
     }
   }
@@ -80,6 +82,8 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
     );
 
     _videoController!.addListener(videoListener);
+    _videoController!.play();
+    _videoController!.setVolume(0);
 
     setState(() {});
   }
@@ -128,6 +132,29 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
                           onPlayPressed: onPlayPressed,
                           onReversePressed: onReversePressed,
                           isPlaying: _videoController!.value.isPlaying,
+                        ),
+                      if (isShowControlls)
+                        Positioned(
+                          right: 10,
+                          top: 10,
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                mute = !mute;
+                              });
+
+                              if (mute) {
+                                _videoController!.setVolume(0);
+                              } else {
+                                _videoController!.setVolume(volume);
+                              }
+                            },
+                            icon: Icon(
+                              mute ? Icons.volume_off : Icons.volume_up_rounded,
+                              color: Colors.white,
+                              size: 30.0,
+                            ),
+                          ),
                         ),
                       if (isShowControlls)
                         _Slider(

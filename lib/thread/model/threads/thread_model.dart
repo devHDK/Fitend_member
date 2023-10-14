@@ -1,3 +1,5 @@
+import 'package:fitend_member/thread/model/comments/thread_comment_list_model.dart';
+import 'package:fitend_member/thread/model/comments/thread_comment_model.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
@@ -20,7 +22,7 @@ class ThreadModelError extends ThreadModelBase {
 class ThreadModelLoading extends ThreadModelBase {}
 
 @JsonSerializable()
-class ThreadModel {
+class ThreadModel extends ThreadModelBase {
   @JsonKey(name: "id")
   final int id;
   @JsonKey(name: "writerType")
@@ -42,27 +44,29 @@ class ThreadModel {
   @JsonKey(name: "emojis")
   List<EmojiModel>? emojis;
   @JsonKey(name: "userCommentCount")
-  final int userCommentCount;
+  int? userCommentCount;
   @JsonKey(name: "trainerCommentCount")
-  final int trainerCommentCount;
+  int? trainerCommentCount;
   @JsonKey(name: "createdAt")
   final String createdAt;
+  @JsonKey(name: "comments")
+  List<ThreadCommentModel>? comments;
 
-  ThreadModel({
-    required this.id,
-    required this.writerType,
-    required this.type,
-    required this.title,
-    required this.content,
-    required this.gallery,
-    required this.workoutInfo,
-    required this.user,
-    required this.trainer,
-    required this.emojis,
-    required this.userCommentCount,
-    required this.trainerCommentCount,
-    required this.createdAt,
-  });
+  ThreadModel(
+      {required this.id,
+      required this.writerType,
+      required this.type,
+      required this.title,
+      required this.content,
+      required this.gallery,
+      required this.workoutInfo,
+      required this.user,
+      required this.trainer,
+      required this.emojis,
+      this.userCommentCount,
+      this.trainerCommentCount,
+      required this.createdAt,
+      this.comments});
 
   ThreadModel copyWith({
     int? id,
@@ -78,6 +82,7 @@ class ThreadModel {
     int? userCommentCount,
     int? trainerCommentCount,
     String? createdAt,
+    List<ThreadCommentModel>? comments,
   }) =>
       ThreadModel(
         id: id ?? this.id,
@@ -93,6 +98,7 @@ class ThreadModel {
         userCommentCount: userCommentCount ?? this.userCommentCount,
         trainerCommentCount: trainerCommentCount ?? this.trainerCommentCount,
         createdAt: createdAt ?? this.createdAt,
+        comments: comments ?? this.comments,
       );
 
   factory ThreadModel.fromJson(Map<String, dynamic> json) =>

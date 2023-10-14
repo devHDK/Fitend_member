@@ -440,7 +440,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               minHeight: 195,
               maxHeight: size.height - (56 + kToolbarHeight),
               borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              ),
               onPanelClosed: () => setState(() {
                 isSwipeUp = false;
               }),

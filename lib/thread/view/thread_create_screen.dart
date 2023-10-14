@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -163,43 +162,44 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 18),
             child: TextButton(
-                onPressed: state.isLoading
-                    ? null
-                    : () async {
-                        await ref
-                            .read(threadCreateProvider.notifier)
-                            .createThread(widget.trainerId)
-                            .then((value) => context.pop());
-                      },
-                child: Container(
-                  width: 53,
-                  height: 25,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: contentsController.text.isNotEmpty
-                        ? POINT_COLOR
-                        : POINT_COLOR.withOpacity(0.5),
-                  ),
-                  child: Center(
-                    child: state.isLoading || state.isUploading
-                        ? const SizedBox(
-                            height: 15,
-                            width: 15,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
-                          )
-                        : Text(
-                            '등록',
-                            style: h6Headline.copyWith(
-                              color: contentsController.text.isNotEmpty
-                                  ? Colors.white
-                                  : Colors.white.withOpacity(0.5),
-                              height: 1,
-                            ),
+              onPressed: state.isLoading
+                  ? null
+                  : () async {
+                      await ref
+                          .read(threadCreateProvider.notifier)
+                          .createThread(widget.trainerId)
+                          .then((value) => context.pop());
+                    },
+              child: Container(
+                width: 53,
+                height: 25,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: contentsController.text.isNotEmpty
+                      ? POINT_COLOR
+                      : POINT_COLOR.withOpacity(0.5),
+                ),
+                child: Center(
+                  child: state.isLoading || state.isUploading
+                      ? const SizedBox(
+                          height: 15,
+                          width: 15,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
                           ),
-                  ),
-                )),
+                        )
+                      : Text(
+                          '등록',
+                          style: h6Headline.copyWith(
+                            color: contentsController.text.isNotEmpty
+                                ? Colors.white
+                                : Colors.white.withOpacity(0.5),
+                            height: 1,
+                          ),
+                        ),
+                ),
+              ),
+            ),
           )
         ],
       ),
@@ -288,77 +288,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            TextFormField(
-              onChanged: (value) {
-                ref.read(threadCreateProvider.notifier).updateTitle(value);
-              },
-              maxLines: 1,
-              style: const TextStyle(color: Colors.white),
-              controller: titleController,
-              cursorColor: POINT_COLOR,
-              focusNode: titleFocusNode,
-              onTapOutside: (event) {
-                titleFocusNode.unfocus();
-              },
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                focusColor: POINT_COLOR,
-                border: baseBorder,
-                disabledBorder: baseBorder,
-                enabledBorder: baseBorder,
-                focusedBorder: baseBorder,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 11,
-                ),
-                filled: true,
-                labelText:
-                    titleFocusNode.hasFocus || titleController.text.isNotEmpty
-                        ? ''
-                        : '제목을 추가하시겠어요?',
-                labelStyle: s1SubTitle.copyWith(
-                  color: titleFocusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
-                ),
-              ),
-            ),
-            TextFormField(
-              onChanged: (value) {
-                ref.read(threadCreateProvider.notifier).updateContent(value);
-              },
-              maxLines: 20,
-              style: const TextStyle(color: Colors.white),
-              controller: contentsController,
-              cursorColor: POINT_COLOR,
-              focusNode: contentFocusNode,
-              onTapOutside: (event) {
-                contentFocusNode.unfocus();
-              },
-              keyboardType: TextInputType.multiline,
-              decoration: InputDecoration(
-                focusColor: POINT_COLOR,
-                border: baseBorder,
-                disabledBorder: baseBorder,
-                enabledBorder: baseBorder,
-                focusedBorder: baseBorder,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 11,
-                ),
-                filled: true,
-                labelStyle: s1SubTitle.copyWith(
-                  color: contentFocusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
-                ),
-                label: Text(
-                  contentFocusNode.hasFocus ||
-                          contentsController.text.isNotEmpty
-                      ? ''
-                      : '여기를 눌러 시작해주세요\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',
-                  style: s1SubTitle.copyWith(
-                    color: GRAY_COLOR,
-                  ),
-                ),
-              ),
-            ),
+            _titleTextFormfield(),
+            _contentTextFormField(),
             SizedBox(
               height: 140,
               child: state.isLoading
@@ -430,6 +361,81 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                     ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  TextFormField _contentTextFormField() {
+    return TextFormField(
+      onChanged: (value) {
+        ref.read(threadCreateProvider.notifier).updateContent(value);
+      },
+      maxLines: 20,
+      style: const TextStyle(color: Colors.white),
+      controller: contentsController,
+      cursorColor: POINT_COLOR,
+      focusNode: contentFocusNode,
+      onTapOutside: (event) {
+        contentFocusNode.unfocus();
+      },
+      keyboardType: TextInputType.multiline,
+      decoration: InputDecoration(
+        focusColor: POINT_COLOR,
+        border: baseBorder,
+        disabledBorder: baseBorder,
+        enabledBorder: baseBorder,
+        focusedBorder: baseBorder,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 11,
+        ),
+        filled: true,
+        labelStyle: s1SubTitle.copyWith(
+          color: contentFocusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
+        ),
+        label: Text(
+          contentFocusNode.hasFocus || contentsController.text.isNotEmpty
+              ? ''
+              : '여기를 눌러 시작해주세요\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',
+          style: s1SubTitle.copyWith(
+            color: GRAY_COLOR,
+          ),
+        ),
+      ),
+    );
+  }
+
+  TextFormField _titleTextFormfield() {
+    return TextFormField(
+      onChanged: (value) {
+        ref.read(threadCreateProvider.notifier).updateTitle(value);
+      },
+      maxLines: 1,
+      style: const TextStyle(color: Colors.white),
+      controller: titleController,
+      cursorColor: POINT_COLOR,
+      focusNode: titleFocusNode,
+      onTapOutside: (event) {
+        titleFocusNode.unfocus();
+      },
+      keyboardType: TextInputType.text,
+      decoration: InputDecoration(
+        focusColor: POINT_COLOR,
+        border: baseBorder,
+        disabledBorder: baseBorder,
+        enabledBorder: baseBorder,
+        focusedBorder: baseBorder,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 11,
+        ),
+        filled: true,
+        labelText: titleFocusNode.hasFocus || titleController.text.isNotEmpty
+            ? ''
+            : '제목을 추가하시겠어요?',
+        labelStyle: s1SubTitle.copyWith(
+          color: titleFocusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
         ),
       ),
     );

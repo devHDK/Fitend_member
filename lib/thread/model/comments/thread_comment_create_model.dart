@@ -15,7 +15,7 @@ class ThreadCommentCreateModel {
   ThreadCommentCreateModel({
     required this.threadId,
     required this.content,
-    required this.gallery,
+    this.gallery,
   });
 
   ThreadCommentCreateModel copyWith({
@@ -33,4 +33,54 @@ class ThreadCommentCreateModel {
       _$ThreadCommentCreateModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ThreadCommentCreateModelToJson(this);
+}
+
+@JsonSerializable()
+class ThreadCommentCreateTempModel {
+  @JsonKey(name: "threadId")
+  int threadId;
+  @JsonKey(name: "content")
+  String content;
+  @JsonKey(name: "gallery")
+  List<String> assetsPaths;
+  @JsonKey(name: "isLoading")
+  bool isLoading;
+  @JsonKey(name: "isUploading")
+  bool isUploading;
+  int doneCount;
+  int totalCount;
+
+  ThreadCommentCreateTempModel({
+    required this.threadId,
+    required this.content,
+    required this.assetsPaths,
+    required this.isLoading,
+    required this.isUploading,
+    required this.doneCount,
+    required this.totalCount,
+  });
+
+  ThreadCommentCreateTempModel copyWith({
+    int? threadId,
+    String? content,
+    List<String>? assetPaths,
+    bool? isLoading,
+    bool? isUploading,
+    int? doneCount,
+    int? totalCount,
+  }) =>
+      ThreadCommentCreateTempModel(
+        threadId: threadId ?? this.threadId,
+        content: content ?? this.content,
+        assetsPaths: assetPaths ?? assetsPaths,
+        isLoading: isLoading ?? this.isLoading,
+        isUploading: isUploading ?? this.isUploading,
+        doneCount: doneCount ?? this.doneCount,
+        totalCount: totalCount ?? this.totalCount,
+      );
+
+  factory ThreadCommentCreateTempModel.fromJson(Map<String, dynamic> json) =>
+      _$ThreadCommentCreateTempModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ThreadCommentCreateTempModelToJson(this);
 }

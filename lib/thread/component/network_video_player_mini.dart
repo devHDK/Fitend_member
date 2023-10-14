@@ -36,7 +36,6 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
 
   @override
   void dispose() {
-    _videoController!.removeListener(videoListener);
     _videoController!.dispose();
     super.dispose();
   }
@@ -46,7 +45,6 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.video != widget.video) {
-      _videoController!.removeListener(videoListener);
       _videoController!.dispose().then((value) {
         videoInit();
       });
@@ -70,26 +68,12 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
       _videoController!.initialize(),
     ]);
 
-    // slider 변경
-    _videoController!.addListener(
-      () {
-        final currentPosition = _videoController!.value.position;
-        setState(() {
-          this.currentPosition = currentPosition;
-        });
-      },
-    );
-
-    _videoController!.addListener(videoListener);
-
     _videoController!.setVolume(0);
     _videoController!.setLooping(true);
     _videoController!.play();
 
     setState(() {});
   }
-
-  void videoListener() {}
 
   @override
   Widget build(BuildContext context) {

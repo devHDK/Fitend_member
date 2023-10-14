@@ -88,7 +88,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
               10 +
               10 +
               20 +
-              10 +
+              24 +
               galleryHeight.toDouble(),
 
           child: Row(

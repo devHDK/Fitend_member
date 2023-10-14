@@ -13,32 +13,32 @@ class ThreadCommentModel {
   @JsonKey(name: "threadId")
   final int threadId;
   @JsonKey(name: "trainerId")
-  final int trainerId;
+  int? trainerId;
   @JsonKey(name: "userId")
-  final int userId;
+  int? userId;
   @JsonKey(name: "content")
   final String content;
   @JsonKey(name: "gallery")
-  final List<GalleryModel> gallery;
+  List<GalleryModel>? gallery;
   @JsonKey(name: "user")
   ThreadUser? user;
   @JsonKey(name: "trainer")
   ThreadTrainer? trainer;
   @JsonKey(name: "emojis")
-  final List<EmojiModel> emojis;
+  List<EmojiModel>? emojis;
   @JsonKey(name: "createdAt")
   final String createdAt;
 
   ThreadCommentModel({
     required this.id,
     required this.threadId,
-    required this.trainerId,
-    required this.userId,
+    this.trainerId,
+    this.userId,
     required this.content,
-    required this.gallery,
-    required this.user,
-    required this.trainer,
-    required this.emojis,
+    this.gallery,
+    this.user,
+    this.trainer,
+    this.emojis,
     required this.createdAt,
   });
 

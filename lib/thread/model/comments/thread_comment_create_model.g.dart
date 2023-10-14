@@ -23,3 +23,28 @@ Map<String, dynamic> _$ThreadCommentCreateModelToJson(
       'content': instance.content,
       'gallery': instance.gallery,
     };
+
+ThreadCommentCreateTempModel _$ThreadCommentCreateTempModelFromJson(
+        Map<String, dynamic> json) =>
+    ThreadCommentCreateTempModel(
+      threadId: json['threadId'] as int,
+      content: json['content'] as String,
+      assetsPaths:
+          (json['gallery'] as List<dynamic>).map((e) => e as String).toList(),
+      isLoading: json['isLoading'] as bool,
+      isUploading: json['isUploading'] as bool,
+      doneCount: json['doneCount'] as int,
+      totalCount: json['totalCount'] as int,
+    );
+
+Map<String, dynamic> _$ThreadCommentCreateTempModelToJson(
+        ThreadCommentCreateTempModel instance) =>
+    <String, dynamic>{
+      'threadId': instance.threadId,
+      'content': instance.content,
+      'gallery': instance.assetsPaths,
+      'isLoading': instance.isLoading,
+      'isUploading': instance.isUploading,
+      'doneCount': instance.doneCount,
+      'totalCount': instance.totalCount,
+    };

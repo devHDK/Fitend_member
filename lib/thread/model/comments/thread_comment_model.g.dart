@@ -10,11 +10,11 @@ ThreadCommentModel _$ThreadCommentModelFromJson(Map<String, dynamic> json) =>
     ThreadCommentModel(
       id: json['id'] as int,
       threadId: json['threadId'] as int,
-      trainerId: json['trainerId'] as int,
-      userId: json['userId'] as int,
+      trainerId: json['trainerId'] as int?,
+      userId: json['userId'] as int?,
       content: json['content'] as String,
-      gallery: (json['gallery'] as List<dynamic>)
-          .map((e) => GalleryModel.fromJson(e as Map<String, dynamic>))
+      gallery: (json['gallery'] as List<dynamic>?)
+          ?.map((e) => GalleryModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       user: json['user'] == null
           ? null
@@ -22,8 +22,8 @@ ThreadCommentModel _$ThreadCommentModelFromJson(Map<String, dynamic> json) =>
       trainer: json['trainer'] == null
           ? null
           : ThreadTrainer.fromJson(json['trainer'] as Map<String, dynamic>),
-      emojis: (json['emojis'] as List<dynamic>)
-          .map((e) => EmojiModel.fromJson(e as Map<String, dynamic>))
+      emojis: (json['emojis'] as List<dynamic>?)
+          ?.map((e) => EmojiModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       createdAt: json['createdAt'] as String,
     );

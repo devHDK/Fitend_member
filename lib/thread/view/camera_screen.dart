@@ -6,6 +6,7 @@ import 'package:camera/camera.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +18,13 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
-  const CameraScreen({super.key});
+  const CameraScreen({
+    super.key,
+    this.isComment = false,
+    this.threadId,
+  });
+  final bool? isComment;
+  final int? threadId;
 
   @override
   ConsumerState<CameraScreen> createState() => _CameraScreenState();
@@ -557,18 +564,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                           .saveFile(
                                                         videoFile.path,
                                                       );
-
-                                                      // int currentUnix = DateTime
-                                                      //         .now()
-                                                      //     .millisecondsSinceEpoch;
-
-                                                      // final directory =
-                                                      //     await getApplicationDocumentsDirectory();
-
-                                                      // String fileFormat =
-                                                      //     videoFile.path
-                                                      //         .split('.')
-                                                      //         .last;
                                                     } else {
                                                       await startVideoRecording();
                                                     }
@@ -622,68 +617,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                             ),
                                           ),
                                           if (!_isRecordingInProgress)
-                                            InkWell(
-                                              onTap: () async {
-                                                await ref
-                                                    .read(threadCreateProvider
-                                                        .notifier)
-                                                    .pickImage(context)
-                                                    .then((assets) async {
-                                                  if (assets != null &&
-                                                      assets.isNotEmpty) {
-                                                    ref
-                                                        .read(
-                                                            threadCreateProvider
-                                                                .notifier)
-                                                        .updateIsLoading(true);
-
-                                                    for (var asset in assets) {
-                                                      if (await asset.file !=
-                                                          null) {
-                                                        final file =
-                                                            await asset.file;
-
-                                                        ref
-                                                            .read(
-                                                                threadCreateProvider
-                                                                    .notifier)
-                                                            .addAssets(
-                                                                file!.path);
-
-                                                        debugPrint(
-                                                            'file.path : ${file.path}');
-                                                      }
-                                                    }
-
-                                                    ref
-                                                        .read(
-                                                            threadCreateProvider
-                                                                .notifier)
-                                                        .updateIsLoading(false);
-                                                  } else {
-                                                    debugPrint(
-                                                        'assets: $assets');
-                                                  }
-                                                });
-                                              },
-                                              child: const Stack(
-                                                children: [
-                                                  Icon(
-                                                    Icons.square_rounded,
-                                                    size: 50,
-                                                    color: Colors.black38,
-                                                  ),
-                                                  Positioned(
-                                                    top: 10,
-                                                    left: 10,
-                                                    child: Icon(
-                                                      Icons.photo,
-                                                      color: Colors.white,
-                                                      size: 30,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                            _pickImage(
+                                              context,
+                                              widget.isComment!,
+                                              widget.threadId,
                                             )
                                           else
                                             const SizedBox(
@@ -799,6 +736,90 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                   ),
                 ],
               ),
+      ),
+    );
+  }
+
+  InkWell _pickImage(BuildContext context, bool isComment, int? threadId) {
+    return InkWell(
+      onTap: isComment && threadId != null
+          ? () async {
+              await ref
+                  .read(commentCreateProvider(threadId).notifier)
+                  .pickImage(context)
+                  .then(
+                (assets) async {
+                  if (assets != null && assets.isNotEmpty) {
+                    ref
+                        .read(commentCreateProvider(threadId).notifier)
+                        .updateIsLoading(true);
+
+                    for (var asset in assets) {
+                      if (await asset.file != null) {
+                        final file = await asset.file;
+
+                        ref
+                            .read(commentCreateProvider(threadId).notifier)
+                            .addAssets(file!.path);
+
+                        debugPrint('file.path : ${file.path}');
+                      }
+                    }
+
+                    ref
+                        .read(commentCreateProvider(threadId).notifier)
+                        .updateIsLoading(false);
+                  } else {
+                    debugPrint('assets: $assets');
+                  }
+                },
+              );
+            }
+          : () async {
+              await ref
+                  .read(threadCreateProvider.notifier)
+                  .pickImage(context)
+                  .then((assets) async {
+                if (assets != null && assets.isNotEmpty) {
+                  ref.read(threadCreateProvider.notifier).updateIsLoading(true);
+
+                  for (var asset in assets) {
+                    if (await asset.file != null) {
+                      final file = await asset.file;
+
+                      ref
+                          .read(threadCreateProvider.notifier)
+                          .addAssets(file!.path);
+
+                      debugPrint('file.path : ${file.path}');
+                    }
+                  }
+
+                  ref
+                      .read(threadCreateProvider.notifier)
+                      .updateIsLoading(false);
+                } else {
+                  debugPrint('assets: $assets');
+                }
+              });
+            },
+      child: const Stack(
+        children: [
+          Icon(
+            Icons.square_rounded,
+            size: 50,
+            color: Colors.black38,
+          ),
+          Positioned(
+            top: 10,
+            left: 10,
+            child: Icon(
+              Icons.photo,
+              color: Colors.white,
+              size: 30,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -22,7 +22,6 @@ import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/comment_asset_edit_screen.dart';
 import 'package:fitend_member/thread/view/media_page_screen.dart';
-import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -405,7 +404,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                                 await ref
                                     .read(commentCreateProvider(widget.threadId)
                                         .notifier)
-                                    .createComment(widget.threadId)
+                                    .createComment(widget.threadId, model.user)
                                     .then((value) {
                                   setState(() {
                                     commentController.text = '';

@@ -1,10 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_get_params_model.dart';
+import 'package:fitend_member/thread/model/comments/thread_comment_model.dart';
+import 'package:fitend_member/thread/model/common/gallery_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:fitend_member/thread/repository/thread_comment_repository.dart';
 import 'package:fitend_member/thread/repository/thread_emoji_repository.dart';
 import 'package:fitend_member/thread/repository/thread_repository.dart';
+import 'package:fitend_member/user/model/user_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -54,5 +58,35 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
       debugPrint('$e');
       state = ThreadModelError(message: '데이터를 불러올수 없습니다');
     }
+  }
+
+  void addComment({
+    required int id,
+    required String content,
+    required String createdAt,
+    List<GalleryModel>? gallery,
+    required ThreadUser user,
+  }) {
+    final pstate = state as ThreadModel;
+
+    pstate.comments ??= [];
+
+    final tempComments = [
+      ThreadCommentModel(
+        id: id,
+        threadId: threadId,
+        content: content,
+        createdAt: createdAt,
+        gallery: gallery,
+        user: user,
+      ),
+      ...pstate.comments!,
+    ];
+
+    print(tempComments);
+
+    pstate.comments = tempComments;
+
+    state = pstate;
   }
 }

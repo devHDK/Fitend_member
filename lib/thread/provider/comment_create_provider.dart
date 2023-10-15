@@ -5,11 +5,12 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/files/file_upload_request_model.dart';
-import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
+import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
+import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/repository/file_repository.dart';
 import 'package:fitend_member/thread/repository/thread_comment_repository.dart';
-import 'package:fitend_member/thread/repository/thread_repository.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/camera_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,7 +19,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
 final commentCreateProvider = StateNotifierProvider.family<
     CommentCreateStateNotifier,
@@ -27,12 +27,16 @@ final commentCreateProvider = StateNotifierProvider.family<
   final commentRepository = ref.watch(commentRepositoryProvider);
   final fileRepository = ref.watch(fileRepositoryProvider);
   final dioUpload = ref.watch(dioUploadProvider);
+  final threadState = ref.watch(threadDetailProvider(threadId).notifier);
+  final threadListState = ref.watch(threadProvider.notifier);
 
   return CommentCreateStateNotifier(
     threadId: threadId,
     commentRepository: commentRepository,
     fileRepository: fileRepository,
     dioUpload: dioUpload,
+    threadState: threadState,
+    threadListState: threadListState,
   );
 });
 
@@ -42,21 +46,26 @@ class CommentCreateStateNotifier
   final ThreadCommentRepository commentRepository;
   final FileRepository fileRepository;
   final Dio dioUpload;
+  ThreadDetailStateNotifier threadState;
+  ThreadStateNotifier threadListState;
 
   CommentCreateStateNotifier({
     required this.threadId,
     required this.commentRepository,
     required this.fileRepository,
     required this.dioUpload,
+    required this.threadState,
+    required this.threadListState,
   }) : super(
           ThreadCommentCreateTempModel(
-              isLoading: false,
-              isUploading: false,
-              content: '',
-              threadId: threadId,
-              assetsPaths: [],
-              doneCount: 0,
-              totalCount: 0),
+            isLoading: false,
+            isUploading: false,
+            content: '',
+            threadId: threadId,
+            assetsPaths: [],
+            doneCount: 0,
+            totalCount: 0,
+          ),
         ) {
     init();
   }
@@ -73,7 +82,7 @@ class CommentCreateStateNotifier
     );
   }
 
-  Future<void> createComment(int threadId) async {
+  Future<void> createComment(int threadId, ThreadUser user) async {
     try {
       if (state.isUploading || state.isLoading) {
         return;
@@ -184,7 +193,16 @@ class CommentCreateStateNotifier
       }
 
       final respone = await commentRepository.postComment(model: model);
-      //TODO: comments에 새 comment추가
+
+      threadState.addComment(
+        id: respone.id,
+        content: model.content,
+        createdAt: DateTime.now().toUtc().toIso8601String(),
+        gallery: model.gallery,
+        user: user,
+      );
+
+      threadListState.updateUserCommentCount(threadId);
 
       init();
 
@@ -192,7 +210,7 @@ class CommentCreateStateNotifier
       tstate.isUploading = false;
       state = tstate;
     } catch (e) {
-      debugPrint('thread create error : $e');
+      debugPrint('comment create error : $e');
       final tstate = state.copyWith();
       tstate.isUploading = false;
       state = tstate;

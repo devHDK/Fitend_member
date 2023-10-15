@@ -95,4 +95,19 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
       state = ThreadListModelError(message: '데이터를 불러오지 못했습니다.');
     }
   }
+
+  void updateUserCommentCount(int threadId) {
+    final pstate = state as ThreadListModel;
+
+    int index = pstate.data.indexWhere(
+      (thread) {
+        return thread.id == threadId;
+      },
+    );
+
+    pstate.data[index].userCommentCount =
+        pstate.data[index].userCommentCount! + 1;
+
+    state = pstate.copyWith();
+  }
 }

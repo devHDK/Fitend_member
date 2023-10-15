@@ -5,6 +5,8 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
 import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/thread_asset_edit_screen.dart';
@@ -20,10 +22,12 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class ThreadCreateScreen extends ConsumerStatefulWidget {
   const ThreadCreateScreen({
     super.key,
-    required this.trainerId,
+    required this.trainer,
+    required this.user,
   });
 
-  final int trainerId;
+  final ThreadTrainer trainer;
+  final ThreadUser user;
 
   @override
   ConsumerState<ThreadCreateScreen> createState() => _ThreadCreateScreenState();
@@ -167,7 +171,10 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                   : () async {
                       await ref
                           .read(threadCreateProvider.notifier)
-                          .createThread(widget.trainerId)
+                          .createThread(
+                            widget.user,
+                            widget.trainer,
+                          )
                           .then((value) => context.pop());
                     },
               child: Container(

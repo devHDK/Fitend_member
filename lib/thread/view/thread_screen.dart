@@ -6,6 +6,8 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/component/thread_cell.dart';
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 
 import 'package:fitend_member/thread/provider/thread_provider.dart';
@@ -142,8 +144,12 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
           onPressed: () {
             Navigator.of(context).push(CupertinoPageRoute(
               builder: (context) => ThreadCreateScreen(
-                trainerId: user.user.activeTrainers.first.id,
-              ),
+                  trainer: user.user.activeTrainers.first,
+                  user: ThreadUser(
+                    id: user.user.id,
+                    gender: user.user.gender,
+                    nickname: user.user.nickname,
+                  )),
             ));
           },
           backgroundColor: Colors.transparent,

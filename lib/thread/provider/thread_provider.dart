@@ -96,6 +96,17 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
     }
   }
 
+  void addThread(ThreadModel model) {
+    final pstate = state as ThreadListModel;
+
+    final tempList = [model, ...pstate.data];
+
+    pstate.data = tempList;
+    pstate.total += 1;
+
+    state = pstate.copyWith();
+  }
+
   void updateUserCommentCount(int threadId) {
     final pstate = state as ThreadListModel;
 

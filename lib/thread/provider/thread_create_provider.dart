@@ -4,8 +4,12 @@ import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/files/file_upload_request_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_model.dart';
+import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/repository/file_repository.dart';
 import 'package:fitend_member/thread/repository/thread_comment_repository.dart';
 import 'package:fitend_member/thread/repository/thread_repository.dart';
@@ -26,12 +30,14 @@ final threadCreateProvider =
   final commentRepository = ref.watch(commentRepositoryProvider);
   final fileRepository = ref.watch(fileRepositoryProvider);
   final dioUpload = ref.watch(dioUploadProvider);
+  final threadListState = ref.watch(threadProvider.notifier);
 
   return ThreadCreateStateNotifier(
     threadRepository: threadRepository,
     commentRepository: commentRepository,
     fileRepository: fileRepository,
     dioUpload: dioUpload,
+    threadListState: threadListState,
   );
 });
 
@@ -40,12 +46,14 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
   final ThreadCommentRepository commentRepository;
   final FileRepository fileRepository;
   final Dio dioUpload;
+  final ThreadStateNotifier threadListState;
 
   ThreadCreateStateNotifier({
     required this.threadRepository,
     required this.commentRepository,
     required this.fileRepository,
     required this.dioUpload,
+    required this.threadListState,
   }) : super(
           ThreadCreateTempModel(
             isLoading: false,
@@ -53,6 +61,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
             content: '',
             doneCount: 0,
             totalCount: 0,
+            assetsPaths: [],
           ),
         ) {
     init();
@@ -69,7 +78,10 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     );
   }
 
-  Future<void> createThread(int trainerId) async {
+  Future<void> createThread(
+    ThreadUser user,
+    ThreadTrainer trainer,
+  ) async {
     try {
       if (state.isUploading || state.isLoading) {
         return;
@@ -81,7 +93,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       state = pstate;
 
       ThreadCreateModel model = ThreadCreateModel(
-        trainerId: trainerId,
+        trainerId: trainer.id,
         title: state.title != null && state.title!.isNotEmpty
             ? state.title!
             : null,
@@ -184,13 +196,25 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
 
       final response = await threadRepository.postThread(model: model);
 
-      //TODO: ThreadList에 새 thread추가
+      threadListState.addThread(
+        ThreadModel(
+          id: response.id,
+          writerType: 'user',
+          type: 'general',
+          title: model.title,
+          content: model.content,
+          gallery: model.gallery,
+          workoutInfo: null,
+          user: user,
+          trainer: trainer,
+          emojis: [],
+          createdAt: DateTime.now().toUtc().toIso8601String(),
+          userCommentCount: 0,
+          trainerCommentCount: 0,
+        ),
+      );
 
       init();
-
-      final tstate = state.copyWith();
-      tstate.isUploading = false;
-      state = tstate;
     } catch (e) {
       debugPrint('thread create error : $e');
       final tstate = state.copyWith();
@@ -246,7 +270,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
   }
 
   void addAssets(String assetPath) {
-    ThreadCreateTempModel pstate = state.copyWith();
+    final pstate = state.copyWith();
 
     pstate.assetsPaths!.add(assetPath);
 

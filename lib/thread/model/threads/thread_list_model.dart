@@ -18,9 +18,9 @@ class ThreadListModelLoading extends ThreadListModelBase {}
 @JsonSerializable()
 class ThreadListModel extends ThreadListModelBase {
   @JsonKey(name: "data")
-  final List<ThreadModel> data;
+  List<ThreadModel> data;
   @JsonKey(name: "total")
-  final int total;
+  int total;
 
   ThreadListModel({
     required this.data,

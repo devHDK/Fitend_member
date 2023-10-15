@@ -52,21 +52,22 @@ class ThreadModel extends ThreadModelBase {
   @JsonKey(name: "comments")
   List<ThreadCommentModel>? comments;
 
-  ThreadModel(
-      {required this.id,
-      required this.writerType,
-      required this.type,
-      required this.title,
-      required this.content,
-      required this.gallery,
-      required this.workoutInfo,
-      required this.user,
-      required this.trainer,
-      required this.emojis,
-      this.userCommentCount,
-      this.trainerCommentCount,
-      required this.createdAt,
-      this.comments});
+  ThreadModel({
+    required this.id,
+    required this.writerType,
+    required this.type,
+    required this.title,
+    required this.content,
+    required this.gallery,
+    required this.workoutInfo,
+    required this.user,
+    required this.trainer,
+    required this.emojis,
+    this.userCommentCount,
+    this.trainerCommentCount,
+    required this.createdAt,
+    this.comments,
+  });
 
   ThreadModel copyWith({
     int? id,

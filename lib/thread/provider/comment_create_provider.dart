@@ -72,13 +72,13 @@ class CommentCreateStateNotifier
 
   void init() {
     state = ThreadCommentCreateTempModel(
-      assetsPaths: [],
       isLoading: false,
       isUploading: false,
       content: '',
       threadId: threadId,
       doneCount: 0,
       totalCount: 0,
+      assetsPaths: [],
     );
   }
 
@@ -205,10 +205,6 @@ class CommentCreateStateNotifier
       threadListState.updateUserCommentCount(threadId);
 
       init();
-
-      final tstate = state.copyWith();
-      tstate.isUploading = false;
-      state = tstate;
     } catch (e) {
       debugPrint('comment create error : $e');
       final tstate = state.copyWith();
@@ -255,7 +251,10 @@ class CommentCreateStateNotifier
     try {
       Navigator.of(context).push(
         CupertinoPageRoute(
-          builder: (context) => const CameraScreen(),
+          builder: (context) => CameraScreen(
+            isComment: true,
+            threadId: threadId,
+          ),
         ),
       );
     } catch (e) {
@@ -264,11 +263,14 @@ class CommentCreateStateNotifier
   }
 
   void addAssets(String assetPath) {
-    ThreadCommentCreateTempModel pstate = state.copyWith();
+    final pstate = state.copyWith();
 
     pstate.assetsPaths.add(assetPath);
 
-    state = pstate;
+    print(pstate.assetsPaths);
+    print('asset length ${pstate.assetsPaths.length}');
+
+    state = pstate.copyWith();
   }
 
   void removeAsset(int index) {
@@ -280,6 +282,7 @@ class CommentCreateStateNotifier
   }
 
   void changeAsset(int index, String path) {
+    print(state.assetsPaths);
     final pstate = state.copyWith();
 
     pstate.assetsPaths[index] = path;

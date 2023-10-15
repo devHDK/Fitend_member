@@ -397,20 +397,29 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                   ),
                   const Spacer(),
                   TextButton(
-                    onPressed:
-                        commentState.isLoading || commentController.text.isEmpty
-                            ? null
-                            : () async {
-                                await ref
-                                    .read(commentCreateProvider(widget.threadId)
-                                        .notifier)
-                                    .createComment(widget.threadId, model.user)
-                                    .then((value) {
-                                  setState(() {
-                                    commentController.text = '';
-                                  });
-                                });
-                              },
+                    onPressed: commentState.isLoading ||
+                            commentController.text.isEmpty
+                        ? null
+                        : () async {
+                            await ref
+                                .read(commentCreateProvider(widget.threadId)
+                                    .notifier)
+                                .createComment(widget.threadId, model.user)
+                                .then((value) {
+                              setState(() {
+                                commentController.text = '';
+                              });
+                            }).onError((error, stackTrace) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => DialogWidgets.errorDialog(
+                                  message: '업도르에 실패하였습니다.',
+                                  confirmText: '확인',
+                                  confirmOnTap: () => context.pop(),
+                                ),
+                              );
+                            });
+                          },
                     child: Container(
                       width: 53,
                       height: 25,

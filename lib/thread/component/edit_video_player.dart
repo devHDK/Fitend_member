@@ -10,10 +10,14 @@ import 'package:video_player/video_player.dart';
 class EditVideoPlayer extends ConsumerStatefulWidget {
   final File file;
   final int index;
+  final bool? isComment;
+  final int? threadId;
   const EditVideoPlayer({
     super.key,
     required this.file,
     required this.index,
+    this.isComment = false,
+    this.threadId,
   });
 
   @override
@@ -174,6 +178,8 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
                           VideoEditorScreen(
                         file: widget.file,
                         index: widget.index,
+                        isComment: widget.isComment,
+                        threadId: widget.threadId,
                       ),
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {

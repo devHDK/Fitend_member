@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
+import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/video_crop_screen.dart';
@@ -17,10 +17,14 @@ class VideoEditorScreen extends ConsumerStatefulWidget {
     super.key,
     required this.file,
     required this.index,
+    this.isComment = false,
+    this.threadId,
   });
 
   final File file;
   final int index;
+  final bool? isComment;
+  final int? threadId;
 
   @override
   ConsumerState<VideoEditorScreen> createState() => _VideoEditScreenState();
@@ -65,7 +69,7 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
         ),
       );
 
-  void _exportVideo(ThreadCreateTempModel state, int index) async {
+  void _exportVideo(int index) async {
     _exportingProgress.value = 0;
     _isExporting.value = true;
 
@@ -94,7 +98,13 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
         _isExporting.value = false;
         if (!mounted) return;
 
-        ref.read(threadCreateProvider.notifier).changeAsset(index, file.path);
+        if (widget.isComment!) {
+          ref
+              .read(commentCreateProvider(widget.threadId!).notifier)
+              .changeAsset(index, file.path);
+        } else {
+          ref.read(threadCreateProvider.notifier).changeAsset(index, file.path);
+        }
       },
     ).then((value) {
       // setState(() {
@@ -127,8 +137,6 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(threadCreateProvider);
-
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -184,7 +192,7 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
                         const SizedBox(
                           height: 10,
                         ),
-                        _bottomNavBar(state, widget.index),
+                        _bottomNavBar(widget.index),
                       ],
                     )
                   ],
@@ -195,7 +203,7 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
     );
   }
 
-  Widget _bottomNavBar(ThreadCreateTempModel state, int index) {
+  Widget _bottomNavBar(int index) {
     return SafeArea(
       child: SizedBox(
         height: height,
@@ -254,7 +262,7 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
             Expanded(
               child: TextButton(
                 onPressed: () {
-                  _exportVideo(state, index);
+                  _exportVideo(index);
 
                   context.pop();
                 },

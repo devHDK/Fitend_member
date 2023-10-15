@@ -1,3 +1,4 @@
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'user_model.g.dart';
 
@@ -47,18 +48,21 @@ class User {
   final String nickname;
   @JsonKey(name: "phone")
   final String? phone;
+  @JsonKey(name: "gender")
+  final String gender;
   @JsonKey(name: "isNotification")
   final bool? isNotification;
   @JsonKey(name: "deletedAt")
   final String? deletedAt;
   @JsonKey(name: "activeTrainers")
-  final List<ActiveTrainer> activeTrainers;
+  final List<ThreadTrainer> activeTrainers;
 
   User({
     required this.id,
     required this.email,
     required this.nickname,
     required this.phone,
+    required this.gender,
     required this.isNotification,
     required this.deletedAt,
     required this.activeTrainers,
@@ -69,15 +73,17 @@ class User {
     String? email,
     String? nickname,
     String? phone,
+    String? gender,
     bool? isNotification,
     String? deletedAt,
-    List<ActiveTrainer>? activeTrainers,
+    List<ThreadTrainer>? activeTrainers,
   }) =>
       User(
         id: id ?? this.id,
         email: email ?? this.email,
         nickname: nickname ?? this.nickname,
         phone: phone ?? this.phone,
+        gender: gender ?? this.gender,
         isNotification: isNotification ?? this.isNotification,
         deletedAt: deletedAt ?? this.deletedAt,
         activeTrainers: activeTrainers ?? this.activeTrainers,
@@ -86,31 +92,4 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
-}
-
-@JsonSerializable()
-class ActiveTrainer {
-  @JsonKey(name: "id")
-  final int id;
-  @JsonKey(name: "nickname")
-  final String nickname;
-
-  ActiveTrainer({
-    required this.id,
-    required this.nickname,
-  });
-
-  ActiveTrainer copyWith({
-    int? id,
-    String? nickname,
-  }) =>
-      ActiveTrainer(
-        id: id ?? this.id,
-        nickname: nickname ?? this.nickname,
-      );
-
-  factory ActiveTrainer.fromJson(Map<String, dynamic> json) =>
-      _$ActiveTrainerFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ActiveTrainerToJson(this);
 }

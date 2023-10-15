@@ -3,6 +3,7 @@ import 'package:fitend_member/common/dio/dio.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_get_params_model.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_list_model.dart';
+import 'package:fitend_member/thread/model/common/create_resp_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -22,7 +23,7 @@ abstract class ThreadCommentRepository {
   @Headers({
     'accessToken': 'true',
   })
-  Future<void> postComment({
+  Future<CreateRespModel> postComment({
     @Body() required ThreadCommentCreateModel model,
   });
 

@@ -183,7 +183,8 @@ class CommentCreateStateNotifier
         }
       }
 
-      await commentRepository.postComment(model: model);
+      final respone = await commentRepository.postComment(model: model);
+      //TODO: comments에 새 comment추가
 
       init();
 

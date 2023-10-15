@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
+import 'package:fitend_member/thread/model/common/create_resp_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_get_list_params_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
@@ -23,7 +24,7 @@ abstract class ThreadRepository {
   @Headers({
     'accessToken': 'true',
   })
-  Future<void> postThread({
+  Future<CreateRespModel> postThread({
     @Body() required ThreadCreateModel model,
   });
 

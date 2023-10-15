@@ -182,7 +182,10 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         }
       }
 
-      await threadRepository.postThread(model: model);
+      final response = await threadRepository.postThread(model: model);
+
+      //TODO: ThreadList에 새 thread추가
+
       init();
 
       final tstate = state.copyWith();

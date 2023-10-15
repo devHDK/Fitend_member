@@ -21,9 +21,7 @@ import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/comment_asset_edit_screen.dart';
-import 'package:fitend_member/thread/view/thread_asset_edit_screen.dart';
 import 'package:fitend_member/thread/view/media_page_screen.dart';
-import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +47,8 @@ class ThreadDetailScreen extends ConsumerStatefulWidget {
 class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
   FocusNode commentFocusNode = FocusNode();
   final commentController = TextEditingController();
-  bool isSwipeUp = false;
+  // bool isSwipeUp = false;
+  int maxLine = 1;
 
   @override
   void initState() {
@@ -82,7 +81,6 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(threadDetailProvider(widget.threadId));
     final commentState = ref.watch(commentCreateProvider(widget.threadId));
-    final userState = ref.watch(getMeProvider);
 
     if (state is ThreadModelLoading) {
       return const Scaffold(
@@ -164,7 +162,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                       itemBuilder: (context, index) {
                         if (index != 0 && index == model.comments!.length) {
                           return const SizedBox(
-                            height: 200,
+                            height: 150,
                           );
                         }
 
@@ -211,42 +209,38 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
     );
   }
 
-  Positioned _bottomInputBox(ThreadCommentCreateTempModel commentState,
-      ThreadModel model, BuildContext context) {
+  Positioned _bottomInputBox(
+    ThreadCommentCreateTempModel commentState,
+    ThreadModel model,
+    BuildContext context,
+  ) {
+    print(maxLine);
+
     return Positioned(
       child: SlidingUpPanel(
-        minHeight: commentState.assetsPaths.isNotEmpty ? 250 : 130,
-        maxHeight: commentState.assetsPaths.isNotEmpty ? 320 : 200,
+        minHeight:
+            commentState.assetsPaths.isNotEmpty ? 250 : 120 + maxLine * 10,
+        maxHeight:
+            commentState.assetsPaths.isNotEmpty ? 250 : 120 + maxLine * 10,
         color: DARK_GRAY_COLOR,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(10),
           topRight: Radius.circular(10),
         ),
-        onPanelClosed: () => setState(() {
-          isSwipeUp = false;
-        }),
-        onPanelOpened: () => setState(() {
-          isSwipeUp = true;
-        }),
+        // onPanelClosed: () => setState(() {
+        //   isSwipeUp = false;
+        // }),
+        // onPanelOpened: () => setState(() {
+        //   isSwipeUp = true;
+        // }),
         panel: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 12,
-                  ),
-                  child: Container(
-                    width: 44,
-                    height: 4,
-                    decoration: BoxDecoration(
-                        color: LIGHT_GRAY_COLOR,
-                        borderRadius: BorderRadius.circular(2)),
-                  ),
-                ),
+              const SizedBox(
+                height: 10,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -404,19 +398,20 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                   ),
                   const Spacer(),
                   TextButton(
-                    onPressed: commentState.isLoading
-                        ? null
-                        : () async {
-                            await ref
-                                .read(commentCreateProvider(widget.threadId)
-                                    .notifier)
-                                .createComment(widget.threadId)
-                                .then((value) {
-                              setState(() {
-                                commentController.text = '';
-                              });
-                            });
-                          },
+                    onPressed:
+                        commentState.isLoading || commentController.text.isEmpty
+                            ? null
+                            : () async {
+                                await ref
+                                    .read(commentCreateProvider(widget.threadId)
+                                        .notifier)
+                                    .createComment(widget.threadId)
+                                    .then((value) {
+                                  setState(() {
+                                    commentController.text = '';
+                                  });
+                                });
+                              },
                     child: Container(
                       width: 53,
                       height: 25,
@@ -584,8 +579,16 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
         ref
             .read(commentCreateProvider(widget.threadId).notifier)
             .updateContent(value);
+
+        setState(() {
+          maxLine = '\n'.allMatches(value).length + 1;
+
+          if (maxLine > 3) {
+            maxLine = 3;
+          }
+        });
       },
-      maxLines: isSwipeUp ? 5 : 1,
+      maxLines: maxLine > 1 ? maxLine : null,
       style: const TextStyle(color: Colors.white),
       controller: commentController,
       cursorColor: POINT_COLOR,
@@ -594,6 +597,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
         commentFocusNode.unfocus();
       },
       keyboardType: TextInputType.multiline,
+      textInputAction: TextInputAction.newline,
       decoration: InputDecoration(
         focusColor: POINT_COLOR,
         border: baseBorder,

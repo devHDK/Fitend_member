@@ -162,7 +162,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 18),
             child: TextButton(
-              onPressed: state.isLoading
+              onPressed: state.isLoading || state.content.isEmpty
                   ? null
                   : () async {
                       await ref

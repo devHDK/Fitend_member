@@ -13,6 +13,8 @@ import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
+import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
+import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/view/media_page_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -68,10 +70,6 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
   @override
   Widget build(BuildContext context) {
-    final userState = ref.watch(getMeProvider);
-
-    final user = userState as UserModel;
-
     final galleryHeight =
         widget.gallery != null && widget.gallery!.isNotEmpty ? 100 : 0;
 
@@ -231,7 +229,37 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                         onTap: () {
                           DialogWidgets.emojiPickerDialog(
                             context: context,
-                            onEmojiSelect: (category, emoji) {
+                            onEmojiSelect: (category, emoji) async {
+                              if (emoji != null) {
+                                final result = await ref
+                                    .read(threadProvider.notifier)
+                                    .updateEmoji(
+                                        widget.id, widget.user.id, emoji.emoji);
+
+                                print(result);
+
+                                try {
+                                  if (result['type'] == 'add') {
+                                    final emojiId = result['emojiId'];
+
+                                    ref
+                                        .read(threadDetailProvider(widget.id)
+                                            .notifier)
+                                        .addEmoji(widget.user.id, emoji.emoji,
+                                            emojiId);
+                                  } else if (result['type'] == 'remove') {
+                                    final emojiId = result['emojiId'];
+                                    ref
+                                        .read(threadDetailProvider(widget.id)
+                                            .notifier)
+                                        .addEmoji(widget.user.id, emoji.emoji,
+                                            emojiId);
+                                  }
+                                } catch (e) {
+                                  debugPrint('$e');
+                                }
+                              }
+
                               context.pop();
                             },
                           );

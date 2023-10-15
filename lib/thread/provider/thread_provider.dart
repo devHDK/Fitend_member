@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
+import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
+import 'package:fitend_member/thread/model/emojis/emoji_params_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_get_list_params_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
@@ -120,5 +122,80 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
         pstate.data[index].userCommentCount! + 1;
 
     state = pstate.copyWith();
+  }
+
+  Future<Map<dynamic, dynamic>> updateEmoji(
+      int threadId, int userId, String inputEmoji) async {
+    try {
+      final pstate = state as ThreadListModel;
+
+      Map result = {'type': 'add', 'emojiId': 0};
+
+      int index = pstate.data.indexWhere(
+        (thread) {
+          return thread.id == threadId;
+        },
+      );
+
+      final response = await emojiRepository.putEmoji(
+          model: PutEmojiParamsModel(
+        emoji: inputEmoji,
+        threadId: threadId,
+      ));
+
+      if (pstate.data[index].emojis != null &&
+          pstate.data[index].emojis!.isNotEmpty) {
+        final emojiIndex = pstate.data[index].emojis!.indexWhere((emoji) {
+          return emoji.emoji == inputEmoji && emoji.userId == userId;
+        });
+
+        //TODO: threadDetail emoji 추가 삭제
+        if (emojiIndex == -1) {
+          //이모지 추가
+          addEmoji(userId, inputEmoji, index, response.emojiId);
+          result['type'] = 'add';
+        } else {
+          //이모지 취소
+          removeEmoji(userId, inputEmoji, index, response.emojiId);
+          result['type'] = 'remove';
+        }
+      } else if (pstate.data[index].emojis != null &&
+          pstate.data[index].emojis!.isEmpty) {
+        addEmoji(userId, inputEmoji, index, response.emojiId);
+        result['type'] = 'add';
+      }
+
+      result['emojiId'] = response.emojiId;
+
+      return result;
+    } catch (e) {
+      debugPrint('$e');
+
+      return {'type': 'error'};
+    }
+  }
+
+  void addEmoji(int userId, String inputEmoji, int index, int emojiId) {
+    final pstate = state as ThreadListModel;
+
+    pstate.data[index].emojis!.add(
+      EmojiModel(
+        id: emojiId,
+        emoji: inputEmoji,
+        userId: userId,
+        trainerId: null,
+      ),
+    );
+
+    state = pstate;
+  }
+
+  void removeEmoji(int userId, String inputEmoji, int index, int emojiId) {
+    final pstate = state as ThreadListModel;
+    pstate.data[index].emojis!.removeWhere((emoji) {
+      return emoji.id == emojiId && emoji.userId == userId;
+    });
+
+    state = pstate;
   }
 }

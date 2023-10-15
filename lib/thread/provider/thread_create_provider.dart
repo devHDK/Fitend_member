@@ -211,6 +211,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
           createdAt: DateTime.now().toUtc().toIso8601String(),
           userCommentCount: 0,
           trainerCommentCount: 0,
+          comments: [],
         ),
       );
 

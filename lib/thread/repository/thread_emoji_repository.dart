@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_params_model.dart';
+import 'package:fitend_member/thread/model/emojis/emoji_resp_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -20,7 +21,7 @@ abstract class EmojiRepository {
   @Headers({
     'accessToken': 'true',
   })
-  Future<void> putEmoji({
+  Future<EmojiRespModel> putEmoji({
     @Body() required PutEmojiParamsModel model,
   });
 }

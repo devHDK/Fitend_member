@@ -163,7 +163,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
     int horizonEmojiCounts = (100.w - 100) ~/ 49;
     int verticalEmojiCounts = (emojiButtons.length / horizonEmojiCounts).ceil();
 
-    emojiHeight = verticalEmojiCounts * 28;
+    emojiHeight = verticalEmojiCounts * 31;
 
     return Stack(
       children: [

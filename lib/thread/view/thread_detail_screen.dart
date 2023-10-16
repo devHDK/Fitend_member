@@ -213,8 +213,6 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
     ThreadModel model,
     BuildContext context,
   ) {
-    print(maxLine);
-
     return Positioned(
       child: SlidingUpPanel(
         minHeight:

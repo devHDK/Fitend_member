@@ -23,6 +23,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ThreadCell extends ConsumerStatefulWidget {
   const ThreadCell({
@@ -97,8 +99,6 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                 .read(threadProvider.notifier)
                 .updateEmoji(widget.id, widget.user.id, key);
 
-            print(result);
-
             try {
               if (result['type'] == 'add') {
                 final emojiId = result['emojiId'];
@@ -164,12 +164,57 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
     //url link 포함여부
     List<String> linkUrls = [];
+
     String processedText = widget.content.replaceAll('\n', ' ');
     processedText.split(' ').forEach(
       (word) {
         if (urlRegExp.hasMatch(word)) {
           linkUrls.add(word);
         }
+      },
+    );
+
+    List<TextSpan> contentTextSpans = [];
+
+    widget.content.splitMapJoin(
+      urlRegExp,
+      onMatch: (m) {
+        contentTextSpans.add(TextSpan(
+          text: '${m.group(0)} ',
+          style: const TextStyle(color: Colors.blue),
+          recognizer: TapAndPanGestureRecognizer()
+            ..onTapDown = (detail) => _launchURL(
+                  m.group(0)!.contains('https://')
+                      ? '${m.group(0)} '
+                      : 'https://${m.group(0)}',
+                ),
+        ));
+        return m.group(0)!;
+      },
+      onNonMatch: (n) {
+        var nonUrlParts = n.split(' ');
+        for (var part in nonUrlParts) {
+          if (nonUrlParts.last == part) {
+            contentTextSpans.add(
+              TextSpan(
+                text: '$part ',
+                style: s2SubTitle.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            );
+          } else {
+            contentTextSpans.add(
+              TextSpan(
+                text: '$part ',
+                style: s2SubTitle.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            );
+          }
+        }
+        return n;
       },
     );
 
@@ -268,11 +313,13 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                     ),
                   SizedBox(
                     width: 100.w - 56 - 34 - 9,
-                    child: AutoSizeText(
-                      widget.content,
-                      maxLines: 50,
-                      style: s1SubTitle.copyWith(
-                        color: Colors.white,
+                    child: RichText(
+                      textScaleFactor: 1.0,
+                      text: TextSpan(
+                        children: contentTextSpans,
+                        style: s2SubTitle.copyWith(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -448,4 +495,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
     return textPainter.computeLineMetrics().length;
   }
+
+  void _launchURL(String url) async => await canLaunchUrlString(url)
+      ? await launchUrlString(url)
+      : throw 'Could not launch $url';
 }

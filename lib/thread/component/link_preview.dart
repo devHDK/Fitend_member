@@ -35,11 +35,14 @@ class _LinkPreviewState extends State<LinkPreview> {
       width: widget.width!,
       child: AnyLinkPreview(
         key: ValueKey(widget.url),
-        link: widget.url,
+        link: widget.url.contains('https://')
+            ? widget.url
+            : 'https://${widget.url}',
         titleStyle: h5Headline,
         bodyStyle: s3SubTitle.copyWith(
           color: GRAY_COLOR,
         ),
+        headers: const {"https": "https"},
         errorWidget: GestureDetector(
           onTap: () => launchUrlString(widget.url),
           child: Container(

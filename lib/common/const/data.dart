@@ -65,3 +65,7 @@ String workoutResult = 'workoutResult';
 String modifiedExercise = 'modifiedExercise';
 String workoutFeedback = 'WorkoutFeedback';
 String processingExerciseIndex = 'processExerciseIndex';
+
+// URL 패턴을 검사하는 정규표현식
+final RegExp urlRegExp = RegExp(
+    r"(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})");

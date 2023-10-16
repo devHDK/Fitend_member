@@ -281,7 +281,7 @@ class CommentCreateStateNotifier
 
     pstate.assetsPaths.removeAt(index);
 
-    state = pstate;
+    state = pstate.copyWith();
   }
 
   void changeAsset(int index, String path) {
@@ -290,7 +290,7 @@ class CommentCreateStateNotifier
 
     pstate.assetsPaths[index] = path;
 
-    state = pstate;
+    state = pstate.copyWith();
   }
 
   void updateIsLoading(bool isLoading) {
@@ -298,7 +298,7 @@ class CommentCreateStateNotifier
 
     pstate.isLoading = isLoading;
 
-    state = pstate;
+    state = pstate.copyWith();
   }
 
   void updateContent(String content) {
@@ -306,6 +306,6 @@ class CommentCreateStateNotifier
 
     pstate.content = content;
 
-    state = pstate;
+    state = pstate.copyWith();
   }
 }

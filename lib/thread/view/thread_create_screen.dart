@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:any_link_preview/any_link_preview.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/thread/component/link_preview.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
 import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/thread_asset_edit_screen.dart';
@@ -92,6 +96,26 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(threadCreateProvider);
+
+    List<String> linkUrls = [];
+    String processedText = contentsController.text.replaceAll('\n', ' ');
+
+    print(linkUrls);
+
+    processedText.split(' ').forEach(
+      (word) {
+        if (urlRegExp.hasMatch(word)) {
+          linkUrls.add(word);
+        }
+      },
+    );
+
+    print(linkUrls);
+
+    final tempList = [
+      ...state.assetsPaths!,
+      ...linkUrls,
+    ];
 
     if (state.isUploading && state.doneCount != state.totalCount) {
       return Scaffold(
@@ -282,7 +306,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                       ),
                     );
                   }
-
                   return const SizedBox();
                 },
               ),
@@ -295,8 +318,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _titleTextFormfield(),
-            _contentTextFormField(),
+            _titleTextFormfield(state),
+            _contentTextFormField(state),
             SizedBox(
               height: 140,
               child: state.isLoading
@@ -308,6 +331,19 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                   : ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
+                        if (index >= state.assetsPaths!.length) {
+                          return Row(
+                            children: [
+                              LinkPreview(
+                                url: tempList[index],
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                            ],
+                          );
+                        }
+
                         final intPath = utf8.encode(state.assetsPaths![index]);
                         final path = Uint8List.fromList(intPath);
                         final file = File.fromRawPath(path);
@@ -364,7 +400,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                           ],
                         );
                       },
-                      itemCount: state.assetsPaths!.length,
+                      itemCount: tempList.length,
                     ),
             ),
           ],
@@ -373,10 +409,12 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     );
   }
 
-  TextFormField _contentTextFormField() {
+  TextFormField _contentTextFormField(ThreadCreateTempModel state) {
     return TextFormField(
       onChanged: (value) {
         ref.read(threadCreateProvider.notifier).updateContent(value);
+
+        setState(() {});
       },
       maxLines: 20,
       style: const TextStyle(color: Colors.white),
@@ -413,7 +451,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     );
   }
 
-  TextFormField _titleTextFormfield() {
+  TextFormField _titleTextFormfield(ThreadCreateTempModel state) {
     return TextFormField(
       onChanged: (value) {
         ref.read(threadCreateProvider.notifier).updateTitle(value);

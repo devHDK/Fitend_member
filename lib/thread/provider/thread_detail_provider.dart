@@ -74,6 +74,7 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
     pstate.comments ??= [];
 
     final tempComments = [
+      ...pstate.comments!,
       ThreadCommentModel(
         id: id,
         threadId: threadId,
@@ -83,7 +84,6 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
         emojis: emojis,
         user: user,
       ),
-      ...pstate.comments!,
     ];
 
     print(tempComments);

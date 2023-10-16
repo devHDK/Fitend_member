@@ -138,10 +138,11 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
       );
 
       final response = await emojiRepository.putEmoji(
-          model: PutEmojiParamsModel(
-        emoji: inputEmoji,
-        threadId: threadId,
-      ));
+        model: PutEmojiParamsModel(
+          emoji: inputEmoji,
+          threadId: threadId,
+        ),
+      );
 
       if (pstate.data[index].emojis != null &&
           pstate.data[index].emojis!.isNotEmpty) {
@@ -167,6 +168,8 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
 
       result['emojiId'] = response.emojiId;
 
+      state = pstate;
+
       return result;
     } catch (e) {
       debugPrint('$e');
@@ -187,7 +190,7 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
       ),
     );
 
-    state = pstate;
+    state = pstate.copyWith();
   }
 
   void removeEmoji(int userId, String inputEmoji, int index, int emojiId) {
@@ -196,6 +199,6 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
       return emoji.id == emojiId && emoji.userId == userId;
     });
 
-    state = pstate;
+    state = pstate.copyWith();
   }
 }

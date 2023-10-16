@@ -102,8 +102,10 @@ class ThreadModel extends ThreadModelBase {
         comments: comments ?? this.comments,
       );
 
-  factory ThreadModel.fromJson(Map<String, dynamic> json) =>
-      _$ThreadModelFromJson(json);
+  factory ThreadModel.fromJson(Map<String, dynamic> json) {
+    json['emojis'] = json['emojis'] ?? [];
+    return _$ThreadModelFromJson(json);
+  }
 
   Map<String, dynamic> toJson() => _$ThreadModelToJson(this);
 }

@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
@@ -16,17 +15,13 @@ import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/view/media_page_screen.dart';
-import 'package:fitend_member/user/model/user_model.dart';
-import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:ndialog/ndialog.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:flutter/foundation.dart' as foundation;
 
 class ThreadCell extends ConsumerStatefulWidget {
   const ThreadCell({
@@ -73,6 +68,103 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
     final galleryHeight =
         widget.gallery != null && widget.gallery!.isNotEmpty ? 100 : 0;
 
+    double emojiHeight = 28;
+
+    Map<String, int> emojiCounts = {};
+    List<Widget> emojiButtons = [];
+
+    print(widget.emojis);
+
+    if (widget.emojis != null && widget.emojis!.isNotEmpty) {
+      for (var emoji in widget.emojis!) {
+        String emojiChar = emoji.emoji;
+
+        if (!emojiCounts.containsKey(emojiChar)) {
+          emojiCounts[emojiChar] = 1;
+        } else {
+          emojiCounts[emojiChar] = (emojiCounts[emojiChar] ?? 0) + 1;
+        }
+      }
+
+      emojiCounts.forEach((key, value) {
+        emojiButtons.add(EmojiButton(
+          emoji: key,
+          count: value,
+          color: widget.emojis!.indexWhere((e) {
+                    return e.emoji == key && e.userId == widget.user.id;
+                  }) >
+                  -1
+              ? POINT_COLOR
+              : DARK_GRAY_COLOR,
+          onTap: () async {
+            final result = await ref
+                .read(threadProvider.notifier)
+                .updateEmoji(widget.id, widget.user.id, key);
+
+            print(result);
+
+            try {
+              if (result['type'] == 'add') {
+                final emojiId = result['emojiId'];
+
+                ref
+                    .read(threadDetailProvider(widget.id).notifier)
+                    .addEmoji(widget.user.id, key, emojiId);
+              } else if (result['type'] == 'remove') {
+                final emojiId = result['emojiId'];
+                ref
+                    .read(threadDetailProvider(widget.id).notifier)
+                    .addEmoji(widget.user.id, key, emojiId);
+              }
+            } catch (e) {
+              debugPrint('$e');
+            }
+          },
+        ));
+      });
+    }
+
+    emojiButtons.add(
+      EmojiButton(
+        onTap: () {
+          DialogWidgets.emojiPickerDialog(
+            context: context,
+            onEmojiSelect: (category, emoji) async {
+              if (emoji != null) {
+                final result = await ref
+                    .read(threadProvider.notifier)
+                    .updateEmoji(widget.id, widget.user.id, emoji.emoji);
+
+                try {
+                  if (result['type'] == 'add') {
+                    final emojiId = result['emojiId'];
+
+                    ref
+                        .read(threadDetailProvider(widget.id).notifier)
+                        .addEmoji(widget.user.id, emoji.emoji, emojiId);
+                  } else if (result['type'] == 'remove') {
+                    final emojiId = result['emojiId'];
+                    ref
+                        .read(threadDetailProvider(widget.id).notifier)
+                        .addEmoji(widget.user.id, emoji.emoji, emojiId);
+                  }
+                } catch (e) {
+                  debugPrint('$e');
+                }
+              }
+
+              context.pop();
+            },
+          );
+        },
+      ),
+    );
+
+    int horizonEmojiCounts = (100.w - 100) ~/ 49;
+    int verticalEmojiCounts = (emojiButtons.length / horizonEmojiCounts).ceil();
+
+    emojiHeight = verticalEmojiCounts * 28;
+
     return Stack(
       children: [
         SizedBox(
@@ -82,7 +174,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
               _calculateLinesHeight(widget.content, s1SubTitle, 74.w).toInt() *
                   24 +
               10 +
-              28 +
+              emojiHeight +
               10 +
               10 +
               20 +
@@ -223,49 +315,14 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    children: [
-                      EmojiButton(
-                        onTap: () {
-                          DialogWidgets.emojiPickerDialog(
-                            context: context,
-                            onEmojiSelect: (category, emoji) async {
-                              if (emoji != null) {
-                                final result = await ref
-                                    .read(threadProvider.notifier)
-                                    .updateEmoji(
-                                        widget.id, widget.user.id, emoji.emoji);
-
-                                print(result);
-
-                                try {
-                                  if (result['type'] == 'add') {
-                                    final emojiId = result['emojiId'];
-
-                                    ref
-                                        .read(threadDetailProvider(widget.id)
-                                            .notifier)
-                                        .addEmoji(widget.user.id, emoji.emoji,
-                                            emojiId);
-                                  } else if (result['type'] == 'remove') {
-                                    final emojiId = result['emojiId'];
-                                    ref
-                                        .read(threadDetailProvider(widget.id)
-                                            .notifier)
-                                        .addEmoji(widget.user.id, emoji.emoji,
-                                            emojiId);
-                                  }
-                                } catch (e) {
-                                  debugPrint('$e');
-                                }
-                              }
-
-                              context.pop();
-                            },
-                          );
-                        },
-                      ),
-                    ],
+                  SizedBox(
+                    height: emojiHeight,
+                    width: 100.w - 99,
+                    child: Wrap(
+                      spacing: 2.0,
+                      runSpacing: 5.0,
+                      children: emojiButtons,
+                    ),
                   ),
                   const SizedBox(
                     height: 10,

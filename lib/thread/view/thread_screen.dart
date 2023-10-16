@@ -48,16 +48,16 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   }
 
   void _handleItemPositionChange() {
-    int minIndex = itemPositionsListener.itemPositions.value
-        .where((position) => position.itemTrailingEdge < 1)
-        .reduce((minPosition, currPosition) =>
-            currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
+    int maxIndex = itemPositionsListener.itemPositions.value
+        .where((position) => position.itemLeadingEdge > 0)
+        .reduce((maxPosition, currPosition) =>
+            currPosition.itemLeadingEdge > maxPosition.itemLeadingEdge
                 ? currPosition
-                : minPosition)
+                : maxPosition)
         .index;
 
     if (pstate.data.isNotEmpty &&
-        minIndex == 1 &&
+        maxIndex == pstate.data.length - 1 &&
         pstate.total > pstate.data.length &&
         !isLoading) {
       //스크롤을 아래로 내렸을때
@@ -65,7 +65,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         ref
             .read(threadProvider.notifier)
-            .paginate(startIndex: startIndex + 1, fetchMore: true)
+            .paginate(startIndex: startIndex, fetchMore: true)
             .then((value) {
           isLoading = false;
         });
@@ -101,10 +101,16 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
         appBar: LogoAppbar(
           title: 'T H R E A D S',
           tapLogo: () async {
-            await ref.read(threadProvider.notifier).paginate(
+            await ref
+                .read(threadProvider.notifier)
+                .paginate(
                   startIndex: 0,
                   isRefetch: true,
-                );
+                )
+                .then((value) {
+              itemScrollController.jumpTo(index: 0);
+              isLoading = false;
+            });
           },
           actions: [
             InkWell(
@@ -159,10 +165,16 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
           color: POINT_COLOR,
           semanticsLabel: '새로고침',
           onRefresh: () async {
-            await ref.read(threadProvider.notifier).paginate(
+            await ref
+                .read(threadProvider.notifier)
+                .paginate(
                   startIndex: 0,
                   isRefetch: true,
-                );
+                )
+                .then((value) {
+              itemScrollController.jumpTo(index: 0);
+              isLoading = false;
+            });
           },
           child: ScrollablePositionedList.builder(
             padding: const EdgeInsets.symmetric(horizontal: 28),

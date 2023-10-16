@@ -83,10 +83,13 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
       if (state is ThreadListModelFetchingMore && threadResponse != null) {
         final pState = state as ThreadListModel;
 
-        state = ThreadListModel(data: <ThreadModel>[
-          ...pState.data,
-          ...threadResponse.data,
-        ], total: pState.total);
+        state = ThreadListModel(
+          data: <ThreadModel>[
+            ...pState.data,
+            ...threadResponse.data,
+          ],
+          total: threadResponse.total,
+        );
       } else if (threadResponse != null) {
         final pstate = ThreadListModel(
             data: threadResponse.data, total: threadResponse.total);

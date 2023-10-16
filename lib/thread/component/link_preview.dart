@@ -9,10 +9,12 @@ class LinkPreview extends StatefulWidget {
     super.key,
     required this.url,
     this.width = 140,
+    this.height = 112,
   });
 
   final String url;
-  final int? width;
+  final double? width;
+  final double? height;
 
   @override
   State<LinkPreview> createState() => _LinkPreviewState();
@@ -29,9 +31,10 @@ class _LinkPreviewState extends State<LinkPreview> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.width!.toDouble() * 0.8,
-      width: 140,
+      height: widget.height!,
+      width: widget.width!,
       child: AnyLinkPreview(
+        key: ValueKey(widget.url),
         link: widget.url,
         titleStyle: h5Headline,
         bodyStyle: s3SubTitle.copyWith(

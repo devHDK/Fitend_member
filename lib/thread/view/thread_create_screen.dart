@@ -100,8 +100,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     List<String> linkUrls = [];
     String processedText = contentsController.text.replaceAll('\n', ' ');
 
-    print(linkUrls);
-
     processedText.split(' ').forEach(
       (word) {
         if (urlRegExp.hasMatch(word)) {
@@ -109,8 +107,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
         }
       },
     );
-
-    print(linkUrls);
 
     final tempList = [
       ...state.assetsPaths!,
@@ -332,6 +328,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         if (index >= state.assetsPaths!.length) {
+                          print('tempList[$index] : ${tempList[index]}');
+
                           return Row(
                             children: [
                               LinkPreview(

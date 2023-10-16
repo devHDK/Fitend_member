@@ -5,6 +5,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
+import 'package:fitend_member/thread/component/link_preview.dart';
 import 'package:fitend_member/thread/component/network_video_player_mini.dart';
 import 'package:fitend_member/thread/component/preview_image_network.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
@@ -65,9 +66,6 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
   @override
   Widget build(BuildContext context) {
-    final galleryHeight =
-        widget.gallery != null && widget.gallery!.isNotEmpty ? 100 : 0;
-
     double emojiHeight = 28;
 
     Map<String, int> emojiCounts = {};
@@ -164,6 +162,26 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
     emojiHeight = verticalEmojiCounts * 31;
 
+    //url link 포함여부
+    List<String> linkUrls = [];
+    String processedText = widget.content.replaceAll('\n', ' ');
+    processedText.split(' ').forEach(
+      (word) {
+        if (urlRegExp.hasMatch(word)) {
+          linkUrls.add(word);
+        }
+      },
+    );
+
+    double linkHeight = linkUrls.length == 1 &&
+            (widget.gallery == null || widget.gallery!.isEmpty)
+        ? 120.0 * linkUrls.length
+        : 0;
+
+    int mediaCount = widget.gallery!.length + linkUrls.length;
+
+    final galleryHeight = mediaCount > 1 ? 100 : 0;
+
     return Stack(
       children: [
         SizedBox(
@@ -178,7 +196,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
               10 +
               20 +
               24 +
-              galleryHeight.toDouble(),
+              galleryHeight.toDouble() +
+              linkHeight,
 
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,17 +276,41 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       ),
                     ),
                   ),
-                  if (widget.gallery != null && widget.gallery!.isNotEmpty)
+                  if (mediaCount == 1 && linkUrls.length == 1)
+                    LinkPreview(
+                      url: linkUrls.first,
+                      width: 100.w - 110,
+                      height: 120,
+                    ),
+
+                  //TODO : 단일 미디어 만들어야함
+                  // else if( mediaCount == 1 && widget.gallery!.length == 1 && widget.gallery!.first.type == 'video' )
+                  // else if( mediaCount == 1 && widget.gallery!.length == 1 && widget.gallery!.first.type == 'image' )
+
+                  if (mediaCount > 1)
                     const SizedBox(
                       height: 10,
                     ),
-                  if (widget.gallery != null && widget.gallery!.isNotEmpty)
+                  if (mediaCount > 2)
                     SizedBox(
                       height: 100,
                       width: 100.w - 56 - 34 - 9,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
+                          if (index >= widget.gallery!.length) {
+                            return Row(
+                              children: [
+                                LinkPreview(
+                                  url: linkUrls[index - widget.gallery!.length],
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                              ],
+                            );
+                          }
+
                           return Stack(
                             children: [
                               InkWell(
@@ -308,7 +351,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                             ],
                           );
                         },
-                        itemCount: widget.gallery!.length,
+                        itemCount: mediaCount,
                       ),
                     ),
                   const SizedBox(

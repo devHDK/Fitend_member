@@ -91,7 +91,8 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
     state = pstate;
   }
 
-  Future<void> updateEmoji(int threadId, int userId, String inputEmoji) async {
+  Future<Map<dynamic, dynamic>> updateEmoji(
+      int threadId, int userId, String inputEmoji) async {
     try {
       final pstate = state as ThreadModel;
 
@@ -102,6 +103,8 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
         ),
       );
 
+      Map result = {'type': 'add', 'emojiId': 0};
+
       if (pstate.emojis != null && pstate.emojis!.isNotEmpty) {
         final emojiIndex = pstate.emojis!.indexWhere((emoji) {
           return emoji.emoji == inputEmoji && emoji.userId == userId;
@@ -109,15 +112,25 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
         if (emojiIndex == -1) {
           //이모지 추가
           addEmoji(userId, inputEmoji, response.emojiId);
+          result['type'] = 'add';
         } else {
           //이모지 취소
           removeEmoji(userId, inputEmoji, response.emojiId);
+          result['type'] = 'remove';
         }
       } else if (pstate.emojis != null && pstate.emojis!.isEmpty) {
         addEmoji(userId, inputEmoji, response.emojiId);
+        result['type'] = 'add';
       }
+
+      result['emojiId'] = response.emojiId;
+
+      state = pstate;
+
+      return result;
     } catch (e) {
       debugPrint('$e');
+      return {'type': 'error'};
     }
   }
 
@@ -133,7 +146,7 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
       ),
     );
 
-    state = pstate;
+    state = pstate.copyWith();
   }
 
   void removeEmoji(int userId, String inputEmoji, int emojiId) {
@@ -142,6 +155,6 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
       return emoji.id == emojiId && emoji.userId == userId;
     });
 
-    state = pstate;
+    state = pstate.copyWith();
   }
 }

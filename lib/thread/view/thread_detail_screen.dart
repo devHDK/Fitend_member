@@ -16,9 +16,11 @@ import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/component/thread_detail.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
+import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/comment_asset_edit_screen.dart';
 import 'package:fitend_member/thread/view/media_page_screen.dart';
@@ -80,6 +82,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(threadDetailProvider(widget.threadId));
     final commentState = ref.watch(commentCreateProvider(widget.threadId));
+    final threadListState = ref.watch(threadProvider);
 
     if (state is ThreadModelLoading) {
       return const Scaffold(
@@ -104,6 +107,114 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
     }
 
     final model = state as ThreadModel;
+    final threadListModel = threadListState as ThreadListModel;
+
+    double emojiHeight = 28;
+
+    Map<String, int> emojiCounts = {};
+    List<Widget> emojiButtons = [];
+
+    print(model.emojis);
+
+    if (model.emojis != null && model.emojis!.isNotEmpty) {
+      for (var emoji in model.emojis!) {
+        String emojiChar = emoji.emoji;
+
+        if (!emojiCounts.containsKey(emojiChar)) {
+          emojiCounts[emojiChar] = 1;
+        } else {
+          emojiCounts[emojiChar] = (emojiCounts[emojiChar] ?? 0) + 1;
+        }
+      }
+
+      emojiCounts.forEach(
+        (key, value) {
+          emojiButtons.add(
+            EmojiButton(
+              emoji: key,
+              count: value,
+              color: model.emojis!.indexWhere((e) {
+                        return e.emoji == key && e.userId == model.user.id;
+                      }) >
+                      -1
+                  ? POINT_COLOR
+                  : DARK_GRAY_COLOR,
+              onTap: () async {
+                final result = await ref
+                    .read(threadDetailProvider(widget.threadId).notifier)
+                    .updateEmoji(widget.threadId, model.user.id, key);
+
+                print(result);
+
+                try {
+                  if (result['type'] == 'add') {
+                    final emojiId = result['emojiId'];
+
+                    ref
+                        .read(threadDetailProvider(widget.threadId).notifier)
+                        .addEmoji(model.user.id, key, emojiId);
+                  } else if (result['type'] == 'remove') {
+                    final emojiId = result['emojiId'];
+                    ref
+                        .read(threadDetailProvider(widget.threadId).notifier)
+                        .addEmoji(model.user.id, key, emojiId);
+                  }
+                } catch (e) {
+                  debugPrint('$e');
+                }
+              },
+            ),
+          );
+        },
+      );
+    }
+
+    emojiButtons.add(
+      EmojiButton(
+        onTap: () {
+          DialogWidgets.emojiPickerDialog(
+            context: context,
+            onEmojiSelect: (category, emoji) async {
+              if (emoji != null) {
+                final result = await ref
+                    .read(threadDetailProvider(widget.threadId).notifier)
+                    .updateEmoji(widget.threadId, model.user.id, emoji.emoji);
+
+                int index = threadListModel.data.indexWhere(
+                  (thread) {
+                    return thread.id == widget.threadId;
+                  },
+                );
+
+                try {
+                  if (result['type'] == 'add') {
+                    final emojiId = result['emojiId'];
+
+                    ref
+                        .read(threadProvider.notifier)
+                        .addEmoji(model.user.id, emoji.emoji, index, emojiId);
+                  } else if (result['type'] == 'remove') {
+                    final emojiId = result['emojiId'];
+                    ref
+                        .read(threadProvider.notifier)
+                        .addEmoji(model.user.id, emoji.emoji, index, emojiId);
+                  }
+                } catch (e) {
+                  debugPrint('$e');
+                }
+              }
+
+              context.pop();
+            },
+          );
+        },
+      ),
+    );
+
+    int horizonEmojiCounts = (100.w - 56) ~/ 49;
+    int verticalEmojiCounts = (emojiButtons.length / horizonEmojiCounts).ceil();
+
+    emojiHeight = verticalEmojiCounts * 31;
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -154,7 +265,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                   ),
                   if (model.gallery != null && model.gallery!.isNotEmpty)
                     _mediaListView(model),
-                  _emojiSection(context),
+                  _emojiSection(emojiHeight, emojiButtons),
                   _commentsDivider(model),
                   if (model.comments != null && model.comments!.isNotEmpty)
                     SliverList.separated(
@@ -204,6 +315,21 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
           ),
           _bottomInputBox(commentState, model, context),
         ],
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _emojiSection(
+      double emojiHeight, List<Widget> emojiButtons) {
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        height: emojiHeight,
+        width: 100.w - 56,
+        child: Wrap(
+          spacing: 2.0,
+          runSpacing: 5.0,
+          children: emojiButtons,
+        ),
       ),
     );
   }
@@ -485,32 +611,6 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
           const SizedBox(
             height: 10,
           ),
-        ],
-      ),
-    );
-  }
-
-  SliverToBoxAdapter _emojiSection(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              EmojiButton(
-                onTap: () {
-                  DialogWidgets.emojiPickerDialog(
-                    context: context,
-                    onEmojiSelect: (category, emoji) {
-                      context.pop();
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 25,
-          )
         ],
       ),
     );

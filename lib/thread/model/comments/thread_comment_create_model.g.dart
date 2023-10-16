@@ -31,6 +31,9 @@ ThreadCommentCreateTempModel _$ThreadCommentCreateTempModelFromJson(
       content: json['content'] as String,
       assetsPaths:
           (json['gallery'] as List<dynamic>).map((e) => e as String).toList(),
+      emojis: (json['emojis'] as List<dynamic>)
+          .map((e) => EmojiModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       isLoading: json['isLoading'] as bool,
       isUploading: json['isUploading'] as bool,
       doneCount: json['doneCount'] as int,
@@ -43,6 +46,7 @@ Map<String, dynamic> _$ThreadCommentCreateTempModelToJson(
       'threadId': instance.threadId,
       'content': instance.content,
       'gallery': instance.assetsPaths,
+      'emojis': instance.emojis,
       'isLoading': instance.isLoading,
       'isUploading': instance.isUploading,
       'doneCount': instance.doneCount,

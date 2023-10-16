@@ -1,4 +1,5 @@
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
+import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'thread_comment_create_model.g.dart';
@@ -43,6 +44,8 @@ class ThreadCommentCreateTempModel {
   String content;
   @JsonKey(name: "gallery")
   List<String> assetsPaths;
+  @JsonKey(name: "emojis")
+  List<EmojiModel> emojis;
   @JsonKey(name: "isLoading")
   bool isLoading;
   @JsonKey(name: "isUploading")
@@ -54,6 +57,7 @@ class ThreadCommentCreateTempModel {
     required this.threadId,
     required this.content,
     required this.assetsPaths,
+    required this.emojis,
     required this.isLoading,
     required this.isUploading,
     required this.doneCount,
@@ -64,6 +68,7 @@ class ThreadCommentCreateTempModel {
     int? threadId,
     String? content,
     List<String>? assetPaths,
+    List<EmojiModel>? emojis,
     bool? isLoading,
     bool? isUploading,
     int? doneCount,
@@ -73,6 +78,7 @@ class ThreadCommentCreateTempModel {
         threadId: threadId ?? this.threadId,
         content: content ?? this.content,
         assetsPaths: assetPaths ?? assetsPaths,
+        emojis: emojis ?? this.emojis,
         isLoading: isLoading ?? this.isLoading,
         isUploading: isUploading ?? this.isUploading,
         doneCount: doneCount ?? this.doneCount,

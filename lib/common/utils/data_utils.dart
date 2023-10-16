@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:fitend_member/common/const/data.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DataUtils {
@@ -98,5 +99,36 @@ class DataUtils {
     String date = '${dateTime.month}월 ${dateTime.day}일';
 
     return date;
+  }
+
+  static String getDurationStringFromNow(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inMinutes < 1) {
+      return '방금전';
+    }
+
+    if (difference.inHours < 1) {
+      return '${difference.inMinutes}분 전';
+    }
+
+    if (difference.inDays < 1) {
+      return '${difference.inHours}시간 전';
+    }
+
+    if (difference.inDays < 30) {
+      return '${difference.inDays}일 전';
+    }
+
+    if (difference.inDays >= 31 && difference.inDays < 365) {
+      return '${(difference.inDays / 31).floor()}달 전';
+    }
+
+    if (difference.inDays >= 365) {
+      return '${(difference.inDays / 365).floor()}달 전';
+    }
+
+    return DateFormat('h:mm a').format(dateTime).toString();
   }
 }

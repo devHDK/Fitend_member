@@ -142,7 +142,13 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
               onTap: () async {
                 final result = await ref
                     .read(threadDetailProvider(widget.threadId).notifier)
-                    .updateEmoji(widget.threadId, model.user.id, key);
+                    .updateThreadEmoji(widget.threadId, model.user.id, key);
+
+                int index = threadListModel.data.indexWhere(
+                  (thread) {
+                    return thread.id == widget.threadId;
+                  },
+                );
 
                 print(result);
 
@@ -151,13 +157,13 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                     final emojiId = result['emojiId'];
 
                     ref
-                        .read(threadDetailProvider(widget.threadId).notifier)
-                        .addEmoji(model.user.id, key, emojiId);
+                        .read(threadProvider.notifier)
+                        .addEmoji(model.user.id, key, index, emojiId);
                   } else if (result['type'] == 'remove') {
                     final emojiId = result['emojiId'];
                     ref
-                        .read(threadDetailProvider(widget.threadId).notifier)
-                        .addEmoji(model.user.id, key, emojiId);
+                        .read(threadProvider.notifier)
+                        .removeEmoji(model.user.id, key, index, emojiId);
                   }
                 } catch (e) {
                   debugPrint('$e');
@@ -178,7 +184,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
               if (emoji != null) {
                 final result = await ref
                     .read(threadDetailProvider(widget.threadId).notifier)
-                    .updateEmoji(widget.threadId, model.user.id, emoji.emoji);
+                    .updateThreadEmoji(
+                        widget.threadId, model.user.id, emoji.emoji);
 
                 int index = threadListModel.data.indexWhere(
                   (thread) {
@@ -195,9 +202,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                         .addEmoji(model.user.id, emoji.emoji, index, emojiId);
                   } else if (result['type'] == 'remove') {
                     final emojiId = result['emojiId'];
-                    ref
-                        .read(threadProvider.notifier)
-                        .addEmoji(model.user.id, emoji.emoji, index, emojiId);
+                    ref.read(threadProvider.notifier).removeEmoji(
+                        model.user.id, emoji.emoji, index, emojiId);
                   }
                 } catch (e) {
                   debugPrint('$e');
@@ -259,7 +265,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                       nickname: model.writerType == 'trainer'
                           ? model.trainer.nickname
                           : model.user.nickname,
-                      dateTime: DateTime.parse(model.createdAt),
+                      dateTime:
+                          DateTime.parse(model.createdAt).toUtc().toLocal(),
                       content: model.content,
                     ),
                   ),
@@ -278,20 +285,21 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
 
                         final commentModel = model.comments![index];
 
-                        return CommentCell(
-                          profileImageUrl: commentModel.trainer != null
-                              ? '$s3Url${commentModel.trainer!.profileImage}'
-                              : commentModel.user!.gender == 'male'
-                                  ? maleProfileUrl
-                                  : femaleProfileUrl,
-                          content: commentModel.content,
-                          dateTime: DateTime.parse(commentModel.createdAt)
-                              .toUtc()
-                              .toLocal(),
-                          nickname: commentModel.trainer != null
-                              ? commentModel.trainer!.nickname
-                              : commentModel.user!.nickname,
-                          gallery: commentModel.gallery,
+                        return Column(
+                          children: [
+                            CommentCell(
+                              threadId: widget.threadId,
+                              commentId: commentModel.id,
+                              content: commentModel.content,
+                              dateTime: DateTime.parse(commentModel.createdAt)
+                                  .toUtc()
+                                  .toLocal(),
+                              user: commentModel.user,
+                              trainer: commentModel.trainer,
+                              emojis: commentModel.emojis!,
+                              gallery: commentModel.gallery,
+                            ),
+                          ],
                         );
                       },
                       separatorBuilder: (context, index) => const SizedBox(

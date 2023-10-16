@@ -4,37 +4,119 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/network_video_player_mini.dart';
 import 'package:fitend_member/thread/component/preview_image_network.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
+import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/view/media_page_screen.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class CommentCell extends StatelessWidget {
+class CommentCell extends ConsumerStatefulWidget {
   const CommentCell({
     super.key,
-    required this.profileImageUrl,
+    required this.threadId,
+    required this.commentId,
     required this.content,
     required this.dateTime,
-    required this.nickname,
+    this.trainer,
+    this.user,
     this.gallery,
+    required this.emojis,
   });
 
-  final String profileImageUrl;
+  final int threadId;
+  final int commentId;
   final String content;
   final DateTime dateTime;
-  final String nickname;
+  final ThreadTrainer? trainer;
+  final ThreadUser? user;
   final List<GalleryModel>? gallery;
+  final List<EmojiModel> emojis;
 
   @override
+  ConsumerState<CommentCell> createState() => _CommentCellState();
+}
+
+class _CommentCellState extends ConsumerState<CommentCell> {
+  @override
   Widget build(BuildContext context) {
+    final userState = ref.watch(getMeProvider);
+
+    final userModel = userState as UserModel;
+
+    double emojiHeight = 28;
+
+    Map<String, int> emojiCounts = {};
+    List<Widget> emojiButtons = [];
+
+    if (widget.emojis.isNotEmpty) {
+      for (var emoji in widget.emojis) {
+        String emojiChar = emoji.emoji;
+
+        if (!emojiCounts.containsKey(emojiChar)) {
+          emojiCounts[emojiChar] = 1;
+        } else {
+          emojiCounts[emojiChar] = (emojiCounts[emojiChar] ?? 0) + 1;
+        }
+      }
+
+      emojiCounts.forEach((key, value) {
+        emojiButtons.add(EmojiButton(
+          emoji: key,
+          count: value,
+          color: widget.emojis.indexWhere((e) {
+                    return e.emoji == key && e.userId == userModel.user.id;
+                  }) >
+                  -1
+              ? POINT_COLOR
+              : DARK_GRAY_COLOR,
+          onTap: () async {
+            await ref
+                .read(threadDetailProvider(widget.threadId).notifier)
+                .updateCommentEmoji(widget.commentId, userModel.user.id, key);
+          },
+        ));
+      });
+    }
+
+    emojiButtons.add(
+      EmojiButton(
+        onTap: () {
+          DialogWidgets.emojiPickerDialog(
+            context: context,
+            onEmojiSelect: (category, emoji) async {
+              if (emoji != null) {
+                await ref
+                    .read(threadDetailProvider(widget.threadId).notifier)
+                    .updateCommentEmoji(
+                        widget.commentId, userModel.user.id, emoji.emoji);
+              }
+
+              context.pop();
+            },
+          );
+        },
+      ),
+    );
+
+    int horizonEmojiCounts = (100.w - 135) ~/ 49;
+    int verticalEmojiCounts = (emojiButtons.length / horizonEmojiCounts).ceil();
+
+    emojiHeight = verticalEmojiCounts * 31;
+
     return Stack(
       children: [
         Column(
@@ -44,7 +126,11 @@ class CommentCell extends StatelessWidget {
               children: [
                 CircleProfileImage(
                   image: CachedNetworkImage(
-                    imageUrl: profileImageUrl,
+                    imageUrl: widget.trainer != null
+                        ? '$s3Url${widget.trainer!.profileImage}'
+                        : widget.user != null && widget.user!.gender == 'male'
+                            ? maleProfileUrl
+                            : femaleProfileUrl,
                     width: 34,
                     height: 34,
                   ),
@@ -60,7 +146,9 @@ class CommentCell extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          nickname,
+                          widget.trainer != null
+                              ? widget.trainer!.nickname
+                              : widget.user!.nickname,
                           style: s1SubTitle.copyWith(
                             color: LIGHT_GRAY_COLOR,
                             height: 1,
@@ -70,7 +158,7 @@ class CommentCell extends StatelessWidget {
                           width: 10,
                         ),
                         Text(
-                          DateFormat('h:mm a').format(dateTime).toString(),
+                          DataUtils.getDurationStringFromNow(widget.dateTime),
                           style:
                               s2SubTitle.copyWith(color: GRAY_COLOR, height: 1),
                         ),
@@ -79,7 +167,7 @@ class CommentCell extends StatelessWidget {
                     SizedBox(
                       width: 100.w - 56 - 44,
                       child: AutoSizeText(
-                        content,
+                        widget.content,
                         maxLines: 50,
                         style: s1SubTitle.copyWith(
                           color: Colors.white,
@@ -90,11 +178,11 @@ class CommentCell extends StatelessWidget {
                 ),
               ],
             ),
-            if (gallery != null && gallery!.isNotEmpty)
+            if (widget.gallery != null && widget.gallery!.isNotEmpty)
               const SizedBox(
                 height: 10,
               ),
-            if (gallery != null && gallery!.isNotEmpty)
+            if (widget.gallery != null && widget.gallery!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.fromLTRB(39, 0, 0, 0),
                 child: SizedBox(
@@ -110,12 +198,12 @@ class CommentCell extends StatelessWidget {
                               CupertinoPageRoute(
                                 builder: (context) => MediaPageScreen(
                                   pageIndex: index,
-                                  gallery: gallery!,
+                                  gallery: widget.gallery!,
                                 ),
                                 fullscreenDialog: true,
                               ),
                             ),
-                            child: gallery![index].type == 'video'
+                            child: widget.gallery![index].type == 'video'
                                 ? Row(
                                     children: [
                                       ClipRRect(
@@ -124,7 +212,7 @@ class CommentCell extends StatelessWidget {
                                           height: 130,
                                           width: 140,
                                           child: NetworkVideoPlayerMini(
-                                            video: gallery![index],
+                                            video: widget.gallery![index],
                                           ),
                                         ),
                                       ),
@@ -134,37 +222,29 @@ class CommentCell extends StatelessWidget {
                                     ],
                                   )
                                 : PreviewImageNetwork(
-                                    url: '$s3Url${gallery![index].url}',
+                                    url: '$s3Url${widget.gallery![index].url}',
                                     width: 140,
                                   ),
                           ),
                         ],
                       );
                     },
-                    itemCount: gallery!.length,
+                    itemCount: widget.gallery!.length,
                   ),
                 ),
               ),
             const SizedBox(
               height: 10,
             ),
-            Row(
-              children: [
-                const SizedBox(
-                  width: 39,
-                ),
-                EmojiButton(
-                  onTap: () {
-                    DialogWidgets.emojiPickerDialog(
-                      context: context,
-                      onEmojiSelect: (category, emoji) {
-                        context.pop();
-                      },
-                    );
-                  },
-                ),
-              ],
-            )
+            SizedBox(
+              height: emojiHeight,
+              width: 100.w - 135,
+              child: Wrap(
+                spacing: 2.0,
+                runSpacing: 5.0,
+                children: emojiButtons,
+              ),
+            ),
           ],
         ),
         Positioned(

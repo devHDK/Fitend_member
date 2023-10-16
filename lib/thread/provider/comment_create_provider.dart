@@ -63,6 +63,7 @@ class CommentCreateStateNotifier
             content: '',
             threadId: threadId,
             assetsPaths: [],
+            emojis: [],
             doneCount: 0,
             totalCount: 0,
           ),
@@ -79,6 +80,7 @@ class CommentCreateStateNotifier
       doneCount: 0,
       totalCount: 0,
       assetsPaths: [],
+      emojis: [],
     );
   }
 
@@ -199,6 +201,7 @@ class CommentCreateStateNotifier
         content: model.content,
         createdAt: DateTime.now().toUtc().toIso8601String(),
         gallery: model.gallery,
+        emojis: [],
         user: user,
       );
 

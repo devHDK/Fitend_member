@@ -73,8 +73,6 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
     Map<String, int> emojiCounts = {};
     List<Widget> emojiButtons = [];
 
-    print(widget.emojis);
-
     if (widget.emojis != null && widget.emojis!.isNotEmpty) {
       for (var emoji in widget.emojis!) {
         String emojiChar = emoji.emoji;
@@ -109,12 +107,12 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
                 ref
                     .read(threadDetailProvider(widget.id).notifier)
-                    .addEmoji(widget.user.id, key, emojiId);
+                    .addThreadEmoji(widget.user.id, key, emojiId);
               } else if (result['type'] == 'remove') {
                 final emojiId = result['emojiId'];
                 ref
                     .read(threadDetailProvider(widget.id).notifier)
-                    .addEmoji(widget.user.id, key, emojiId);
+                    .removeThreadEmoji(widget.user.id, key, emojiId);
               }
             } catch (e) {
               debugPrint('$e');
@@ -141,12 +139,13 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
                     ref
                         .read(threadDetailProvider(widget.id).notifier)
-                        .addEmoji(widget.user.id, emoji.emoji, emojiId);
+                        .addThreadEmoji(widget.user.id, emoji.emoji, emojiId);
                   } else if (result['type'] == 'remove') {
                     final emojiId = result['emojiId'];
                     ref
                         .read(threadDetailProvider(widget.id).notifier)
-                        .addEmoji(widget.user.id, emoji.emoji, emojiId);
+                        .removeThreadEmoji(
+                            widget.user.id, emoji.emoji, emojiId);
                   }
                 } catch (e) {
                   debugPrint('$e');
@@ -371,8 +370,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       Text(
                         widget.userCommentCount == 0 &&
                                 widget.trainerCommentCount == 0
-                            ? '아직 댓글이 없어요 :)'
-                            : '${widget.userCommentCount + widget.trainerCommentCount} 개의 댓글이 있어요 :)',
+                            ? ' 아직 댓글이 없어요 :)'
+                            : ' ${widget.userCommentCount + widget.trainerCommentCount}개의 댓글이 있어요 :)',
                         style: s2SubTitle.copyWith(
                           color: GRAY_COLOR,
                           height: 1,

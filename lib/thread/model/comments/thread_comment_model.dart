@@ -67,8 +67,10 @@ class ThreadCommentModel {
         createdAt: createdAt ?? this.createdAt,
       );
 
-  factory ThreadCommentModel.fromJson(Map<String, dynamic> json) =>
-      _$ThreadCommentModelFromJson(json);
-
+  factory ThreadCommentModel.fromJson(Map<String, dynamic> json) {
+    json['emojis'] = json['emojis'] ?? [];
+    json['gallery'] = json['gallery'] ?? [];
+    return _$ThreadCommentModelFromJson(json);
+  }
   Map<String, dynamic> toJson() => _$ThreadCommentModelToJson(this);
 }

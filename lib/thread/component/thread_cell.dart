@@ -16,6 +16,8 @@ import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/view/media_page_screen.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +25,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class ThreadCell extends ConsumerStatefulWidget {
   const ThreadCell({
@@ -40,6 +41,8 @@ class ThreadCell extends ConsumerStatefulWidget {
     required this.trainerCommentCount,
     required this.user,
     required this.trainer,
+    required this.writerType,
+    required this.threadType,
   });
 
   final int id;
@@ -54,6 +57,8 @@ class ThreadCell extends ConsumerStatefulWidget {
   final int trainerCommentCount;
   final ThreadUser user;
   final ThreadTrainer trainer;
+  final String writerType;
+  final String threadType;
 
   @override
   ConsumerState<ThreadCell> createState() => _ThreadCellState();
@@ -67,6 +72,10 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = ref.watch(getMeProvider);
+
+    final userModel = userState as UserModel;
+
     double emojiHeight = 31;
 
     List<Widget> emojiButtons = [];
@@ -442,11 +451,20 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
             ],
           ),
         ),
-        Positioned(
-          top: 5,
-          right: 0,
-          child: SvgPicture.asset('asset/img/icon_edit.svg'),
-        )
+        if (widget.writerType == 'user' &&
+            widget.user.id == userModel.user.id &&
+            widget.threadType == ThreadType.general.name)
+          Positioned(
+            top: -10,
+            right: -10,
+            child: InkWell(
+              onTap: () => DialogWidgets.editBottomModal(context),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: SvgPicture.asset('asset/img/icon_edit.svg'),
+              ),
+            ),
+          )
       ],
     );
   }

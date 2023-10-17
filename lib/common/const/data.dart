@@ -17,6 +17,11 @@ enum WorkoutPushType {
   workoutScheduleChange,
 }
 
+enum ThreadType {
+  record,
+  general,
+}
+
 String needScheduleUpdate = 'scheduleUpdate';
 String needNotificationUpdate = 'notificationUpdate';
 String needWorkoutUpdateList = 'needWorkoutUpdateList';

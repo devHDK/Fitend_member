@@ -1,17 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
+import 'package:fitend_member/thread/model/threads/thread_model.dart';
+import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class ThreadDetail extends StatefulWidget {
+class ThreadDetail extends ConsumerStatefulWidget {
   const ThreadDetail({
     super.key,
+    required this.threadId,
     required this.profileImageUrl,
     this.title,
     required this.nickname,
@@ -19,6 +26,7 @@ class ThreadDetail extends StatefulWidget {
     required this.content,
   });
 
+  final int threadId;
   final String profileImageUrl;
   final String? title;
   final String nickname;
@@ -26,10 +34,10 @@ class ThreadDetail extends StatefulWidget {
   final String content;
 
   @override
-  State<ThreadDetail> createState() => _ThreadDetailState();
+  ConsumerState<ThreadDetail> createState() => _ThreadDetailState();
 }
 
-class _ThreadDetailState extends State<ThreadDetail> {
+class _ThreadDetailState extends ConsumerState<ThreadDetail> {
   @override
   void initState() {
     super.initState();
@@ -37,6 +45,12 @@ class _ThreadDetailState extends State<ThreadDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = ref.watch(getMeProvider);
+    final userModel = userState as UserModel;
+
+    final state = ref.watch(threadDetailProvider(widget.threadId));
+    final model = state as ThreadModel;
+
     List<TextSpan> contentTextSpans = [];
 
     widget.content.splitMapJoin(
@@ -120,11 +134,20 @@ class _ThreadDetailState extends State<ThreadDetail> {
                 ),
               ],
             ),
-            Positioned(
-              top: 15,
-              right: 0,
-              child: SvgPicture.asset('asset/img/icon_edit.svg'),
-            )
+            if (model.writerType == 'user' &&
+                model.user.id == userModel.user.id &&
+                model.type == ThreadType.general.name)
+              Positioned(
+                top: -10,
+                right: -10,
+                child: InkWell(
+                  onTap: () => DialogWidgets.editBottomModal(context),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: SvgPicture.asset('asset/img/icon_edit.svg'),
+                  ),
+                ),
+              )
           ],
         ),
         const SizedBox(

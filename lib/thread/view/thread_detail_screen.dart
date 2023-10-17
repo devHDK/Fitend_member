@@ -174,6 +174,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                 slivers: [
                   SliverToBoxAdapter(
                     child: ThreadDetail(
+                      threadId: model.id,
                       profileImageUrl: model.writerType == 'trainer'
                           ? '$s3Url${model.trainer.profileImage}'
                           : model.user.gender == 'male'

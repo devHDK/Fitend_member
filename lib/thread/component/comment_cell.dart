@@ -335,11 +335,18 @@ class _CommentCellState extends ConsumerState<CommentCell> {
             ),
           ],
         ),
-        Positioned(
-          top: 5,
-          right: 0,
-          child: SvgPicture.asset('asset/img/icon_edit.svg'),
-        )
+        if (widget.user != null && widget.user!.id == userModel.user.id)
+          Positioned(
+            top: -10,
+            right: -10,
+            child: InkWell(
+              onTap: () => DialogWidgets.editBottomModal(context),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: SvgPicture.asset('asset/img/icon_edit.svg'),
+              ),
+            ),
+          )
       ],
     );
   }

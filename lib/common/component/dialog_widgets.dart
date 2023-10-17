@@ -10,10 +10,12 @@ import 'package:fitend_member/schedule/repository/workout_schedule_repository.da
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:ndialog/ndialog.dart';
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class DialogWidgets {
   static DialogBackground confirmDialog({
@@ -252,6 +254,107 @@ class DialogWidgets {
           ),
         ),
       ),
+    );
+  }
+
+  static Future<dynamic> editBottomModal(BuildContext context) {
+    return showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black38,
+      context: context,
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: DARK_GRAY_COLOR,
+          ),
+          width: 100.w,
+          height: 175,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28),
+            child: Column(
+              children: [
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 12,
+                    ),
+                    child: Container(
+                      width: 44,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: LIGHT_GRAY_COLOR,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 33,
+                ),
+                SizedBox(
+                  width: 100.w - 56,
+                  height: 34,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: GRAY_COLOR,
+                          borderRadius: BorderRadius.circular(17),
+                        ),
+                        child: Center(
+                          child: SvgPicture.asset('asset/img/icon_pencil.svg'),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 14,
+                      ),
+                      Text(
+                        '수정 하기',
+                        style:
+                            h6Headline.copyWith(color: Colors.white, height: 1),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  width: 100.w - 56,
+                  height: 34,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: GRAY_COLOR,
+                          borderRadius: BorderRadius.circular(17),
+                        ),
+                        child: Center(
+                          child:
+                              SvgPicture.asset('asset/img/icon_trash_bin.svg'),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 14,
+                      ),
+                      Text(
+                        '삭제 하기',
+                        style:
+                            h6Headline.copyWith(color: Colors.white, height: 1),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

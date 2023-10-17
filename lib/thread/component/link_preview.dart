@@ -43,7 +43,6 @@ class _LinkPreviewState extends State<LinkPreview> {
         bodyStyle: s3SubTitle.copyWith(
           color: GRAY_COLOR,
         ),
-        headers: const {"https": "https"},
         errorWidget: GestureDetector(
           onTap: () => DataUtils.launchURL(widget.url),
           child: Container(

@@ -67,5 +67,8 @@ String workoutFeedback = 'WorkoutFeedback';
 String processingExerciseIndex = 'processExerciseIndex';
 
 // URL 패턴을 검사하는 정규표현식
-final RegExp urlRegExp = RegExp(
+final urlRegExp = RegExp(
     r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+
+// final RegExp urlRegExp =
+//     RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');

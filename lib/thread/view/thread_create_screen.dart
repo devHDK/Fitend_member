@@ -328,8 +328,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         if (index >= state.assetsPaths!.length) {
-                          print('tempList[$index] : ${tempList[index]}');
-
                           return Row(
                             children: [
                               LinkPreview(

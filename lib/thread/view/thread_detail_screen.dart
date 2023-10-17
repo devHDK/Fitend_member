@@ -366,7 +366,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                       ),
                     ),
                   if (mediaCount > 2)
-                    _mediaListView(
+                    _MediaListView(
                       model: model,
                       linkUrls: linkUrls,
                       mediaCount: mediaCount,
@@ -426,35 +426,30 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
     );
   }
 
-  SliverToBoxAdapter _emojiSection(
-      double emojiHeight, List<Widget> emojiButtons) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: SizedBox(
-          height: emojiHeight,
-          width: 100.w - 56,
-          child: Wrap(
-            spacing: 2.0,
-            runSpacing: 5.0,
-            children: emojiButtons,
-          ),
-        ),
-      ),
-    );
-  }
+  Positioned _bottomInputBox(ThreadCommentCreateTempModel commentState,
+      ThreadModel model, BuildContext context) {
+    List<String> commentCreateLinkUrl = [];
+    String commentProcessedText = commentController.text.replaceAll('\n', ' ');
 
-  Positioned _bottomInputBox(
-    ThreadCommentCreateTempModel commentState,
-    ThreadModel model,
-    BuildContext context,
-  ) {
+    commentProcessedText.split(' ').forEach(
+      (word) {
+        if (urlRegExp.hasMatch(word)) {
+          commentCreateLinkUrl.add(word);
+        }
+      },
+    );
+
+    final tempList = [
+      ...commentState.assetsPaths,
+      ...commentCreateLinkUrl,
+    ];
+
     return Positioned(
       child: SlidingUpPanel(
         minHeight:
-            commentState.assetsPaths.isNotEmpty ? 250 : 120 + maxLine * 10,
+            tempList.isNotEmpty ? 220 + maxLine * 10 : 120 + maxLine * 10,
         maxHeight:
-            commentState.assetsPaths.isNotEmpty ? 250 : 120 + maxLine * 10,
+            tempList.isNotEmpty ? 220 + maxLine * 10 : 120 + maxLine * 10,
         color: DARK_GRAY_COLOR,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(10),
@@ -496,9 +491,9 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                   ),
                 ],
               ),
-              if (commentState.assetsPaths.isNotEmpty)
+              if (tempList.isNotEmpty)
                 SizedBox(
-                  height: 120,
+                  height: 100,
                   child: commentState.isLoading
                       ? const Center(
                           child: CircularProgressIndicator(
@@ -508,6 +503,21 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                       : ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
+                            if (index >= commentState.assetsPaths.length) {
+                              return Row(
+                                children: [
+                                  LinkPreview(
+                                    url: tempList[index],
+                                    width: 100,
+                                    height: 80,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                ],
+                              );
+                            }
+
                             final intPath =
                                 utf8.encode(commentState.assetsPaths[index]);
                             final path = Uint8List.fromList(intPath);
@@ -571,7 +581,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                               ],
                             );
                           },
-                          itemCount: commentState.assetsPaths.length,
+                          itemCount: tempList.length,
                         ),
                 ),
               Row(
@@ -694,6 +704,24 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
     );
   }
 
+  SliverToBoxAdapter _emojiSection(
+      double emojiHeight, List<Widget> emojiButtons) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: SizedBox(
+          height: emojiHeight,
+          width: 100.w - 56,
+          child: Wrap(
+            spacing: 2.0,
+            runSpacing: 5.0,
+            children: emojiButtons,
+          ),
+        ),
+      ),
+    );
+  }
+
   SliverToBoxAdapter _commentsDivider(ThreadModel model) {
     return SliverToBoxAdapter(
       child: Column(
@@ -785,8 +813,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
   }
 }
 
-class _mediaListView extends StatelessWidget {
-  const _mediaListView({
+class _MediaListView extends StatelessWidget {
+  const _MediaListView({
     required this.model,
     required this.linkUrls,
     required this.mediaCount,
@@ -855,6 +883,7 @@ class _mediaListView extends StatelessWidget {
                           : PreviewImageNetwork(
                               url: '$s3Url${model.gallery![index].url}',
                               width: 80.w.toInt() - 56,
+                              height: ((80.w - 56) * 0.8).toInt(),
                             ),
                     ),
                   ),

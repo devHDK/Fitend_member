@@ -182,11 +182,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
           text: '${m.group(0)} ',
           style: const TextStyle(color: Colors.blue),
           recognizer: TapAndPanGestureRecognizer()
-            ..onTapDown = (detail) => DataUtils.launchURL(
-                  m.group(0)!.contains('https://')
-                      ? '${m.group(0)} '
-                      : 'https://${m.group(0)}',
-                ),
+            ..onTapDown = (detail) => DataUtils.launchURL('${m.group(0)}'),
         ));
         return m.group(0)!;
       },

@@ -133,7 +133,14 @@ class DataUtils {
     return DateFormat('h:mm a').format(dateTime).toString();
   }
 
-  static void launchURL(String url) async => await canLaunchUrlString(url)
-      ? await launchUrlString(url)
-      : throw 'Could not launch $url';
+  static void launchURL(String url) async {
+    String tempUrl = url;
+    if (!tempUrl.contains('https://')) {
+      tempUrl = 'https://$tempUrl';
+    }
+
+    await canLaunchUrlString(tempUrl)
+        ? await launchUrlString(tempUrl)
+        : throw 'Could not launch $tempUrl';
+  }
 }

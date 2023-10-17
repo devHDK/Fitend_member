@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/thread/component/extended_image.dart';
@@ -65,9 +66,9 @@ class _MediaPageScreenState extends State<MediaPageScreen> {
                 if (widget.gallery[index].type == 'image') {
                   return Hero(
                     tag: widget.gallery[index].url,
-                    child: CustomExtendImage(
-                      url: '$s3Url${widget.gallery[index].url}',
-                      fit: BoxFit.contain,
+                    child: CustomNetworkImage(
+                      imageUrl: '$s3Url${widget.gallery[index].url}',
+                      boxFit: BoxFit.contain,
                     ),
                   );
                 } else {

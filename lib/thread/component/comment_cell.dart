@@ -58,59 +58,16 @@ class _CommentCellState extends ConsumerState<CommentCell> {
 
     final userModel = userState as UserModel;
 
-    double emojiHeight = 28;
+    double emojiHeight = 31;
 
-    Map<String, int> emojiCounts = {};
     List<Widget> emojiButtons = [];
 
     if (widget.emojis.isNotEmpty) {
-      for (var emoji in widget.emojis) {
-        String emojiChar = emoji.emoji;
-
-        if (!emojiCounts.containsKey(emojiChar)) {
-          emojiCounts[emojiChar] = 1;
-        } else {
-          emojiCounts[emojiChar] = (emojiCounts[emojiChar] ?? 0) + 1;
-        }
-      }
-
-      emojiCounts.forEach((key, value) {
-        emojiButtons.add(EmojiButton(
-          emoji: key,
-          count: value,
-          color: widget.emojis.indexWhere((e) {
-                    return e.emoji == key && e.userId == userModel.user.id;
-                  }) >
-                  -1
-              ? POINT_COLOR
-              : DARK_GRAY_COLOR,
-          onTap: () async {
-            await ref
-                .read(threadDetailProvider(widget.threadId).notifier)
-                .updateCommentEmoji(widget.commentId, userModel.user.id, key);
-          },
-        ));
-      });
+      emojiButtons = _buildEmojiButtons(userModel);
     }
 
     emojiButtons.add(
-      EmojiButton(
-        onTap: () {
-          DialogWidgets.emojiPickerDialog(
-            context: context,
-            onEmojiSelect: (category, emoji) async {
-              if (emoji != null) {
-                await ref
-                    .read(threadDetailProvider(widget.threadId).notifier)
-                    .updateCommentEmoji(
-                        widget.commentId, userModel.user.id, emoji.emoji);
-              }
-
-              context.pop();
-            },
-          );
-        },
-      ),
+      _defaultEmojiButton(context, userModel),
     );
 
     int horizonEmojiCounts = (100.w - 135) ~/ 49;
@@ -303,9 +260,9 @@ class _CommentCellState extends ConsumerState<CommentCell> {
               ),
             if (mediaCount > 2)
               Padding(
-                padding: const EdgeInsets.fromLTRB(39, 0, 0, 0),
+                padding: const EdgeInsets.fromLTRB(39, 0, 0, 10),
                 child: SizedBox(
-                  height: 130,
+                  height: 112,
                   width: 100.w - 56,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
@@ -315,7 +272,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                           children: [
                             LinkPreview(
                               url: linkUrls[index - widget.gallery!.length],
-                              height: 130,
+                              height: 140 * 0.8,
                               width: 140,
                             ),
                             const SizedBox(
@@ -343,7 +300,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(20),
                                         child: SizedBox(
-                                          height: 130,
+                                          height: 140 * 0.8,
                                           width: 140,
                                           child: NetworkVideoPlayerMini(
                                             video: widget.gallery![index],
@@ -384,6 +341,62 @@ class _CommentCellState extends ConsumerState<CommentCell> {
           child: SvgPicture.asset('asset/img/icon_edit.svg'),
         )
       ],
+    );
+  }
+
+  List<Widget> _buildEmojiButtons(UserModel userModel) {
+    Map<String, int> emojiCounts = {};
+
+    List<Widget> emojiButtons = [];
+
+    for (var emoji in widget.emojis) {
+      String emojiChar = emoji.emoji;
+
+      if (!emojiCounts.containsKey(emojiChar)) {
+        emojiCounts[emojiChar] = 1;
+      } else {
+        emojiCounts[emojiChar] = (emojiCounts[emojiChar] ?? 0) + 1;
+      }
+    }
+
+    emojiCounts.forEach((key, value) {
+      emojiButtons.add(EmojiButton(
+        emoji: key,
+        count: value,
+        color: widget.emojis.indexWhere((e) {
+                  return e.emoji == key && e.userId == userModel.user.id;
+                }) >
+                -1
+            ? POINT_COLOR
+            : DARK_GRAY_COLOR,
+        onTap: () async {
+          await ref
+              .read(threadDetailProvider(widget.threadId).notifier)
+              .updateCommentEmoji(widget.commentId, userModel.user.id, key);
+        },
+      ));
+    });
+
+    return emojiButtons;
+  }
+
+  EmojiButton _defaultEmojiButton(BuildContext context, UserModel userModel) {
+    return EmojiButton(
+      onTap: () {
+        DialogWidgets.emojiPickerDialog(
+          context: context,
+          onEmojiSelect: (category, emoji) async {
+            if (emoji != null) {
+              await ref
+                  .read(threadDetailProvider(widget.threadId).notifier)
+                  .updateCommentEmoji(
+                      widget.commentId, userModel.user.id, emoji.emoji);
+            }
+
+            context.pop();
+          },
+        );
+      },
     );
   }
 }

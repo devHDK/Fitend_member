@@ -57,7 +57,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
         .index;
 
     if (pstate.data.isNotEmpty &&
-        maxIndex == pstate.data.length - 1 &&
+        maxIndex == pstate.data.length - 2 &&
         pstate.total > pstate.data.length &&
         !isLoading) {
       //스크롤을 아래로 내렸을때

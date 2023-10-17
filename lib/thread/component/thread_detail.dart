@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -47,7 +48,7 @@ class _ThreadDetailState extends State<ThreadDetail> {
           text: '${m.group(0)} ',
           style: const TextStyle(color: Colors.blue),
           recognizer: TapAndPanGestureRecognizer()
-            ..onTapDown = (detail) => _launchURL(
+            ..onTapDown = (detail) => DataUtils.launchURL(
                   m.group(0)!.contains('https://')
                       ? '${m.group(0)} '
                       : 'https://${m.group(0)}',
@@ -164,8 +165,4 @@ class _ThreadDetailState extends State<ThreadDetail> {
       ],
     );
   }
-
-  void _launchURL(String url) async => await canLaunchUrlString(url)
-      ? await launchUrlString(url)
-      : throw 'Could not launch $url';
 }

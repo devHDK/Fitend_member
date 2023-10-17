@@ -1,6 +1,7 @@
 import 'package:any_link_preview/any_link_preview.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -44,7 +45,7 @@ class _LinkPreviewState extends State<LinkPreview> {
         ),
         headers: const {"https": "https"},
         errorWidget: GestureDetector(
-          onTap: () => launchUrlString(widget.url),
+          onTap: () => DataUtils.launchURL(widget.url),
           child: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10), color: Colors.white),

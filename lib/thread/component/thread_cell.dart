@@ -3,6 +3,7 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/link_preview.dart';
 import 'package:fitend_member/thread/component/network_video_player_mini.dart';
@@ -181,7 +182,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
           text: '${m.group(0)} ',
           style: const TextStyle(color: Colors.blue),
           recognizer: TapAndPanGestureRecognizer()
-            ..onTapDown = (detail) => _launchURL(
+            ..onTapDown = (detail) => DataUtils.launchURL(
                   m.group(0)!.contains('https://')
                       ? '${m.group(0)} '
                       : 'https://${m.group(0)}',
@@ -497,8 +498,4 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
     return textPainter.computeLineMetrics().length;
   }
-
-  void _launchURL(String url) async => await canLaunchUrlString(url)
-      ? await launchUrlString(url)
-      : throw 'Could not launch $url';
 }

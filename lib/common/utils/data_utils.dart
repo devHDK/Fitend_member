@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class DataUtils {
   static String pathToUrl(String value) {
@@ -131,4 +132,8 @@ class DataUtils {
 
     return DateFormat('h:mm a').format(dateTime).toString();
   }
+
+  static void launchURL(String url) async => await canLaunchUrlString(url)
+      ? await launchUrlString(url)
+      : throw 'Could not launch $url';
 }

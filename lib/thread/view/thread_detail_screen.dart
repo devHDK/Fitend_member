@@ -305,79 +305,10 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                       ),
                     ),
                   if (mediaCount > 2)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: SizedBox(
-                          height: (80.w.toInt() - 56) * 0.8,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              if (index >= model.gallery!.length) {
-                                return Row(
-                                  children: [
-                                    LinkPreview(
-                                      width: (80.w.toInt() - 56),
-                                      height: (80.w.toInt() - 56) * 0.8,
-                                      url: linkUrls[
-                                          index - model.gallery!.length],
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                  ],
-                                );
-                              }
-
-                              return Stack(
-                                children: [
-                                  InkWell(
-                                    onTap: () => Navigator.of(context).push(
-                                      CupertinoPageRoute(
-                                        builder: (context) => MediaPageScreen(
-                                          pageIndex: index,
-                                          gallery: model.gallery!,
-                                        ),
-                                        fullscreenDialog: true,
-                                      ),
-                                    ),
-                                    child: Hero(
-                                      tag: model.gallery![index].url,
-                                      child: model.gallery![index].type ==
-                                              'video'
-                                          ? Row(
-                                              children: [
-                                                ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                  child: SizedBox(
-                                                    height: (80.w - 56) * 0.8,
-                                                    child:
-                                                        NetworkVideoPlayerMini(
-                                                      video:
-                                                          model.gallery![index],
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                )
-                                              ],
-                                            )
-                                          : PreviewImageNetwork(
-                                              url:
-                                                  '$s3Url${model.gallery![index].url}',
-                                              width: 80.w.toInt() - 56,
-                                            ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                            itemCount: mediaCount,
-                          ),
-                        ),
-                      ),
+                    _mediaListView(
+                      model: model,
+                      linkUrls: linkUrls,
+                      mediaCount: mediaCount,
                     ),
                   _emojiSection(emojiHeight, emojiButtons),
                   _commentsDivider(model),
@@ -734,62 +665,6 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
     );
   }
 
-  SliverToBoxAdapter _mediaListView(ThreadModel model) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: SizedBox(
-          height: (80.w.toInt() - 56) * 0.8,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              return Stack(
-                children: [
-                  InkWell(
-                    onTap: () => Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => MediaPageScreen(
-                          pageIndex: index,
-                          gallery: model.gallery!,
-                        ),
-                        fullscreenDialog: true,
-                      ),
-                    ),
-                    child: Hero(
-                      tag: model.gallery![index].url,
-                      child: model.gallery![index].type == 'video'
-                          ? Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: SizedBox(
-                                    height: (80.w - 56) * 0.8,
-                                    child: NetworkVideoPlayerMini(
-                                      video: model.gallery![index],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                )
-                              ],
-                            )
-                          : PreviewImageNetwork(
-                              url: '$s3Url${model.gallery![index].url}',
-                              width: 80.w.toInt() - 56,
-                            ),
-                    ),
-                  ),
-                ],
-              );
-            },
-            itemCount: model.gallery!.length,
-          ),
-        ),
-      ),
-    );
-  }
-
   TextFormField _commentTextFormField() {
     const baseBorder = OutlineInputBorder(
       borderSide: BorderSide(
@@ -842,6 +717,90 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
               : '댓글을 입력해주세요',
           style: s1SubTitle.copyWith(
             color: GRAY_COLOR,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _mediaListView extends StatelessWidget {
+  const _mediaListView({
+    required this.model,
+    required this.linkUrls,
+    required this.mediaCount,
+  });
+
+  final ThreadModel model;
+  final List<String> linkUrls;
+  final int mediaCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: SizedBox(
+          height: (80.w.toInt() - 56) * 0.8,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              if (index >= model.gallery!.length) {
+                return Row(
+                  children: [
+                    LinkPreview(
+                      width: (80.w.toInt() - 56),
+                      height: (80.w.toInt() - 56) * 0.8,
+                      url: linkUrls[index - model.gallery!.length],
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                  ],
+                );
+              }
+
+              return Stack(
+                children: [
+                  InkWell(
+                    onTap: () => Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => MediaPageScreen(
+                          pageIndex: index,
+                          gallery: model.gallery!,
+                        ),
+                        fullscreenDialog: true,
+                      ),
+                    ),
+                    child: Hero(
+                      tag: model.gallery![index].url,
+                      child: model.gallery![index].type == 'video'
+                          ? Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: SizedBox(
+                                    height: (80.w - 56) * 0.8,
+                                    child: NetworkVideoPlayerMini(
+                                      video: model.gallery![index],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                )
+                              ],
+                            )
+                          : PreviewImageNetwork(
+                              url: '$s3Url${model.gallery![index].url}',
+                              width: 80.w.toInt() - 56,
+                            ),
+                    ),
+                  ),
+                ],
+              );
+            },
+            itemCount: mediaCount,
           ),
         ),
       ),

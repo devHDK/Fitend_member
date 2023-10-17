@@ -6,6 +6,7 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
+import 'package:fitend_member/thread/component/link_preview.dart';
 import 'package:fitend_member/thread/component/network_video_player_mini.dart';
 import 'package:fitend_member/thread/component/preview_image_network.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
@@ -117,6 +118,64 @@ class _CommentCellState extends ConsumerState<CommentCell> {
 
     emojiHeight = verticalEmojiCounts * 31;
 
+    //url link 포함여부
+    List<String> linkUrls = [];
+
+    String processedText = widget.content.replaceAll('\n', ' ');
+    processedText.split(' ').forEach(
+      (word) {
+        if (urlRegExp.hasMatch(word)) {
+          linkUrls.add(word);
+        }
+      },
+    );
+
+    List<TextSpan> contentTextSpans = [];
+
+    widget.content.splitMapJoin(
+      urlRegExp,
+      onMatch: (m) {
+        contentTextSpans.add(TextSpan(
+          text: '${m.group(0)} ',
+          style: const TextStyle(color: Colors.blue),
+          recognizer: TapAndPanGestureRecognizer()
+            ..onTapDown = (detail) => DataUtils.launchURL(
+                  m.group(0)!.contains('https://')
+                      ? '${m.group(0)} '
+                      : 'https://${m.group(0)}',
+                ),
+        ));
+        return m.group(0)!;
+      },
+      onNonMatch: (n) {
+        var nonUrlParts = n.split(' ');
+        for (var part in nonUrlParts) {
+          if (nonUrlParts.last == part) {
+            contentTextSpans.add(
+              TextSpan(
+                text: '$part ',
+                style: s2SubTitle.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            );
+          } else {
+            contentTextSpans.add(
+              TextSpan(
+                text: '$part ',
+                style: s2SubTitle.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            );
+          }
+        }
+        return n;
+      },
+    );
+
+    int mediaCount = widget.gallery!.length + linkUrls.length;
+
     return Stack(
       children: [
         Column(
@@ -166,11 +225,13 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                     ),
                     SizedBox(
                       width: 100.w - 56 - 44,
-                      child: AutoSizeText(
-                        widget.content,
-                        maxLines: 50,
-                        style: s1SubTitle.copyWith(
-                          color: Colors.white,
+                      child: RichText(
+                        textScaleFactor: 1.0,
+                        text: TextSpan(
+                          children: contentTextSpans,
+                          style: s1SubTitle.copyWith(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -178,11 +239,24 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                 ),
               ],
             ),
-            if (widget.gallery != null && widget.gallery!.isNotEmpty)
+            if (mediaCount == 1 && linkUrls.length == 1)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: LinkPreview(
+                  url: linkUrls.first,
+                  width: 100.w - 135,
+                  height: 120,
+                ),
+              ),
+            //TODO : 단일 미디어 만들어야함
+            // else if( mediaCount == 1 && widget.gallery!.length == 1 && widget.gallery!.first.type == 'video' )
+            // else if( mediaCount == 1 && widget.gallery!.length == 1 && widget.gallery!.first.type == 'image' )
+
+            if (mediaCount > 1)
               const SizedBox(
                 height: 10,
               ),
-            if (widget.gallery != null && widget.gallery!.isNotEmpty)
+            if (mediaCount > 2)
               Padding(
                 padding: const EdgeInsets.fromLTRB(39, 0, 0, 0),
                 child: SizedBox(
@@ -191,6 +265,21 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
+                      if (index >= widget.gallery!.length) {
+                        return Row(
+                          children: [
+                            LinkPreview(
+                              url: linkUrls[index - widget.gallery!.length],
+                              height: 130,
+                              width: 140,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        );
+                      }
+
                       return Stack(
                         children: [
                           InkWell(
@@ -229,13 +318,10 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                         ],
                       );
                     },
-                    itemCount: widget.gallery!.length,
+                    itemCount: mediaCount,
                   ),
                 ),
               ),
-            const SizedBox(
-              height: 10,
-            ),
             SizedBox(
               height: emojiHeight,
               width: 100.w - 135,

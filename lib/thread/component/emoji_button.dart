@@ -6,14 +6,14 @@ import 'package:flutter_svg/svg.dart';
 class EmojiButton extends StatefulWidget {
   final int? count;
   final String? emoji;
-  final Color? color;
+  final bool? isSelected;
   final GestureTapCallback onTap;
 
   const EmojiButton({
     super.key,
     this.count,
     this.emoji,
-    this.color = DARK_GRAY_COLOR,
+    this.isSelected = false,
     required this.onTap,
   });
 
@@ -31,7 +31,8 @@ class _EmojiButtonState extends State<EmojiButton> {
         height: 28,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: widget.color,
+          color:
+              widget.isSelected! ? POINT_COLOR.withAlpha(255) : DARK_GRAY_COLOR,
         ),
         child: widget.emoji == null
             ? Center(child: SvgPicture.asset('asset/img/icon_emoji_button.svg'))

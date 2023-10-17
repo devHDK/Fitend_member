@@ -455,10 +455,20 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
             widget.user.id == userModel.user.id &&
             widget.threadType == ThreadType.general.name)
           Positioned(
-            top: -10,
+            top: -15,
             right: -10,
             child: InkWell(
-              onTap: () => DialogWidgets.editBottomModal(context),
+              onTap: () => DialogWidgets.editBottomModal(
+                context,
+                delete: () async {
+                  context.pop();
+
+                  await ref
+                      .read(threadDetailProvider(widget.id).notifier)
+                      .deleteThread();
+                },
+                edit: () {},
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: SvgPicture.asset('asset/img/icon_edit.svg'),
@@ -487,12 +497,10 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
       emojiButtons.add(EmojiButton(
         emoji: key,
         count: value,
-        color: widget.emojis!.indexWhere((e) {
-                  return e.emoji == key && e.userId == widget.user.id;
-                }) >
-                -1
-            ? POINT_COLOR
-            : DARK_GRAY_COLOR,
+        isSelected: widget.emojis!.indexWhere((e) {
+              return e.emoji == key && e.userId == widget.user.id;
+            }) >
+            -1,
         onTap: () async {
           final result = await ref
               .read(threadProvider.notifier)

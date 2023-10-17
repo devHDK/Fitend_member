@@ -339,7 +339,17 @@ class _CommentCellState extends ConsumerState<CommentCell> {
             top: -10,
             right: -10,
             child: InkWell(
-              onTap: () => DialogWidgets.editBottomModal(context),
+              onTap: () => DialogWidgets.editBottomModal(
+                context,
+                delete: () async {
+                  context.pop();
+
+                  await ref
+                      .read(threadDetailProvider(widget.threadId).notifier)
+                      .deleteComment(widget.commentId);
+                },
+                edit: () async {},
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: SvgPicture.asset('asset/img/icon_edit.svg'),
@@ -369,12 +379,10 @@ class _CommentCellState extends ConsumerState<CommentCell> {
       emojiButtons.add(EmojiButton(
         emoji: key,
         count: value,
-        color: widget.emojis.indexWhere((e) {
-                  return e.emoji == key && e.userId == userModel.user.id;
-                }) >
-                -1
-            ? POINT_COLOR
-            : DARK_GRAY_COLOR,
+        isSelected: widget.emojis.indexWhere((e) {
+              return e.emoji == key && e.userId == userModel.user.id;
+            }) >
+            -1,
         onTap: () async {
           await ref
               .read(threadDetailProvider(widget.threadId).notifier)

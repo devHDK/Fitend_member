@@ -210,6 +210,8 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
 
     pstate.data.removeAt(index);
 
+    pstate.total -= 1;
+
     state = pstate.copyWith();
   }
 }

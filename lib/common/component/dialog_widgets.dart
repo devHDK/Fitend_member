@@ -257,7 +257,11 @@ class DialogWidgets {
     );
   }
 
-  static Future<dynamic> editBottomModal(BuildContext context) {
+  static Future<dynamic> editBottomModal(
+    BuildContext context, {
+    required Function() edit,
+    required Function() delete,
+  }) {
     return showModalBottomSheet(
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black38,
@@ -292,62 +296,73 @@ class DialogWidgets {
                 const SizedBox(
                   height: 33,
                 ),
-                SizedBox(
-                  width: 100.w - 56,
-                  height: 34,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 34,
-                        height: 34,
-                        decoration: BoxDecoration(
-                          color: GRAY_COLOR,
-                          borderRadius: BorderRadius.circular(17),
+                InkWell(
+                  onTap: () async {
+                    await edit();
+                  },
+                  child: SizedBox(
+                    width: 100.w - 56,
+                    height: 34,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: GRAY_COLOR,
+                            borderRadius: BorderRadius.circular(17),
+                          ),
+                          child: Center(
+                            child:
+                                SvgPicture.asset('asset/img/icon_pencil.svg'),
+                          ),
                         ),
-                        child: Center(
-                          child: SvgPicture.asset('asset/img/icon_pencil.svg'),
+                        const SizedBox(
+                          width: 14,
                         ),
-                      ),
-                      const SizedBox(
-                        width: 14,
-                      ),
-                      Text(
-                        '수정 하기',
-                        style:
-                            h6Headline.copyWith(color: Colors.white, height: 1),
-                      )
-                    ],
+                        Text(
+                          '수정 하기',
+                          style: h6Headline.copyWith(
+                              color: Colors.white, height: 1),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                SizedBox(
-                  width: 100.w - 56,
-                  height: 34,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 34,
-                        height: 34,
-                        decoration: BoxDecoration(
-                          color: GRAY_COLOR,
-                          borderRadius: BorderRadius.circular(17),
+                InkWell(
+                  onTap: () async {
+                    await delete();
+                  },
+                  child: SizedBox(
+                    width: 100.w - 56,
+                    height: 34,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: GRAY_COLOR,
+                            borderRadius: BorderRadius.circular(17),
+                          ),
+                          child: Center(
+                            child: SvgPicture.asset(
+                                'asset/img/icon_trash_bin.svg'),
+                          ),
                         ),
-                        child: Center(
-                          child:
-                              SvgPicture.asset('asset/img/icon_trash_bin.svg'),
+                        const SizedBox(
+                          width: 14,
                         ),
-                      ),
-                      const SizedBox(
-                        width: 14,
-                      ),
-                      Text(
-                        '삭제 하기',
-                        style:
-                            h6Headline.copyWith(color: Colors.white, height: 1),
-                      )
-                    ],
+                        Text(
+                          '삭제 하기',
+                          style: h6Headline.copyWith(
+                              color: Colors.white, height: 1),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],

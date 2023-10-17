@@ -341,12 +341,10 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
           EmojiButton(
             emoji: key,
             count: value,
-            color: model.emojis!.indexWhere((e) {
-                      return e.emoji == key && e.userId == model.user.id;
-                    }) >
-                    -1
-                ? POINT_COLOR
-                : DARK_GRAY_COLOR,
+            isSelected: model.emojis!.indexWhere((e) {
+                  return e.emoji == key && e.userId == model.user.id;
+                }) >
+                -1,
             onTap: () async {
               final result = await ref
                   .read(threadDetailProvider(widget.threadId).notifier)

@@ -12,6 +12,7 @@ import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -101,6 +102,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircleProfileImage(
                       borderRadius: 17,
@@ -141,7 +143,18 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                 top: -10,
                 right: -10,
                 child: InkWell(
-                  onTap: () => DialogWidgets.editBottomModal(context),
+                  onTap: () => DialogWidgets.editBottomModal(
+                    context,
+                    delete: () async {
+                      context.pop();
+
+                      await ref
+                          .read(threadDetailProvider(widget.threadId).notifier)
+                          .deleteThread()
+                          .then((value) => context.pop());
+                    },
+                    edit: () {},
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: SvgPicture.asset('asset/img/icon_edit.svg'),

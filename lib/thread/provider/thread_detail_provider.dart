@@ -256,6 +256,14 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
       await commentRepository.deleteCommentWithId(id: commentId);
 
       threadListState.updateUserCommentCount(threadId, -1);
+
+      final pstate = state as ThreadModel;
+
+      final index = pstate.comments!.indexWhere((e) => e.id == commentId);
+
+      pstate.comments!.removeAt(index);
+
+      state = pstate.copyWith();
     } catch (e) {
       debugPrint('$e');
     }

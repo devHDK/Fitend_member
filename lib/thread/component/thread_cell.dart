@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -23,7 +22,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class ThreadCell extends ConsumerStatefulWidget {
@@ -317,17 +315,21 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       textScaleFactor: 1.0,
                       text: TextSpan(
                         children: contentTextSpans,
-                        style: s2SubTitle.copyWith(
+                        style: s1SubTitle.copyWith(
                           color: Colors.white,
                         ),
                       ),
                     ),
                   ),
+
                   if (mediaCount == 1 && linkUrls.length == 1)
-                    LinkPreview(
-                      url: linkUrls.first,
-                      width: 100.w - 110,
-                      height: 120,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: LinkPreview(
+                        url: linkUrls.first,
+                        width: 100.w - 110,
+                        height: 120,
+                      ),
                     ),
 
                   //TODO : 단일 미디어 만들어야함

@@ -9,6 +9,7 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/comment_cell.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
+import 'package:fitend_member/thread/component/link_preview.dart';
 import 'package:fitend_member/thread/component/network_video_player_mini.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
 import 'package:fitend_member/thread/component/preview_image_network.dart';
@@ -48,7 +49,6 @@ class ThreadDetailScreen extends ConsumerStatefulWidget {
 class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
   FocusNode commentFocusNode = FocusNode();
   final commentController = TextEditingController();
-  // bool isSwipeUp = false;
   int maxLine = 1;
 
   @override
@@ -222,6 +222,19 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
 
     emojiHeight = verticalEmojiCounts * 31;
 
+    List<String> linkUrls = [];
+
+    String processedText = model.content.replaceAll('\n', ' ');
+    processedText.split(' ').forEach(
+      (word) {
+        if (urlRegExp.hasMatch(word)) {
+          linkUrls.add(word);
+        }
+      },
+    );
+
+    int mediaCount = model.gallery!.length + linkUrls.length;
+
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
@@ -270,8 +283,102 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                       content: model.content,
                     ),
                   ),
-                  if (model.gallery != null && model.gallery!.isNotEmpty)
-                    _mediaListView(model),
+                  if (mediaCount == 1 && linkUrls.length == 1)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: LinkPreview(
+                          url: linkUrls.first,
+                          width: 100.w - 56,
+                          height: 140,
+                        ),
+                      ),
+                    ),
+                  //TODO : 단일 미디어 만들어야함
+                  // else if( mediaCount == 1 && model.gallery!.length == 1 && model.gallery!.first.type == 'video' )
+                  // else if( mediaCount == 1 && model.gallery!.length == 1 && model.gallery!.first.type == 'image' )
+
+                  if (mediaCount > 1)
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 10,
+                      ),
+                    ),
+                  if (mediaCount > 2)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: SizedBox(
+                          height: (80.w.toInt() - 56) * 0.8,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              if (index >= model.gallery!.length) {
+                                return Row(
+                                  children: [
+                                    LinkPreview(
+                                      width: (80.w.toInt() - 56),
+                                      height: (80.w.toInt() - 56) * 0.8,
+                                      url: linkUrls[
+                                          index - model.gallery!.length],
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                  ],
+                                );
+                              }
+
+                              return Stack(
+                                children: [
+                                  InkWell(
+                                    onTap: () => Navigator.of(context).push(
+                                      CupertinoPageRoute(
+                                        builder: (context) => MediaPageScreen(
+                                          pageIndex: index,
+                                          gallery: model.gallery!,
+                                        ),
+                                        fullscreenDialog: true,
+                                      ),
+                                    ),
+                                    child: Hero(
+                                      tag: model.gallery![index].url,
+                                      child: model.gallery![index].type ==
+                                              'video'
+                                          ? Row(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  child: SizedBox(
+                                                    height: (80.w - 56) * 0.8,
+                                                    child:
+                                                        NetworkVideoPlayerMini(
+                                                      video:
+                                                          model.gallery![index],
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                )
+                                              ],
+                                            )
+                                          : PreviewImageNetwork(
+                                              url:
+                                                  '$s3Url${model.gallery![index].url}',
+                                              width: 80.w.toInt() - 56,
+                                            ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                            itemCount: mediaCount,
+                          ),
+                        ),
+                      ),
+                    ),
                   _emojiSection(emojiHeight, emojiButtons),
                   _commentsDivider(model),
                   if (model.comments != null && model.comments!.isNotEmpty)
@@ -311,7 +418,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                     SliverToBoxAdapter(
                       child: Text(
                         '아직 댓글이 없어요 :)',
-                        style: s2SubTitle.copyWith(
+                        style: s1SubTitle.copyWith(
                           color: GRAY_COLOR,
                           height: 1,
                         ),
@@ -330,13 +437,16 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
   SliverToBoxAdapter _emojiSection(
       double emojiHeight, List<Widget> emojiButtons) {
     return SliverToBoxAdapter(
-      child: SizedBox(
-        height: emojiHeight,
-        width: 100.w - 56,
-        child: Wrap(
-          spacing: 2.0,
-          runSpacing: 5.0,
-          children: emojiButtons,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: SizedBox(
+          height: emojiHeight,
+          width: 100.w - 56,
+          child: Wrap(
+            spacing: 2.0,
+            runSpacing: 5.0,
+            children: emojiButtons,
+          ),
         ),
       ),
     );

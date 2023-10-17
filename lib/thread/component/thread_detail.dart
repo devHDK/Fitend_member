@@ -1,14 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
-import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ThreadDetail extends StatefulWidget {
   const ThreadDetail({
@@ -38,6 +38,50 @@ class _ThreadDetailState extends State<ThreadDetail> {
 
   @override
   Widget build(BuildContext context) {
+    List<TextSpan> contentTextSpans = [];
+
+    widget.content.splitMapJoin(
+      urlRegExp,
+      onMatch: (m) {
+        contentTextSpans.add(TextSpan(
+          text: '${m.group(0)} ',
+          style: const TextStyle(color: Colors.blue),
+          recognizer: TapAndPanGestureRecognizer()
+            ..onTapDown = (detail) => _launchURL(
+                  m.group(0)!.contains('https://')
+                      ? '${m.group(0)} '
+                      : 'https://${m.group(0)}',
+                ),
+        ));
+        return m.group(0)!;
+      },
+      onNonMatch: (n) {
+        var nonUrlParts = n.split(' ');
+        for (var part in nonUrlParts) {
+          if (nonUrlParts.last == part) {
+            contentTextSpans.add(
+              TextSpan(
+                text: '$part ',
+                style: s2SubTitle.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            );
+          } else {
+            contentTextSpans.add(
+              TextSpan(
+                text: '$part ',
+                style: s2SubTitle.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            );
+          }
+        }
+        return n;
+      },
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -107,15 +151,21 @@ class _ThreadDetailState extends State<ThreadDetail> {
           ),
         SizedBox(
           width: 100.w - 56,
-          child: AutoSizeText(
-            widget.content,
-            maxLines: 50,
-            style: s1SubTitle.copyWith(
-              color: Colors.white,
+          child: RichText(
+            textScaleFactor: 1.0,
+            text: TextSpan(
+              children: contentTextSpans,
+              style: s1SubTitle.copyWith(
+                color: Colors.white,
+              ),
             ),
           ),
         ),
       ],
     );
   }
+
+  void _launchURL(String url) async => await canLaunchUrlString(url)
+      ? await launchUrlString(url)
+      : throw 'Could not launch $url';
 }

@@ -16,7 +16,7 @@ import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_reps_card.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_timer_card.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_weight_reps_card.dart';
-import 'package:fitend_member/workout/component/timer_progress_card%20.dart';
+import 'package:fitend_member/workout/component/timer_progress_card.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';

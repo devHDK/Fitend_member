@@ -205,7 +205,7 @@ class CommentCreateStateNotifier
         user: user,
       );
 
-      threadListState.updateUserCommentCount(threadId);
+      threadListState.updateUserCommentCount(threadId, 1);
 
       init();
     } catch (e) {

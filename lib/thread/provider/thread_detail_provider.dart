@@ -6,7 +6,9 @@ import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_params_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
+import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/repository/thread_comment_repository.dart';
 import 'package:fitend_member/thread/repository/thread_emoji_repository.dart';
 import 'package:fitend_member/thread/repository/thread_repository.dart';
@@ -19,9 +21,11 @@ final threadDetailProvider = StateNotifierProvider.family<
   final commentRepository = ref.watch(commentRepositoryProvider);
   final emojiRepository = ref.watch(emojiRepositoryProvider);
   final dioUpload = ref.watch(dioUploadProvider);
+  final threadListState = ref.watch(threadProvider.notifier);
 
   return ThreadDetailStateNotifier(
     threadId: threadId,
+    threadListState: threadListState,
     threadRepository: threadRepository,
     commentRepository: commentRepository,
     emojiRepository: emojiRepository,
@@ -31,6 +35,7 @@ final threadDetailProvider = StateNotifierProvider.family<
 
 class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
   final int threadId;
+  final ThreadStateNotifier threadListState;
   final ThreadRepository threadRepository;
   final ThreadCommentRepository commentRepository;
   final EmojiRepository emojiRepository;
@@ -38,6 +43,7 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
 
   ThreadDetailStateNotifier({
     required this.threadId,
+    required this.threadListState,
     required this.threadRepository,
     required this.commentRepository,
     required this.emojiRepository,
@@ -85,8 +91,6 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
         user: user,
       ),
     ];
-
-    print(tempComments);
 
     pstate.comments = tempComments;
 
@@ -228,5 +232,32 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
     });
 
     state = pstate.copyWith();
+  }
+
+  Future<void> deleteThread() async {
+    try {
+      await threadRepository.deleteThreadWithId(id: threadId);
+
+      if (threadListState.state is ThreadListModel) {
+        final pstate = threadListState.state as ThreadListModel;
+
+        final index = pstate.data.indexWhere((e) => e.id == threadId);
+        if (index != -1) {
+          threadListState.removeThreadWithId(threadId, index);
+        }
+      }
+    } catch (e) {
+      debugPrint('$e');
+    }
+  }
+
+  Future<void> deleteComment(int commentId) async {
+    try {
+      await commentRepository.deleteCommentWithId(id: commentId);
+
+      threadListState.updateUserCommentCount(threadId, -1);
+    } catch (e) {
+      debugPrint('$e');
+    }
   }
 }

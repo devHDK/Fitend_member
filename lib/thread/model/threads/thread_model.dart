@@ -1,4 +1,3 @@
-import 'package:fitend_member/thread/model/comments/thread_comment_list_model.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_model.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';

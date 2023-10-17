@@ -112,7 +112,7 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
     state = pstate.copyWith();
   }
 
-  void updateUserCommentCount(int threadId) {
+  void updateUserCommentCount(int threadId, int count) {
     final pstate = state as ThreadListModel;
 
     int index = pstate.data.indexWhere(
@@ -122,7 +122,7 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
     );
 
     pstate.data[index].userCommentCount =
-        pstate.data[index].userCommentCount! + 1;
+        pstate.data[index].userCommentCount! + count;
 
     state = pstate.copyWith();
   }
@@ -201,6 +201,14 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
     pstate.data[index].emojis!.removeWhere((emoji) {
       return emoji.id == emojiId && emoji.userId == userId;
     });
+
+    state = pstate.copyWith();
+  }
+
+  void removeThreadWithId(int threadId, int index) {
+    final pstate = state as ThreadListModel;
+
+    pstate.data.removeAt(index);
 
     state = pstate.copyWith();
   }

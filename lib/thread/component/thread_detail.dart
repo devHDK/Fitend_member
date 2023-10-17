@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
@@ -9,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class ThreadDetail extends StatefulWidget {
   const ThreadDetail({

@@ -241,17 +241,62 @@ class _CommentCellState extends ConsumerState<CommentCell> {
             ),
             if (mediaCount == 1 && linkUrls.length == 1)
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.fromLTRB(39, 10, 0, 10),
                 child: LinkPreview(
                   url: linkUrls.first,
-                  width: 100.w - 135,
+                  width: 100.w - 110,
                   height: 120,
                 ),
+              )
+            else if (mediaCount == 1 &&
+                widget.gallery!.length == 1 &&
+                widget.gallery!.first.type == 'video')
+              InkWell(
+                onTap: () => Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => MediaPageScreen(
+                      pageIndex: 0,
+                      gallery: widget.gallery!,
+                    ),
+                    fullscreenDialog: true,
+                  ),
+                ),
+                child: SizedBox(
+                  width: (100.w - 145),
+                  height: (100.w - 145) * 0.8,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: NetworkVideoPlayerMini(
+                        video: widget.gallery!.first,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            else if (mediaCount == 1 &&
+                widget.gallery!.length == 1 &&
+                widget.gallery!.first.type == 'image')
+              InkWell(
+                onTap: () => Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => MediaPageScreen(
+                      pageIndex: 0,
+                      gallery: widget.gallery!,
+                    ),
+                    fullscreenDialog: true,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(39, 10, 0, 10),
+                  child: PreviewImageNetwork(
+                    url: '$s3Url${widget.gallery!.first.url}',
+                    width: (100.w - 145).toInt(),
+                    height: ((100.w - 145) * 0.8).toInt(),
+                  ),
+                ),
               ),
-            //TODO : 단일 미디어 만들어야함
-            // else if( mediaCount == 1 && widget.gallery!.length == 1 && widget.gallery!.first.type == 'video' )
-            // else if( mediaCount == 1 && widget.gallery!.length == 1 && widget.gallery!.first.type == 'image' )
-
             if (mediaCount > 1)
               const SizedBox(
                 height: 10,

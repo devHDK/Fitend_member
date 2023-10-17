@@ -12,9 +12,11 @@ class NetworkVideoPlayerMini extends ConsumerStatefulWidget {
   const NetworkVideoPlayerMini({
     super.key,
     required this.video,
+    this.userOriginRatio = false,
   });
 
   final GalleryModel video;
+  final bool? userOriginRatio;
 
   @override
   ConsumerState<NetworkVideoPlayerMini> createState() =>
@@ -98,7 +100,9 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
               SizedBox(
                 child: Center(
                   child: AspectRatio(
-                    aspectRatio: 1 / 0.8,
+                    aspectRatio: widget.userOriginRatio!
+                        ? _videoController!.value.aspectRatio
+                        : 1 / 0.8,
                     child: Container(
                       color: BACKGROUND_COLOR,
                       child: Center(

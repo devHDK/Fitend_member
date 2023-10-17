@@ -294,10 +294,71 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                         ),
                       ),
                     ),
-                  //TODO : 단일 미디어 만들어야함
-                  // else if( mediaCount == 1 && model.gallery!.length == 1 && model.gallery!.first.type == 'video' )
-                  // else if( mediaCount == 1 && model.gallery!.length == 1 && model.gallery!.first.type == 'image' )
-
+                  if (mediaCount == 1 && linkUrls.length == 1)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: LinkPreview(
+                          url: linkUrls.first,
+                          width: 100.w - 110,
+                          height: 120,
+                        ),
+                      ),
+                    )
+                  else if (mediaCount == 1 &&
+                      model.gallery!.length == 1 &&
+                      model.gallery!.first.type == 'video')
+                    SliverToBoxAdapter(
+                      child: InkWell(
+                        onTap: () => Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (context) => MediaPageScreen(
+                              pageIndex: 0,
+                              gallery: model.gallery!,
+                            ),
+                            fullscreenDialog: true,
+                          ),
+                        ),
+                        child: SizedBox(
+                          height: 400,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: NetworkVideoPlayerMini(
+                                video: model.gallery!.first,
+                                userOriginRatio: true,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  else if (mediaCount == 1 &&
+                      model.gallery!.length == 1 &&
+                      model.gallery!.first.type == 'image')
+                    SliverToBoxAdapter(
+                      child: InkWell(
+                        onTap: () => Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (context) => MediaPageScreen(
+                              pageIndex: 0,
+                              gallery: model.gallery!,
+                            ),
+                            fullscreenDialog: true,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: PreviewImageNetwork(
+                            url: '$s3Url${model.gallery!.first.url}',
+                            width: (100.w - 70.0).toInt(),
+                            height: 300,
+                            boxFit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    ),
                   if (mediaCount > 1)
                     const SliverToBoxAdapter(
                       child: SizedBox(

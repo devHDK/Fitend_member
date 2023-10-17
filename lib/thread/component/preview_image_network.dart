@@ -6,11 +6,15 @@ class PreviewImageNetwork extends StatefulWidget {
   const PreviewImageNetwork({
     super.key,
     this.width = 140,
+    this.height = 112,
     required this.url,
+    this.boxFit = BoxFit.cover,
   });
 
   final int? width;
+  final int? height;
   final String url;
+  final BoxFit? boxFit;
 
   @override
   State<PreviewImageNetwork> createState() => _PreviewImageNetworkState();
@@ -31,12 +35,12 @@ class _PreviewImageNetworkState extends State<PreviewImageNetwork> {
       children: [
         SizedBox(
           width: widget.width!.toDouble(),
-          height: widget.width!.toDouble() * 0.8,
+          height: widget.height!.toDouble(),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: CustomExtendImage(
               url: widget.url,
-              fit: BoxFit.cover,
+              fit: widget.boxFit!,
             ),
           ),
         ),

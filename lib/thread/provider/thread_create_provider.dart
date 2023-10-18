@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/files/file_upload_request_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/repository/file_repository.dart';
@@ -17,6 +19,7 @@ import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/camera_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -75,6 +78,19 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       content: '',
       doneCount: 0,
       totalCount: 0,
+    );
+  }
+
+  void updateFromCache(ThreadCreateTempModel model) {
+    state = ThreadCreateTempModel(
+      isLoading: false,
+      isUploading: false,
+      content: model.content,
+      title: model.title,
+      doneCount: 0,
+      totalCount: 0,
+      assetsPaths: model.assetsPaths,
+      trainerId: model.trainerId,
     );
   }
 
@@ -332,5 +348,36 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     }
 
     return savedDir;
+  }
+
+  Future<void> updateFromEditModel(ThreadEditModel editModel) async {
+    List<String> assetPaths = [];
+
+    if (editModel.gallery != null && editModel.gallery!.isNotEmpty) {
+      for (var asset in editModel.gallery!) {
+        final fileInfo =
+            await DefaultCacheManager().getFileFromCache(asset.url);
+
+        if (fileInfo != null) {
+          assetPaths.add(fileInfo.file.path);
+        } else {
+          final file = await DefaultCacheManager()
+              .getSingleFile('$s3Url${asset.url}', key: asset.url);
+
+          assetPaths.add(file.path);
+        }
+      }
+    }
+
+    state = ThreadCreateTempModel(
+      title: editModel.title,
+      content: editModel.content,
+      isLoading: false,
+      isUploading: false,
+      doneCount: 0,
+      totalCount: assetPaths.length,
+      assetsPaths: assetPaths,
+      isEditedAssets: List.generate(assetPaths.length, (index) => false),
+    );
   }
 }

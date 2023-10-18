@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:any_link_preview/any_link_preview.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -11,6 +10,7 @@ import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/thread_asset_edit_screen.dart';
@@ -28,10 +28,12 @@ class ThreadCreateScreen extends ConsumerStatefulWidget {
     super.key,
     required this.trainer,
     required this.user,
+    this.threadEditModel,
   });
 
   final ThreadTrainer trainer;
   final ThreadUser user;
+  final ThreadEditModel? threadEditModel;
 
   @override
   ConsumerState<ThreadCreateScreen> createState() => _ThreadCreateScreenState();
@@ -40,8 +42,8 @@ class ThreadCreateScreen extends ConsumerStatefulWidget {
 class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
   FocusNode titleFocusNode = FocusNode();
   FocusNode contentFocusNode = FocusNode();
-  final titleController = TextEditingController();
-  final contentsController = TextEditingController();
+  TextEditingController? titleController;
+  TextEditingController? contentsController;
 
   final baseBorder = const OutlineInputBorder(
     borderSide: BorderSide(
@@ -50,12 +52,34 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     ),
   );
 
+  late final ThreadCreateTempModel model;
+
   @override
   void initState() {
     super.initState();
 
     titleFocusNode.addListener(_titleFocusnodeListner);
     contentFocusNode.addListener(_contentFocusnodeListner);
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (widget.threadEditModel != null) {
+        titleController =
+            TextEditingController(text: widget.threadEditModel!.title);
+        contentsController =
+            TextEditingController(text: widget.threadEditModel!.content);
+
+        ref
+            .read(threadCreateProvider.notifier)
+            .updateFromEditModel(widget.threadEditModel!); //edit 내용으로 업데이트
+      } else {
+        model = ref.read(threadCreateProvider);
+
+        titleController = TextEditingController(text: model.title);
+        contentsController = TextEditingController(text: model.content);
+
+        ref.read(threadCreateProvider.notifier).updateFromCache(model);
+      }
+    });
   }
 
   @override
@@ -64,7 +88,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     contentFocusNode.removeListener(_contentFocusnodeListner);
     titleFocusNode.dispose();
     contentFocusNode.dispose();
-    contentsController.dispose();
+    contentsController!.dispose();
 
     super.dispose();
   }
@@ -98,7 +122,11 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     final state = ref.watch(threadCreateProvider);
 
     List<String> linkUrls = [];
-    String processedText = contentsController.text.replaceAll('\n', ' ');
+    String processedText = '';
+
+    if (contentsController != null) {
+      processedText = contentsController!.text.replaceAll('\n', ' ');
+    }
 
     processedText.split(' ').forEach(
       (word) {
@@ -202,7 +230,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                 height: 25,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: contentsController.text.isNotEmpty
+                  color: contentsController != null &&
+                          contentsController!.text.isNotEmpty
                       ? POINT_COLOR
                       : POINT_COLOR.withOpacity(0.5),
                 ),
@@ -218,7 +247,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                       : Text(
                           '등록',
                           style: h6Headline.copyWith(
-                            color: contentsController.text.isNotEmpty
+                            color: contentsController != null &&
+                                    contentsController!.text.isNotEmpty
                                 ? Colors.white
                                 : Colors.white.withOpacity(0.5),
                             height: 1,
@@ -409,7 +439,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     return TextFormField(
       onChanged: (value) {
         ref.read(threadCreateProvider.notifier).updateContent(value);
-
         setState(() {});
       },
       maxLines: 20,
@@ -436,7 +465,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
           color: contentFocusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
         ),
         label: Text(
-          contentFocusNode.hasFocus || contentsController.text.isNotEmpty
+          contentFocusNode.hasFocus ||
+                  (contentsController != null &&
+                      contentsController!.text.isNotEmpty)
               ? ''
               : '여기를 눌러 시작해주세요\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',
           style: s1SubTitle.copyWith(
@@ -451,6 +482,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     return TextFormField(
       onChanged: (value) {
         ref.read(threadCreateProvider.notifier).updateTitle(value);
+        setState(() {});
       },
       maxLines: 1,
       style: const TextStyle(color: Colors.white),
@@ -472,7 +504,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
           vertical: 11,
         ),
         filled: true,
-        labelText: titleFocusNode.hasFocus || titleController.text.isNotEmpty
+        labelText: titleFocusNode.hasFocus ||
+                (titleController != null && titleController!.text.isNotEmpty)
             ? ''
             : '제목을 추가하시겠어요?',
         labelStyle: s1SubTitle.copyWith(

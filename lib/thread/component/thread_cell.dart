@@ -13,9 +13,11 @@ import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/view/media_page_screen.dart';
+import 'package:fitend_member/thread/view/thread_create_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -467,7 +469,22 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       .read(threadDetailProvider(widget.id).notifier)
                       .deleteThread();
                 },
-                edit: () {},
+                edit: () {
+                  context.pop();
+
+                  Navigator.of(context).push(CupertinoDialogRoute(
+                      builder: (context) => ThreadCreateScreen(
+                            trainer: widget.trainer,
+                            user: widget.user,
+                            threadEditModel: ThreadEditModel(
+                              threadId: widget.id,
+                              content: widget.content,
+                              gallery: widget.gallery,
+                              title: widget.title,
+                            ),
+                          ),
+                      context: context));
+                },
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20),

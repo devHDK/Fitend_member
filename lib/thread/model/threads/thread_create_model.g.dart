@@ -36,6 +36,9 @@ ThreadCreateTempModel _$ThreadCreateTempModelFromJson(
       isUploading: json['isUploading'] as bool,
       doneCount: json['doneCount'] as int,
       totalCount: json['totalCount'] as int,
+      isEditedAssets: (json['isEditedAssets'] as List<dynamic>?)
+          ?.map((e) => e as bool)
+          .toList(),
     );
 
 Map<String, dynamic> _$ThreadCreateTempModelToJson(
@@ -49,4 +52,5 @@ Map<String, dynamic> _$ThreadCreateTempModelToJson(
       'isUploading': instance.isUploading,
       'doneCount': instance.doneCount,
       'totalCount': instance.totalCount,
+      'isEditedAssets': instance.isEditedAssets,
     };

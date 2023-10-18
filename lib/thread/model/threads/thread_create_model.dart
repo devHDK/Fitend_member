@@ -58,6 +58,8 @@ class ThreadCreateTempModel {
   int doneCount;
   @JsonKey(name: "totalCount")
   int totalCount;
+  @JsonKey(name: "isEditedAssets")
+  final List<bool>? isEditedAssets;
 
   ThreadCreateTempModel({
     this.trainerId,
@@ -68,6 +70,7 @@ class ThreadCreateTempModel {
     required this.isUploading,
     required this.doneCount,
     required this.totalCount,
+    this.isEditedAssets,
   });
 
   ThreadCreateTempModel copyWith({
@@ -79,6 +82,7 @@ class ThreadCreateTempModel {
     bool? isUploading,
     int? doneCount,
     int? totalCount,
+    List<bool>? isEditedAssets,
   }) =>
       ThreadCreateTempModel(
         trainerId: trainerId ?? this.trainerId,
@@ -89,6 +93,7 @@ class ThreadCreateTempModel {
         isUploading: isUploading ?? this.isUploading,
         doneCount: doneCount ?? this.doneCount,
         totalCount: totalCount ?? this.totalCount,
+        isEditedAssets: isEditedAssets ?? this.isEditedAssets,
       );
 
   factory ThreadCreateTempModel.fromJson(Map<String, dynamic> json) =>

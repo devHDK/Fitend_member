@@ -57,6 +57,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
 
   late final ThreadCreateTempModel model;
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -71,9 +73,18 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
         contentsController =
             TextEditingController(text: widget.threadEditModel!.content);
 
+        setState(() {
+          isLoading = true;
+        });
+
         ref
             .read(threadCreateProvider.notifier)
-            .updateFromEditModel(widget.threadEditModel!); //edit 내용으로 업데이트
+            .updateFromEditModel(widget.threadEditModel!)
+            .then((value) {
+          setState(() {
+            isLoading = false;
+          });
+        }); //edit 내용으로 업데이트
       } else {
         model = ref.read(threadCreateProvider);
 
@@ -123,6 +134,17 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(threadCreateProvider);
+
+    if (isLoading) {
+      return const Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: POINT_COLOR,
+          ),
+        ),
+      );
+    }
 
     List<String> linkUrls = [];
     String processedText = '';

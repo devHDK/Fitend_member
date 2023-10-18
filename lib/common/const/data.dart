@@ -40,15 +40,14 @@ const DEVICEID = 'DEVICEID';
 
 const emulatorIp = 'http://10.0.2.2:4000/api/mobile';
 const simulatorIp = 'http://127.0.0.1:4000/api/mobile';
-// const simulatorIp = 'http://192.168.0.31:4000/api/mobile';
 
 final localIp = F.appFlavor == Flavor.local && Platform.isAndroid
     ? emulatorIp
     : simulatorIp;
 
 // const devIp = 'https://api-dev.fit-end.com/api/mobile'; //개발 서버
-// const devIp = 'http://192.168.0.63:4000/api/mobile'; //company
-const devIp = 'http://192.168.0.8:4000/api/mobile'; //home
+const devIp = 'http://192.168.0.63:4000/api/mobile'; //home
+// const devIp = 'http://192.168.0.8:4000/api/mobile'; //company
 const deployIp = 'https://api-prod.fit-end.com/api/mobile';
 
 //s3URL

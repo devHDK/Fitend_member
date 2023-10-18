@@ -167,9 +167,6 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
             final file = File(filePath);
             final bytes = await file.readAsBytes();
 
-            final timeBeforeUpload = DateTime.now();
-            print('timeBeforeUpload : $timeBeforeUpload');
-
             await dioUpload.put(
               retVideo.url,
               data: bytes,
@@ -179,10 +176,6 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
                 },
               ),
             );
-
-            final difference = DateTime.now().difference(timeBeforeUpload);
-            print('finish : ${DateTime.now()}');
-            print('difference : ${difference.inSeconds}');
 
             final retThumbnail = await fileRepository.getFileUpload(
               model:
@@ -370,8 +363,9 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         if (fileInfo != null) {
           assetPaths.add(fileInfo.file.path);
         } else {
+          debugPrint('media 다운로드중...');
           final file = await DefaultCacheManager()
-              .getSingleFile('$s3Url${asset.url}', key: asset.url);
+              .getSingleFile('$s3Url${asset.url}', key: '$s3Url$asset.url');
 
           assetPaths.add(file.path);
         }

@@ -21,14 +21,14 @@ class VideoCropScreen extends StatelessWidget {
                 child: IconButton(
                   onPressed: () =>
                       controller.rotate90Degrees(RotateDirection.left),
-                  icon: const Icon(Icons.rotate_left),
+                  icon: const Icon(Icons.keyboard_double_arrow_left_rounded),
                 ),
               ),
               Expanded(
                 child: IconButton(
                   onPressed: () =>
                       controller.rotate90Degrees(RotateDirection.right),
-                  icon: const Icon(Icons.rotate_right),
+                  icon: const Icon(Icons.keyboard_double_arrow_right_rounded),
                 ),
               )
             ]),

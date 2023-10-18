@@ -235,7 +235,7 @@ class _Controls extends StatelessWidget {
         children: [
           renderIconButton(
             onPressed: onReversePressed,
-            iconData: Icons.rotate_left,
+            iconData: Icons.keyboard_double_arrow_left_rounded,
           ),
           renderIconButton(
             onPressed: onPlayPressed,
@@ -243,7 +243,7 @@ class _Controls extends StatelessWidget {
           ),
           renderIconButton(
             onPressed: onForwarPressed,
-            iconData: Icons.rotate_right,
+            iconData: Icons.keyboard_double_arrow_right_rounded,
           ),
         ],
       ),

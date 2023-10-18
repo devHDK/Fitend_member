@@ -167,6 +167,9 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
             final file = File(filePath);
             final bytes = await file.readAsBytes();
 
+            final timeBeforeUpload = DateTime.now();
+            print('timeBeforeUpload : $timeBeforeUpload');
+
             await dioUpload.put(
               retVideo.url,
               data: bytes,
@@ -176,6 +179,10 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
                 },
               ),
             );
+
+            final difference = DateTime.now().difference(timeBeforeUpload);
+            print('finish : ${DateTime.now()}');
+            print('difference : ${difference.inSeconds}');
 
             final retThumbnail = await fileRepository.getFileUpload(
               model:
@@ -458,7 +465,6 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
           } else if (type == MediaType.video &&
               state.isEditedAssets != null &&
               state.isEditedAssets![index]) {
-            print('Video 수정됨');
             final mimeType = mime(filePath);
 
             final thumbnail = await MediaUtils.getVideoThumbNail(filePath);

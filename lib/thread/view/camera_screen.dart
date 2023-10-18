@@ -95,6 +95,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   void getAvailableCameras() async {
     try {
       WidgetsFlutterBinding.ensureInitialized();
+
       cameras = await availableCameras();
     } on CameraException catch (e) {
       debugPrint('Error in fetching the cameras: $e');
@@ -254,16 +255,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   @override
   void initState() {
+    super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     getPermissionStatus();
     getAvailableCameras();
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-
-    super.initState();
   }
 
   @override
@@ -361,49 +360,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              if (_isRecordingInProgress ||
-                                  recordingDuration > 0)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 10,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 15,
-                                        height: 15,
-                                        decoration: BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Container(
-                                        width: 60,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          color: Colors.black38,
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            DataUtils.getTimeStringMinutes(
-                                                recordingDuration),
-                                            style: s1SubTitle.copyWith(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                              height: 1.1,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                               const Spacer(),
                               // Row(
                               //   children: [
@@ -432,6 +388,55 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                               //     ),
                               //   ],
                               // ),
+                              if (_isRecordingInProgress ||
+                                  recordingDuration > 0)
+                                Center(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.black38,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          12, 5, 9, 5),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 8,
+                                            height: 8,
+                                            decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Center(
+                                            child: Text(
+                                              DataUtils.getTimeStringMinutes(
+                                                  recordingDuration),
+                                              style: s1SubTitle.copyWith(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                                height: 1.1,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                              const SizedBox(
+                                height: 11,
+                              ),
+
                               Container(
                                 color: Colors.black38,
                                 child: Padding(

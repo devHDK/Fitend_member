@@ -8,23 +8,18 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/comment_cell.dart';
-import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/link_preview.dart';
-import 'package:fitend_member/thread/component/network_video_player_mini.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
-import 'package:fitend_member/thread/component/preview_image_network.dart';
 import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/component/thread_detail.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
-import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/comment_asset_edit_screen.dart';
-import 'package:fitend_member/thread/view/media_page_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -82,7 +77,6 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(threadDetailProvider(widget.threadId));
     final commentState = ref.watch(commentCreateProvider(widget.threadId));
-    final threadListState = ref.watch(threadProvider);
 
     if (state is ThreadModelLoading) {
       return const Scaffold(
@@ -107,37 +101,6 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
     }
 
     final model = state as ThreadModel;
-    final threadListModel = threadListState as ThreadListModel;
-
-    double emojiHeight = 31;
-
-    List<Widget> emojiButtons = [];
-
-    if (model.emojis != null && model.emojis!.isNotEmpty) {
-      emojiButtons = _buildEmojiButtons(model, threadListModel);
-    }
-
-    emojiButtons.add(
-      _defaultEmojiButton(context, model, threadListModel),
-    );
-
-    int horizonEmojiCounts = (100.w - 56) ~/ 49;
-    int verticalEmojiCounts = (emojiButtons.length / horizonEmojiCounts).ceil();
-
-    emojiHeight = verticalEmojiCounts * 31;
-
-    List<String> linkUrls = [];
-
-    String processedText = model.content.replaceAll('\n', ' ');
-    processedText.split(' ').forEach(
-      (word) {
-        if (urlRegExp.hasMatch(word)) {
-          linkUrls.add(word);
-        }
-      },
-    );
-
-    int mediaCount = model.gallery!.length + linkUrls.length;
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -158,267 +121,69 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
       ),
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 28),
-            child: RefreshIndicator(
-              backgroundColor: BACKGROUND_COLOR,
-              color: POINT_COLOR,
-              onRefresh: () async {
-                await ref
-                    .read(threadDetailProvider(widget.threadId).notifier)
-                    .getThreadDetail(
-                      threadId: widget.threadId,
-                    );
-              },
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: ThreadDetail(
-                      threadId: model.id,
-                      writerType: model.writerType,
-                      user: model.user,
-                      trainer: model.trainer,
-                      title: model.title,
-                      dateTime:
-                          DateTime.parse(model.createdAt).toUtc().toLocal(),
-                      content: model.content,
-                      gallery: model.gallery,
-                    ),
+          RefreshIndicator(
+            backgroundColor: BACKGROUND_COLOR,
+            color: POINT_COLOR,
+            onRefresh: () async {
+              await ref
+                  .read(threadDetailProvider(widget.threadId).notifier)
+                  .getThreadDetail(
+                    threadId: widget.threadId,
+                  );
+            },
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: ThreadDetail(
+                    dateTime: DateTime.parse(model.createdAt).toUtc().toLocal(),
+                    threadId: widget.threadId,
                   ),
-                  if (mediaCount == 1 && linkUrls.length == 1)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: LinkPreview(
-                          url: linkUrls.first,
-                          width: 100.w - 110,
-                          height: 120,
-                        ),
-                      ),
-                    )
-                  else if (mediaCount == 1 &&
-                      model.gallery!.length == 1 &&
-                      model.gallery!.first.type == 'video')
-                    SliverToBoxAdapter(
-                      child: InkWell(
-                        onTap: () => Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (context) => MediaPageScreen(
-                              pageIndex: 0,
-                              gallery: model.gallery!,
-                            ),
-                            fullscreenDialog: true,
-                          ),
-                        ),
-                        child: SizedBox(
-                          height: 400,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: NetworkVideoPlayerMini(
-                                video: model.gallery!.first,
-                                userOriginRatio: true,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  else if (mediaCount == 1 &&
-                      model.gallery!.length == 1 &&
-                      model.gallery!.first.type == 'image')
-                    SliverToBoxAdapter(
-                      child: InkWell(
-                        onTap: () => Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (context) => MediaPageScreen(
-                              pageIndex: 0,
-                              gallery: model.gallery!,
-                            ),
-                            fullscreenDialog: true,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: PreviewImageNetwork(
-                            url: '$s3Url${model.gallery!.first.url}',
-                            width: (100.w - 70.0).toInt(),
-                            height: 300,
-                            boxFit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (mediaCount > 1)
-                    const SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 10,
-                      ),
-                    ),
-                  if (mediaCount > 2)
-                    _MediaListView(
-                      model: model,
-                      linkUrls: linkUrls,
-                      mediaCount: mediaCount,
-                    ),
-                  _emojiSection(emojiHeight, emojiButtons),
-                  _commentsDivider(model),
-                  if (model.comments != null && model.comments!.isNotEmpty)
-                    SliverList.separated(
-                      itemBuilder: (context, index) {
-                        if (index != 0 && index == model.comments!.length) {
-                          return const SizedBox(
-                            height: 150,
-                          );
-                        }
-
-                        final commentModel = model.comments![index];
-
-                        return Column(
-                          children: [
-                            CommentCell(
-                              threadId: widget.threadId,
-                              commentId: commentModel.id,
-                              content: commentModel.content,
-                              dateTime: DateTime.parse(commentModel.createdAt)
-                                  .toUtc()
-                                  .toLocal(),
-                              user: commentModel.user,
-                              trainer: commentModel.trainer,
-                              emojis: commentModel.emojis!,
-                              gallery: commentModel.gallery,
-                            ),
-                          ],
+                ),
+                if (model.comments != null && model.comments!.isNotEmpty)
+                  SliverList.separated(
+                    itemBuilder: (context, index) {
+                      if (index != 0 && index == model.comments!.length) {
+                        return const SizedBox(
+                          height: 150,
                         );
-                      },
-                      separatorBuilder: (context, index) => const SizedBox(
-                        height: 10,
+                      }
+
+                      final commentModel = model.comments![index];
+
+                      return CommentCell(
+                        threadId: widget.threadId,
+                        commentId: commentModel.id,
+                        content: commentModel.content,
+                        dateTime: DateTime.parse(commentModel.createdAt)
+                            .toUtc()
+                            .toLocal(),
+                        user: commentModel.user,
+                        trainer: commentModel.trainer,
+                        emojis: commentModel.emojis!,
+                        gallery: commentModel.gallery,
+                      );
+                    },
+                    separatorBuilder: (context, index) => const SizedBox(
+                      height: 10,
+                    ),
+                    itemCount: model.comments!.length + 1,
+                  )
+                else
+                  SliverToBoxAdapter(
+                    child: Text(
+                      '아직 댓글이 없어요 :)',
+                      style: s1SubTitle.copyWith(
+                        color: GRAY_COLOR,
+                        height: 1,
                       ),
-                      itemCount: model.comments!.length + 1,
-                    )
-                  else
-                    SliverToBoxAdapter(
-                      child: Text(
-                        '아직 댓글이 없어요 :)',
-                        style: s1SubTitle.copyWith(
-                          color: GRAY_COLOR,
-                          height: 1,
-                        ),
-                      ),
-                    )
-                ],
-              ),
+                    ),
+                  )
+              ],
             ),
           ),
           _bottomInputBox(commentState, model, context),
         ],
       ),
-    );
-  }
-
-  List<Widget> _buildEmojiButtons(
-      ThreadModel model, ThreadListModel threadListModel) {
-    Map<String, int> emojiCounts = {};
-    List<Widget> emojiButtons = [];
-
-    for (var emoji in model.emojis!) {
-      String emojiChar = emoji.emoji;
-
-      if (!emojiCounts.containsKey(emojiChar)) {
-        emojiCounts[emojiChar] = 1;
-      } else {
-        emojiCounts[emojiChar] = (emojiCounts[emojiChar] ?? 0) + 1;
-      }
-    }
-
-    emojiCounts.forEach(
-      (key, value) {
-        emojiButtons.add(
-          EmojiButton(
-            emoji: key,
-            count: value,
-            isSelected: model.emojis!.indexWhere((e) {
-                  return e.emoji == key && e.userId == model.user.id;
-                }) >
-                -1,
-            onTap: () async {
-              final result = await ref
-                  .read(threadDetailProvider(widget.threadId).notifier)
-                  .updateThreadEmoji(widget.threadId, model.user.id, key);
-
-              int index = threadListModel.data.indexWhere(
-                (thread) {
-                  return thread.id == widget.threadId;
-                },
-              );
-
-              try {
-                if (result['type'] == 'add') {
-                  final emojiId = result['emojiId'];
-
-                  ref
-                      .read(threadProvider.notifier)
-                      .addEmoji(model.user.id, key, index, emojiId);
-                } else if (result['type'] == 'remove') {
-                  final emojiId = result['emojiId'];
-                  ref
-                      .read(threadProvider.notifier)
-                      .removeEmoji(model.user.id, key, index, emojiId);
-                }
-              } catch (e) {
-                debugPrint('$e');
-              }
-            },
-          ),
-        );
-      },
-    );
-
-    return emojiButtons;
-  }
-
-  EmojiButton _defaultEmojiButton(BuildContext context, ThreadModel model,
-      ThreadListModel threadListModel) {
-    return EmojiButton(
-      onTap: () {
-        DialogWidgets.emojiPickerDialog(
-          context: context,
-          onEmojiSelect: (category, emoji) async {
-            if (emoji != null) {
-              final result = await ref
-                  .read(threadDetailProvider(widget.threadId).notifier)
-                  .updateThreadEmoji(
-                      widget.threadId, model.user.id, emoji.emoji);
-
-              int index = threadListModel.data.indexWhere(
-                (thread) {
-                  return thread.id == widget.threadId;
-                },
-              );
-
-              try {
-                if (result['type'] == 'add') {
-                  final emojiId = result['emojiId'];
-
-                  ref
-                      .read(threadProvider.notifier)
-                      .addEmoji(model.user.id, emoji.emoji, index, emojiId);
-                } else if (result['type'] == 'remove') {
-                  final emojiId = result['emojiId'];
-                  ref
-                      .read(threadProvider.notifier)
-                      .removeEmoji(model.user.id, emoji.emoji, index, emojiId);
-                }
-              } catch (e) {
-                debugPrint('$e');
-              }
-            }
-
-            context.pop();
-          },
-        );
-      },
     );
   }
 
@@ -451,12 +216,6 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
           topLeft: Radius.circular(10),
           topRight: Radius.circular(10),
         ),
-        // onPanelClosed: () => setState(() {
-        //   isSwipeUp = false;
-        // }),
-        // onPanelOpened: () => setState(() {
-        //   isSwipeUp = true;
-        // }),
         panel: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Column(
@@ -700,56 +459,6 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
     );
   }
 
-  SliverToBoxAdapter _emojiSection(
-      double emojiHeight, List<Widget> emojiButtons) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: SizedBox(
-          height: emojiHeight,
-          width: 100.w - 56,
-          child: Wrap(
-            spacing: 2.0,
-            runSpacing: 5.0,
-            children: emojiButtons,
-          ),
-        ),
-      ),
-    );
-  }
-
-  SliverToBoxAdapter _commentsDivider(ThreadModel model) {
-    return SliverToBoxAdapter(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                model.comments != null ? '${model.comments!.length}개의 댓글' : '',
-                style: s2SubTitle.copyWith(
-                  color: GRAY_COLOR,
-                  height: 1,
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              const Expanded(
-                child: Divider(
-                  thickness: 1,
-                  color: GRAY_COLOR,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
-    );
-  }
-
   TextFormField _commentTextFormField() {
     const baseBorder = OutlineInputBorder(
       borderSide: BorderSide(
@@ -802,91 +511,6 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
               : '댓글을 입력해주세요',
           style: s1SubTitle.copyWith(
             color: GRAY_COLOR,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MediaListView extends StatelessWidget {
-  const _MediaListView({
-    required this.model,
-    required this.linkUrls,
-    required this.mediaCount,
-  });
-
-  final ThreadModel model;
-  final List<String> linkUrls;
-  final int mediaCount;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: SizedBox(
-          height: (80.w.toInt() - 56) * 0.8,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              if (index >= model.gallery!.length) {
-                return Row(
-                  children: [
-                    LinkPreview(
-                      width: (80.w.toInt() - 56),
-                      height: (80.w.toInt() - 56) * 0.8,
-                      url: linkUrls[index - model.gallery!.length],
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                  ],
-                );
-              }
-
-              return Stack(
-                children: [
-                  InkWell(
-                    onTap: () => Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => MediaPageScreen(
-                          pageIndex: index,
-                          gallery: model.gallery!,
-                        ),
-                        fullscreenDialog: true,
-                      ),
-                    ),
-                    child: Hero(
-                      tag: model.gallery![index].url,
-                      child: model.gallery![index].type == 'video'
-                          ? Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: SizedBox(
-                                    height: (80.w - 56) * 0.8,
-                                    child: NetworkVideoPlayerMini(
-                                      video: model.gallery![index],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                )
-                              ],
-                            )
-                          : PreviewImageNetwork(
-                              url: '$s3Url${model.gallery![index].url}',
-                              width: 80.w.toInt() - 56,
-                              height: ((80.w - 56) * 0.8).toInt(),
-                            ),
-                    ),
-                  ),
-                ],
-              );
-            },
-            itemCount: mediaCount,
           ),
         ),
       ),

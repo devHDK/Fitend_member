@@ -17,14 +17,13 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ThreadAssetEditScreen extends ConsumerStatefulWidget {
-  const ThreadAssetEditScreen(
-      {super.key,
-      required this.pageIndex,
-      this.isComment = false,
-      this.threadId});
+  const ThreadAssetEditScreen({
+    super.key,
+    required this.pageIndex,
+    this.isThreadEdit = false,
+  });
   final int pageIndex;
-  final bool? isComment;
-  final int? threadId;
+  final bool? isThreadEdit;
 
   @override
   ConsumerState<ThreadAssetEditScreen> createState() => _AssetEditScreenState();
@@ -197,6 +196,12 @@ class _AssetEditScreenState extends ConsumerState<ThreadAssetEditScreen> {
                     ref
                         .read(threadCreateProvider.notifier)
                         .changeAsset(fileIndex, croppedFile.path);
+
+                    if (widget.isThreadEdit!) {
+                      ref
+                          .read(threadCreateProvider.notifier)
+                          .updateFileCheck('change', fileIndex);
+                    }
                   }
                 },
                 icon: const Icon(

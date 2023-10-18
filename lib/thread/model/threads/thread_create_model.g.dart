@@ -30,14 +30,18 @@ ThreadCreateTempModel _$ThreadCreateTempModelFromJson(
       trainerId: json['trainerId'] as int?,
       title: json['title'] as String?,
       content: json['content'] as String,
-      assetsPaths:
-          (json['assets'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      assetsPaths: (json['assetsPaths'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       isLoading: json['isLoading'] as bool,
       isUploading: json['isUploading'] as bool,
       doneCount: json['doneCount'] as int,
       totalCount: json['totalCount'] as int,
       isEditedAssets: (json['isEditedAssets'] as List<dynamic>?)
           ?.map((e) => e as bool)
+          .toList(),
+      gallery: (json['gallery'] as List<dynamic>?)
+          ?.map((e) => GalleryModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -47,10 +51,11 @@ Map<String, dynamic> _$ThreadCreateTempModelToJson(
       'trainerId': instance.trainerId,
       'title': instance.title,
       'content': instance.content,
-      'assets': instance.assetsPaths,
+      'assetsPaths': instance.assetsPaths,
       'isLoading': instance.isLoading,
       'isUploading': instance.isUploading,
       'doneCount': instance.doneCount,
       'totalCount': instance.totalCount,
       'isEditedAssets': instance.isEditedAssets,
+      'gallery': instance.gallery,
     };

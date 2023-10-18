@@ -6,6 +6,7 @@ import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_params_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
@@ -95,6 +96,20 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
     pstate.comments = tempComments;
 
     state = pstate;
+  }
+
+  void updateThreadWithModel(int threadId, ThreadCreateModel model) {
+    if (state is ThreadModel) {
+      var pstate = state as ThreadModel;
+
+      pstate = pstate.copyWith(
+        title: model.title,
+        content: model.content,
+        gallery: model.gallery,
+      );
+
+      state = pstate.copyWith();
+    }
   }
 
   Future<Map<dynamic, dynamic>> updateThreadEmoji(

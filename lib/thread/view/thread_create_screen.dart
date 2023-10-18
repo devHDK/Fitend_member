@@ -7,11 +7,14 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/link_preview.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
 import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
+import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
+import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
+import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/thread_asset_edit_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -216,15 +219,43 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
             child: TextButton(
               onPressed: state.isLoading || state.content.isEmpty
                   ? null
-                  : () async {
-                      await ref
-                          .read(threadCreateProvider.notifier)
-                          .createThread(
-                            widget.user,
-                            widget.trainer,
-                          )
-                          .then((value) => context.pop());
-                    },
+                  : widget.threadEditModel == null
+                      ? () async {
+                          await ref
+                              .read(threadCreateProvider.notifier)
+                              .createThread(
+                                widget.user,
+                                widget.trainer,
+                              )
+                              .then((value) => context.pop());
+                        }
+                      : () async {
+                          await ref
+                              .read(threadCreateProvider.notifier)
+                              .updateThread(
+                                widget.user,
+                                widget.trainer,
+                                widget.threadEditModel!.threadId,
+                                widget.threadEditModel!.gallery,
+                              )
+                              .then((value) {
+                            if (value != null) {
+                              ref
+                                  .read(threadProvider.notifier)
+                                  .updateThreadWithModel(
+                                      widget.threadEditModel!.threadId, value);
+
+                              ref
+                                  .read(threadDetailProvider(
+                                          widget.threadEditModel!.threadId)
+                                      .notifier)
+                                  .updateThreadWithModel(
+                                      widget.threadEditModel!.threadId, value);
+                            }
+
+                            context.pop();
+                          });
+                        },
               child: Container(
                 width: 53,
                 height: 25,
@@ -245,7 +276,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                           ),
                         )
                       : Text(
-                          '등록',
+                          widget.threadEditModel != null ? '수정' : '등록',
                           style: h6Headline.copyWith(
                             color: contentsController != null &&
                                     contentsController!.text.isNotEmpty
@@ -297,6 +328,12 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                               ref
                                   .read(threadCreateProvider.notifier)
                                   .addAssets(file!.path);
+
+                              if (widget.threadEditModel != null) {
+                                ref
+                                    .read(threadCreateProvider.notifier)
+                                    .updateFileCheck('add', 0);
+                              }
 
                               debugPrint('file.path : ${file.path}');
                             }
@@ -386,6 +423,10 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                       builder: (context) {
                                         return ThreadAssetEditScreen(
                                           pageIndex: index,
+                                          isThreadEdit:
+                                              widget.threadEditModel != null
+                                                  ? true
+                                                  : false,
                                         );
                                       },
                                     ),
@@ -416,6 +457,16 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                   ref
                                       .read(threadCreateProvider.notifier)
                                       .removeAsset(index);
+
+                                  if (widget.threadEditModel != null) {
+                                    ref
+                                        .read(threadCreateProvider.notifier)
+                                        .updateFileCheck('remove', index);
+
+                                    ref
+                                        .read(threadCreateProvider.notifier)
+                                        .removeAssetFromGallery(index);
+                                  }
                                 },
                                 icon: const Icon(
                                   Icons.cancel,

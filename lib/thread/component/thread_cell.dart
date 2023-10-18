@@ -14,6 +14,7 @@ import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/view/media_page_screen.dart';
@@ -472,18 +473,27 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                 edit: () {
                   context.pop();
 
-                  Navigator.of(context).push(CupertinoDialogRoute(
+                  Navigator.of(context)
+                      .push(
+                    CupertinoDialogRoute(
                       builder: (context) => ThreadCreateScreen(
-                            trainer: widget.trainer,
-                            user: widget.user,
-                            threadEditModel: ThreadEditModel(
-                              threadId: widget.id,
-                              content: widget.content,
-                              gallery: widget.gallery,
-                              title: widget.title,
-                            ),
-                          ),
-                      context: context));
+                        trainer: widget.trainer,
+                        user: widget.user,
+                        threadEditModel: ThreadEditModel(
+                          threadId: widget.id,
+                          content: widget.content,
+                          gallery: widget.gallery,
+                          title: widget.title,
+                        ),
+                      ),
+                      context: context,
+                    ),
+                  )
+                      .then((value) {
+                    if (value is bool && value) {
+                      ref.read(threadCreateProvider.notifier).init();
+                    }
+                  });
                 },
               ),
               child: Padding(

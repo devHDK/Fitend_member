@@ -5,10 +5,17 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
+import 'package:fitend_member/thread/model/common/gallery_model.dart';
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
+import 'package:fitend_member/thread/view/thread_create_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -20,19 +27,23 @@ class ThreadDetail extends ConsumerStatefulWidget {
   const ThreadDetail({
     super.key,
     required this.threadId,
-    required this.profileImageUrl,
     this.title,
-    required this.nickname,
-    required this.dateTime,
     required this.content,
+    required this.dateTime,
+    required this.user,
+    required this.trainer,
+    required this.writerType,
+    this.gallery,
   });
 
   final int threadId;
-  final String profileImageUrl;
   final String? title;
-  final String nickname;
   final DateTime dateTime;
   final String content;
+  final ThreadUser user;
+  final ThreadTrainer trainer;
+  final String writerType;
+  final List<GalleryModel>? gallery;
 
   @override
   ConsumerState<ThreadDetail> createState() => _ThreadDetailState();
@@ -107,7 +118,11 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                     CircleProfileImage(
                       borderRadius: 17,
                       image: CachedNetworkImage(
-                        imageUrl: widget.profileImageUrl,
+                        imageUrl: widget.writerType == 'trainer'
+                            ? '$s3Url${widget.trainer.profileImage}'
+                            : widget.user.gender == 'male'
+                                ? maleProfileUrl
+                                : femaleProfileUrl,
                         height: 34,
                         width: 34,
                       ),
@@ -116,7 +131,9 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                       width: 9,
                     ),
                     Text(
-                      widget.nickname,
+                      widget.writerType == 'trainer'
+                          ? widget.trainer.nickname
+                          : widget.user.nickname,
                       style: s1SubTitle.copyWith(
                         color: LIGHT_GRAY_COLOR,
                         height: 1,
@@ -153,7 +170,31 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                           .deleteThread()
                           .then((value) => context.pop());
                     },
-                    edit: () {},
+                    edit: () {
+                      context.pop();
+
+                      Navigator.of(context)
+                          .push(
+                        CupertinoDialogRoute(
+                          builder: (context) => ThreadCreateScreen(
+                            trainer: widget.trainer,
+                            user: widget.user,
+                            threadEditModel: ThreadEditModel(
+                              threadId: widget.threadId,
+                              content: widget.content,
+                              gallery: widget.gallery,
+                              title: widget.title,
+                            ),
+                          ),
+                          context: context,
+                        ),
+                      )
+                          .then((value) {
+                        if (value is bool && value) {
+                          ref.read(threadCreateProvider.notifier).init();
+                        }
+                      });
+                    },
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(20),

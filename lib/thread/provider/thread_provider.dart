@@ -2,9 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_params_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_get_list_params_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
+import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/repository/thread_comment_repository.dart';
 import 'package:fitend_member/thread/repository/thread_emoji_repository.dart';
 import 'package:fitend_member/thread/repository/thread_repository.dart';
@@ -213,5 +215,21 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
     pstate.total -= 1;
 
     state = pstate.copyWith();
+  }
+
+  void updateThreadWithModel(int threadId, ThreadCreateModel model) {
+    if (state is ThreadListModel) {
+      final pstate = state as ThreadListModel;
+
+      final index = pstate.data.indexWhere((e) => e.id == threadId);
+
+      pstate.data[index] = pstate.data[index].copyWith(
+        title: model.title,
+        content: model.content,
+        gallery: model.gallery,
+      );
+
+      state = pstate.copyWith();
+    }
   }
 }

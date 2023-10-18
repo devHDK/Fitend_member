@@ -175,17 +175,14 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                   SliverToBoxAdapter(
                     child: ThreadDetail(
                       threadId: model.id,
-                      profileImageUrl: model.writerType == 'trainer'
-                          ? '$s3Url${model.trainer.profileImage}'
-                          : model.user.gender == 'male'
-                              ? maleProfileUrl
-                              : femaleProfileUrl,
-                      nickname: model.writerType == 'trainer'
-                          ? model.trainer.nickname
-                          : model.user.nickname,
+                      writerType: model.writerType,
+                      user: model.user,
+                      trainer: model.trainer,
+                      title: model.title,
                       dateTime:
                           DateTime.parse(model.createdAt).toUtc().toLocal(),
                       content: model.content,
+                      gallery: model.gallery,
                     ),
                   ),
                   if (mediaCount == 1 && linkUrls.length == 1)

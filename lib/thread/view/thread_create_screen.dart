@@ -228,7 +228,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context); //뒤로가기
+            context.pop(widget.threadEditModel != null ? true : null);
           },
           icon: const Padding(
             padding: EdgeInsets.only(left: 18),

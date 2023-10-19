@@ -14,6 +14,7 @@ import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/component/thread_detail.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_comment_edit_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
@@ -25,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:html/dom_parsing.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -45,6 +47,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
   FocusNode commentFocusNode = FocusNode();
   final commentController = TextEditingController();
   int maxLine = 1;
+
+  int edittingCommentId = -1;
 
   @override
   void initState() {
@@ -150,17 +154,68 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
 
                       final commentModel = model.comments![index];
 
-                      return CommentCell(
-                        threadId: widget.threadId,
-                        commentId: commentModel.id,
-                        content: commentModel.content,
-                        dateTime: DateTime.parse(commentModel.createdAt)
-                            .toUtc()
-                            .toLocal(),
-                        user: commentModel.user,
-                        trainer: commentModel.trainer,
-                        emojis: commentModel.emojis!,
-                        gallery: commentModel.gallery,
+                      return Stack(
+                        children: [
+                          CommentCell(
+                            threadId: widget.threadId,
+                            commentId: commentModel.id,
+                            content: commentModel.content,
+                            dateTime: DateTime.parse(commentModel.createdAt)
+                                .toUtc()
+                                .toLocal(),
+                            user: commentModel.user,
+                            trainer: commentModel.trainer,
+                            emojis: commentModel.emojis!,
+                            gallery: commentModel.gallery,
+                            isEditting: commentModel.id == edittingCommentId,
+                          ),
+                          if (commentModel.user != null &&
+                              model.user.id == commentModel.user!.id &&
+                              edittingCommentId == -1)
+                            Positioned(
+                              top: -5,
+                              right: 15,
+                              child: InkWell(
+                                onTap: () => DialogWidgets.editBottomModal(
+                                  context,
+                                  delete: () async {
+                                    context.pop();
+
+                                    await ref
+                                        .read(threadDetailProvider(
+                                                widget.threadId)
+                                            .notifier)
+                                        .deleteComment(commentModel.id);
+                                  },
+                                  edit: () async {
+                                    context.pop();
+
+                                    ref
+                                        .read(commentCreateProvider(
+                                                commentModel.threadId)
+                                            .notifier)
+                                        .updateFromEditModel(
+                                            ThreadCommentEditModel(
+                                                threadId: commentModel.threadId,
+                                                content: commentModel.content,
+                                                gallery: commentModel.gallery));
+
+                                    setState(() {
+                                      commentController.text =
+                                          commentModel.content;
+
+                                      edittingCommentId = commentModel.id;
+                                    });
+                                  },
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15),
+                                  child: SvgPicture.asset(
+                                      'asset/img/icon_edit.svg'),
+                                ),
+                              ),
+                            )
+                        ],
                       );
                     },
                     separatorBuilder: (context, index) => const SizedBox(
@@ -170,11 +225,14 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                   )
                 else
                   SliverToBoxAdapter(
-                    child: Text(
-                      '아직 댓글이 없어요 :)',
-                      style: s1SubTitle.copyWith(
-                        color: GRAY_COLOR,
-                        height: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 28),
+                      child: Text(
+                        '아직 댓글이 없어요 :)',
+                        style: s1SubTitle.copyWith(
+                          color: GRAY_COLOR,
+                          height: 1,
+                        ),
                       ),
                     ),
                   )
@@ -187,8 +245,11 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
     );
   }
 
-  Positioned _bottomInputBox(ThreadCommentCreateTempModel commentState,
-      ThreadModel model, BuildContext context) {
+  Positioned _bottomInputBox(
+    ThreadCommentCreateTempModel commentState,
+    ThreadModel model,
+    BuildContext context,
+  ) {
     List<String> commentCreateLinkUrl = [];
     String commentProcessedText = commentController.text.replaceAll('\n', ' ');
 
@@ -326,6 +387,20 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                                                   widget.threadId)
                                               .notifier)
                                           .removeAsset(index);
+
+                                      if (edittingCommentId != -1) {
+                                        ref
+                                            .read(commentCreateProvider(
+                                                    widget.threadId)
+                                                .notifier)
+                                            .updateFileCheck('remove', index);
+
+                                        ref
+                                            .read(commentCreateProvider(
+                                                    commentState.threadId)
+                                                .notifier)
+                                            .removeAssetFromGallery(index);
+                                      }
                                     },
                                     icon: const Icon(
                                       Icons.cancel,
@@ -375,6 +450,14 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                                         .notifier)
                                     .addAssets(file!.path);
 
+                                if (edittingCommentId != -1) {
+                                  ref
+                                      .read(
+                                          commentCreateProvider(widget.threadId)
+                                              .notifier)
+                                      .updateFileCheck('add', 0);
+                                }
+
                                 debugPrint('file.path : ${file.path}');
                               }
                             }
@@ -395,63 +478,151 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                     ),
                   ),
                   const Spacer(),
-                  TextButton(
-                    onPressed: commentState.isLoading ||
-                            commentController.text.isEmpty
-                        ? null
-                        : () async {
-                            await ref
-                                .read(commentCreateProvider(widget.threadId)
-                                    .notifier)
-                                .createComment(widget.threadId, model.user)
-                                .then((value) {
-                              setState(() {
-                                commentController.text = '';
-                              });
-                            }).onError((error, stackTrace) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => DialogWidgets.errorDialog(
-                                  message: '업도르에 실패하였습니다.',
-                                  confirmText: '확인',
-                                  confirmOnTap: () => context.pop(),
-                                ),
-                              );
-                            });
-                          },
-                    child: Container(
-                      width: 53,
-                      height: 25,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: commentController.text.isNotEmpty
-                            ? POINT_COLOR
-                            : POINT_COLOR.withOpacity(0.5),
-                      ),
-                      child: Center(
-                        child:
-                            commentState.isLoading || commentState.isUploading
-                                ? const SizedBox(
-                                    height: 15,
-                                    width: 15,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : Text(
-                                    '등록',
-                                    style: h6Headline.copyWith(
-                                      color: commentController.text.isNotEmpty
-                                          ? Colors.white
-                                          : Colors.white.withOpacity(0.5),
-                                      height: 1,
-                                    ),
+                  if (edittingCommentId == -1)
+                    InkWell(
+                      onTap: commentState.isLoading ||
+                              commentController.text.isEmpty
+                          ? null
+                          : () async {
+                              await ref
+                                  .read(commentCreateProvider(widget.threadId)
+                                      .notifier)
+                                  .createComment(widget.threadId, model.user)
+                                  .then((value) {
+                                setState(() {
+                                  commentController.text = '';
+                                });
+                              }).onError((error, stackTrace) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      DialogWidgets.errorDialog(
+                                    message: '업도르에 실패하였습니다.',
+                                    confirmText: '확인',
+                                    confirmOnTap: () => context.pop(),
                                   ),
+                                );
+                              });
+                            },
+                      child: Container(
+                        width: 53,
+                        height: 25,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: commentController.text.isNotEmpty
+                              ? POINT_COLOR
+                              : POINT_COLOR.withOpacity(0.5),
+                        ),
+                        child: Center(
+                          child:
+                              commentState.isLoading || commentState.isUploading
+                                  ? const SizedBox(
+                                      height: 15,
+                                      width: 15,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Text(
+                                      '등록',
+                                      style: h6Headline.copyWith(
+                                        color: commentController.text.isNotEmpty
+                                            ? Colors.white
+                                            : Colors.white.withOpacity(0.5),
+                                        height: 1,
+                                      ),
+                                    ),
+                        ),
                       ),
-                    ),
-                  ),
+                    )
+                  else
+                    commentState.isLoading || commentState.isUploading
+                        ? Container(
+                            width: 53,
+                            height: 25,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: POINT_COLOR.withOpacity(0.5),
+                            ),
+                            child: const Center(
+                              child: SizedBox(
+                                height: 15,
+                                width: 15,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  ref
+                                      .read(commentCreateProvider(model.id)
+                                          .notifier)
+                                      .init();
+
+                                  setState(() {
+                                    edittingCommentId = -1;
+                                  });
+                                },
+                                child: Container(
+                                  width: 45,
+                                  height: 25,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: POINT_COLOR, width: 1),
+                                  ),
+                                  child: const Icon(Icons.close,
+                                      color: POINT_COLOR),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  ref
+                                      .read(commentCreateProvider(
+                                              commentState.threadId)
+                                          .notifier)
+                                      .updateComment(
+                                        edittingCommentId,
+                                        commentState.gallery,
+                                      )
+                                      .then((value) {
+                                    ref
+                                        .read(commentCreateProvider(
+                                                commentState.threadId)
+                                            .notifier)
+                                        .init();
+
+                                    setState(() {
+                                      edittingCommentId = -1;
+                                      commentController.text = '';
+                                    });
+                                  });
+                                },
+                                child: Container(
+                                  width: 45,
+                                  height: 25,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: POINT_COLOR,
+                                  ),
+                                  child: SvgPicture.asset(
+                                    'asset/img/icon_check_save.svg',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
                 ],
-              ),
+              )
             ],
           ),
         ),

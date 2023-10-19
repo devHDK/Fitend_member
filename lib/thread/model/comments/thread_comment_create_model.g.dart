@@ -29,8 +29,9 @@ ThreadCommentCreateTempModel _$ThreadCommentCreateTempModelFromJson(
     ThreadCommentCreateTempModel(
       threadId: json['threadId'] as int,
       content: json['content'] as String,
-      assetsPaths:
-          (json['gallery'] as List<dynamic>).map((e) => e as String).toList(),
+      assetsPaths: (json['assetsPaths'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       emojis: (json['emojis'] as List<dynamic>)
           .map((e) => EmojiModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -38,6 +39,12 @@ ThreadCommentCreateTempModel _$ThreadCommentCreateTempModelFromJson(
       isUploading: json['isUploading'] as bool,
       doneCount: json['doneCount'] as int,
       totalCount: json['totalCount'] as int,
+      isEditedAssets: (json['isEditedAssets'] as List<dynamic>?)
+          ?.map((e) => e as bool)
+          .toList(),
+      gallery: (json['gallery'] as List<dynamic>?)
+          ?.map((e) => GalleryModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$ThreadCommentCreateTempModelToJson(
@@ -45,10 +52,12 @@ Map<String, dynamic> _$ThreadCommentCreateTempModelToJson(
     <String, dynamic>{
       'threadId': instance.threadId,
       'content': instance.content,
-      'gallery': instance.assetsPaths,
+      'assetsPaths': instance.assetsPaths,
       'emojis': instance.emojis,
       'isLoading': instance.isLoading,
       'isUploading': instance.isUploading,
       'doneCount': instance.doneCount,
       'totalCount': instance.totalCount,
+      'isEditedAssets': instance.isEditedAssets,
+      'gallery': instance.gallery,
     };

@@ -21,9 +21,12 @@ class CommentAssetEditScreen extends ConsumerStatefulWidget {
     super.key,
     required this.pageIndex,
     required this.threadId,
+    this.isCommentEdit = false,
   });
+
   final int pageIndex;
   final int threadId;
+  final bool? isCommentEdit;
 
   @override
   ConsumerState<CommentAssetEditScreen> createState() =>
@@ -202,6 +205,12 @@ class _AssetEditScreenState extends ConsumerState<CommentAssetEditScreen> {
                     ref
                         .read(commentCreateProvider(widget.threadId).notifier)
                         .changeAsset(fileIndex, croppedFile.path);
+
+                    if (widget.isCommentEdit!) {
+                      ref
+                          .read(commentCreateProvider(widget.threadId).notifier)
+                          .updateFileCheck('change', fileIndex);
+                    }
                   }
                 },
                 icon: const Icon(

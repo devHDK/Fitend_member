@@ -35,7 +35,7 @@ class CommentCell extends ConsumerStatefulWidget {
     this.user,
     this.gallery,
     required this.emojis,
-    this.isSelected = false,
+    this.isEditting = false,
   });
 
   final int threadId;
@@ -46,7 +46,7 @@ class CommentCell extends ConsumerStatefulWidget {
   final ThreadUser? user;
   final List<GalleryModel>? gallery;
   final List<EmojiModel> emojis;
-  final bool? isSelected;
+  final bool? isEditting;
 
   @override
   ConsumerState<CommentCell> createState() => _CommentCellState();
@@ -135,246 +135,216 @@ class _CommentCellState extends ConsumerState<CommentCell> {
     int mediaCount = widget.gallery!.length + linkUrls.length;
 
     return Container(
-      width: 100.w - 56,
+      width: 100.w,
       decoration: BoxDecoration(
         border: Border.all(
-          color: widget.isSelected! ? POINT_COLOR : Colors.transparent,
+          color: widget.isEditting! ? POINT_COLOR : Colors.transparent,
         ),
-        color: widget.isSelected! ? Colors.black54 : null,
+        color: widget.isEditting! ? Colors.black54 : null,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 7),
-        child: Stack(
+        child: Column(
           children: [
-            Column(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                CircleProfileImage(
+                  image: CachedNetworkImage(
+                    imageUrl: widget.trainer != null
+                        ? '$s3Url${widget.trainer!.profileImage}'
+                        : widget.user != null && widget.user!.gender == 'male'
+                            ? maleProfileUrl
+                            : femaleProfileUrl,
+                    width: 34,
+                    height: 34,
+                  ),
+                  borderRadius: 17,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleProfileImage(
-                      image: CachedNetworkImage(
-                        imageUrl: widget.trainer != null
-                            ? '$s3Url${widget.trainer!.profileImage}'
-                            : widget.user != null &&
-                                    widget.user!.gender == 'male'
-                                ? maleProfileUrl
-                                : femaleProfileUrl,
-                        width: 34,
-                        height: 34,
+                    Row(
+                      children: [
+                        Text(
+                          widget.trainer != null
+                              ? widget.trainer!.nickname
+                              : widget.user!.nickname,
+                          style: s1SubTitle.copyWith(
+                            color: LIGHT_GRAY_COLOR,
+                            height: 1,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          DataUtils.getDurationStringFromNow(widget.dateTime),
+                          style:
+                              s2SubTitle.copyWith(color: GRAY_COLOR, height: 1),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: 100.w - 100,
+                      child: RichText(
+                        textScaleFactor: 1.0,
+                        text: TextSpan(
+                          children: contentTextSpans,
+                          style: s1SubTitle.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                      borderRadius: 17,
                     ),
                     const SizedBox(
-                      width: 10,
+                      height: 5,
+                    )
+                  ],
+                ),
+              ],
+            ),
+            if (mediaCount == 1 && linkUrls.length == 1)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(39, 10, 0, 10),
+                child: LinkPreview(
+                  url: linkUrls.first,
+                  width: 100.w - 110,
+                  height: 120,
+                ),
+              )
+            else if (mediaCount == 1 &&
+                widget.gallery!.length == 1 &&
+                widget.gallery!.first.type == 'video')
+              InkWell(
+                onTap: () => Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => MediaPageScreen(
+                      pageIndex: 0,
+                      gallery: widget.gallery!,
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                    fullscreenDialog: true,
+                  ),
+                ),
+                child: SizedBox(
+                  width: (100.w - 110),
+                  height: (100.w - 110) * 0.8,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: NetworkVideoPlayerMini(
+                        video: widget.gallery!.first,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            else if (mediaCount == 1 &&
+                widget.gallery!.length == 1 &&
+                widget.gallery!.first.type == 'image')
+              InkWell(
+                onTap: () => Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => MediaPageScreen(
+                      pageIndex: 0,
+                      gallery: widget.gallery!,
+                    ),
+                    fullscreenDialog: true,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(39, 10, 0, 10),
+                  child: PreviewImageNetwork(
+                    url: '$s3Url${widget.gallery!.first.url}',
+                    width: (100.w - 110).toInt(),
+                    height: ((100.w - 110) * 0.8).toInt(),
+                  ),
+                ),
+              ),
+            if (mediaCount > 1)
+              const SizedBox(
+                height: 10,
+              ),
+            if (mediaCount > 2)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(39, 0, 0, 10),
+                child: SizedBox(
+                  height: 112,
+                  width: 100.w - 110,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      if (index >= widget.gallery!.length) {
+                        return Row(
                           children: [
-                            Text(
-                              widget.trainer != null
-                                  ? widget.trainer!.nickname
-                                  : widget.user!.nickname,
-                              style: s1SubTitle.copyWith(
-                                color: LIGHT_GRAY_COLOR,
-                                height: 1,
-                              ),
+                            LinkPreview(
+                              url: linkUrls[index - widget.gallery!.length],
+                              height: 140 * 0.8,
+                              width: 140,
                             ),
                             const SizedBox(
                               width: 10,
                             ),
-                            Text(
-                              DataUtils.getDurationStringFromNow(
-                                  widget.dateTime),
-                              style: s2SubTitle.copyWith(
-                                  color: GRAY_COLOR, height: 1),
-                            ),
                           ],
-                        ),
-                        SizedBox(
-                          width: 100.w - 56 - 44,
-                          child: RichText(
-                            textScaleFactor: 1.0,
-                            text: TextSpan(
-                              children: contentTextSpans,
-                              style: s1SubTitle.copyWith(
-                                color: Colors.white,
+                        );
+                      }
+
+                      return Stack(
+                        children: [
+                          InkWell(
+                            onTap: () => Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (context) => MediaPageScreen(
+                                  pageIndex: index,
+                                  gallery: widget.gallery!,
+                                ),
+                                fullscreenDialog: true,
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                if (mediaCount == 1 && linkUrls.length == 1)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(39, 10, 0, 10),
-                    child: LinkPreview(
-                      url: linkUrls.first,
-                      width: 100.w - 110,
-                      height: 120,
-                    ),
-                  )
-                else if (mediaCount == 1 &&
-                    widget.gallery!.length == 1 &&
-                    widget.gallery!.first.type == 'video')
-                  InkWell(
-                    onTap: () => Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => MediaPageScreen(
-                          pageIndex: 0,
-                          gallery: widget.gallery!,
-                        ),
-                        fullscreenDialog: true,
-                      ),
-                    ),
-                    child: SizedBox(
-                      width: (100.w - 145),
-                      height: (100.w - 145) * 0.8,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: NetworkVideoPlayerMini(
-                            video: widget.gallery!.first,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                else if (mediaCount == 1 &&
-                    widget.gallery!.length == 1 &&
-                    widget.gallery!.first.type == 'image')
-                  InkWell(
-                    onTap: () => Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => MediaPageScreen(
-                          pageIndex: 0,
-                          gallery: widget.gallery!,
-                        ),
-                        fullscreenDialog: true,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(39, 10, 0, 10),
-                      child: PreviewImageNetwork(
-                        url: '$s3Url${widget.gallery!.first.url}',
-                        width: (100.w - 145).toInt(),
-                        height: ((100.w - 145) * 0.8).toInt(),
-                      ),
-                    ),
-                  ),
-                if (mediaCount > 1)
-                  const SizedBox(
-                    height: 10,
-                  ),
-                if (mediaCount > 2)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(39, 0, 0, 10),
-                    child: SizedBox(
-                      height: 112,
-                      width: 100.w - 56,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          if (index >= widget.gallery!.length) {
-                            return Row(
-                              children: [
-                                LinkPreview(
-                                  url: linkUrls[index - widget.gallery!.length],
-                                  height: 140 * 0.8,
-                                  width: 140,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                              ],
-                            );
-                          }
-
-                          return Stack(
-                            children: [
-                              InkWell(
-                                onTap: () => Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => MediaPageScreen(
-                                      pageIndex: index,
-                                      gallery: widget.gallery!,
-                                    ),
-                                    fullscreenDialog: true,
-                                  ),
-                                ),
-                                child: widget.gallery![index].type == 'video'
-                                    ? Row(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: SizedBox(
-                                              height: 140 * 0.8,
-                                              width: 140,
-                                              child: NetworkVideoPlayerMini(
-                                                video: widget.gallery![index],
-                                              ),
-                                            ),
+                            child: widget.gallery![index].type == 'video'
+                                ? Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: SizedBox(
+                                          height: 140 * 0.8,
+                                          width: 140,
+                                          child: NetworkVideoPlayerMini(
+                                            video: widget.gallery![index],
                                           ),
-                                          const SizedBox(
-                                            width: 10,
-                                          )
-                                        ],
-                                      )
-                                    : PreviewImageNetwork(
-                                        url:
-                                            '$s3Url${widget.gallery![index].url}',
-                                        width: 140,
+                                        ),
                                       ),
-                              ),
-                            ],
-                          );
-                        },
-                        itemCount: mediaCount,
-                      ),
-                    ),
-                  ),
-                SizedBox(
-                  height: emojiHeight,
-                  width: 100.w - 135,
-                  child: Wrap(
-                    spacing: 2.0,
-                    runSpacing: 5.0,
-                    children: emojiButtons,
-                  ),
-                ),
-              ],
-            ),
-            if (widget.user != null && widget.user!.id == userModel.user.id)
-              Positioned(
-                top: -10,
-                right: -10,
-                child: InkWell(
-                  onTap: () => DialogWidgets.editBottomModal(
-                    context,
-                    delete: () async {
-                      context.pop();
-
-                      await ref
-                          .read(threadDetailProvider(widget.threadId).notifier)
-                          .deleteComment(widget.commentId);
+                                      const SizedBox(
+                                        width: 10,
+                                      )
+                                    ],
+                                  )
+                                : PreviewImageNetwork(
+                                    url: '$s3Url${widget.gallery![index].url}',
+                                    width: 140,
+                                  ),
+                          ),
+                        ],
+                      );
                     },
-                    edit: () async {},
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: SvgPicture.asset('asset/img/icon_edit.svg'),
+                    itemCount: mediaCount,
                   ),
                 ),
-              )
+              ),
+            SizedBox(
+              height: emojiHeight,
+              width: 100.w - 135,
+              child: Wrap(
+                spacing: 2.0,
+                runSpacing: 5.0,
+                children: emojiButtons,
+              ),
+            ),
           ],
         ),
       ),

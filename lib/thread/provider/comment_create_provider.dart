@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
+import 'package:fitend_member/thread/model/comments/thread_comment_model.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/files/file_upload_request_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_comment_edit_model.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/repository/file_repository.dart';
@@ -15,6 +18,7 @@ import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/camera_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -265,13 +269,197 @@ class CommentCreateStateNotifier
     }
   }
 
+  Future<void> updateFromEditModel(ThreadCommentEditModel editModel) async {
+    List<String> assetPaths = [];
+
+    if (editModel.gallery != null && editModel.gallery!.isNotEmpty) {
+      for (var asset in editModel.gallery!) {
+        final fileInfo =
+            await DefaultCacheManager().getFileFromCache('$s3Url${asset.url}');
+
+        if (fileInfo != null) {
+          assetPaths.add(fileInfo.file.path);
+        } else {
+          debugPrint('media 다운로드중...');
+          final file = await DefaultCacheManager()
+              .getSingleFile('$s3Url${asset.url}', key: '$s3Url${asset.url}');
+
+          assetPaths.add(file.path);
+        }
+      }
+    }
+
+    state = ThreadCommentCreateTempModel(
+      threadId: threadId,
+      content: editModel.content,
+      isLoading: false,
+      isUploading: false,
+      doneCount: 0,
+      totalCount: assetPaths.length,
+      assetsPaths: assetPaths,
+      isEditedAssets: List.generate(assetPaths.length, (index) => false),
+      gallery: editModel.gallery,
+      emojis: [],
+    );
+  }
+
+  Future<ThreadCommentCreateModel?> updateComment(
+    int commentId,
+    List<GalleryModel>? gallery,
+  ) async {
+    try {
+      if (state.isUploading || state.isLoading) {
+        return null;
+      }
+
+      final pstate = state.copyWith();
+      pstate.isUploading = true;
+
+      state = pstate;
+
+      ThreadCommentCreateModel model = ThreadCommentCreateModel(
+        content: state.content,
+        gallery: [],
+      );
+
+      List<GalleryModel> addGallery = [];
+
+      if (state.assetsPaths.isNotEmpty && state.isEditedAssets != null) {
+        final tempState0 = state.copyWith();
+
+        tempState0.totalCount =
+            state.isEditedAssets!.where((element) => true).length;
+
+        state = tempState0;
+
+        for (int index = 0; index < state.assetsPaths.length; index++) {
+          final filePath = state.assetsPaths[index];
+
+          final type = MediaUtils.getMediaType(filePath);
+
+          if (type == MediaType.image &&
+              state.isEditedAssets != null &&
+              state.isEditedAssets![index]) {
+            final mimeType = mime(filePath);
+            final ret = await fileRepository.getFileUpload(
+              model: FileRequestModel(type: 'image', mimeType: mimeType!),
+            );
+
+            final file = File(filePath);
+            final bytes = await file.readAsBytes();
+
+            await dioUpload.put(
+              ret.url,
+              data: bytes,
+              options: Options(
+                headers: {
+                  "Content-Type": mimeType,
+                },
+              ),
+            );
+
+            if (state.gallery!.length < index + 1) {
+              addGallery.add(
+                GalleryModel(type: 'image', url: ret.path),
+              );
+            } else {
+              state.gallery![index] =
+                  GalleryModel(type: 'image', url: ret.path);
+            }
+          } else if (type == MediaType.video &&
+              state.isEditedAssets != null &&
+              state.isEditedAssets![index]) {
+            final mimeType = mime(filePath);
+
+            final thumbnail = await MediaUtils.getVideoThumbNail(filePath);
+            final thumbnailMimeType = mime(thumbnail);
+
+            final retVideo = await fileRepository.getFileUpload(
+              model: FileRequestModel(type: 'video', mimeType: mimeType!),
+            );
+
+            final file = File(filePath);
+            final bytes = await file.readAsBytes();
+
+            await dioUpload.put(
+              retVideo.url,
+              data: bytes,
+              options: Options(
+                headers: {
+                  "Content-Type": mimeType,
+                },
+              ),
+            );
+
+            final retThumbnail = await fileRepository.getFileUpload(
+              model:
+                  FileRequestModel(type: 'image', mimeType: thumbnailMimeType!),
+            );
+
+            final thumbnailFile = File(thumbnail!);
+            final thumbnailBytes = await thumbnailFile.readAsBytes();
+
+            await dioUpload.put(
+              retThumbnail.url,
+              data: thumbnailBytes,
+              options: Options(
+                headers: {
+                  "Content-Type": thumbnailMimeType,
+                },
+              ),
+            );
+
+            if (state.gallery!.length < index + 1) {
+              addGallery.add(
+                GalleryModel(
+                  type: 'video',
+                  url: retVideo.path,
+                  thumbnail: retThumbnail.path,
+                ),
+              );
+            } else {
+              state.gallery![index] = GalleryModel(
+                type: 'video',
+                url: retVideo.path,
+                thumbnail: retThumbnail.path,
+              );
+            }
+          }
+
+          final tempState1 = state.copyWith();
+
+          tempState1.doneCount++;
+
+          state = tempState1;
+        }
+      }
+
+      model.gallery = [
+        ...state.gallery!,
+        ...addGallery,
+      ];
+
+      await commentRepository.putCommentWithId(id: commentId, model: model);
+
+      threadState.updateComment(
+        commentId,
+        model,
+      );
+
+      return model;
+    } catch (e) {
+      debugPrint('thread create error : $e');
+      final tstate = state.copyWith();
+      tstate.isUploading = false;
+      state = tstate;
+    }
+    return null;
+  }
+
   void addAssets(String assetPath) {
     final pstate = state.copyWith();
 
     pstate.assetsPaths.add(assetPath);
-
-    print(pstate.assetsPaths);
-    print('asset length ${pstate.assetsPaths.length}');
 
     state = pstate.copyWith();
   }
@@ -285,7 +473,6 @@ class CommentCreateStateNotifier
   }
 
   void changeAsset(int index, String path) {
-    print(state.assetsPaths);
     final pstate = state.copyWith();
 
     pstate.assetsPaths[index] = path;
@@ -305,6 +492,39 @@ class CommentCreateStateNotifier
     final pstate = state.copyWith();
 
     pstate.content = content;
+
+    state = pstate.copyWith();
+  }
+
+  void updateFileCheck(String type, int index) {
+    final pstate = state.copyWith();
+
+    switch (type) {
+      case 'add':
+        pstate.isEditedAssets!.add(true);
+
+        break;
+      case 'remove':
+        pstate.isEditedAssets!.removeAt(index);
+        break;
+      case 'change':
+        pstate.isEditedAssets![index] = true;
+        break;
+    }
+
+    state = pstate.copyWith();
+  }
+
+  void removeAssetFromGallery(int index) {
+    final pstate = state.copyWith(
+      gallery: state.gallery!.map((e) => e.copyWith()).toList(),
+    );
+
+    if (pstate.gallery != null &&
+        pstate.gallery!.isNotEmpty &&
+        pstate.gallery!.length >= index + 1) {
+      pstate.gallery!.removeAt(index);
+    }
 
     state = pstate.copyWith();
   }

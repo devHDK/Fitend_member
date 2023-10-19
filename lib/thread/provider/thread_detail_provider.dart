@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
+import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_get_params_model.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_model.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_params_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_comment_edit_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
@@ -110,6 +112,19 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
 
       state = pstate.copyWith();
     }
+  }
+
+  void updateComment(int commentId, ThreadCommentCreateModel model) async {
+    var pstate = state as ThreadModel;
+
+    final index = pstate.comments!.indexWhere((e) => e.id == commentId);
+
+    pstate.comments![index] = pstate.comments![index].copyWith(
+      content: model.content,
+      gallery: model.gallery,
+    );
+
+    state = pstate.copyWith();
   }
 
   Future<Map<dynamic, dynamic>> updateThreadEmoji(

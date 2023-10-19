@@ -14,7 +14,7 @@ class ThreadCommentCreateModel {
   List<GalleryModel>? gallery;
 
   ThreadCommentCreateModel({
-    required this.threadId,
+    this.threadId,
     required this.content,
     this.gallery,
   });
@@ -42,7 +42,6 @@ class ThreadCommentCreateTempModel {
   int threadId;
   @JsonKey(name: "content")
   String content;
-  @JsonKey(name: "gallery")
   List<String> assetsPaths;
   @JsonKey(name: "emojis")
   List<EmojiModel> emojis;
@@ -52,6 +51,10 @@ class ThreadCommentCreateTempModel {
   bool isUploading;
   int doneCount;
   int totalCount;
+  @JsonKey(name: "isEditedAssets")
+  final List<bool>? isEditedAssets;
+  @JsonKey(name: "gallery")
+  List<GalleryModel>? gallery;
 
   ThreadCommentCreateTempModel({
     required this.threadId,
@@ -62,6 +65,8 @@ class ThreadCommentCreateTempModel {
     required this.isUploading,
     required this.doneCount,
     required this.totalCount,
+    this.isEditedAssets,
+    this.gallery,
   });
 
   ThreadCommentCreateTempModel copyWith({
@@ -73,6 +78,8 @@ class ThreadCommentCreateTempModel {
     bool? isUploading,
     int? doneCount,
     int? totalCount,
+    List<bool>? isEditedAssets,
+    List<GalleryModel>? gallery,
   }) =>
       ThreadCommentCreateTempModel(
         threadId: threadId ?? this.threadId,
@@ -83,6 +90,8 @@ class ThreadCommentCreateTempModel {
         isUploading: isUploading ?? this.isUploading,
         doneCount: doneCount ?? this.doneCount,
         totalCount: totalCount ?? this.totalCount,
+        isEditedAssets: isEditedAssets ?? this.isEditedAssets,
+        gallery: gallery ?? this.gallery,
       );
 
   factory ThreadCommentCreateTempModel.fromJson(Map<String, dynamic> json) =>

@@ -155,7 +155,6 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
           return emoji.emoji == inputEmoji && emoji.userId == userId;
         });
 
-        //TODO: threadDetail emoji 추가 삭제
         if (emojiIndex == -1) {
           //이모지 추가
           addEmoji(userId, inputEmoji, index, response.emojiId);

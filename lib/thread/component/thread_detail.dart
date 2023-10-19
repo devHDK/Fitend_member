@@ -4,11 +4,13 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
 import 'package:fitend_member/thread/component/link_preview.dart';
 import 'package:fitend_member/thread/component/network_video_player_mini.dart';
 import 'package:fitend_member/thread/component/preview_image_network.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
+import 'package:fitend_member/thread/component/thread_cell.dart';
 import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
@@ -126,7 +128,8 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
       },
     );
 
-    int mediaCount = model.gallery!.length + linkUrls.length;
+    int mediaCount =
+        model.gallery != null ? model.gallery!.length : 0 + linkUrls.length;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -260,6 +263,23 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               ),
             ),
           ),
+          if (model.type == ThreadType.record.name && model.workoutInfo != null)
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) => ScheduleResultScreen(
+                    workoutScheduleId: model.workoutInfo!.workoutScheduleId,
+                    // exercises: exercises,
+                  ),
+                ));
+              },
+              child: RecordTypeThread(
+                height: 216,
+                width: 100.w - 56,
+                info: model.workoutInfo!,
+                isbigSize: true,
+              ),
+            ),
           if (mediaCount == 1 && linkUrls.length == 1)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),

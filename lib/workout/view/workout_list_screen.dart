@@ -419,7 +419,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                         pathParameters: {
                           'id': model.workoutScheduleId.toString(),
                         },
-                        extra: model.exercises,
+                        // extra: model.exercises,
                       );
                     }
                   : isTodayWorkout

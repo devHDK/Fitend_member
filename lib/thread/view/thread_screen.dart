@@ -241,29 +241,31 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                       ),
                     )),
                     child: ThreadCell(
-                        id: model.id,
-                        title: model.title,
-                        content: model.content,
-                        profileImageUrl: model.writerType == 'trainer'
-                            ? '$s3Url${model.trainer.profileImage}'
-                            : model.user.gender == 'male'
-                                ? maleProfileUrl
-                                : femaleProfileUrl,
-                        nickname: model.user.nickname,
-                        dateTime:
-                            DateTime.parse(model.createdAt).toUtc().toLocal(),
-                        gallery: model.gallery,
-                        emojis: model.emojis,
-                        userCommentCount: model.userCommentCount != null
-                            ? model.userCommentCount!
-                            : 0,
-                        trainerCommentCount: model.trainerCommentCount != null
-                            ? model.trainerCommentCount!
-                            : 0,
-                        user: model.user,
-                        trainer: model.trainer,
-                        writerType: model.writerType,
-                        threadType: model.type),
+                      id: model.id,
+                      title: model.title,
+                      content: model.content,
+                      profileImageUrl: model.writerType == 'trainer'
+                          ? '$s3Url${model.trainer.profileImage}'
+                          : model.user.gender == 'male'
+                              ? maleProfileUrl
+                              : femaleProfileUrl,
+                      nickname: model.user.nickname,
+                      dateTime:
+                          DateTime.parse(model.createdAt).toUtc().toLocal(),
+                      gallery: model.gallery,
+                      emojis: model.emojis,
+                      userCommentCount: model.userCommentCount != null
+                          ? model.userCommentCount!
+                          : 0,
+                      trainerCommentCount: model.trainerCommentCount != null
+                          ? model.trainerCommentCount!
+                          : 0,
+                      user: model.user,
+                      trainer: model.trainer,
+                      writerType: model.writerType,
+                      threadType: model.type,
+                      workoutInfo: model.workoutInfo,
+                    ),
                   ),
                 ],
               );

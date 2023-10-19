@@ -52,6 +52,8 @@ class DataUtils {
   }
 
   static String getTimeStringMinutes(int seconds) {
+    //string seconds => 00:00
+
     String ret =
         '${(seconds / 60).floor().toString().padLeft(2, '0')} : ${(seconds % 60).floor().toString().padLeft(2, '0')}';
 
@@ -102,7 +104,7 @@ class DataUtils {
     return date;
   }
 
-  static String getDurationStringFromNow(DateTime dateTime) {
+  static String getElapsedTimeStringFromNow(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 

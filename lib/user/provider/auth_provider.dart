@@ -131,7 +131,7 @@ class AuthProvider extends ChangeNotifier {
                   state,
                   ScheduleResultScreen(
                     workoutScheduleId: int.parse(state.pathParameters['id']!),
-                    exercises: state.extra as List<Exercise>,
+                    // exercises: state.extra as List<Exercise>,
                     key: state.pageKey,
                   ),
                 );

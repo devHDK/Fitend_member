@@ -254,7 +254,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                               'id': widget.workoutScheduleId
                                                   .toString(),
                                             },
-                                            extra: widget.exercises,
+                                            // extra: widget.exercises,
                                           );
                                           // Navigator.of(context).pushReplacement(
                                           //   CupertinoPageRoute(

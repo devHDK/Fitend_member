@@ -21,14 +21,16 @@ class WorkoutRecordStateNotifier
   WorkoutRecordStateNotifier({
     required this.repository,
     required this.id,
-  }) : super(null);
+  }) : super(WorkoutResultModelLoading()) {
+    getWorkoutResults(workoutScheduleId: id);
+  }
 
   Future<void> getWorkoutResults({
     required int workoutScheduleId,
   }) async {
     try {
-      final isLoading = state is WorkoutResultModelLoading;
-      if (isLoading) return;
+      // final isLoading = state is WorkoutResultModelLoading;
+      // if (isLoading) return;
 
       state = WorkoutResultModelLoading();
 

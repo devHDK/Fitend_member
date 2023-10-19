@@ -183,7 +183,8 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                           width: 10,
                         ),
                         Text(
-                          DataUtils.getDurationStringFromNow(widget.dateTime),
+                          DataUtils.getElapsedTimeStringFromNow(
+                              widget.dateTime),
                           style:
                               s2SubTitle.copyWith(color: GRAY_COLOR, height: 1),
                         ),

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
@@ -12,6 +13,7 @@ import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/model/common/thread_workout_info_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
@@ -28,6 +30,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:collection/collection.dart';
 
 class ThreadCell extends ConsumerStatefulWidget {
   const ThreadCell({
@@ -46,6 +49,7 @@ class ThreadCell extends ConsumerStatefulWidget {
     required this.trainer,
     required this.writerType,
     required this.threadType,
+    required this.workoutInfo,
   });
 
   final int id;
@@ -62,6 +66,7 @@ class ThreadCell extends ConsumerStatefulWidget {
   final ThreadTrainer trainer;
   final String writerType;
   final String threadType;
+  final ThreadWorkoutInfo? workoutInfo;
 
   @override
   ConsumerState<ThreadCell> createState() => _ThreadCellState();
@@ -153,13 +158,16 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
         ? 140.0 * linkUrls.length
         : 0;
 
-    int mediaCount = widget.gallery!.length + linkUrls.length;
+    int mediaCount =
+        widget.gallery != null ? widget.gallery!.length : 0 + linkUrls.length;
 
     final galleryHeight = mediaCount > 1
         ? 120
-        : widget.gallery!.length == 1
+        : widget.gallery != null && widget.gallery!.length == 1
             ? 220
             : 0;
+
+    double recordHeight = widget.workoutInfo != null ? 195 : 0;
 
     return Stack(
       children: [
@@ -174,7 +182,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
               24 +
               emojiHeight +
               galleryHeight.toDouble() +
-              linkHeight,
+              linkHeight +
+              recordHeight,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
@@ -254,6 +263,13 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       ),
                     ),
                   ),
+                  if (widget.threadType == ThreadType.record.name &&
+                      widget.workoutInfo != null)
+                    RecordTypeThread(
+                      height: recordHeight - 5,
+                      width: 100.w - 110,
+                      info: widget.workoutInfo!,
+                    ),
                   if (mediaCount == 1 && linkUrls.length == 1)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -600,5 +616,158 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
     )..layout(minWidth: 0, maxWidth: width);
 
     return textPainter.computeLineMetrics().length;
+  }
+}
+
+class RecordTypeThread extends StatelessWidget {
+  const RecordTypeThread({
+    super.key,
+    required this.height,
+    required this.width,
+    required this.info,
+    this.isbigSize = false,
+  });
+
+  final double height;
+  final double width;
+  final ThreadWorkoutInfo info;
+  final bool? isbigSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 5),
+      child: Container(
+        width: width,
+        height: height.toDouble(),
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 1,
+            color: GRAY_COLOR,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ...List.generate(
+                      info.targetMuscleIds.length >= 4
+                          ? 4
+                          : info.targetMuscleIds.length,
+                      (index) => 0).mapIndexed((index, element) {
+                    return Row(
+                      children: [
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: CustomNetworkImage(
+                                imageUrl:
+                                    '$s3Url$muscleImageUrl${info.targetMuscleIds[index]}.png',
+                                width: isbigSize! ? 52 : 40,
+                                height: isbigSize! ? 52 : 40,
+                                boxFit: BoxFit.cover,
+                              ),
+                            ),
+                            if (index == 3 && info.targetMuscleIds.length > 4)
+                              Positioned(
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  color: Colors.black87,
+                                  child: Center(
+                                    child: Text(
+                                      '+${info.targetMuscleIds.length - 4}',
+                                      style: h6Headline.copyWith(
+                                        color: Colors.white,
+                                        height: 1,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                          ],
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                      ],
+                    );
+                  }).toList()
+                ],
+              ),
+              const SizedBox(
+                height: 18,
+              ),
+              Text(
+                info.title,
+                style: h6Headline.copyWith(
+                  fontSize: isbigSize! ? 18 : 14,
+                  color: Colors.white,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(
+                height: 9,
+              ),
+              Text(
+                info.subTitle,
+                style: s3SubTitle.copyWith(
+                  color: Colors.white,
+                  fontSize: isbigSize! ? 16 : 12,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(
+                height: 18,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'asset/img/icon_timer.svg',
+                    width: isbigSize! ? 18.5 : 16,
+                    color: GRAY_COLOR,
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    DataUtils.getTimeStringMinutes(info.workoutDuration!),
+                    style: c1Caption.copyWith(
+                      fontSize: isbigSize! ? 14 : 12,
+                      color: LIGHT_GRAY_COLOR,
+                      height: 1,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 11,
+                  ),
+                  SvgPicture.asset(
+                    'asset/img/icon_barbell.svg',
+                    width: isbigSize! ? 18.5 : 16,
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    '${info.totalSet} set',
+                    style: c1Caption.copyWith(
+                      fontSize: isbigSize! ? 14 : 12,
+                      color: LIGHT_GRAY_COLOR,
+                      height: 1,
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

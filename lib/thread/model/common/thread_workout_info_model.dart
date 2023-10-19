@@ -4,6 +4,8 @@ part 'thread_workout_info_model.g.dart';
 
 @JsonSerializable()
 class ThreadWorkoutInfo {
+  @JsonKey(name: "trainerId")
+  int? trainerId;
   @JsonKey(name: "workoutScheduleId")
   final int workoutScheduleId;
   @JsonKey(name: "targetMuscleIds")
@@ -22,17 +24,19 @@ class ThreadWorkoutInfo {
   int? calories;
 
   ThreadWorkoutInfo({
+    this.trainerId,
     required this.workoutScheduleId,
     required this.targetMuscleIds,
     required this.title,
     required this.subTitle,
     required this.workoutDuration,
     required this.totalSet,
-    required this.heartRate,
-    required this.calories,
+    this.heartRate,
+    this.calories,
   });
 
   ThreadWorkoutInfo copyWith({
+    int? trainerId,
     int? workoutScheduleId,
     List<int>? targetMuscleIds,
     String? title,
@@ -43,6 +47,7 @@ class ThreadWorkoutInfo {
     int? calories,
   }) =>
       ThreadWorkoutInfo(
+        trainerId: trainerId ?? this.trainerId,
         workoutScheduleId: workoutScheduleId ?? this.workoutScheduleId,
         targetMuscleIds: targetMuscleIds ?? this.targetMuscleIds,
         title: title ?? this.title,

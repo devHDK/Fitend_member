@@ -8,6 +8,7 @@ part of 'thread_workout_info_model.dart';
 
 ThreadWorkoutInfo _$ThreadWorkoutInfoFromJson(Map<String, dynamic> json) =>
     ThreadWorkoutInfo(
+      trainerId: json['trainerId'] as int?,
       workoutScheduleId: json['workoutScheduleId'] as int,
       targetMuscleIds: (json['targetMuscleIds'] as List<dynamic>)
           .map((e) => e as int)
@@ -22,6 +23,7 @@ ThreadWorkoutInfo _$ThreadWorkoutInfoFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$ThreadWorkoutInfoToJson(ThreadWorkoutInfo instance) =>
     <String, dynamic>{
+      'trainerId': instance.trainerId,
       'workoutScheduleId': instance.workoutScheduleId,
       'targetMuscleIds': instance.targetMuscleIds,
       'title': instance.title,

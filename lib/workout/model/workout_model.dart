@@ -17,6 +17,7 @@ class WorkoutModelError extends WorkoutModelBase {
 @JsonSerializable()
 class WorkoutModel extends WorkoutModelBase {
   final int workoutScheduleId;
+  final int trainerId;
   final String startDate;
   final String workoutTitle;
   final String workoutSubTitle;
@@ -31,6 +32,7 @@ class WorkoutModel extends WorkoutModelBase {
 
   WorkoutModel({
     required this.workoutScheduleId,
+    required this.trainerId,
     required this.startDate,
     required this.workoutTitle,
     required this.workoutSubTitle,
@@ -46,6 +48,7 @@ class WorkoutModel extends WorkoutModelBase {
 
   WorkoutModel copyWith({
     int? workoutScheduleId,
+    int? trainerId,
     String? startDate,
     String? workoutTitle,
     String? workoutSubTitle,
@@ -60,6 +63,7 @@ class WorkoutModel extends WorkoutModelBase {
   }) =>
       WorkoutModel(
         workoutScheduleId: workoutScheduleId ?? this.workoutScheduleId,
+        trainerId: trainerId ?? this.trainerId,
         startDate: startDate ?? this.startDate,
         workoutTitle: workoutTitle ?? this.workoutTitle,
         workoutSubTitle: workoutSubTitle ?? this.workoutSubTitle,
@@ -76,6 +80,7 @@ class WorkoutModel extends WorkoutModelBase {
   static WorkoutModel clone({required WorkoutModel model}) {
     return WorkoutModel(
       workoutScheduleId: model.workoutScheduleId,
+      trainerId: model.trainerId,
       startDate: model.startDate,
       workoutTitle: model.workoutTitle,
       workoutSubTitle: model.workoutSubTitle,

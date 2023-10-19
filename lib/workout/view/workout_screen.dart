@@ -319,16 +319,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   .read(workoutProcessProvider(
                                           widget.workoutScheduleId)
                                       .notifier)
-                                  .quitWorkout()
+                                  .quitWorkout(
+                                    title: widget.workout.workoutTitle,
+                                    subTitle: widget.workout.workoutSubTitle,
+                                    trainerId: widget.workout.trainerId,
+                                  )
                                   .then((value) {
-                                final pstate = ref
-                                    .read(workoutProvider(
-                                            widget.workoutScheduleId)
-                                        .notifier)
-                                    .state as WorkoutModel;
-
-                                final id = pstate.workoutScheduleId;
-                                final date = pstate.startDate;
+                                final id = widget.workoutScheduleId;
+                                final date = widget.workout.startDate;
 
                                 context.pop();
                                 context.pop();
@@ -923,14 +921,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         if (value == -1) {
           await ref
               .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
-              .quitWorkout()
+              .quitWorkout(
+                title: widget.workout.workoutTitle,
+                subTitle: widget.workout.workoutSubTitle,
+                trainerId: widget.workout.trainerId,
+              )
               .then((_) {
-            final pstate = ref
-                .read(workoutProvider(widget.workoutScheduleId).notifier)
-                .state as WorkoutModel;
-
-            final id = pstate.workoutScheduleId;
-            final date = pstate.startDate;
+            final id = widget.workoutScheduleId;
+            final date = widget.workout.startDate;
             context.pop();
 
             GoRouter.of(context).pushNamed(
@@ -983,14 +981,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               await ref
                   .read(
                       workoutProcessProvider(widget.workoutScheduleId).notifier)
-                  .quitWorkout()
+                  .quitWorkout(
+                    title: widget.workout.workoutTitle,
+                    subTitle: widget.workout.workoutSubTitle,
+                    trainerId: widget.workout.trainerId,
+                  )
                   .then((value) {
-                final pstate = ref
-                    .read(workoutProvider(widget.workoutScheduleId).notifier)
-                    .state as WorkoutModel;
-
-                final id = pstate.workoutScheduleId;
-                final date = pstate.startDate;
+                final id = widget.workoutScheduleId;
+                final date = widget.workout.startDate;
 
                 context.pop();
                 context.pop();

@@ -14,6 +14,10 @@ PostWorkoutRecordModel _$PostWorkoutRecordModelFromJson(
           .toList(),
       scheduleRecords: ScheduleRecordsModel.fromJson(
           json['scheduleRecords'] as Map<String, dynamic>),
+      workoutInfo: json['workoutInfo'] == null
+          ? null
+          : ThreadWorkoutInfo.fromJson(
+              json['workoutInfo'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$PostWorkoutRecordModelToJson(
@@ -21,4 +25,5 @@ Map<String, dynamic> _$PostWorkoutRecordModelToJson(
     <String, dynamic>{
       'records': instance.records,
       'scheduleRecords': instance.scheduleRecords,
+      'workoutInfo': instance.workoutInfo,
     };

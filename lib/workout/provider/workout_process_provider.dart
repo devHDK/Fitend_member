@@ -9,6 +9,8 @@ import 'package:fitend_member/common/provider/hive_workout_result_provider.dart'
 import 'package:fitend_member/common/utils/hive_box_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
+import 'package:fitend_member/exercise/model/target_muscle_model.dart';
+import 'package:fitend_member/thread/model/common/thread_workout_info_model.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/schedule_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -441,7 +443,11 @@ class WorkoutProcessStateNotifier
   }
 
   //운동 종료
-  Future<void> quitWorkout() async {
+  Future<void> quitWorkout({
+    required String title,
+    required String subTitle,
+    required int trainerId,
+  }) async {
     try {
       final pstate = state as WorkoutProcessModel;
       List<WorkoutRecordSimple> tempRecordList = [];
@@ -492,14 +498,42 @@ class WorkoutProcessStateNotifier
       state = pstate;
 
       try {
+        List<int> targetMuscles = [];
+        int totalSetCount = 0;
+
+        for (var exercise in pstate.exercises) {
+          for (var targetMuscle in exercise.targetMuscles) {
+            targetMuscles.add(targetMuscle.id);
+          }
+
+          totalSetCount += exercise.setInfo
+              .where((element) =>
+                  element.reps != null ||
+                  element.seconds != null ||
+                  element.weight != null)
+              .toList()
+              .length;
+        }
+
         //운동 기록 서버로
         await repository.postWorkoutRecords(
-            body: PostWorkoutRecordModel(
-                records: tempRecordList,
-                scheduleRecords: ScheduleRecordsModel(
-                  workoutScheduleId: id,
-                  workoutDuration: pstate.totalTime,
-                )));
+          body: PostWorkoutRecordModel(
+            records: tempRecordList,
+            scheduleRecords: ScheduleRecordsModel(
+              workoutScheduleId: id,
+              workoutDuration: pstate.totalTime,
+            ),
+            workoutInfo: ThreadWorkoutInfo(
+              workoutScheduleId: id,
+              trainerId: trainerId,
+              targetMuscleIds: targetMuscles.toSet().toList(),
+              title: title,
+              subTitle: subTitle,
+              workoutDuration: pstate.totalTime,
+              totalSet: totalSetCount,
+            ),
+          ),
+        );
       } on DioException catch (e) {
         debugPrint('$e');
         throw DioException(

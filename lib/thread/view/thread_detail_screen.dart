@@ -18,7 +18,6 @@ import 'package:fitend_member/thread/model/threads/thread_comment_edit_model.dar
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
-import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/view/comment_asset_edit_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,7 +25,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:html/dom_parsing.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';

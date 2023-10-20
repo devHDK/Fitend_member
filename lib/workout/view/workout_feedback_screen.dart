@@ -20,13 +20,13 @@ class WorkoutFeedbackScreen extends ConsumerStatefulWidget {
   static String get routeName => 'workoutFeedback';
 
   final int workoutScheduleId;
-  final List<Exercise>? exercises;
+  final List<Exercise> exercises;
   final String startdate;
 
   const WorkoutFeedbackScreen({
     super.key,
     required this.workoutScheduleId,
-    this.exercises,
+    required this.exercises,
     required this.startdate,
   });
 
@@ -246,15 +246,13 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                               .updateWorkoutStateIsComplete();
                                           //워크아웃 상태 업데이트
 
-                                          // context.pop();
-
                                           context.goNamed(
                                             ScheduleResultScreen.routeName,
                                             pathParameters: {
                                               'id': widget.workoutScheduleId
                                                   .toString(),
                                             },
-                                            // extra: widget.exercises,
+                                            extra: widget.exercises,
                                           );
                                           // Navigator.of(context).pushReplacement(
                                           //   CupertinoPageRoute(

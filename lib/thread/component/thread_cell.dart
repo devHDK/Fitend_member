@@ -677,9 +677,12 @@ class RecordTypeThread extends StatelessWidget {
                             if (index == 3 && info.targetMuscleIds.length > 4)
                               Positioned(
                                 child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  color: Colors.black87,
+                                  width: isbigSize! ? 52 : 40,
+                                  height: isbigSize! ? 52 : 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    color: Colors.black54,
+                                  ),
                                   child: Center(
                                     child: Text(
                                       '+${info.targetMuscleIds.length - 4}',

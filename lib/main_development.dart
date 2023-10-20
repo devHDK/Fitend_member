@@ -69,6 +69,8 @@ void processPushMessage(RemoteMessage message) async {
         break;
     }
   }
+
+  //TODO: thread 관련 SharedPrefUtils 추가
 }
 
 void showFlutterNotification(RemoteMessage message) async {

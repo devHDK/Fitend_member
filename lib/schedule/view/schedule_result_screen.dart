@@ -35,12 +35,12 @@ class ScheduleResultScreen extends ConsumerStatefulWidget {
   static String get routeName => 'scheduleResult';
 
   final int workoutScheduleId;
-  // final List<Exercise> exercises;
+  final List<Exercise>? exercises;
 
   const ScheduleResultScreen({
     super.key,
     required this.workoutScheduleId,
-    // required this.exercises,
+    this.exercises,
   });
 
   @override
@@ -62,13 +62,13 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if (initial && !hasLocal) {
-    //     getResults();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (initial && !hasLocal) {
+        getResults();
 
-    //     initial = false;
-    //   }
-    // });
+        initial = false;
+      }
+    });
   }
 
   void getResults() async {
@@ -87,18 +87,17 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   @override
   Widget build(BuildContext context) {
     final pstate = ref.watch(workoutResultProvider(widget.workoutScheduleId));
-    // final workoutFeedbackBox = ref.watch(hiveWorkoutFeedbackProvider);
+    final workoutFeedbackBox = ref.watch(hiveWorkoutFeedbackProvider);
     // final workoutResultBox = ref.watch(hiveWorkoutResultProvider);
-    // final workoutRecordBox = ref.watch(hiveWorkoutRecordSimpleProvider);
+    final workoutRecordBox = ref.watch(hiveWorkoutRecordSimpleProvider);
 
-    // workoutFeedbackBox.whenData(
-    //   (value) {
-    //     feedback = value.get(widget.workoutScheduleId);
-    //   },
-    // );
+    workoutFeedbackBox.whenData(
+      (value) {
+        feedback = value.get(widget.workoutScheduleId);
+      },
+    );
 
-    // if (feedback == null)
-    {
+    if (feedback == null || widget.exercises != null) {
       if (pstate is WorkoutResultModelLoading) {
         return const Scaffold(
           backgroundColor: BACKGROUND_COLOR,
@@ -121,34 +120,34 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         );
       }
 
-      // workoutRecordBox.whenData(
-      //   (value) {
-      //     workoutRecords = [];
+      workoutRecordBox.whenData(
+        (value) {
+          workoutRecords = [];
 
-      //     for (var i = 0; i < widget.exercises.length; i++) {
-      //       final record = value.get(widget.exercises[i].workoutPlanId);
-      //       if (record != null && record is WorkoutRecordSimple) {
-      //         workoutRecords.add(record);
-      //       } else {
-      //         hasLocal = false;
-      //       }
-      //     }
-      //   },
-      // );
+          for (var i = 0; i < widget.exercises!.length; i++) {
+            final record = value.get(widget.exercises![i].workoutPlanId);
+            if (record != null && record is WorkoutRecordSimple) {
+              workoutRecords.add(record);
+            } else {
+              hasLocal = false;
+            }
+          }
+        },
+      );
 
-      // for (var i = 0; i < workoutResults.length; i++) {
-      //   for (var j = 0; j < workoutResults[i].setInfo.length; j++) {
-      //     workoutResults[i].setInfo[j] = workoutRecords[i].setInfo[j];
-      //   }
-      // }
+      for (var i = 0; i < workoutResults.length; i++) {
+        for (var j = 0; j < workoutResults[i].setInfo.length; j++) {
+          workoutResults[i].setInfo[j] = workoutRecords[i].setInfo[j];
+        }
+      }
 
-      // if (pstate is WorkoutResultModel) {
-      //   startDate = DateTime.parse(pstate.startDate);
-      //   pstate.copyWith(
-      //     startDate:
-      //         '${DateFormat('M월 dd일').format(DateTime.parse(pstate.startDate))} ${weekday[DateTime.parse(pstate.startDate).weekday - 1]}요일',
-      //   );
-      // }
+      if (pstate is WorkoutResultModel) {
+        startDate = DateTime.parse(pstate.startDate);
+        pstate.copyWith(
+          startDate:
+              '${DateFormat('M월 dd일').format(DateTime.parse(pstate.startDate))} ${weekday[DateTime.parse(pstate.startDate).weekday - 1]}요일',
+        );
+      }
     }
 
     var state = pstate as WorkoutResultModel;

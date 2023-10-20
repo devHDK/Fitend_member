@@ -267,12 +267,14 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
           if (model.type == ThreadType.record.name && model.workoutInfo != null)
             GestureDetector(
               onTap: () {
-                Navigator.of(context).push(CupertinoPageRoute(
-                  builder: (context) => ScheduleResultScreen(
-                    workoutScheduleId: model.workoutInfo!.workoutScheduleId,
-                    // exercises: exercises,
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => ScheduleResultScreen(
+                      workoutScheduleId: model.workoutInfo!.workoutScheduleId,
+                    ),
+                    fullscreenDialog: true,
                   ),
-                ));
+                );
               },
               child: RecordTypeThread(
                 height: 216,

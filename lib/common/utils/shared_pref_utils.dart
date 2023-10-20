@@ -49,4 +49,6 @@ class SharedPrefUtils {
       SharedPreferences pref, List<String> updateList) async {
     await pref.setStringList(needWorkoutUpdateList, updateList);
   }
+
+  //TODO: thread 관련 함수들 추가
 }

@@ -98,7 +98,8 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
         state = pstate;
       }
     } catch (e) {
-      debugPrint('e : ScheduleModelError');
+      debugPrint('e : $e');
+
       state = ThreadListModelError(message: '데이터를 불러오지 못했습니다.');
     }
   }

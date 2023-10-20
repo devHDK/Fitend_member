@@ -120,7 +120,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
       setState(() {});
     } catch (e) {
-      debugPrint('e : getNotificationsConfirm');
+      debugPrint('e : $e');
     }
   }
 

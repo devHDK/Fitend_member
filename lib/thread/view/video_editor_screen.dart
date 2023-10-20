@@ -40,7 +40,7 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
   late final VideoEditorController _controller = VideoEditorController.file(
     widget.file,
     minDuration: const Duration(seconds: 1),
-    maxDuration: const Duration(seconds: 180),
+    maxDuration: const Duration(seconds: 90),
   );
 
   @override

@@ -225,7 +225,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         appBar: LogoAppbar(
           title: 'P L A N',
           tapLogo: () async {
-            await _resetScheduleList();
+            await ref
+                .read(scheduleProvider.notifier)
+                .paginate(
+                  startDate: DataUtils.getDate(fifteenDaysAgo),
+                )
+                .then((value) {
+              itemScrollController.jumpTo(index: 15);
+            });
           },
           actions: [
             InkWell(

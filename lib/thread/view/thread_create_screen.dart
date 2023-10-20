@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/link_preview.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
 import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
-import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/model/exception/thread_exceptios.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
@@ -23,6 +24,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -269,13 +271,32 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                   ? null
                   : widget.threadEditModel == null
                       ? () async {
-                          await ref
-                              .read(threadCreateProvider.notifier)
-                              .createThread(
-                                widget.user,
-                                widget.trainer,
-                              )
-                              .then((value) => context.pop());
+                          try {
+                            await ref
+                                .read(threadCreateProvider.notifier)
+                                .createThread(
+                                  widget.user,
+                                  widget.trainer,
+                                )
+                                .then((value) => context.pop());
+                          } catch (e) {
+                            if (e is FileException) {
+                              if (e.message == 'oversize_file_include_error') {
+                                // DialogWidgets.showToast(
+                                //     '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
+
+                                Fluttertoast.showToast(
+                                  msg: '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.',
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.black54,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0,
+                                );
+                              }
+                            }
+                          }
                         }
                       : () async {
                           await ref

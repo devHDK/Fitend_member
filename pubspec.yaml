@@ -106,6 +106,7 @@ dependencies:
   emoji_picker_flutter: ^1.6.1
   toggle_switch: ^2.1.0
   any_link_preview: ^3.0.1
+  fluttertoast: ^8.2.2
 
 dev_dependencies:
   flutter_test:

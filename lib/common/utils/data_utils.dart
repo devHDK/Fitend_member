@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fitend_member/common/const/data.dart';
 import 'package:intl/intl.dart';
@@ -144,5 +145,22 @@ class DataUtils {
     await canLaunchUrlString(tempUrl)
         ? await launchUrlString(tempUrl)
         : throw 'Could not launch $tempUrl';
+  }
+
+  static Future<bool> checkFileSize(List<String> assetPaths) async {
+    const limitFileSize = 1 * 1024 * 1024; //200mb
+    for (var filePath in assetPaths) {
+      final file = File(filePath);
+
+      if (await file.exists()) {
+        final fileSize = await file.length(); //byte
+        print('fileSize : ${fileSize / (1024 * 1024)} MB');
+        if (limitFileSize < fileSize) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 }

@@ -4,9 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/model/exception/thread_exceptios.dart';
 import 'package:fitend_member/thread/model/files/file_upload_request_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
@@ -119,6 +121,13 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
 
       if (state.assetsPaths != null && state.assetsPaths!.isNotEmpty) {
         final tempState0 = state.copyWith();
+
+        final isOverLimtSize =
+            await DataUtils.checkFileSize(state.assetsPaths!);
+
+        if (isOverLimtSize) {
+          throw FileException('oversize_file_include_error');
+        }
 
         tempState0.totalCount = state.assetsPaths!.length;
 
@@ -233,10 +242,14 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
 
       init();
     } catch (e) {
-      debugPrint('thread create error : $e');
       final tstate = state.copyWith();
       tstate.isUploading = false;
       state = tstate;
+
+      if (e is FileException) {
+        debugPrint('thread create error : ${e.message}');
+        throw FileException(e.message);
+      }
     }
   }
 

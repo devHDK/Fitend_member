@@ -158,8 +158,9 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
         ? 140.0 * linkUrls.length
         : 0;
 
-    int mediaCount =
-        widget.gallery != null ? widget.gallery!.length : 0 + linkUrls.length;
+    int mediaCount = widget.gallery != null
+        ? widget.gallery!.length + linkUrls.length
+        : 0 + linkUrls.length;
 
     final galleryHeight = mediaCount > 1
         ? 120

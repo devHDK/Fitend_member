@@ -639,6 +639,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
     );
 
     return TextFormField(
+      autocorrect: false,
       onChanged: (value) {
         ref
             .read(commentCreateProvider(widget.threadId).notifier)

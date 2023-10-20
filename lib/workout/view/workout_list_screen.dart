@@ -277,134 +277,144 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
         //     )
         // ],
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                WorkoutBanner(
-                  title: model.workoutTitle,
-                  subTitle: model.workoutSubTitle,
-                  exercises: model.exercises,
-                  time: model.workoutTotalTime,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
-            ),
-          ),
-          SliverPadding(
-            padding: EdgeInsets.symmetric(
-                horizontal: Platform.isIOS ? 7.w : (3.8).w),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final exerciseModel = model.exercises[index];
-
-                  int completeSetCount = 0;
-
-                  workoutRecordbox.when(
-                    data: (data) {
-                      final record = data.get(exerciseModel.workoutPlanId);
-                      if (record != null && record is WorkoutRecordSimple) {
-                        completeSetCount = record.setInfo
-                            .where((element) =>
-                                element.reps != null ||
-                                element.weight != null ||
-                                element.seconds != null)
-                            .length;
-                      } else {
-                        completeSetCount = 0;
-                      }
-
-                      debugPrint(completeSetCount.toString());
-                    },
-                    error: (error, stackTrace) => completeSetCount = 0,
-                    loading: () => debugPrint('loading...'),
-                  );
-
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        CupertinoPageRoute(
-                          builder: (context) =>
-                              ExerciseScreen(exercise: exerciseModel),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        if (exerciseModel.circuitGroupNum != null &&
-                            exerciseModel.circuitSeq == 1)
-                          Column(
-                            children: [
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 30,
-                                  ),
-                                  SvgPicture.asset(
-                                      'asset/img/icon_turn_down.svg'),
-                                ],
-                              ),
-                            ],
-                          )
-                        else if (exerciseModel.circuitGroupNum != null)
-                          Row(children: [
-                            const SizedBox(
-                              width: 30,
-                            ),
-                            SvgPicture.asset('asset/img/icon_turn_line.svg'),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            SvgPicture.asset('asset/img/icon_turn_line.svg'),
-                          ]),
-                        WorkoutCard(
-                          exercise: exerciseModel,
-                          completeSetCount: completeSetCount,
-                          islastCircuit:
-                              exerciseModel.circuitGroupNum != null &&
-                                  groupCounts[exerciseModel.circuitGroupNum!] ==
-                                      exerciseModel.circuitSeq!,
-                        ),
-                        if (exerciseModel.circuitGroupNum != null &&
-                            groupCounts[exerciseModel.circuitGroupNum!] ==
-                                exerciseModel.circuitSeq!)
-                          Column(
-                            children: [
-                              Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 30,
-                                  ),
-                                  SvgPicture.asset(
-                                      'asset/img/icon_turn_up.svg'),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                            ],
-                          )
-                      ],
-                    ),
-                  );
-                },
-                childCount: model.exercises.length,
+      body: RefreshIndicator(
+        backgroundColor: BACKGROUND_COLOR,
+        color: POINT_COLOR,
+        semanticsLabel: '새로고침',
+        onRefresh: () async {
+          await ref
+              .read(workoutProvider(widget.id).notifier)
+              .getWorkout(id: widget.id);
+        },
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  WorkoutBanner(
+                    title: model.workoutTitle,
+                    subTitle: model.workoutSubTitle,
+                    exercises: model.exercises,
+                    time: model.workoutTotalTime,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
               ),
             ),
-          ),
-          const SliverToBoxAdapter(
-            child: SizedBox(
-              height: 100,
+            SliverPadding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: Platform.isIOS ? 7.w : (3.8).w),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final exerciseModel = model.exercises[index];
+
+                    int completeSetCount = 0;
+
+                    workoutRecordbox.when(
+                      data: (data) {
+                        final record = data.get(exerciseModel.workoutPlanId);
+                        if (record != null && record is WorkoutRecordSimple) {
+                          completeSetCount = record.setInfo
+                              .where((element) =>
+                                  element.reps != null ||
+                                  element.weight != null ||
+                                  element.seconds != null)
+                              .length;
+                        } else {
+                          completeSetCount = 0;
+                        }
+
+                        debugPrint(completeSetCount.toString());
+                      },
+                      error: (error, stackTrace) => completeSetCount = 0,
+                      loading: () => debugPrint('loading...'),
+                    );
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (context) =>
+                                ExerciseScreen(exercise: exerciseModel),
+                          ),
+                        );
+                      },
+                      child: Column(
+                        children: [
+                          if (exerciseModel.circuitGroupNum != null &&
+                              exerciseModel.circuitSeq == 1)
+                            Column(
+                              children: [
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 30,
+                                    ),
+                                    SvgPicture.asset(
+                                        'asset/img/icon_turn_down.svg'),
+                                  ],
+                                ),
+                              ],
+                            )
+                          else if (exerciseModel.circuitGroupNum != null)
+                            Row(children: [
+                              const SizedBox(
+                                width: 30,
+                              ),
+                              SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                            ]),
+                          WorkoutCard(
+                            exercise: exerciseModel,
+                            completeSetCount: completeSetCount,
+                            islastCircuit: exerciseModel.circuitGroupNum !=
+                                    null &&
+                                groupCounts[exerciseModel.circuitGroupNum!] ==
+                                    exerciseModel.circuitSeq!,
+                          ),
+                          if (exerciseModel.circuitGroupNum != null &&
+                              groupCounts[exerciseModel.circuitGroupNum!] ==
+                                  exerciseModel.circuitSeq!)
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 30,
+                                    ),
+                                    SvgPicture.asset(
+                                        'asset/img/icon_turn_up.svg'),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                              ],
+                            )
+                        ],
+                      ),
+                    );
+                  },
+                  childCount: model.exercises.length,
+                ),
+              ),
             ),
-          ),
-        ],
+            const SliverToBoxAdapter(
+              child: SizedBox(
+                height: 100,
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: !isTodayWorkout && !model.isWorkoutComplete
           ? null

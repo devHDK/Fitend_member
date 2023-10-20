@@ -24,6 +24,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ThreadCreateScreen extends ConsumerStatefulWidget {
@@ -32,11 +33,13 @@ class ThreadCreateScreen extends ConsumerStatefulWidget {
     required this.trainer,
     required this.user,
     this.threadEditModel,
+    this.title,
   });
 
   final ThreadTrainer trainer;
   final ThreadUser user;
   final ThreadEditModel? threadEditModel;
+  final String? title; //운동 thread 작성시
 
   @override
   ConsumerState<ThreadCreateScreen> createState() => _ThreadCreateScreenState();
@@ -85,6 +88,15 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
             isLoading = false;
           });
         }); //edit 내용으로 업데이트
+      } else if (widget.title != null) {
+        ref.read(threadCreateProvider.notifier).init();
+
+        titleController = TextEditingController(
+          text: widget.title,
+        );
+        contentsController = TextEditingController();
+
+        setState(() {});
       } else {
         model = ref.read(threadCreateProvider);
 
@@ -184,8 +196,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                       child: CircularProgressIndicator(
                         color: POINT_COLOR,
                         backgroundColor: Colors.transparent,
-                        value: state.doneCount / state.totalCount,
-                        strokeWidth: 9,
+                        value: (state.doneCount + 1) / state.totalCount,
+                        strokeWidth: 15,
+                        strokeCap: StrokeCap.round,
                       ),
                     ),
                     SizedBox(
@@ -193,7 +206,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                       width: 100,
                       child: Center(
                         child: Text(
-                          '${(state.doneCount / state.totalCount * 100).toInt()}%',
+                          '${((state.doneCount + 1 > state.totalCount ? state.doneCount : state.doneCount + 1) / state.totalCount * 100).toInt()}%',
                           style: h4Headline.copyWith(
                             color: Colors.white,
                           ),
@@ -205,11 +218,24 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                Text(
-                  'UPLOADING',
-                  style: h4Headline.copyWith(
-                    color: Colors.white,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'UPLOADING',
+                      style: h4Headline.copyWith(
+                        color: Colors.white,
+                        height: 1,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    LoadingAnimationWidget.staggeredDotsWave(
+                      color: Colors.white,
+                      size: 20,
+                    )
+                  ],
                 ),
                 const SizedBox(
                   height: 20,
@@ -510,6 +536,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
 
   TextFormField _contentTextFormField(ThreadCreateTempModel state) {
     return TextFormField(
+      autocorrect: false,
       onChanged: (value) {
         ref.read(threadCreateProvider.notifier).updateContent(value);
         setState(() {});
@@ -553,6 +580,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
 
   TextFormField _titleTextFormfield(ThreadCreateTempModel state) {
     return TextFormField(
+      autocorrect: false,
       onChanged: (value) {
         ref.read(threadCreateProvider.notifier).updateTitle(value);
         setState(() {});

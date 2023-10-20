@@ -11,7 +11,6 @@ import 'package:fitend_member/thread/model/files/file_upload_request_model.dart'
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
-import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/repository/file_repository.dart';
 import 'package:fitend_member/thread/repository/thread_comment_repository.dart';
@@ -26,7 +25,6 @@ import 'package:mime_type/mime_type.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:collection/collection.dart';
 
 final threadCreateProvider =
     StateNotifierProvider<ThreadCreateStateNotifier, ThreadCreateTempModel>(

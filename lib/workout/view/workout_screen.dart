@@ -13,6 +13,13 @@ import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
+import 'package:fitend_member/thread/view/thread_create_screen.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_reps_card.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_timer_card.dart';
 import 'package:fitend_member/workout/component/setinfo_list_card/setInfo_weight_reps_card.dart';
@@ -205,6 +212,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   Widget build(BuildContext context) {
     final size = Size(100.w, 100.h);
     final state = ref.watch(workoutProcessProvider(widget.workoutScheduleId));
+    final userState = ref.watch(getMeProvider);
+    final workoutState = ref.watch(workoutProvider(widget.workoutScheduleId));
 
     if (state is WorkoutProcessModelLoading) {
       return const Center(
@@ -219,6 +228,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     }
 
     final model = state;
+    final userModel = userState as UserModel;
+    final workoutModel = workoutState as WorkoutModel;
 
     return WillPopScope(
       onWillPop: () async {
@@ -232,9 +243,52 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         floatingActionButton: isSwipeUp
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () async {
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(CupertinoDialogRoute(
+                          builder: (context) {
+                            return ThreadCreateScreen(
+                              trainer: ThreadTrainer(
+                                id: userModel.user.activeTrainers.first.id,
+                                nickname: userModel
+                                    .user.activeTrainers.first.nickname,
+                                profileImage: userModel
+                                    .user.activeTrainers.first.profileImage,
+                              ),
+                              user: ThreadUser(
+                                id: userModel.user.id,
+                                nickname: userModel.user.nickname,
+                                gender: userModel.user.gender,
+                              ),
+                              title:
+                                  '${workoutModel.exercises[model.exerciseIndex].name} ${model.exerciseIndex + 1}SET',
+                            );
+                          },
+                          context: context));
+                    },
+                    child: Container(
+                      width: 98,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: DARK_GRAY_COLOR,
+                      ),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'asset/img/icon_message.svg',
+                          width: 25,
+                          height: 25,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 9,
+                  ),
+                  GestureDetector(
+                    onTap: () async {
                       FirebaseAnalytics.instance
                           .logEvent(name: 'click_large_next_button');
 
@@ -259,7 +313,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       }
                     },
                     child: Container(
-                      width: size.width - 56,
+                      width: size.width - 56 - 107,
                       height: 44,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),

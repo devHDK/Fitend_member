@@ -335,6 +335,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
           height: 12,
         ),
         TextFormField(
+          autocorrect: false,
           maxLines: 9,
           style: const TextStyle(color: Colors.white),
           controller: contentsController,

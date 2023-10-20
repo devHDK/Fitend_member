@@ -1,23 +1,29 @@
+import 'package:camera/camera.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/provider/avail_camera_provider.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/thread/view/thread_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   static String get routeName => 'home_screen';
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
   final children = [const ScheduleScreen(), const ThreadScreen()];
 
   @override
   Widget build(BuildContext context) {
+    AsyncValue<List<CameraDescription>> camerasAsyncValue =
+        ref.watch(availableCamerasProvider);
+
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       bottomNavigationBar: BottomAppBar(

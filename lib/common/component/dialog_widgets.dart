@@ -195,14 +195,15 @@ class DialogWidgets {
               color: Colors.white,
             ),
             child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 20,
-                ),
-                child: CircularProgressIndicator(
-                  color: POINT_COLOR,
-                  value: doneCount / totalCount,
-                )),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 20,
+              ),
+              child: CircularProgressIndicator(
+                color: POINT_COLOR,
+                value: doneCount / totalCount,
+              ),
+            ),
           ),
         ],
       ),

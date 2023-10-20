@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/provider/avail_camera_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
@@ -77,16 +78,23 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   }
 
   getPermissionStatus() async {
-    await Permission.camera.request();
-    PermissionStatus status = await Permission.camera.status;
+    PermissionStatus status = await Permission.camera.request();
+
+    // if (status.isDenied) {
+    //   await Permission.camera.request();
+
+    //   status = await Permission.camera.status;
+    // }
 
     if (status.isGranted) {
       log('Camera Permission: GRANTED');
+      getAvailableCameras();
+
+      print(cameras);
+
       setState(() {
         _isCameraPermissionGranted = true;
       });
-      // Set and initialize the new camera
-      onNewCameraSelected(cameras[0]);
     } else {
       log('Camera Permission: DENIED');
     }
@@ -94,9 +102,16 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   void getAvailableCameras() async {
     try {
-      WidgetsFlutterBinding.ensureInitialized();
+      AsyncValue<List<CameraDescription>> camerasAsyncValue =
+          ref.read(availableCamerasProvider);
 
-      cameras = await availableCameras();
+      camerasAsyncValue.whenData((value) {
+        cameras = value;
+      });
+
+      print(cameras);
+
+      onNewCameraSelected(cameras[0]);
     } on CameraException catch (e) {
       debugPrint('Error in fetching the cameras: $e');
     }
@@ -257,8 +272,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
     getPermissionStatus();
-    getAvailableCameras();
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -352,10 +367,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                     }),
                                   ),
                                 )
-                              : Expanded(
-                                  child: Container(
-                                    color: Colors.black,
-                                  ),
+                              : Container(
+                                  color: Colors.black,
                                 ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -714,27 +727,29 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Row(),
-                  const Text(
+                  Text(
                     '카메라 권한을 허용해주세요!',
-                    style: TextStyle(
+                    style: h5Headline.copyWith(
                       color: Colors.white,
                       fontSize: 24,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: POINT_COLOR,
+                      foregroundColor: POINT_COLOR,
+                    ),
                     onPressed: () {
                       context.pop();
                       openAppSettings();
                     },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(
                         '📷 설정으로 이동',
-                        style: TextStyle(
+                        style: h6Headline.copyWith(
                           color: Colors.white,
-                          fontSize: 24,
                         ),
                       ),
                     ),

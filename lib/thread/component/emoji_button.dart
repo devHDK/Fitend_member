@@ -31,8 +31,7 @@ class _EmojiButtonState extends State<EmojiButton> {
         height: 28,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color:
-              widget.isSelected! ? POINT_COLOR.withAlpha(255) : DARK_GRAY_COLOR,
+          color: widget.isSelected! ? const Color(0xffCA3850) : DARK_GRAY_COLOR,
         ),
         child: widget.emoji == null
             ? Center(child: SvgPicture.asset('asset/img/icon_emoji_button.svg'))

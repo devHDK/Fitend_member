@@ -128,8 +128,9 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
       },
     );
 
-    int mediaCount =
-        model.gallery != null ? model.gallery!.length : 0 + linkUrls.length;
+    int mediaCount = model.gallery != null
+        ? model.gallery!.length + linkUrls.length
+        : 0 + linkUrls.length;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 28),

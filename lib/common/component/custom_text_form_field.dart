@@ -72,6 +72,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     );
 
     return TextFormField(
+      autocorrect: false,
       controller: widget.controller,
       style: const TextStyle(
         color: Colors.white,

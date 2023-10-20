@@ -145,17 +145,19 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton.small(
+        floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(CupertinoPageRoute(
-              builder: (context) => ThreadCreateScreen(
-                  trainer: user.user.activeTrainers.first,
-                  user: ThreadUser(
-                    id: user.user.id,
-                    gender: user.user.gender,
-                    nickname: user.user.nickname,
-                  )),
-            ));
+            Navigator.of(context).push(
+              CupertinoPageRoute(
+                builder: (context) => ThreadCreateScreen(
+                    trainer: user.user.activeTrainers.first,
+                    user: ThreadUser(
+                      id: user.user.id,
+                      gender: user.user.gender,
+                      nickname: user.user.nickname,
+                    )),
+              ),
+            );
           },
           backgroundColor: Colors.transparent,
           child: SvgPicture.asset('asset/img/icon_thread_create_button.svg'),
@@ -176,101 +178,117 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
               isLoading = false;
             });
           },
-          child: ScrollablePositionedList.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 28),
-            itemScrollController: itemScrollController,
-            itemPositionsListener: itemPositionsListener,
-            itemCount: state.data.length + 1,
-            itemBuilder: (context, index) {
-              if (index == state.data.length) {
-                if (state.data.length == state.total) {
-                  return const SizedBox(
-                    height: 100,
-                  );
-                }
-
-                return const SizedBox(
-                  height: 100,
+          child: state.data.isEmpty
+              ? SingleChildScrollView(
                   child: Center(
-                    child: CircularProgressIndicator(color: POINT_COLOR),
-                  ),
-                );
-              }
-
-              final model = state.data[index];
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (index == 0 ||
-                      DataUtils.getDateFromDateTime(
-                              DateTime.parse(model.createdAt)
-                                  .toUtc()
-                                  .toLocal()) !=
-                          DataUtils.getDateFromDateTime(
-                              DateTime.parse(state.data[index - 1].createdAt)
-                                  .toUtc()
-                                  .toLocal()))
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      child: Text(
-                        DataUtils.getDateFromDateTime(
-                                    DateTime.parse(model.createdAt)
-                                        .toUtc()
-                                        .toLocal()) ==
-                                DataUtils.getDateFromDateTime(DateTime.now())
-                            ? '오늘'
-                            : DataUtils.getDateFromDateTime(
-                                        DateTime.parse(model.createdAt)
-                                            .toUtc()
-                                            .toLocal()) ==
-                                    DataUtils.getDateFromDateTime(DateTime.now()
-                                        .subtract(const Duration(days: 1)))
-                                ? '어제'
-                                : DataUtils.getMonthDayFromDateTime(
-                                    DateTime.parse(model.createdAt)
-                                        .toUtc()
-                                        .toLocal()),
-                        style: h4Headline.copyWith(color: Colors.white),
+                    child: Text(
+                      '아직 코치님과 함께한 쓰레드가 없어요 🙂',
+                      style: s2SubTitle.copyWith(
+                        color: Colors.white,
                       ),
                     ),
-                  InkWell(
-                    onTap: () => Navigator.of(context).push(CupertinoPageRoute(
-                      builder: (context) => ThreadDetailScreen(
-                        threadId: model.id,
-                      ),
-                    )),
-                    child: ThreadCell(
-                      id: model.id,
-                      title: model.title,
-                      content: model.content,
-                      profileImageUrl: model.writerType == 'trainer'
-                          ? '$s3Url${model.trainer.profileImage}'
-                          : model.user.gender == 'male'
-                              ? maleProfileUrl
-                              : femaleProfileUrl,
-                      nickname: model.user.nickname,
-                      dateTime:
-                          DateTime.parse(model.createdAt).toUtc().toLocal(),
-                      gallery: model.gallery,
-                      emojis: model.emojis,
-                      userCommentCount: model.userCommentCount != null
-                          ? model.userCommentCount!
-                          : 0,
-                      trainerCommentCount: model.trainerCommentCount != null
-                          ? model.trainerCommentCount!
-                          : 0,
-                      user: model.user,
-                      trainer: model.trainer,
-                      writerType: model.writerType,
-                      threadType: model.type,
-                      workoutInfo: model.workoutInfo,
-                    ),
                   ),
-                ],
-              );
-            },
-          ),
+                )
+              : ScrollablePositionedList.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  itemScrollController: itemScrollController,
+                  itemPositionsListener: itemPositionsListener,
+                  itemCount: state.data.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == state.data.length) {
+                      if (state.data.length == state.total) {
+                        return const SizedBox(
+                          height: 100,
+                        );
+                      }
+
+                      return const SizedBox(
+                        height: 100,
+                        child: Center(
+                          child: CircularProgressIndicator(color: POINT_COLOR),
+                        ),
+                      );
+                    }
+
+                    final model = state.data[index];
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (index == 0 ||
+                            DataUtils.getDateFromDateTime(
+                                    DateTime.parse(model.createdAt)
+                                        .toUtc()
+                                        .toLocal()) !=
+                                DataUtils.getDateFromDateTime(DateTime.parse(
+                                        state.data[index - 1].createdAt)
+                                    .toUtc()
+                                    .toLocal()))
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: Text(
+                              DataUtils.getDateFromDateTime(
+                                          DateTime.parse(model.createdAt)
+                                              .toUtc()
+                                              .toLocal()) ==
+                                      DataUtils.getDateFromDateTime(
+                                          DateTime.now())
+                                  ? '오늘'
+                                  : DataUtils.getDateFromDateTime(
+                                              DateTime.parse(model.createdAt)
+                                                  .toUtc()
+                                                  .toLocal()) ==
+                                          DataUtils.getDateFromDateTime(
+                                              DateTime.now().subtract(
+                                                  const Duration(days: 1)))
+                                      ? '어제'
+                                      : DataUtils.getMonthDayFromDateTime(
+                                          DateTime.parse(model.createdAt)
+                                              .toUtc()
+                                              .toLocal()),
+                              style: h4Headline.copyWith(color: Colors.white),
+                            ),
+                          ),
+                        InkWell(
+                          onTap: () =>
+                              Navigator.of(context).push(CupertinoPageRoute(
+                            builder: (context) => ThreadDetailScreen(
+                              threadId: model.id,
+                            ),
+                          )),
+                          child: ThreadCell(
+                            id: model.id,
+                            title: model.title,
+                            content: model.content,
+                            profileImageUrl: model.writerType == 'trainer'
+                                ? '$s3Url${model.trainer.profileImage}'
+                                : model.user.gender == 'male'
+                                    ? maleProfileUrl
+                                    : femaleProfileUrl,
+                            nickname: model.user.nickname,
+                            dateTime: DateTime.parse(model.createdAt)
+                                .toUtc()
+                                .toLocal(),
+                            gallery: model.gallery,
+                            emojis: model.emojis,
+                            userCommentCount: model.userCommentCount != null
+                                ? model.userCommentCount!
+                                : 0,
+                            trainerCommentCount:
+                                model.trainerCommentCount != null
+                                    ? model.trainerCommentCount!
+                                    : 0,
+                            user: model.user,
+                            trainer: model.trainer,
+                            writerType: model.writerType,
+                            threadType: model.type,
+                            workoutInfo: model.workoutInfo,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
         ),
       ),
     );

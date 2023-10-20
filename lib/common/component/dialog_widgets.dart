@@ -378,12 +378,12 @@ class DialogWidgets {
   static void showToast(String content) {
     Fluttertoast.showToast(
       msg: content,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 3,
       backgroundColor: Colors.black54,
       textColor: Colors.white,
-      fontSize: 16.0,
+      fontSize: 13.0,
     );
   }
 }

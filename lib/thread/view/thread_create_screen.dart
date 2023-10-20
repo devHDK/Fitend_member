@@ -284,16 +284,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                               if (e.message == 'oversize_file_include_error') {
                                 // DialogWidgets.showToast(
                                 //     '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
-
-                                Fluttertoast.showToast(
-                                  msg: '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.',
-                                  toastLength: Toast.LENGTH_LONG,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.black54,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0,
-                                );
                               }
                             }
                           }

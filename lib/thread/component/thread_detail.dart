@@ -446,12 +446,12 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
 
                   ref
                       .read(threadProvider.notifier)
-                      .addEmoji(model.user.id, key, index, emojiId);
+                      .addEmoji(model.user.id, null, key, index, emojiId);
                 } else if (result['type'] == 'remove') {
                   final emojiId = result['emojiId'];
                   ref
                       .read(threadProvider.notifier)
-                      .removeEmoji(model.user.id, key, index, emojiId);
+                      .removeEmoji(model.user.id, null, key, index, emojiId);
                 }
               } catch (e) {
                 debugPrint('$e');
@@ -488,14 +488,12 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                 if (result['type'] == 'add') {
                   final emojiId = result['emojiId'];
 
-                  ref
-                      .read(threadProvider.notifier)
-                      .addEmoji(model.user.id, emoji.emoji, index, emojiId);
+                  ref.read(threadProvider.notifier).addEmoji(
+                      model.user.id, null, emoji.emoji, index, emojiId);
                 } else if (result['type'] == 'remove') {
                   final emojiId = result['emojiId'];
-                  ref
-                      .read(threadProvider.notifier)
-                      .removeEmoji(model.user.id, emoji.emoji, index, emojiId);
+                  ref.read(threadProvider.notifier).removeEmoji(
+                      model.user.id, null, emoji.emoji, index, emojiId);
                 }
               } catch (e) {
                 debugPrint('$e');

@@ -147,15 +147,15 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
         });
         if (emojiIndex == -1) {
           //이모지 추가
-          addThreadEmoji(userId, inputEmoji, response.emojiId);
+          addThreadEmoji(userId, null, inputEmoji, response.emojiId);
           result['type'] = 'add';
         } else {
           //이모지 취소
-          removeThreadEmoji(userId, inputEmoji, response.emojiId);
+          removeThreadEmoji(userId, null, inputEmoji, response.emojiId);
           result['type'] = 'remove';
         }
       } else if (pstate.emojis != null && pstate.emojis!.isEmpty) {
-        addThreadEmoji(userId, inputEmoji, response.emojiId);
+        addThreadEmoji(userId, null, inputEmoji, response.emojiId);
         result['type'] = 'add';
       }
 
@@ -194,12 +194,13 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
         });
         if (emojiIndex == -1) {
           //이모지 추가
-          addCommentEmoji(userId, inputEmoji, commentIndex, response.emojiId);
+          addCommentEmoji(
+              userId, null, inputEmoji, commentIndex, response.emojiId);
           result['type'] = 'add';
         } else {
           //이모지 취소
           removeCommentEmoji(
-              userId, inputEmoji, commentIndex, response.emojiId);
+              userId, null, inputEmoji, commentIndex, response.emojiId);
           result['type'] = 'remove';
         }
       }
@@ -215,7 +216,8 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
     }
   }
 
-  void addThreadEmoji(int userId, String inputEmoji, int emojiId) {
+  void addThreadEmoji(
+      int? userId, int? trainerId, String inputEmoji, int emojiId) {
     final pstate = state as ThreadModel;
 
     pstate.emojis!.add(
@@ -223,23 +225,26 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
         id: emojiId,
         emoji: inputEmoji,
         userId: userId,
-        trainerId: null,
+        trainerId: trainerId,
       ),
     );
 
     state = pstate.copyWith();
   }
 
-  void removeThreadEmoji(int userId, String inputEmoji, int emojiId) {
+  void removeThreadEmoji(
+      int? userId, int? trainerId, String inputEmoji, int emojiId) {
     final pstate = state as ThreadModel;
     pstate.emojis!.removeWhere((emoji) {
-      return emoji.id == emojiId && emoji.userId == userId;
+      return emoji.id == emojiId &&
+          (emoji.userId == userId || emoji.trainerId == trainerId);
     });
 
     state = pstate.copyWith();
   }
 
-  void addCommentEmoji(int userId, String inputEmoji, int index, int emojiId) {
+  void addCommentEmoji(
+      int? userId, int? trainerId, String inputEmoji, int index, int emojiId) {
     final pstate = state as ThreadModel;
 
     pstate.comments![index].emojis!.add(
@@ -247,7 +252,7 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
         id: emojiId,
         emoji: inputEmoji,
         userId: userId,
-        trainerId: null,
+        trainerId: trainerId,
       ),
     );
 
@@ -255,10 +260,11 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
   }
 
   void removeCommentEmoji(
-      int userId, String inputEmoji, int index, int emojiId) {
+      int? userId, int? trainerId, String inputEmoji, int index, int emojiId) {
     final pstate = state as ThreadModel;
     pstate.comments![index].emojis!.removeWhere((emoji) {
-      return emoji.id == emojiId && emoji.userId == userId;
+      return emoji.id == emojiId &&
+          (emoji.userId == userId || emoji.trainerId == trainerId);
     });
 
     state = pstate.copyWith();

@@ -130,6 +130,21 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
     state = pstate.copyWith();
   }
 
+  void updateTrainerCommentCount(int threadId, int count) {
+    final pstate = state as ThreadListModel;
+
+    int index = pstate.data.indexWhere(
+      (thread) {
+        return thread.id == threadId;
+      },
+    );
+
+    pstate.data[index].trainerCommentCount =
+        pstate.data[index].trainerCommentCount! + count;
+
+    state = pstate.copyWith();
+  }
+
   Future<Map<dynamic, dynamic>> updateEmoji(
       int threadId, int userId, String inputEmoji) async {
     try {
@@ -158,16 +173,16 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
 
         if (emojiIndex == -1) {
           //이모지 추가
-          addEmoji(userId, inputEmoji, index, response.emojiId);
+          addEmoji(userId, null, inputEmoji, index, response.emojiId);
           result['type'] = 'add';
         } else {
           //이모지 취소
-          removeEmoji(userId, inputEmoji, index, response.emojiId);
+          removeEmoji(userId, null, inputEmoji, index, response.emojiId);
           result['type'] = 'remove';
         }
       } else if (pstate.data[index].emojis != null &&
           pstate.data[index].emojis!.isEmpty) {
-        addEmoji(userId, inputEmoji, index, response.emojiId);
+        addEmoji(userId, null, inputEmoji, index, response.emojiId);
         result['type'] = 'add';
       }
 
@@ -183,7 +198,8 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
     }
   }
 
-  void addEmoji(int userId, String inputEmoji, int index, int emojiId) {
+  void addEmoji(
+      int? userId, int? trainerId, String inputEmoji, int index, int emojiId) {
     final pstate = state as ThreadListModel;
 
     pstate.data[index].emojis!.add(
@@ -191,17 +207,19 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
         id: emojiId,
         emoji: inputEmoji,
         userId: userId,
-        trainerId: null,
+        trainerId: trainerId,
       ),
     );
 
     state = pstate.copyWith();
   }
 
-  void removeEmoji(int userId, String inputEmoji, int index, int emojiId) {
+  void removeEmoji(
+      int? userId, int? trainerId, String inputEmoji, int index, int emojiId) {
     final pstate = state as ThreadListModel;
     pstate.data[index].emojis!.removeWhere((emoji) {
-      return emoji.id == emojiId && emoji.userId == userId;
+      return emoji.id == emojiId &&
+          (emoji.userId == userId || emoji.trainerId == trainerId);
     });
 
     state = pstate.copyWith();

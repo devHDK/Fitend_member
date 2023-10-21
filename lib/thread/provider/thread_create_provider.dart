@@ -120,8 +120,6 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       );
 
       if (state.assetsPaths != null && state.assetsPaths!.isNotEmpty) {
-        final tempState0 = state.copyWith();
-
         final isOverLimtSize =
             await DataUtils.checkFileSize(state.assetsPaths!);
 
@@ -129,8 +127,8 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
           throw FileException('oversize_file_include_error');
         }
 
+        final tempState0 = state.copyWith();
         tempState0.totalCount = state.assetsPaths!.length;
-
         state = tempState0;
 
         for (var filePath in state.assetsPaths!) {
@@ -212,9 +210,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
           }
 
           final tempState1 = state.copyWith();
-
           tempState1.doneCount++;
-
           state = tempState1;
         }
       }
@@ -426,16 +422,20 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       if (state.assetsPaths != null &&
           state.assetsPaths!.isNotEmpty &&
           state.isEditedAssets != null) {
-        final tempState0 = state.copyWith();
+        final isOverLimtSize =
+            await DataUtils.checkFileSize(state.assetsPaths!);
 
+        if (isOverLimtSize) {
+          throw FileException('oversize_file_include_error');
+        }
+
+        final tempState0 = state.copyWith();
         tempState0.totalCount =
             state.isEditedAssets!.where((element) => true).length;
-
         state = tempState0;
 
         for (int index = 0; index < state.assetsPaths!.length; index++) {
           final filePath = state.assetsPaths![index];
-
           final type = MediaUtils.getMediaType(filePath);
 
           if (type == MediaType.image &&
@@ -550,6 +550,11 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       final tstate = state.copyWith();
       tstate.isUploading = false;
       state = tstate;
+
+      if (e is FileException) {
+        debugPrint('thread create error : ${e.message}');
+        throw FileException(e.message);
+      }
     }
     return null;
   }

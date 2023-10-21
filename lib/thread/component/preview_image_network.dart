@@ -1,6 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
-import 'package:fitend_member/thread/component/extended_image.dart';
 import 'package:flutter/material.dart';
 
 class PreviewImageNetwork extends StatefulWidget {

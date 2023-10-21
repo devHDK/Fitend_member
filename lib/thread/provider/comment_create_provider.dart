@@ -4,10 +4,12 @@ import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_model.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/model/exception/thread_exceptios.dart';
 import 'package:fitend_member/thread/model/files/file_upload_request_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_comment_edit_model.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
@@ -106,10 +108,14 @@ class CommentCreateStateNotifier
       );
 
       if (state.assetsPaths.isNotEmpty) {
+        final isOverLimtSize = await DataUtils.checkFileSize(state.assetsPaths);
+
+        if (isOverLimtSize) {
+          throw FileException('oversize_file_include_error');
+        }
+
         final tempState0 = state.copyWith();
-
         tempState0.totalCount = state.assetsPaths.length;
-
         state = tempState0;
 
         for (var filePath in state.assetsPaths) {
@@ -217,6 +223,11 @@ class CommentCreateStateNotifier
       final tstate = state.copyWith();
       tstate.isUploading = false;
       state = tstate;
+
+      if (e is FileException) {
+        debugPrint('thread create error : ${e.message}');
+        throw FileException(e.message);
+      }
     }
   }
 
@@ -325,11 +336,15 @@ class CommentCreateStateNotifier
       List<GalleryModel> addGallery = [];
 
       if (state.assetsPaths.isNotEmpty && state.isEditedAssets != null) {
-        final tempState0 = state.copyWith();
+        final isOverLimtSize = await DataUtils.checkFileSize(state.assetsPaths);
 
+        if (isOverLimtSize) {
+          throw FileException('oversize_file_include_error');
+        }
+
+        final tempState0 = state.copyWith();
         tempState0.totalCount =
             state.isEditedAssets!.where((element) => true).length;
-
         state = tempState0;
 
         for (int index = 0; index < state.assetsPaths.length; index++) {
@@ -452,6 +467,11 @@ class CommentCreateStateNotifier
       final tstate = state.copyWith();
       tstate.isUploading = false;
       state = tstate;
+
+      if (e is FileException) {
+        debugPrint('thread create error : ${e.message}');
+        throw FileException(e.message);
+      }
     }
     return null;
   }

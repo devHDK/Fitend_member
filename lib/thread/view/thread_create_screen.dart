@@ -282,38 +282,49 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                           } catch (e) {
                             if (e is FileException) {
                               if (e.message == 'oversize_file_include_error') {
-                                // DialogWidgets.showToast(
-                                //     '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
+                                DialogWidgets.showToast(
+                                    '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
                               }
                             }
                           }
                         }
                       : () async {
-                          await ref
-                              .read(threadCreateProvider.notifier)
-                              .updateThread(
-                                widget.user,
-                                widget.trainer,
-                                widget.threadEditModel!.threadId,
-                                widget.threadEditModel!.gallery,
-                              )
-                              .then((value) {
-                            if (value != null) {
-                              ref
-                                  .read(threadProvider.notifier)
-                                  .updateThreadWithModel(
-                                      widget.threadEditModel!.threadId, value);
+                          try {
+                            await ref
+                                .read(threadCreateProvider.notifier)
+                                .updateThread(
+                                  widget.user,
+                                  widget.trainer,
+                                  widget.threadEditModel!.threadId,
+                                  widget.threadEditModel!.gallery,
+                                )
+                                .then((value) {
+                              if (value != null) {
+                                ref
+                                    .read(threadProvider.notifier)
+                                    .updateThreadWithModel(
+                                        widget.threadEditModel!.threadId,
+                                        value);
 
-                              ref
-                                  .read(threadDetailProvider(
-                                          widget.threadEditModel!.threadId)
-                                      .notifier)
-                                  .updateThreadWithModel(
-                                      widget.threadEditModel!.threadId, value);
+                                ref
+                                    .read(threadDetailProvider(
+                                            widget.threadEditModel!.threadId)
+                                        .notifier)
+                                    .updateThreadWithModel(
+                                        widget.threadEditModel!.threadId,
+                                        value);
+                              }
+
+                              context.pop();
+                            });
+                          } catch (e) {
+                            if (e is FileException) {
+                              if (e.message == 'oversize_file_include_error') {
+                                DialogWidgets.showToast(
+                                    '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
+                              }
                             }
-
-                            context.pop();
-                          });
+                          }
                         },
               child: Container(
                 width: 53,

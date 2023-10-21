@@ -14,6 +14,7 @@ import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/component/thread_detail.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
+import 'package:fitend_member/thread/model/exception/thread_exceptios.dart';
 import 'package:fitend_member/thread/model/threads/thread_comment_edit_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:fitend_member/thread/provider/comment_create_provider.dart';
@@ -482,25 +483,25 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                               commentController.text.isEmpty
                           ? null
                           : () async {
-                              await ref
-                                  .read(commentCreateProvider(widget.threadId)
-                                      .notifier)
-                                  .createComment(widget.threadId, model.user)
-                                  .then((value) {
-                                setState(() {
-                                  commentController.text = '';
+                              try {
+                                await ref
+                                    .read(commentCreateProvider(widget.threadId)
+                                        .notifier)
+                                    .createComment(widget.threadId, model.user)
+                                    .then((value) {
+                                  setState(() {
+                                    commentController.text = '';
+                                  });
                                 });
-                              }).onError((error, stackTrace) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      DialogWidgets.errorDialog(
-                                    message: '업도르에 실패하였습니다.',
-                                    confirmText: '확인',
-                                    confirmOnTap: () => context.pop(),
-                                  ),
-                                );
-                              });
+                              } catch (e) {
+                                if (e is FileException) {
+                                  if (e.message ==
+                                      'oversize_file_include_error') {
+                                    DialogWidgets.showToast(
+                                        '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
+                                  }
+                                }
+                              }
                             },
                       child: Container(
                         width: 53,
@@ -584,26 +585,36 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
                               ),
                               GestureDetector(
                                 onTap: () async {
-                                  ref
-                                      .read(commentCreateProvider(
-                                              commentState.threadId)
-                                          .notifier)
-                                      .updateComment(
-                                        edittingCommentId,
-                                        commentState.gallery,
-                                      )
-                                      .then((value) {
-                                    ref
+                                  try {
+                                    await ref
                                         .read(commentCreateProvider(
                                                 commentState.threadId)
                                             .notifier)
-                                        .init();
+                                        .updateComment(
+                                          edittingCommentId,
+                                          commentState.gallery,
+                                        )
+                                        .then((value) {
+                                      ref
+                                          .read(commentCreateProvider(
+                                                  commentState.threadId)
+                                              .notifier)
+                                          .init();
 
-                                    setState(() {
-                                      edittingCommentId = -1;
-                                      commentController.text = '';
+                                      setState(() {
+                                        edittingCommentId = -1;
+                                        commentController.text = '';
+                                      });
                                     });
-                                  });
+                                  } catch (e) {
+                                    if (e is FileException) {
+                                      if (e.message ==
+                                          'oversize_file_include_error') {
+                                        DialogWidgets.showToast(
+                                            '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
+                                      }
+                                    }
+                                  }
                                 },
                                 child: Container(
                                   width: 45,

@@ -148,13 +148,13 @@ class DataUtils {
   }
 
   static Future<bool> checkFileSize(List<String> assetPaths) async {
-    const limitFileSize = 1 * 1024 * 1024; //200mb
+    const limitFileSize = 200 * 1000 * 1000; //200mb
     for (var filePath in assetPaths) {
       final file = File(filePath);
 
       if (await file.exists()) {
         final fileSize = await file.length(); //byte
-        print('fileSize : ${fileSize / (1024 * 1024)} MB');
+        print('fileSize : ${fileSize / (1000 * 1000)} MB');
         if (limitFileSize < fileSize) {
           return true;
         }

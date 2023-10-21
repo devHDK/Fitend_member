@@ -11,20 +11,49 @@ const List<String> weekday = [
   '일',
 ];
 
+String needNotificationUpdate = 'notificationUpdate';
+
+String needScheduleUpdate = 'scheduleUpdate';
+String needWorkoutUpdateList = 'needWorkoutUpdateList';
+
+String needThreadCreate = 'threadCreate';
+String needThreadUpdate = 'threadUpdate';
+String needThreadDelete = 'threadDelete';
+
+String needCommentCreate = 'commentCreate';
+String needCommentUpdate = 'commentUpdate';
+String needcommentDelete = 'commentDelete';
+
+String needEmojiCreate = 'emojiCreate';
+String needEmojiDelete = 'emojiDelete';
+
 enum WorkoutPushType {
   workoutScheduleCreate,
   workoutScheduleDelete,
   workoutScheduleChange,
 }
 
+enum ThreadPushType {
+  threadCreate,
+  threadDelete,
+  threadUpdate,
+}
+
+enum CommentPushType {
+  commentCreate,
+  commentDelete,
+  commentUpdate,
+}
+
+enum EmojiPushType {
+  emojiCreate,
+  emojiDelete,
+}
+
 enum ThreadType {
   record,
   general,
 }
-
-String needScheduleUpdate = 'scheduleUpdate';
-String needNotificationUpdate = 'notificationUpdate';
-String needWorkoutUpdateList = 'needWorkoutUpdateList';
 
 final buildEnv = F.appFlavor == Flavor.local
     ? Flavor.local.name
@@ -69,10 +98,6 @@ String workoutResult = 'workoutResult';
 String modifiedExercise = 'modifiedExercise';
 String workoutFeedback = 'WorkoutFeedback';
 String processingExerciseIndex = 'processExerciseIndex';
-
-// URL 패턴을 검사하는 정규표현식
-// final urlRegExp = RegExp(
-//     r"((https?:www\.)|(https?:\/\/)|(www\.) | (-a-z\.)  )[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
 
 final RegExp urlRegExp =
     RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+');

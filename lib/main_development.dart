@@ -50,7 +50,7 @@ void processPushMessage(RemoteMessage message) async {
   if (type.contains('reservation')) {
     await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
     await SharedPrefUtils.updateIsNeedUpdateNotification(pref, true);
-  } else {
+  } else if (type.contains('workoutSchedule')) {
     switch (DataUtils.getWorkoutPushType(type)) {
       case WorkoutPushType.workoutScheduleCreate:
         await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
@@ -63,6 +63,44 @@ void processPushMessage(RemoteMessage message) async {
         await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
         await SharedPrefUtils.addOneNeedUpdateWorkoutList(
             pref, workoutScheduleId);
+        break;
+
+      default:
+        break;
+    }
+  } else if (type.contains('thread')) {
+    await SharedPrefUtils.updateIsNeedUpdateNotification(pref, true);
+
+    switch (DataUtils.getThreadPushType(type)) {
+      case ThreadPushType.threadCreate:
+        break;
+      case ThreadPushType.threadDelete:
+        break;
+      case ThreadPushType.threadUpdate:
+        break;
+
+      default:
+        break;
+    }
+  } else if (type.contains('comment')) {
+    await SharedPrefUtils.updateIsNeedUpdateNotification(pref, true);
+
+    switch (DataUtils.getCommentPushType(type)) {
+      case CommentPushType.commentCreate:
+        break;
+      case CommentPushType.commentDelete:
+        break;
+      case CommentPushType.commentUpdate:
+        break;
+
+      default:
+        break;
+    }
+  } else {
+    switch (DataUtils.getEmojiPushType(type)) {
+      case EmojiPushType.emojiCreate:
+        break;
+      case EmojiPushType.emojiDelete:
         break;
 
       default:

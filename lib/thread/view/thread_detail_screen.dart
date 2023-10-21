@@ -98,7 +98,10 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen> {
         builder: (context) => DialogWidgets.errorDialog(
           message: state.message,
           confirmText: '확인',
-          confirmOnTap: () => context.pop(),
+          confirmOnTap: () {
+            int count = 0;
+            Navigator.of(context).popUntil((_) => count++ >= 2);
+          },
         ),
       );
     }

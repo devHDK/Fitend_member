@@ -45,6 +45,41 @@ class DataUtils {
     }
   }
 
+  static getThreadPushType(String type) {
+    switch (type) {
+      case 'threadCreate':
+        return ThreadPushType.threadCreate;
+      case 'threadDelete':
+        return ThreadPushType.threadDelete;
+      case 'threadUpdate':
+        return ThreadPushType.threadUpdate;
+      default:
+    }
+  }
+
+  static getCommentPushType(String type) {
+    switch (type) {
+      case 'commentCreate':
+        return CommentPushType.commentCreate;
+      case 'commentDelete':
+        return CommentPushType.commentDelete;
+      case 'commentUpdate':
+        return CommentPushType.commentUpdate;
+      default:
+    }
+  }
+
+  static getEmojiPushType(String type) {
+    switch (type) {
+      case 'emojiCreate':
+        return EmojiPushType.emojiCreate;
+      case 'emojitDelete':
+        return EmojiPushType.emojiDelete;
+
+      default:
+    }
+  }
+
   static String getTimeStringHour(int seconds) {
     String ret =
         '${(seconds / 3600).floor().toString().padLeft(2, '0')} : ${((seconds % 3600) / 60).floor().toString().padLeft(2, '0')} : ${(seconds % 60).floor().toString().padLeft(2, '0')}';

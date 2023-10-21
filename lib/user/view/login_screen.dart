@@ -273,7 +273,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               builder: (context) => DialogWidgets.errorDialog(
                                 message: ret.error,
                                 confirmText: '확인',
-                                confirmOnTap: () => context.pop(),
+                                confirmOnTap: () {
+                                  int count = 0;
+                                  Navigator.of(context)
+                                      .popUntil((_) => count++ >= 2);
+                                },
                               ),
                             );
                           }

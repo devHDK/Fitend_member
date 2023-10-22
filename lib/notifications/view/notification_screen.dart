@@ -1,5 +1,6 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
@@ -60,11 +61,13 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
 
   Future<void> putNotification() async {
     final pref = await ref.read(sharedPrefsProvider);
-    final isNeedUpdateNoti = SharedPrefUtils.getIsNeedUpdateNotification(pref);
+    final isNeedUpdateNoti =
+        SharedPrefUtils.getIsNeedUpdate(needNotificationUpdate, pref);
 
     if (isNeedUpdateNoti) {
       await ref.read(notificationProvider.notifier).paginate();
-      await SharedPrefUtils.updateIsNeedUpdateNotification(pref, false);
+      await SharedPrefUtils.updateIsNeedUpdate(
+          needNotificationUpdate, pref, false);
     }
   }
 

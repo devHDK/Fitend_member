@@ -1,9 +1,9 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/component/reservation_schedule_card.dart';
 import 'package:fitend_member/common/component/workout_schedule_card.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
@@ -113,6 +113,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   void _getNotificationState() async {
+    //TODO: Provider로 변경
     try {
       notificationConfirmResponse = await ref
           .read(notificationRepositoryProvider)
@@ -168,10 +169,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     _getNotificationState();
 
     final pref = await ref.read(sharedPrefsProvider);
-    final isNeedUpdate = SharedPrefUtils.getIsNeedUpdateSchedule(pref);
+    final isNeedUpdate =
+        SharedPrefUtils.getIsNeedUpdate(needScheduleUpdate, pref);
     if (isNeedUpdate) {
       await _resetScheduleList();
-      await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, false);
+      await SharedPrefUtils.updateIsNeedUpdate(needScheduleUpdate, pref, false);
     }
   }
 

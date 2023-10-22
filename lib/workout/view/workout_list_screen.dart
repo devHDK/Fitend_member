@@ -113,14 +113,16 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
 
   Future<void> _checkIsNeedUpdateWorkoutDetail() async {
     final pref = await ref.read(sharedPrefsProvider);
-    final needUpdateList = SharedPrefUtils.getNeedUpdateWorkoutList(pref);
+    final needUpdateList =
+        SharedPrefUtils.getNeedUpdateList(needWorkoutUpdateList, pref);
 
     if (needUpdateList.contains(widget.id.toString()) &&
         workoutModel.exercises.isNotEmpty) {
       ref.read(workoutProvider(widget.id).notifier).getWorkout(id: widget.id);
       needUpdateList.remove(widget.id.toString());
 
-      SharedPrefUtils.updateNeedUpdateWorkoutList(pref, needUpdateList);
+      SharedPrefUtils.updateNeedUpdateList(
+          needWorkoutUpdateList, pref, needUpdateList);
     }
   }
 

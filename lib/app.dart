@@ -60,6 +60,13 @@ class _AppState extends ConsumerState<App> {
       pref.setBool(needScheduleUpdate, false),
       pref.setBool(needNotificationUpdate, false),
       pref.setStringList(needWorkoutUpdateList, []),
+      pref.setBool(needThreadUpdate, false),
+      pref.setStringList(needThreadUpdateList, []),
+      pref.setStringList(needThreadDelete, []),
+      pref.setStringList(needCommentCreate, []),
+      pref.setStringList(needCommentDelete, []),
+      pref.setStringList(needEmojiCreate, []),
+      pref.setStringList(needEmojiDelete, []),
     ]);
   }
 

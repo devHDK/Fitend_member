@@ -2,53 +2,78 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefUtils {
-  static bool getIsNeedUpdateSchedule(SharedPreferences pref) {
-    final bool? isNeedUpdateSchedule = pref.getBool(needScheduleUpdate);
+  static bool getIsNeedUpdate(String value, SharedPreferences pref) {
+    final bool? isNeedUpdate = pref.getBool(value);
 
-    if (isNeedUpdateSchedule == null) return false;
+    if (isNeedUpdate == null) return false;
 
-    return isNeedUpdateSchedule;
+    return isNeedUpdate;
   }
 
-  static bool getIsNeedUpdateNotification(SharedPreferences pref) {
-    final bool? isNeedUpdateNoti = pref.getBool(needNotificationUpdate);
+  static List<String> getNeedUpdateList(String value, SharedPreferences pref) {
+    final updateList = pref.getStringList(value);
 
-    if (isNeedUpdateNoti == null) return false;
+    if (updateList == null) return [];
 
-    return isNeedUpdateNoti;
+    return updateList.toSet().toList();
   }
 
-  static List<String> getNeedUpdateWorkoutList(SharedPreferences pref) {
-    final updateWorkoutList = pref.getStringList(needWorkoutUpdateList);
-
-    if (updateWorkoutList == null) return [];
-
-    return updateWorkoutList.toSet().toList();
+  static Future<void> updateIsNeedUpdate(
+      String value, SharedPreferences pref, bool isNeedUpdate) async {
+    await pref.setBool(value, isNeedUpdate);
   }
 
-  static Future<void> updateIsNeedUpdateSchedule(
-      SharedPreferences pref, bool isNeedUpdate) async {
-    await pref.setBool(needScheduleUpdate, isNeedUpdate);
-  }
+  static Future<void> addOneNeedUpdateList(
+      String value, SharedPreferences pref, String updateValue) async {
+    final pList = getNeedUpdateList(value, pref);
 
-  static Future<void> updateIsNeedUpdateNotification(
-      SharedPreferences pref, bool isNeedUpdate) async {
-    await pref.setBool(needNotificationUpdate, isNeedUpdate);
-  }
-
-  static Future<void> addOneNeedUpdateWorkoutList(
-      SharedPreferences pref, String workoutScheduleId) async {
-    final pList = getNeedUpdateWorkoutList(pref);
-
-    pList.add(workoutScheduleId);
+    pList.add(updateValue);
 
     await pref.setStringList(needWorkoutUpdateList, pList);
   }
 
-  static Future<void> updateNeedUpdateWorkoutList(
-      SharedPreferences pref, List<String> updateList) async {
-    await pref.setStringList(needWorkoutUpdateList, updateList);
+  static Future<void> updateNeedUpdateList(
+      String value, SharedPreferences pref, List<String> updateList) async {
+    await pref.setStringList(value, updateList);
   }
 
-  //TODO: thread 관련 함수들 추가
+  static Future<void> updateAddThreadBadgeCount(
+      SharedPreferences pref, String type) async {
+    switch (type) {
+      case 'add':
+        int? count = pref.getInt(threadBadgeCount);
+
+        count ??= 0;
+        await pref.setInt(threadBadgeCount, count + 1);
+        break;
+
+      case 'reset':
+        await pref.setInt(threadBadgeCount, 0);
+        break;
+
+      default:
+    }
+  }
+
+  static int getThreadBadgeCount(
+    SharedPreferences pref,
+  ) {
+    int? count = pref.getInt(threadBadgeCount);
+    count ??= 0;
+
+    return count;
+  }
+
+  static bool getHasNewNotification(SharedPreferences pref) {
+    final bool? newNotification = pref.getBool(hasNewNotification);
+
+    if (newNotification == null) return false;
+
+    return newNotification;
+  }
+
+  static Future<void> updateHasNewNotification(
+      SharedPreferences pref, bool newNotification) async {
+    await pref.setBool(hasNewNotification, newNotification);
+  }
 }

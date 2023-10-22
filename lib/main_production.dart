@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -14,6 +15,7 @@ import 'package:fitend_member/exercise/model/target_muscle_model.dart';
 import 'package:fitend_member/firebase_options.dart';
 import 'package:fitend_member/firebase_setup.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
+import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:flutter/foundation.dart';
@@ -34,9 +36,6 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   );
 
   processPushMessage(message);
-
-  // await setupFlutterNotifications(); // 셋팅 메소드
-  // showFlutterNotification(message);
 }
 
 void processPushMessage(RemoteMessage message) async {
@@ -47,21 +46,124 @@ void processPushMessage(RemoteMessage message) async {
   debugPrint('message: ${message.toMap()}');
 
   if (type.contains('reservation')) {
-    await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
-    await SharedPrefUtils.updateIsNeedUpdateNotification(pref, true);
-  } else {
+    await SharedPrefUtils.updateIsNeedUpdate(needScheduleUpdate, pref, true);
+    await SharedPrefUtils.updateIsNeedUpdate(
+        needNotificationUpdate, pref, true);
+  } else if (type.contains('workoutSchedule')) {
     switch (DataUtils.getWorkoutPushType(type)) {
       case WorkoutPushType.workoutScheduleCreate:
-        await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
+        await SharedPrefUtils.updateIsNeedUpdate(
+            needScheduleUpdate, pref, true);
         break;
       case WorkoutPushType.workoutScheduleDelete:
-        await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
+        await SharedPrefUtils.updateIsNeedUpdate(
+            needScheduleUpdate, pref, true);
         break;
       case WorkoutPushType.workoutScheduleChange:
         String workoutScheduleId = message.data['workoutScheduleId'].toString();
-        await SharedPrefUtils.updateIsNeedUpdateSchedule(pref, true);
-        await SharedPrefUtils.addOneNeedUpdateWorkoutList(
-            pref, workoutScheduleId);
+        await SharedPrefUtils.updateIsNeedUpdate(
+            needScheduleUpdate, pref, true);
+        await SharedPrefUtils.addOneNeedUpdateList(
+            needWorkoutUpdateList, pref, workoutScheduleId);
+        break;
+
+      default:
+        break;
+    }
+  } else if (type.contains('thread')) {
+    switch (DataUtils.getThreadPushType(type)) {
+      case ThreadPushType.threadCreate:
+        await SharedPrefUtils.updateIsNeedUpdate(
+            needNotificationUpdate, pref, true);
+        await SharedPrefUtils.updateIsNeedUpdate(needThreadUpdate, pref, true);
+        break;
+      case ThreadPushType.threadDelete:
+        String threadId = message.data['threadId'].toString();
+        await SharedPrefUtils.addOneNeedUpdateList(
+            needThreadDelete, pref, threadId);
+        break;
+      case ThreadPushType.threadUpdate:
+        String threadId = message.data['threadId'].toString();
+        await SharedPrefUtils.updateIsNeedUpdate(needThreadUpdate, pref, true);
+        await SharedPrefUtils.addOneNeedUpdateList(
+            needThreadUpdateList, pref, threadId);
+        break;
+
+      default:
+        break;
+    }
+  } else if (type.contains('comment')) {
+    switch (DataUtils.getCommentPushType(type)) {
+      case CommentPushType.commentCreate:
+        await SharedPrefUtils.updateIsNeedUpdate(
+            needNotificationUpdate, pref, true);
+        String threadId = message.data['threadId'].toString();
+        await SharedPrefUtils.addOneNeedUpdateList(
+            needCommentCreate, pref, threadId);
+
+        break;
+      case CommentPushType.commentDelete:
+        String threadId = message.data['threadId'].toString();
+        await SharedPrefUtils.addOneNeedUpdateList(
+            needCommentDelete, pref, threadId);
+        break;
+      case CommentPushType.commentUpdate:
+        String threadId = message.data['threadId'].toString();
+        await SharedPrefUtils.addOneNeedUpdateList(
+            needThreadUpdateList, pref, threadId);
+
+        break;
+
+      default:
+        break;
+    }
+  } else {
+    switch (DataUtils.getEmojiPushType(type)) {
+      case EmojiPushType.emojiCreate:
+        final pushData = EmojiModelFromPushData.fromJson(message.data);
+
+        await SharedPrefUtils.addOneNeedUpdateList(
+            needEmojiCreate, pref, pushData.toString());
+
+        var deleteList =
+            SharedPrefUtils.getNeedUpdateList(needEmojiDelete, pref);
+
+        final tempList = deleteList;
+
+        for (var emoji in tempList) {
+          Map<String, dynamic> emojiMap = jsonDecode(emoji);
+          final deleteEmoji = EmojiModelFromPushData.fromJson(emojiMap);
+
+          if (deleteEmoji == pushData) {
+            deleteList.remove(emoji);
+          }
+        }
+
+        SharedPrefUtils.updateNeedUpdateList(needEmojiDelete, pref, deleteList);
+
+        break;
+      case EmojiPushType.emojiDelete:
+        final pushData = EmojiModelFromPushData.fromJson(message.data);
+
+        await SharedPrefUtils.addOneNeedUpdateList(
+            needEmojiDelete, pref, pushData.toString());
+
+        var createList =
+            SharedPrefUtils.getNeedUpdateList(needEmojiCreate, pref);
+
+        final tempList = createList;
+
+        for (var emoji in tempList) {
+          Map<String, dynamic> emojiMap = jsonDecode(emoji);
+          final deleteEmoji = EmojiModelFromPushData.fromJson(emojiMap);
+
+          if (deleteEmoji == pushData) {
+            createList.remove(emoji);
+          }
+        }
+
+        SharedPrefUtils.updateNeedUpdateList(needEmojiDelete, pref, createList);
+
         break;
 
       default:

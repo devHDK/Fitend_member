@@ -556,12 +556,12 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
               ref
                   .read(threadDetailProvider(widget.id).notifier)
-                  .addThreadEmoji(widget.user.id, key, emojiId);
+                  .addThreadEmoji(widget.user.id, null, key, emojiId);
             } else if (result['type'] == 'remove') {
               final emojiId = result['emojiId'];
               ref
                   .read(threadDetailProvider(widget.id).notifier)
-                  .removeThreadEmoji(widget.user.id, key, emojiId);
+                  .removeThreadEmoji(widget.user.id, null, key, emojiId);
             }
           } catch (e) {
             debugPrint('$e');
@@ -590,12 +590,14 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
                   ref
                       .read(threadDetailProvider(widget.id).notifier)
-                      .addThreadEmoji(widget.user.id, emoji.emoji, emojiId);
+                      .addThreadEmoji(
+                          widget.user.id, null, emoji.emoji, emojiId);
                 } else if (result['type'] == 'remove') {
                   final emojiId = result['emojiId'];
                   ref
                       .read(threadDetailProvider(widget.id).notifier)
-                      .removeThreadEmoji(widget.user.id, emoji.emoji, emojiId);
+                      .removeThreadEmoji(
+                          widget.user.id, null, emoji.emoji, emojiId);
                 }
               } catch (e) {
                 debugPrint('$e');

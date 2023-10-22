@@ -12,17 +12,20 @@ const List<String> weekday = [
 ];
 
 String needNotificationUpdate = 'notificationUpdate';
+String hasNewNotification = 'hasNewNotification';
 
 String needScheduleUpdate = 'scheduleUpdate';
 String needWorkoutUpdateList = 'needWorkoutUpdateList';
 
-String needThreadCreate = 'threadCreate';
-String needThreadUpdate = 'threadUpdate';
-String needThreadDelete = 'threadDelete';
+String threadBadgeCount = 'threadBadgeCount';
+
+String needThreadUpdate = 'needThreadUpdate';
+String needThreadUpdateList = 'needThreadUpdateList';
+String needThreadDelete = 'needThreadDelete';
 
 String needCommentCreate = 'commentCreate';
-String needCommentUpdate = 'commentUpdate';
-String needcommentDelete = 'commentDelete';
+// String needCommentUpdate = 'commentUpdate';
+String needCommentDelete = 'needCommentDelete';
 
 String needEmojiCreate = 'emojiCreate';
 String needEmojiDelete = 'emojiDelete';

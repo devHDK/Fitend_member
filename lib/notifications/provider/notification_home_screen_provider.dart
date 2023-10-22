@@ -52,10 +52,22 @@ class NotificationHomeStateNotifier
   }
 
   void updateBageCount(int count) {
-    final pstate = state as NotificationMainModel;
+    if (state is NotificationMainModel) {
+      final pstate = state as NotificationMainModel;
 
-    pstate.threadBadgeCount = count;
+      pstate.threadBadgeCount = count;
 
-    state = pstate.copyWith();
+      state = pstate.copyWith();
+    }
+  }
+
+  void updateIsConfirm(bool isConfirm) {
+    if (state is NotificationMainModel) {
+      final pstate = state as NotificationMainModel;
+
+      pstate.isConfirmed = isConfirm;
+
+      state = pstate.copyWith();
+    }
   }
 }

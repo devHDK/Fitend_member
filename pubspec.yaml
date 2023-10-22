@@ -78,7 +78,7 @@ dependencies:
   bottom_sheet: ^4.0.0
   animated_text_kit: ^4.2.2
   ndialog: ^4.3.0
-  badges: ^3.1.1
+  badges: ^3.1.2
   upgrader: ^8.1.0
   cached_network_image: ^3.2.3
   permission_handler: ^11.0.0

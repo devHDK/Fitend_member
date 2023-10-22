@@ -1,6 +1,6 @@
-import 'package:camera/camera.dart';
 import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/provider/avail_camera_provider.dart';
+import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
+import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/thread/view/thread_screen.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +21,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    AsyncValue<List<CameraDescription>> camerasAsyncValue =
-        ref.watch(availableCamerasProvider);
+    NotificationMainModel? model;
+    final notificationState = ref.watch(notificationHomeProvider);
+
+    if (notificationState is NotificationMainModel) model = notificationState;
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
@@ -70,10 +72,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       horizontal: 40,
                       vertical: 10,
                     ),
-                    child: SvgPicture.asset(
-                      _currentIndex == 1
-                          ? 'asset/img/icon_message_active.svg'
-                          : 'asset/img/icon_message.svg',
+                    child: Badge.count(
+                      count: model is NotificationMainModel
+                          ? model.threadBadgeCount
+                          : 0,
+                      child: SvgPicture.asset(
+                        _currentIndex == 1
+                            ? 'asset/img/icon_message_active.svg'
+                            : 'asset/img/icon_message.svg',
+                      ),
                     ),
                   ),
                 ),

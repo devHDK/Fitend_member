@@ -102,6 +102,7 @@ void processPushMessage(RemoteMessage message) async {
       case CommentPushType.commentCreate:
         await SharedPrefUtils.updateIsNeedUpdate(
             needNotificationUpdate, pref, true);
+
         String threadId = message.data['threadId'].toString();
         await SharedPrefUtils.addOneNeedUpdateList(
             needCommentCreate, pref, threadId);

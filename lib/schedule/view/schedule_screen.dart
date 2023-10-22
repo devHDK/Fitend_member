@@ -9,7 +9,9 @@ import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
+import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
 import 'package:fitend_member/notifications/model/notification_confirm_model.dart';
+import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/notifications/repository/notifications_repository.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
@@ -40,8 +42,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
-  NotificationConfirmResponse notificationConfirmResponse =
-      NotificationConfirmResponse(isConfirm: false);
 
   DateTime today = DateTime.now();
   DateTime fifteenDaysAgo = DateTime.now().subtract(const Duration(days: 15));
@@ -55,8 +55,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-
-    _getNotificationState();
     itemPositionsListener.itemPositions.addListener(_handleItemPositionChange);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -112,19 +110,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     }
   }
 
-  void _getNotificationState() async {
-    //TODO: Provider로 변경
-    try {
-      notificationConfirmResponse = await ref
-          .read(notificationRepositoryProvider)
-          .getNotificationsConfirm();
-
-      setState(() {});
-    } catch (e) {
-      debugPrint('e : $e');
-    }
-  }
-
   // void _getScheduleInitial() async {
   //   await ref
   //       .read(scheduleProvider.notifier)
@@ -166,8 +151,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   Future<void> _checkIsNeedUpdate() async {
-    _getNotificationState();
-
     final pref = await ref.read(sharedPrefsProvider);
     final isNeedUpdate =
         SharedPrefUtils.getIsNeedUpdate(needScheduleUpdate, pref);
@@ -200,6 +183,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
   @override
   Widget build(BuildContext context) {
+    final notificationState = ref.watch(notificationHomeProvider);
     final state = ref.watch(scheduleProvider);
 
     if (state is ScheduleModelLoading) {
@@ -222,6 +206,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     }
 
     final schedules = state as ScheduleModel;
+    final notificationHomeModel = notificationState as NotificationMainModel;
+
     minDate = schedules.data.first.startDate.subtract(const Duration(days: 31));
     maxDate = schedules.data.last.startDate.add(const Duration(days: 1));
 
@@ -253,7 +239,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                       builder: (context) => const NotificationScreen(),
                     ));
               },
-              child: !notificationConfirmResponse.isConfirm
+              child: !notificationHomeModel.isConfirmed
                   ? SvgPicture.asset('asset/img/icon_alarm_on.svg')
                   : SvgPicture.asset('asset/img/icon_alarm_off.svg'),
             ),

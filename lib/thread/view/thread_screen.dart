@@ -1,13 +1,22 @@
+import 'dart:convert';
+
 import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/common/utils/shared_pref_utils.dart';
+import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
+import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/component/thread_cell.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_model.dart';
+import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/view/thread_create_screen.dart';
@@ -29,7 +38,7 @@ class ThreadScreen extends ConsumerStatefulWidget {
 }
 
 class _ThreadScreenState extends ConsumerState<ThreadScreen>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, RouteAware {
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
@@ -45,6 +54,9 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
 
     WidgetsBinding.instance.addObserver(this);
     itemPositionsListener.itemPositions.addListener(_handleItemPositionChange);
+
+    //threadScreen 진입시 badgeCount => 0
+    ref.read(notificationHomeProvider.notifier).updateBageCount(0);
   }
 
   void _handleItemPositionChange() {
@@ -74,9 +86,173 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        await _checkIsNeedUpdate();
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.hidden:
+        break;
+    }
+  }
+
+  @override
+  void didPushNext() async {
+    super.didPush();
+    await _checkIsNeedUpdate();
+  }
+
+  @override
+  void didPopNext() async {
+    super.didPopNext();
+    await _checkIsNeedUpdate();
+  }
+
+  Future<void> _checkIsNeedUpdate() async {
+    final pref = await ref.read(sharedPrefsProvider);
+    final isNeedUpdate =
+        SharedPrefUtils.getIsNeedUpdate(needThreadUpdate, pref);
+    var deleteList = SharedPrefUtils.getNeedUpdateList(needThreadDelete, pref);
+    var commentCreateList =
+        SharedPrefUtils.getNeedUpdateList(needCommentCreate, pref);
+    var commentDeleteList =
+        SharedPrefUtils.getNeedUpdateList(needCommentDelete, pref);
+    var emojiCreateList =
+        SharedPrefUtils.getNeedUpdateList(needEmojiCreate, pref);
+    var emojiDeleteList =
+        SharedPrefUtils.getNeedUpdateList(needEmojiDelete, pref);
+
+    if (isNeedUpdate) {
+      ref
+          .read(threadProvider.notifier)
+          .paginate(startIndex: 0, isRefetch: true);
+
+      await SharedPrefUtils.updateIsNeedUpdate(needScheduleUpdate, pref, false);
+      await SharedPrefUtils.updateNeedUpdateList(needThreadDelete, pref, []);
+      deleteList = [];
+    }
+
+    if (deleteList.isNotEmpty) {
+      for (var e in deleteList) {
+        final tempState = ref.read(threadProvider);
+
+        final model = tempState as ThreadListModel;
+        final index = model.data.indexWhere((thread) {
+          return thread.id == int.parse(e);
+        });
+
+        if (index != -1) {
+          ref
+              .read(threadProvider.notifier)
+              .removeThreadWithId(int.parse(e), index);
+        }
+      }
+    }
+
+    if (commentCreateList.isNotEmpty) {
+      for (var e in commentCreateList) {
+        if (ref.read(threadDetailProvider(int.parse(e))) is ThreadModel) {
+          ref
+              .read(threadDetailProvider(int.parse(e)).notifier)
+              .getThreadDetail(threadId: int.parse(e));
+        }
+
+        var tempState = ref.read(threadProvider);
+        var model = tempState as ThreadListModel;
+
+        int index =
+            model.data.indexWhere((thread) => thread.id == int.parse(e));
+
+        if (index != -1) {
+          ref
+              .read(threadProvider.notifier)
+              .updateTrainerCommentCount(int.parse(e), 1);
+        }
+      }
+      await SharedPrefUtils.updateNeedUpdateList(needCommentCreate, pref, []);
+      commentCreateList = [];
+    }
+
+    if (commentDeleteList.isNotEmpty) {
+      for (var e in commentDeleteList) {
+        if (ref.read(threadDetailProvider(int.parse(e))) is ThreadModel) {
+          ref
+              .read(threadDetailProvider(int.parse(e)).notifier)
+              .getThreadDetail(threadId: int.parse(e));
+        }
+
+        var tempState = ref.read(threadProvider);
+        var model = tempState as ThreadListModel;
+
+        int index =
+            model.data.indexWhere((thread) => thread.id == int.parse(e));
+
+        if (index != -1) {
+          ref
+              .read(threadProvider.notifier)
+              .updateTrainerCommentCount(int.parse(e), -1);
+        }
+      }
+    }
+
+    if (emojiCreateList.isNotEmpty) {
+      var tempList = emojiCreateList;
+
+      for (var emoji in tempList) {
+        var emojiMap = jsonDecode(emoji);
+        var emojiModel = EmojiModelFromPushData.fromJson(emojiMap);
+
+        if (emojiModel.commentId == null) {
+          final tempState = ref.read(threadProvider) as ThreadListModel;
+          int index = tempState.data
+              .indexWhere((element) => element.id == emojiModel.threadId);
+
+          ref.read(threadProvider.notifier).addEmoji(null, emojiModel.trainerId,
+              emojiModel.emoji, index, emojiModel.id);
+        }
+
+        emojiCreateList.remove(emoji);
+      }
+
+      await SharedPrefUtils.updateNeedUpdateList(
+          needEmojiCreate, pref, emojiCreateList);
+    }
+
+    if (emojiDeleteList.isNotEmpty) {
+      var tempList = emojiDeleteList;
+
+      for (var emoji in tempList) {
+        var emojiMap = jsonDecode(emoji);
+        var emojiModel = EmojiModelFromPushData.fromJson(emojiMap);
+
+        if (emojiModel.commentId == null) {
+          final tempState = ref.read(threadProvider) as ThreadListModel;
+          int index = tempState.data
+              .indexWhere((element) => element.id == emojiModel.threadId);
+
+          ref.read(threadProvider.notifier).removeEmoji(null,
+              emojiModel.trainerId, emojiModel.emoji, index, emojiModel.id);
+        }
+
+        emojiDeleteList.remove(emoji);
+      }
+
+      await SharedPrefUtils.updateNeedUpdateList(
+          needEmojiCreate, pref, emojiDeleteList);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(threadProvider);
     final userState = ref.watch(getMeProvider);
+    final notificationState = ref.watch(notificationHomeProvider);
 
     if (state is ThreadListModelLoading) {
       return const Center(
@@ -92,6 +268,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
 
     final user = userState as UserModel;
     pstate = state as ThreadListModel;
+    final notificationHomeModel = notificationState as NotificationMainModel;
     startIndex = state.data.length;
 
     return WillPopScope(
@@ -122,7 +299,9 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                       builder: (context) => const NotificationScreen(),
                     ));
               },
-              child: SvgPicture.asset('asset/img/icon_alarm_off.svg'),
+              child: !notificationHomeModel.isConfirmed
+                  ? SvgPicture.asset('asset/img/icon_alarm_on.svg')
+                  : SvgPicture.asset('asset/img/icon_alarm_off.svg'),
             ),
             const SizedBox(
               width: 12,

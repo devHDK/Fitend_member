@@ -6,6 +6,7 @@ import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/notifications/component/notification_cell.dart';
 import 'package:fitend_member/notifications/model/notification_model.dart';
+import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/notifications/provider/notification_provider.dart';
 import 'package:fitend_member/notifications/repository/notifications_repository.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
@@ -36,6 +37,8 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
     super.initState();
     controller.addListener(listener);
     WidgetsBinding.instance.addObserver(this);
+
+    ref.read(notificationHomeProvider.notifier).updateIsConfirm(true);
   }
 
   @override

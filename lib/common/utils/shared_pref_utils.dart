@@ -37,7 +37,7 @@ class SharedPrefUtils {
     await pref.setStringList(value, updateList);
   }
 
-  static Future<void> updateAddThreadBadgeCount(
+  static Future<void> updateThreadBadgeCount(
       SharedPreferences pref, String type) async {
     switch (type) {
       case 'add':

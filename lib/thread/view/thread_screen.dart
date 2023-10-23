@@ -99,6 +99,11 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     }
   }
 
+  void threadBadgeCountReset() async {
+    final pref = await ref.read(sharedPrefsProvider);
+    SharedPrefUtils.updateThreadBadgeCount(pref, 'reset');
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
@@ -155,6 +160,11 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
 
       await SharedPrefUtils.updateIsNeedUpdate(needScheduleUpdate, pref, false);
       await SharedPrefUtils.updateNeedUpdateList(needThreadDelete, pref, []);
+
+      await SharedPrefUtils.updateThreadBadgeCount(pref, 'add');
+      ref.read(notificationHomeProvider.notifier).addBageCount(1);
+      ref.read(notificationHomeProvider.notifier).updateIsConfirm(false);
+
       threadDeleteList = [];
       isListRefreshed = true;
     }
@@ -219,6 +229,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
         }
       }
       await SharedPrefUtils.updateNeedUpdateList(needCommentCreate, pref, []);
+      ref.read(notificationHomeProvider.notifier).updateIsConfirm(false);
       commentCreateList = [];
     }
 

@@ -286,7 +286,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                     '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
                               }
                             } else {
-                              DialogWidgets.showToast('업로드 중 중 문제가 발생하였습니다.');
+                              DialogWidgets.showToast('업로드 중 문제가 발생하였습니다.');
                             }
                           }
                         }
@@ -325,7 +325,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                 DialogWidgets.showToast(
                                     '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
                               } else {
-                                DialogWidgets.showToast('업로드 중 중 문제가 발생하였습니다.');
+                                DialogWidgets.showToast('업로드 중 문제가 발생하였습니다.');
                               }
                             }
                           }

@@ -124,7 +124,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
             await DataUtils.checkFileSize(state.assetsPaths!);
 
         if (isOverLimtSize) {
-          throw FileException('oversize_file_include_error');
+          throw UploadException(message: 'oversize_file_include_error');
         }
 
         final tempState0 = state.copyWith();
@@ -242,9 +242,11 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       tstate.isUploading = false;
       state = tstate;
 
-      if (e is FileException) {
+      if (e is UploadException) {
         debugPrint('thread create error : ${e.message}');
-        throw FileException(e.message);
+        throw UploadException(message: e.message);
+      } else {
+        throw CommonException(message: '$e');
       }
     }
   }
@@ -426,7 +428,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
             await DataUtils.checkFileSize(state.assetsPaths!);
 
         if (isOverLimtSize) {
-          throw FileException('oversize_file_include_error');
+          throw UploadException(message: 'oversize_file_include_error');
         }
 
         final tempState0 = state.copyWith();
@@ -551,12 +553,13 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       tstate.isUploading = false;
       state = tstate;
 
-      if (e is FileException) {
+      if (e is UploadException) {
         debugPrint('thread create error : ${e.message}');
-        throw FileException(e.message);
+        throw UploadException(message: e.message);
+      } else {
+        throw CommonException(message: '$e');
       }
     }
-    return null;
   }
 
   void updateFileCheck(String type, int index) {

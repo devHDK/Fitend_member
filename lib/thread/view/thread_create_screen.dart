@@ -280,11 +280,13 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                 )
                                 .then((value) => context.pop());
                           } catch (e) {
-                            if (e is FileException) {
+                            if (e is UploadException) {
                               if (e.message == 'oversize_file_include_error') {
                                 DialogWidgets.showToast(
                                     '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
                               }
+                            } else {
+                              DialogWidgets.showToast('업로드 중 중 문제가 발생하였습니다.');
                             }
                           }
                         }
@@ -318,10 +320,12 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                               context.pop();
                             });
                           } catch (e) {
-                            if (e is FileException) {
+                            if (e is UploadException) {
                               if (e.message == 'oversize_file_include_error') {
                                 DialogWidgets.showToast(
                                     '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
+                              } else {
+                                DialogWidgets.showToast('업로드 중 중 문제가 발생하였습니다.');
                               }
                             }
                           }

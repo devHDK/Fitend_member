@@ -1,5 +1,11 @@
-class FileException implements Exception {
+import 'package:flutter/material.dart';
+
+class CommonException implements Exception {
   final String message;
 
-  FileException(this.message);
+  CommonException({required this.message});
+}
+
+class UploadException extends CommonException {
+  UploadException({required super.message});
 }

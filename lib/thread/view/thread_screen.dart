@@ -89,7 +89,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        await _checkIsNeedUpdate();
+        await checkThreadNeedUpdate();
         break;
       case AppLifecycleState.inactive:
         break;
@@ -105,20 +105,23 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   @override
   void didPushNext() async {
     super.didPush();
-    await _checkIsNeedUpdate();
+    await checkThreadNeedUpdate();
   }
 
   @override
   void didPopNext() async {
     super.didPopNext();
-    await _checkIsNeedUpdate();
+    await checkThreadNeedUpdate();
   }
 
-  Future<void> _checkIsNeedUpdate() async {
+  Future<void> checkThreadNeedUpdate() async {
     final pref = await ref.read(sharedPrefsProvider);
-    final isNeedUpdate =
+    final isNeedListUpdate =
         SharedPrefUtils.getIsNeedUpdate(needThreadUpdate, pref);
-    var deleteList = SharedPrefUtils.getNeedUpdateList(needThreadDelete, pref);
+    var threadUpdateList =
+        SharedPrefUtils.getNeedUpdateList(needThreadUpdateList, pref);
+    var threadDeleteList =
+        SharedPrefUtils.getNeedUpdateList(needThreadDelete, pref);
     var commentCreateList =
         SharedPrefUtils.getNeedUpdateList(needCommentCreate, pref);
     var commentDeleteList =
@@ -128,18 +131,41 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     var emojiDeleteList =
         SharedPrefUtils.getNeedUpdateList(needEmojiDelete, pref);
 
-    if (isNeedUpdate) {
+    bool isListRefreshed = false;
+    List<int> detailRefreshedList = [];
+
+    if (isNeedListUpdate) {
       ref
           .read(threadProvider.notifier)
           .paginate(startIndex: 0, isRefetch: true);
 
       await SharedPrefUtils.updateIsNeedUpdate(needScheduleUpdate, pref, false);
       await SharedPrefUtils.updateNeedUpdateList(needThreadDelete, pref, []);
-      deleteList = [];
+      threadDeleteList = [];
+      isListRefreshed = true;
     }
 
-    if (deleteList.isNotEmpty) {
-      for (var e in deleteList) {
+    if (threadUpdateList.isNotEmpty) {
+      for (var e in threadUpdateList) {
+        final tempState = ref.read(threadProvider);
+
+        final model = tempState as ThreadListModel;
+        final index = model.data.indexWhere((thread) {
+          return thread.id == int.parse(e);
+        });
+
+        if (index != -1) {
+          ref
+              .read(threadDetailProvider(int.parse(e)).notifier)
+              .getThreadDetail(threadId: int.parse(e));
+
+          detailRefreshedList.add(int.parse(e));
+        }
+      }
+    }
+
+    if (threadDeleteList.isNotEmpty && !isListRefreshed) {
+      for (var e in threadDeleteList) {
         final tempState = ref.read(threadProvider);
 
         final model = tempState as ThreadListModel;
@@ -157,10 +183,13 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
 
     if (commentCreateList.isNotEmpty) {
       for (var e in commentCreateList) {
-        if (ref.read(threadDetailProvider(int.parse(e))) is ThreadModel) {
+        if (ref.read(threadDetailProvider(int.parse(e))) is ThreadModel &&
+            !detailRefreshedList.contains(int.parse(e))) {
           ref
               .read(threadDetailProvider(int.parse(e)).notifier)
               .getThreadDetail(threadId: int.parse(e));
+
+          detailRefreshedList.add(int.parse(e));
         }
 
         var tempState = ref.read(threadProvider);
@@ -169,7 +198,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
         int index =
             model.data.indexWhere((thread) => thread.id == int.parse(e));
 
-        if (index != -1) {
+        if (index != -1 && !isListRefreshed) {
           ref
               .read(threadProvider.notifier)
               .updateTrainerCommentCount(int.parse(e), 1);
@@ -181,10 +210,13 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
 
     if (commentDeleteList.isNotEmpty) {
       for (var e in commentDeleteList) {
-        if (ref.read(threadDetailProvider(int.parse(e))) is ThreadModel) {
+        if (ref.read(threadDetailProvider(int.parse(e))) is ThreadModel &&
+            !detailRefreshedList.contains(int.parse(e))) {
           ref
               .read(threadDetailProvider(int.parse(e)).notifier)
               .getThreadDetail(threadId: int.parse(e));
+
+          detailRefreshedList.add(int.parse(e));
         }
 
         var tempState = ref.read(threadProvider);
@@ -193,7 +225,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
         int index =
             model.data.indexWhere((thread) => thread.id == int.parse(e));
 
-        if (index != -1) {
+        if (index != -1 && !isListRefreshed) {
           ref
               .read(threadProvider.notifier)
               .updateTrainerCommentCount(int.parse(e), -1);
@@ -209,12 +241,44 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
         var emojiModel = EmojiModelFromPushData.fromJson(emojiMap);
 
         if (emojiModel.commentId == null) {
-          final tempState = ref.read(threadProvider) as ThreadListModel;
-          int index = tempState.data
-              .indexWhere((element) => element.id == emojiModel.threadId);
+          //thread에 추가
+          if (!isListRefreshed) {
+            final tempState = ref.read(threadProvider) as ThreadListModel;
+            int index = tempState.data
+                .indexWhere((element) => element.id == emojiModel.threadId);
 
-          ref.read(threadProvider.notifier).addEmoji(null, emojiModel.trainerId,
-              emojiModel.emoji, index, emojiModel.id);
+            ref.read(threadProvider.notifier).addEmoji(null,
+                emojiModel.trainerId, emojiModel.emoji, index, emojiModel.id);
+          }
+
+          if (!detailRefreshedList.contains(emojiModel.threadId!)) {
+            ref
+                .read(threadDetailProvider(emojiModel.threadId!).notifier)
+                .addThreadEmoji(null, emojiModel.trainerId, emojiModel.emoji,
+                    emojiModel.id);
+          }
+        } else if (emojiModel.commentId != null &&
+            !detailRefreshedList.contains(emojiModel.threadId)) {
+          ThreadModel? tempState;
+          if (ref.read(threadDetailProvider(emojiModel.threadId!))
+              is ThreadModel) {
+            tempState = ref.read(threadDetailProvider(emojiModel.threadId!))
+                as ThreadModel;
+          }
+
+          if (tempState != null &&
+              tempState.comments != null &&
+              tempState.comments!.isNotEmpty) {
+            final index = tempState.comments!
+                .indexWhere((element) => element.id == emojiModel.commentId);
+
+            if (index != -1) {
+              ref
+                  .read(threadDetailProvider(emojiModel.threadId!).notifier)
+                  .addCommentEmoji(null, emojiModel.trainerId, emojiModel.emoji,
+                      index, emojiModel.id);
+            }
+          }
         }
 
         emojiCreateList.remove(emoji);
@@ -232,19 +296,50 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
         var emojiModel = EmojiModelFromPushData.fromJson(emojiMap);
 
         if (emojiModel.commentId == null) {
-          final tempState = ref.read(threadProvider) as ThreadListModel;
-          int index = tempState.data
-              .indexWhere((element) => element.id == emojiModel.threadId);
+          //thread에서 삭제
+          if (!isListRefreshed) {
+            final tempState = ref.read(threadProvider) as ThreadListModel;
+            int index = tempState.data
+                .indexWhere((element) => element.id == emojiModel.threadId);
 
-          ref.read(threadProvider.notifier).removeEmoji(null,
-              emojiModel.trainerId, emojiModel.emoji, index, emojiModel.id);
+            ref.read(threadProvider.notifier).removeEmoji(null,
+                emojiModel.trainerId, emojiModel.emoji, index, emojiModel.id);
+          }
+
+          if (!detailRefreshedList.contains(emojiModel.threadId!)) {
+            ref
+                .read(threadDetailProvider(emojiModel.threadId!).notifier)
+                .removeThreadEmoji(null, emojiModel.trainerId, emojiModel.emoji,
+                    emojiModel.id);
+          }
+        } else if (emojiModel.commentId != null &&
+            !detailRefreshedList.contains(emojiModel.threadId)) {
+          ThreadModel? tempState;
+          if (ref.read(threadDetailProvider(emojiModel.threadId!))
+              is ThreadModel) {
+            tempState = ref.read(threadDetailProvider(emojiModel.threadId!))
+                as ThreadModel;
+          }
+
+          if (tempState != null &&
+              tempState.comments != null &&
+              tempState.comments!.isNotEmpty) {
+            final index = tempState.comments!
+                .indexWhere((element) => element.id == emojiModel.commentId);
+
+            if (index != -1) {
+              ref
+                  .read(threadDetailProvider(emojiModel.threadId!).notifier)
+                  .removeCommentEmoji(null, emojiModel.trainerId,
+                      emojiModel.emoji, index, emojiModel.id);
+            }
+          }
         }
 
         emojiDeleteList.remove(emoji);
       }
-
       await SharedPrefUtils.updateNeedUpdateList(
-          needEmojiCreate, pref, emojiDeleteList);
+          needEmojiDelete, pref, emojiDeleteList);
     }
   }
 

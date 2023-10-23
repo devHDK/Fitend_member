@@ -129,10 +129,9 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
     final filePath = await MediaUtils.getVideoThumbNail(widget.file.path);
     if (filePath != null) {
       thumbNail = File(filePath);
+      getSize(File(widget.file.path));
       // debugPrint('thumbnail path ===> ${thumbNail!.path}');
     }
-
-    setState(() {});
   }
 
   void getSize(File file) async {

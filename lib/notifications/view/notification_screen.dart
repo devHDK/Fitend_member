@@ -37,8 +37,6 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
     super.initState();
     controller.addListener(listener);
     WidgetsBinding.instance.addObserver(this);
-
-    ref.read(notificationHomeProvider.notifier).updateIsConfirm(true);
   }
 
   @override
@@ -61,6 +59,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
   @override
   void didPop() async {
     await ref.read(notificationProvider.notifier).putNotification();
+    ref.read(notificationHomeProvider.notifier).updateIsConfirm(true);
     super.didPop();
   }
 

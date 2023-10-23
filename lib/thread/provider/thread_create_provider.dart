@@ -251,7 +251,8 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     }
   }
 
-  Future<List<AssetEntity>?> pickImage(BuildContext context) async {
+  Future<List<AssetEntity>?> pickImage(
+      BuildContext context, int maxAssets) async {
     try {
       final permission = await AssetPicker.permissionCheck();
 
@@ -264,7 +265,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
           context,
           pickerConfig: AssetPickerConfig(
             themeColor: POINT_COLOR,
-            maxAssets: 10,
+            maxAssets: maxAssets,
             loadingIndicatorBuilder: (context, isAssetsEmpty) => const Center(
               child: CircularProgressIndicator(
                 color: POINT_COLOR,

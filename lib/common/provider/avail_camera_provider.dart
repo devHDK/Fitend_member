@@ -5,5 +5,7 @@ final availableCamerasProvider =
     FutureProvider<List<CameraDescription>>((ref) async {
   final cameras = await availableCameras();
 
+  print(cameras);
+
   return cameras;
 });

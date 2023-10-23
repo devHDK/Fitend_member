@@ -189,7 +189,7 @@ class DataUtils {
 
       if (await file.exists()) {
         final fileSize = await file.length(); //byte
-        print('fileSize : ${fileSize / (1000 * 1000)} MB');
+
         if (limitFileSize < fileSize) {
           return true;
         }

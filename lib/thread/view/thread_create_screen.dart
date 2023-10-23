@@ -386,40 +386,44 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                   ),
                   InkWell(
                     onTap: () async {
-                      await ref
-                          .read(threadCreateProvider.notifier)
-                          .pickImage(context)
-                          .then((assets) async {
-                        if (assets != null && assets.isNotEmpty) {
-                          ref
-                              .read(threadCreateProvider.notifier)
-                              .updateIsLoading(true);
+                      if (state.assetsPaths!.length < 10) {
+                        await ref
+                            .read(threadCreateProvider.notifier)
+                            .pickImage(context, 10 - state.assetsPaths!.length)
+                            .then((assets) async {
+                          if (assets != null && assets.isNotEmpty) {
+                            ref
+                                .read(threadCreateProvider.notifier)
+                                .updateIsLoading(true);
 
-                          for (var asset in assets) {
-                            if (await asset.file != null) {
-                              final file = await asset.file;
+                            for (var asset in assets) {
+                              if (await asset.file != null) {
+                                final file = await asset.file;
 
-                              ref
-                                  .read(threadCreateProvider.notifier)
-                                  .addAssets(file!.path);
-
-                              if (widget.threadEditModel != null) {
                                 ref
                                     .read(threadCreateProvider.notifier)
-                                    .updateFileCheck('add', 0);
+                                    .addAssets(file!.path);
+
+                                if (widget.threadEditModel != null) {
+                                  ref
+                                      .read(threadCreateProvider.notifier)
+                                      .updateFileCheck('add', 0);
+                                }
+
+                                debugPrint('file.path : ${file.path}');
                               }
-
-                              debugPrint('file.path : ${file.path}');
                             }
-                          }
 
-                          ref
-                              .read(threadCreateProvider.notifier)
-                              .updateIsLoading(false);
-                        } else {
-                          debugPrint('assets: $assets');
-                        }
-                      });
+                            ref
+                                .read(threadCreateProvider.notifier)
+                                .updateIsLoading(false);
+                          } else {
+                            debugPrint('assets: $assets');
+                          }
+                        });
+                      } else {
+                        DialogWidgets.showToast('사진 또는 영상은 10개까지만 첨부할수있습니다!');
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),

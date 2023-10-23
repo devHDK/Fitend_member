@@ -494,12 +494,20 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: Text(
-                        '아직 댓글이 없어요 :)',
-                        style: s1SubTitle.copyWith(
-                          color: GRAY_COLOR,
-                          height: 1,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '아직 댓글이 없어요 :)',
+                            style: s1SubTitle.copyWith(
+                              color: GRAY_COLOR,
+                              height: 1,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 200,
+                          )
+                        ],
                       ),
                     ),
                   )
@@ -697,47 +705,54 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                   ),
                   InkWell(
                     onTap: () async {
-                      await ref
-                          .read(commentCreateProvider(widget.threadId).notifier)
-                          .pickImage(context)
-                          .then(
-                        (assets) async {
-                          if (assets != null && assets.isNotEmpty) {
-                            ref
-                                .read(commentCreateProvider(widget.threadId)
-                                    .notifier)
-                                .updateIsLoading(true);
+                      if (commentState.assetsPaths.length < 10) {
+                        await ref
+                            .read(
+                                commentCreateProvider(widget.threadId).notifier)
+                            .pickImage(
+                                context, 10 - commentState.assetsPaths.length)
+                            .then(
+                          (assets) async {
+                            if (assets != null && assets.isNotEmpty) {
+                              ref
+                                  .read(commentCreateProvider(widget.threadId)
+                                      .notifier)
+                                  .updateIsLoading(true);
 
-                            for (var asset in assets) {
-                              if (await asset.file != null) {
-                                final file = await asset.file;
+                              for (var asset in assets) {
+                                if (await asset.file != null) {
+                                  final file = await asset.file;
 
-                                ref
-                                    .read(commentCreateProvider(widget.threadId)
-                                        .notifier)
-                                    .addAssets(file!.path);
-
-                                if (edittingCommentId != -1) {
                                   ref
                                       .read(
                                           commentCreateProvider(widget.threadId)
                                               .notifier)
-                                      .updateFileCheck('add', 0);
+                                      .addAssets(file!.path);
+
+                                  if (edittingCommentId != -1) {
+                                    ref
+                                        .read(commentCreateProvider(
+                                                widget.threadId)
+                                            .notifier)
+                                        .updateFileCheck('add', 0);
+                                  }
+
+                                  debugPrint('file.path : ${file.path}');
                                 }
-
-                                debugPrint('file.path : ${file.path}');
                               }
-                            }
 
-                            ref
-                                .read(commentCreateProvider(widget.threadId)
-                                    .notifier)
-                                .updateIsLoading(false);
-                          } else {
-                            debugPrint('assets: $assets');
-                          }
-                        },
-                      );
+                              ref
+                                  .read(commentCreateProvider(widget.threadId)
+                                      .notifier)
+                                  .updateIsLoading(false);
+                            } else {
+                              debugPrint('assets: $assets');
+                            }
+                          },
+                        );
+                      } else {
+                        DialogWidgets.showToast('사진 또는 영상은 10개까지만 첨부할수있습니다!');
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -833,6 +848,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                       .read(commentCreateProvider(model.id)
                                           .notifier)
                                       .init();
+
+                                  commentController.text = '';
 
                                   setState(() {
                                     edittingCommentId = -1;

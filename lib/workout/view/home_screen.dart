@@ -1,4 +1,6 @@
+import 'package:camera/camera.dart';
 import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/provider/avail_camera_provider.dart';
 import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
 import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
@@ -23,8 +25,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     NotificationMainModel? model;
     final notificationState = ref.watch(notificationHomeProvider);
-
     if (notificationState is NotificationMainModel) model = notificationState;
+
+    AsyncValue<List<CameraDescription>> camerasAsyncValue =
+        ref.watch(availableCamerasProvider);
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,

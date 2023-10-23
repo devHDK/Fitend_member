@@ -208,70 +208,68 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
       child: SizedBox(
         height: height,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: TextButton(
-                onPressed: () => context.pop(),
-                child: Text(
-                  '취소',
-                  style: h5Headline.copyWith(
-                    color: const Color(0xff0474f1),
-                    height: 1,
-                  ),
+            TextButton(
+              onPressed: () => context.pop(),
+              child: Text(
+                '취소',
+                style: h5Headline.copyWith(
+                  color: const Color(0xff0474f1),
+                  height: 1,
                 ),
               ),
             ),
-            Expanded(
-              child: IconButton(
-                onPressed: () =>
-                    _controller.rotate90Degrees(RotateDirection.left),
-                icon: const Icon(
-                  Icons.rotate_left,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            Expanded(
-              child: IconButton(
-                onPressed: () => Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          VideoCropScreen(controller: _controller),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        return FadeTransition(opacity: animation, child: child);
-                      },
-                    )),
-                icon: const Icon(
-                  Icons.crop,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            Expanded(
-              child: IconButton(
-                onPressed: () =>
-                    _controller.rotate90Degrees(RotateDirection.right),
-                icon: const Icon(
-                  Icons.rotate_right,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            Expanded(
-              child: TextButton(
-                onPressed: () {
-                  _exportVideo(index);
+            const Spacer(),
+            // Expanded(
+            //   child: IconButton(
+            //     onPressed: () =>
+            //         _controller.rotate90Degrees(RotateDirection.left),
+            //     icon: const Icon(
+            //       Icons.rotate_left,
+            //       color: Colors.white,
+            //     ),
+            //   ),
+            // ),
+            // Expanded(
+            //   child: IconButton(
+            //     onPressed: () => Navigator.push(
+            //         context,
+            //         PageRouteBuilder(
+            //           pageBuilder: (context, animation, secondaryAnimation) =>
+            //               VideoCropScreen(controller: _controller),
+            //           transitionsBuilder:
+            //               (context, animation, secondaryAnimation, child) {
+            //             return FadeTransition(opacity: animation, child: child);
+            //           },
+            //         )),
+            //     icon: const Icon(
+            //       Icons.crop,
+            //       color: Colors.white,
+            //     ),
+            //   ),
+            // ),
+            // Expanded(
+            //   child: IconButton(
+            //     onPressed: () =>
+            //         _controller.rotate90Degrees(RotateDirection.right),
+            //     icon: const Icon(
+            //       Icons.rotate_right,
+            //       color: Colors.white,
+            //     ),
+            //   ),
+            // ),
+            TextButton(
+              onPressed: () {
+                _exportVideo(index);
 
-                  context.pop();
-                },
-                child: Text(
-                  '저장',
-                  style: h5Headline.copyWith(
-                    color: const Color(0xffffcc00),
-                    height: 1,
-                  ),
+                context.pop();
+              },
+              child: Text(
+                '저장',
+                style: h5Headline.copyWith(
+                  color: const Color(0xffffcc00),
+                  height: 1,
                 ),
               ),
             ),

@@ -346,7 +346,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
             const SizedBox(
               height: 10,
             ),
-          if (mediaCount > 2)
+          if (mediaCount > 1)
             _MediaListView(
               model: model,
               linkUrls: linkUrls,

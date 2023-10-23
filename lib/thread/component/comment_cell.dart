@@ -271,7 +271,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
               const SizedBox(
                 height: 10,
               ),
-            if (mediaCount > 2)
+            if (mediaCount > 1)
               Padding(
                 padding: const EdgeInsets.fromLTRB(39, 0, 0, 10),
                 child: SizedBox(
@@ -328,6 +328,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                                 : PreviewImageNetwork(
                                     url: '$s3Url${widget.gallery![index].url}',
                                     width: 140,
+                                    height: (140 * 0.8).toInt(),
                                   ),
                           ),
                         ],

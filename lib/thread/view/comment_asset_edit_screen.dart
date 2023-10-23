@@ -199,9 +199,6 @@ class _AssetEditScreenState extends ConsumerState<CommentAssetEditScreen> {
                   );
 
                   if (croppedFile != null) {
-                    print(croppedFile.path);
-                    print('fileIndex $fileIndex');
-
                     ref
                         .read(commentCreateProvider(widget.threadId).notifier)
                         .changeAsset(fileIndex, croppedFile.path);

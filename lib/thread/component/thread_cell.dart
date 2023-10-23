@@ -332,7 +332,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                     const SizedBox(
                       height: 10,
                     ),
-                  if (mediaCount > 2)
+                  if (mediaCount > 1)
                     SizedBox(
                       height: 100,
                       width: 100.w - 56 - 34 - 9,

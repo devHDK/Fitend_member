@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/avail_camera_provider.dart';
@@ -89,8 +90,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     if (status.isGranted) {
       log('Camera Permission: GRANTED');
       getAvailableCameras();
-
-      print(cameras);
 
       setState(() {
         _isCameraPermissionGranted = true;
@@ -764,14 +763,54 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     return InkWell(
       onTap: isComment && threadId != null
           ? () async {
-              await ref
-                  .read(commentCreateProvider(threadId).notifier)
-                  .pickImage(context)
-                  .then(
-                (assets) async {
+              final model = ref.read(commentCreateProvider(threadId));
+
+              if (model.assetsPaths.length < 10) {
+                await ref
+                    .read(commentCreateProvider(threadId).notifier)
+                    .pickImage(context, 10 - model.assetsPaths.length)
+                    .then(
+                  (assets) async {
+                    if (assets != null && assets.isNotEmpty) {
+                      ref
+                          .read(commentCreateProvider(threadId).notifier)
+                          .updateIsLoading(true);
+
+                      for (var asset in assets) {
+                        if (await asset.file != null) {
+                          final file = await asset.file;
+
+                          ref
+                              .read(commentCreateProvider(threadId).notifier)
+                              .addAssets(file!.path);
+
+                          debugPrint('file.path : ${file.path}');
+                        }
+                      }
+
+                      ref
+                          .read(commentCreateProvider(threadId).notifier)
+                          .updateIsLoading(false);
+                    } else {
+                      debugPrint('assets: $assets');
+                    }
+                  },
+                );
+              } else {
+                DialogWidgets.showToast('사진 또는 영상은 10개까지만 첨부할수있습니다!');
+              }
+            }
+          : () async {
+              final model = ref.read(threadCreateProvider);
+
+              if (model.assetsPaths!.length < 10) {
+                await ref
+                    .read(threadCreateProvider.notifier)
+                    .pickImage(context, 10 - model.assetsPaths!.length)
+                    .then((assets) async {
                   if (assets != null && assets.isNotEmpty) {
                     ref
-                        .read(commentCreateProvider(threadId).notifier)
+                        .read(threadCreateProvider.notifier)
                         .updateIsLoading(true);
 
                     for (var asset in assets) {
@@ -779,7 +818,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                         final file = await asset.file;
 
                         ref
-                            .read(commentCreateProvider(threadId).notifier)
+                            .read(threadCreateProvider.notifier)
                             .addAssets(file!.path);
 
                         debugPrint('file.path : ${file.path}');
@@ -787,41 +826,15 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                     }
 
                     ref
-                        .read(commentCreateProvider(threadId).notifier)
+                        .read(threadCreateProvider.notifier)
                         .updateIsLoading(false);
                   } else {
                     debugPrint('assets: $assets');
                   }
-                },
-              );
-            }
-          : () async {
-              await ref
-                  .read(threadCreateProvider.notifier)
-                  .pickImage(context)
-                  .then((assets) async {
-                if (assets != null && assets.isNotEmpty) {
-                  ref.read(threadCreateProvider.notifier).updateIsLoading(true);
-
-                  for (var asset in assets) {
-                    if (await asset.file != null) {
-                      final file = await asset.file;
-
-                      ref
-                          .read(threadCreateProvider.notifier)
-                          .addAssets(file!.path);
-
-                      debugPrint('file.path : ${file.path}');
-                    }
-                  }
-
-                  ref
-                      .read(threadCreateProvider.notifier)
-                      .updateIsLoading(false);
-                } else {
-                  debugPrint('assets: $assets');
-                }
-              });
+                });
+              } else {
+                DialogWidgets.showToast('사진 또는 영상은 10개까지만 첨부할수있습니다!');
+              }
             },
       child: const Stack(
         children: [

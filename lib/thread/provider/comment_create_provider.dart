@@ -233,7 +233,8 @@ class CommentCreateStateNotifier
     }
   }
 
-  Future<List<AssetEntity>?> pickImage(BuildContext context) async {
+  Future<List<AssetEntity>?> pickImage(
+      BuildContext context, int maxAssets) async {
     try {
       final permission = await AssetPicker.permissionCheck();
 
@@ -246,7 +247,7 @@ class CommentCreateStateNotifier
           context,
           pickerConfig: AssetPickerConfig(
             themeColor: POINT_COLOR,
-            maxAssets: 10,
+            maxAssets: maxAssets,
             loadingIndicatorBuilder: (context, isAssetsEmpty) => const Center(
               child: CircularProgressIndicator(
                 color: POINT_COLOR,

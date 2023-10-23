@@ -141,15 +141,15 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   @override
-  void didPushNext() async {
-    super.didPush();
+  void didPush() async {
     await _checkIsNeedUpdate();
+    super.didPush();
   }
 
   @override
-  void didPopNext() async {
-    super.didPopNext();
+  void didPop() async {
     await _checkIsNeedUpdate();
+    super.didPop();
   }
 
   Future<void> _checkIsNeedUpdate() async {

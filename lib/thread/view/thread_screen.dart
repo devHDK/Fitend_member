@@ -122,15 +122,15 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   }
 
   @override
-  void didPushNext() async {
-    super.didPush();
+  void didPush() async {
     await checkThreadNeedUpdate();
+    super.didPush();
   }
 
   @override
-  void didPopNext() async {
-    super.didPopNext();
+  void didPop() async {
     await checkThreadNeedUpdate();
+    super.didPop();
   }
 
   Future<void> checkThreadNeedUpdate() async {

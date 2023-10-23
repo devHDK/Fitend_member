@@ -55,11 +55,13 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
 
     await ref.read(notificationRepositoryProvider).putNotificationsConfirm();
     await FlutterAppBadger.removeBadge();
+    super.didPush();
   }
 
   @override
   void didPop() async {
     await ref.read(notificationProvider.notifier).putNotification();
+    super.didPop();
   }
 
   Future<void> putNotification() async {

@@ -21,19 +21,24 @@ class ThreadListModel extends ThreadListModelBase {
   List<ThreadModel> data;
   @JsonKey(name: "total")
   int total;
+  @JsonKey(name: "scrollIndex")
+  int? scrollIndex;
 
   ThreadListModel({
     required this.data,
     required this.total,
+    this.scrollIndex,
   });
 
   ThreadListModel copyWith({
     List<ThreadModel>? data,
     int? total,
+    int? scrollIndex,
   }) =>
       ThreadListModel(
         data: data ?? this.data,
         total: total ?? this.total,
+        scrollIndex: scrollIndex ?? this.scrollIndex,
       );
 
   factory ThreadListModel.fromJson(Map<String, dynamic> json) =>
@@ -43,15 +48,11 @@ class ThreadListModel extends ThreadListModelBase {
 }
 
 class ThreadListModelFetchingMore extends ThreadListModel {
-  ThreadListModelFetchingMore({
-    required super.data,
-    required super.total,
-  });
+  ThreadListModelFetchingMore(
+      {required super.data, required super.total, super.scrollIndex});
 }
 
 class ThreadListModelRefetching extends ThreadListModel {
-  ThreadListModelRefetching({
-    required super.data,
-    required super.total,
-  });
+  ThreadListModelRefetching(
+      {required super.data, required super.total, super.scrollIndex});
 }

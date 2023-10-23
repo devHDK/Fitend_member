@@ -165,7 +165,7 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
           ]);
         }
       } else {
-        state = ScheduleModel(data: tempScheduleList);
+        state = ScheduleModel(data: tempScheduleList, scrollIndex: 15);
         if (state is ScheduleModel) {
           final pstate = state as ScheduleModel;
           scheduleListGlobal = pstate.data;
@@ -175,6 +175,14 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
       debugPrint('e : ScheduleModelError');
       state = ScheduleModelError(message: '데이터를 불러오지 못했습니다.');
     }
+  }
+
+  void updateScrollIndex(int scrollIndex) {
+    final pstate = state as ScheduleModel;
+
+    pstate.scrollIndex = scrollIndex;
+
+    state = pstate;
   }
 
   void updateScheduleFromBuffer() {

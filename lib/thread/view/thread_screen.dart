@@ -56,7 +56,10 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     itemPositionsListener.itemPositions.addListener(_handleItemPositionChange);
 
     //threadScreen 진입시 badgeCount => 0
-    ref.read(notificationHomeProvider.notifier).updateBageCount(0);
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ref.read(notificationHomeProvider.notifier).updateBageCount(0);
+    });
   }
 
   void _handleItemPositionChange() {
@@ -67,6 +70,17 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                 ? currPosition
                 : maxPosition)
         .index;
+
+    int minIndex = itemPositionsListener.itemPositions.value
+        .where((position) => position.itemTrailingEdge < 1)
+        .reduce((minPosition, currPosition) =>
+            currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
+                ? currPosition
+                : minPosition)
+        .index;
+
+    if (minIndex < 0) minIndex = 0;
+    ref.read(threadProvider.notifier).updateScrollIndex(minIndex);
 
     if (pstate.data.isNotEmpty &&
         maxIndex == pstate.data.length - 2 &&
@@ -466,6 +480,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
               : ScrollablePositionedList.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 28),
                   itemScrollController: itemScrollController,
+                  initialScrollIndex: state.scrollIndex ?? 0,
                   itemPositionsListener: itemPositionsListener,
                   itemCount: state.data.length + 1,
                   itemBuilder: (context, index) {

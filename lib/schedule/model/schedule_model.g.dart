@@ -11,11 +11,13 @@ ScheduleModel _$ScheduleModelFromJson(Map<String, dynamic> json) =>
       data: (json['data'] as List<dynamic>)
           .map((e) => ScheduleData.fromJson(e as Map<String, dynamic>))
           .toList(),
+      scrollIndex: json['scrollIndex'] as int?,
     );
 
 Map<String, dynamic> _$ScheduleModelToJson(ScheduleModel instance) =>
     <String, dynamic>{
       'data': instance.data,
+      'scrollIndex': instance.scrollIndex,
     };
 
 ScheduleData _$ScheduleDataFromJson(Map<String, dynamic> json) => ScheduleData(

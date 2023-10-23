@@ -84,6 +84,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     int itemCount = scheduleListGlobal.length;
 
+    ref.read(scheduleProvider.notifier).updateScrollIndex(minIndex);
+
     if (maxIndex == itemCount - 1 && !isLoading) {
       //스크롤을 아래로 내렸을때
       isLoading = true;
@@ -186,7 +188,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     final notificationState = ref.watch(notificationHomeProvider);
     final state = ref.watch(scheduleProvider);
 
-    if (state is ScheduleModelLoading) {
+    if (state is ScheduleModelLoading ||
+        notificationState is NotificationMainModelLoading) {
       return const Center(
         child: CircularProgressIndicator(
           color: POINT_COLOR,
@@ -267,7 +270,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         body: ScrollablePositionedList.builder(
           itemScrollController: itemScrollController,
           itemPositionsListener: itemPositionsListener,
-          initialScrollIndex: 15,
+          initialScrollIndex:
+              schedules.scrollIndex != null ? schedules.scrollIndex! : 15,
           itemCount: schedules.data.length + 2,
           itemBuilder: (context, index) {
             if (index == schedules.data.length + 1 || index == 0) {

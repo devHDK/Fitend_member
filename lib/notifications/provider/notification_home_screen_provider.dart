@@ -33,12 +33,6 @@ class NotificationHomeStateNotifier
 
   Future<void> init() async {
     try {
-      final isLoading = state is NotificationMainModelLoading;
-
-      if (isLoading) {
-        return;
-      }
-
       final pref = await sharedPref;
 
       final response = await repository.getNotificationsConfirm();

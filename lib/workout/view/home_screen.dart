@@ -72,10 +72,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       horizontal: 40,
                       vertical: 10,
                     ),
-                    child: Badge.count(
-                      count: model is NotificationMainModel
-                          ? model.threadBadgeCount
-                          : 0,
+                    child: Badge(
+                      label: Text(
+                        model is NotificationMainModel
+                            ? model.threadBadgeCount.toString()
+                            : 0.toString(),
+                      ),
+                      isLabelVisible:
+                          model != null && model.threadBadgeCount != 0,
                       child: SvgPicture.asset(
                         _currentIndex == 1
                             ? 'asset/img/icon_message_active.svg'

@@ -94,7 +94,10 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
         );
       } else if (threadResponse != null) {
         final pstate = ThreadListModel(
-            data: threadResponse.data, total: threadResponse.total);
+          data: threadResponse.data,
+          total: threadResponse.total,
+          scrollIndex: 0,
+        );
         state = pstate;
       }
     } catch (e) {
@@ -249,5 +252,13 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
 
       state = pstate.copyWith();
     }
+  }
+
+  void updateScrollIndex(int scrollIndex) {
+    final pstate = state as ThreadListModel;
+
+    pstate.scrollIndex = scrollIndex;
+
+    state = pstate;
   }
 }

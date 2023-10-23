@@ -17,9 +17,11 @@ class ScheduleModelLoading extends ScheduleModelBase {}
 @JsonSerializable()
 class ScheduleModel extends ScheduleModelBase {
   final List<ScheduleData> data;
+  int? scrollIndex;
 
   ScheduleModel({
     required this.data,
+    this.scrollIndex,
   });
 
   factory ScheduleModel.fromJson(Map<String, dynamic> json) =>
@@ -31,12 +33,14 @@ class ScheduleModel extends ScheduleModelBase {
 class ScheduleModelFetchingMore extends ScheduleModel {
   ScheduleModelFetchingMore({
     required super.data,
+    super.scrollIndex,
   });
 }
 
 class ScheduleModelRefetching extends ScheduleModel {
   ScheduleModelRefetching({
     required super.data,
+    super.scrollIndex,
   });
 }
 

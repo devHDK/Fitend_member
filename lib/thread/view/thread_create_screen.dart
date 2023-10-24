@@ -180,7 +180,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
       ...linkUrls,
     ];
 
-    if (state.isUploading) {
+    if (state.isUploading && state.totalCount > 0) {
       return Scaffold(
         backgroundColor: BACKGROUND_COLOR,
         body: SizedBox(

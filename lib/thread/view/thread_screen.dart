@@ -349,7 +349,9 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                                 : model.user.gender == 'male'
                                     ? maleProfileUrl
                                     : femaleProfileUrl,
-                            nickname: model.user.nickname,
+                            nickname: model.writerType == 'trainer'
+                                ? model.trainer.nickname
+                                : model.user.nickname,
                             dateTime: DateTime.parse(model.createdAt)
                                 .toUtc()
                                 .toLocal(),

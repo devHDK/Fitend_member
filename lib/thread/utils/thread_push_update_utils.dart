@@ -155,6 +155,11 @@ class ThreadUpdateUtils {
     if (emojiCreateList.isNotEmpty) {
       var tempList = emojiCreateList;
 
+      if (ref.read(threadProvider) is! ThreadListModel) {
+        tempList = [];
+        await SharedPrefUtils.updateNeedUpdateList(needEmojiCreate, pref, []);
+      }
+
       for (var emoji in tempList) {
         Map<String, dynamic> emojiMap = jsonDecode(emoji);
         var emojiModel = EmojiModelFromPushData.fromJson(emojiMap);
@@ -221,6 +226,11 @@ class ThreadUpdateUtils {
     if (emojiDeleteList.isNotEmpty) {
       var tempList = emojiDeleteList;
 
+      if (ref.read(threadProvider) is! ThreadListModel) {
+        tempList = [];
+        await SharedPrefUtils.updateNeedUpdateList(needEmojiDelete, pref, []);
+      }
+
       for (var emoji in tempList) {
         Map<String, dynamic> emojiMap = jsonDecode(emoji);
         var emojiModel = EmojiModelFromPushData.fromJson(emojiMap);
@@ -281,6 +291,7 @@ class ThreadUpdateUtils {
 
         // emojiDeleteList.remove(emoji);
       }
+
       await SharedPrefUtils.updateNeedUpdateList(needEmojiDelete, pref, []);
     }
   }

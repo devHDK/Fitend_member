@@ -150,10 +150,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
         body: DialogWidgets.errorDialog(
           message: state.message,
           confirmText: '확인',
-          confirmOnTap: () {
-            int count = 0;
-            Navigator.of(context).popUntil((_) => count++ >= 2);
-          },
+          confirmOnTap: () => context.pop(),
         ),
       );
     }

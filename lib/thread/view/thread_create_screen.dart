@@ -180,7 +180,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
       ...linkUrls,
     ];
 
-    if (state.isUploading && state.doneCount != state.totalCount) {
+    if (state.isUploading) {
       return Scaffold(
         backgroundColor: BACKGROUND_COLOR,
         body: SizedBox(
@@ -198,7 +198,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                       child: CircularProgressIndicator(
                         color: POINT_COLOR,
                         backgroundColor: Colors.transparent,
-                        value: (state.doneCount + 1) / state.totalCount,
+                        value: (state.doneCount) / state.totalCount,
                         strokeWidth: 15,
                         strokeCap: StrokeCap.round,
                       ),
@@ -208,7 +208,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                       width: 100,
                       child: Center(
                         child: Text(
-                          '${((state.doneCount + 1 > state.totalCount ? state.doneCount : state.doneCount + 1) / state.totalCount * 100).toInt()}%',
+                          '${(state.doneCount / state.totalCount * 100).toInt()}%',
                           style: h4Headline.copyWith(
                             color: Colors.white,
                           ),

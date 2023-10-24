@@ -55,15 +55,14 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
     }
 
     if (state is UserModelError) {
-      showDialog(
-        context: context,
-        builder: (context) => DialogWidgets.errorDialog(
-          message: '데이터를 불러올수없습니다😂',
-          confirmText: '확인',
-          confirmOnTap: () {
-            int count = 0;
-            Navigator.of(context).popUntil((_) => count++ >= 2);
-          },
+      return Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+          child: DialogWidgets.errorDialog(
+            message: '데이터를 불러올수없습니다😂',
+            confirmText: '확인',
+            confirmOnTap: () => context.pop(),
+          ),
         ),
       );
     }

@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
+import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,14 +42,23 @@ class _AppState extends ConsumerState<App> {
         .getInitialMessage()
         .then((RemoteMessage? message) {
       if (message != null) {
-        debugPrint("getInitialMessage: ${message.messageId}");
-        ref.read(routerProvider).goNamed(NotificationScreen.routeName);
+        debugPrint("getInitialMessage: ${message.data}");
+        // ref.read(routerProvider).goNamed(NotificationScreen.routeName);
       }
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      debugPrint("onMessageOpenedApp: ${message.messageId}");
-      ref.read(routerProvider).goNamed(NotificationScreen.routeName);
+      debugPrint("message: ${message.data}");
+      if (message.data['type'] == 'commentCreate' ||
+          message.data['type'] == 'threadCreate') {
+        ref
+            .read(routerProvider)
+            .goNamed(ThreadDetailScreen.routeName, pathParameters: {
+          'threadId': message.data['threadId'],
+        });
+      } else if (message.data['type'].toString().contains('reservation')) {
+        ref.read(routerProvider).goNamed(NotificationScreen.routeName);
+      }
     });
   }
 

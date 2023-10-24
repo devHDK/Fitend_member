@@ -9,7 +9,9 @@ import 'package:fitend_member/notifications/model/notification_model.dart';
 import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/notifications/provider/notification_provider.dart';
 import 'package:fitend_member/notifications/repository/notifications_repository.dart';
+import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -196,8 +198,20 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
                     return const SizedBox();
                   }
 
-                  return NotificationCell(
-                    notificationData: notification.data![index],
+                  return GestureDetector(
+                    onTap: notification.data![index].info != null &&
+                            notification.data![index].info!.threadId != null
+                        ? () {
+                            Navigator.of(context).push(CupertinoPageRoute(
+                              builder: (context) => ThreadDetailScreen(
+                                  threadId: notification
+                                      .data![index].info!.threadId!),
+                            ));
+                          }
+                        : null,
+                    child: NotificationCell(
+                      notificationData: notification.data![index],
+                    ),
                   );
                 },
               ),

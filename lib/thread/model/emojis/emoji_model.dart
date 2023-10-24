@@ -42,17 +42,17 @@ class EmojiModel {
 @JsonSerializable()
 class EmojiModelFromPushData {
   @JsonKey(name: "id")
-  final int id;
+  final String id;
   @JsonKey(name: "emoji")
   final String emoji;
   @JsonKey(name: "userId")
-  int? userId;
+  String? userId;
   @JsonKey(name: "trainerId")
-  int? trainerId;
+  String? trainerId;
   @JsonKey(name: "threadId")
-  int? threadId;
+  String? threadId;
   @JsonKey(name: "commentId")
-  int? commentId;
+  String? commentId;
 
   EmojiModelFromPushData({
     required this.id,
@@ -64,12 +64,12 @@ class EmojiModelFromPushData {
   });
 
   EmojiModelFromPushData copyWith({
-    int? id,
+    String? id,
     String? emoji,
-    int? userId,
-    int? trainerId,
-    int? threadId,
-    int? commentId,
+    String? userId,
+    String? trainerId,
+    String? threadId,
+    String? commentId,
   }) =>
       EmojiModelFromPushData(
         id: id ?? this.id,

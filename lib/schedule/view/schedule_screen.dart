@@ -198,14 +198,16 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     }
 
     if (state is ScheduleModelError) {
-      DialogWidgets.errorDialog(
-        message: state.message,
-        confirmText: '확인',
-        confirmOnTap: () {
-          int count = 0;
-          Navigator.of(context).popUntil((_) => count++ >= 2);
-        },
-      ).show(context);
+      return Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+          child: DialogWidgets.errorDialog(
+            message: state.message,
+            confirmText: '확인',
+            confirmOnTap: () => context.pop(),
+          ),
+        ),
+      );
     }
 
     final schedules = state as ScheduleModel;

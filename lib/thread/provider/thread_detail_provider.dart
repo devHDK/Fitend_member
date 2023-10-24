@@ -7,7 +7,7 @@ import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_params_model.dart';
-import 'package:fitend_member/thread/model/threads/thread_comment_edit_model.dart';
+import 'package:fitend_member/thread/model/exception/thread_exceptios.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
@@ -57,16 +57,24 @@ class ThreadDetailStateNotifier extends StateNotifier<ThreadModelBase> {
 
   Future<void> getThreadDetail({required int threadId}) async {
     try {
-      var thread = await threadRepository.getThreadWithId(id: threadId);
-      var comments = await commentRepository.getComments(
-          model: CommentGetListParamsModel(threadId: threadId));
+      try {
+        var thread = await threadRepository.getThreadWithId(id: threadId);
+        var comments = await commentRepository.getComments(
+            model: CommentGetListParamsModel(threadId: threadId));
 
-      thread.comments = comments.data;
+        thread.comments = comments.data;
 
-      state = thread.copyWith();
+        state = thread.copyWith();
+      } on DioException {
+        throw CommonException(message: 'not_found');
+      }
     } catch (e) {
       debugPrint('$e');
-      state = ThreadModelError(message: '데이터를 불러올수 없습니다');
+      if (e is CommonException) {
+        state = ThreadModelError(message: '삭제된 thread 입니다.');
+      } else {
+        state = ThreadModelError(message: '데이터를 불러올수 없습니다');
+      }
     }
   }
 

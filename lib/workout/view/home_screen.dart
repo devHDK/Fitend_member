@@ -68,9 +68,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   width: 1, // specify the width of the divider
                 ),
                 InkWell(
-                  onTap: () => setState(() {
-                    _currentIndex = 1;
-                  }),
+                  onTap: () {
+                    if (mounted) {
+                      ref
+                          .read(notificationHomeProvider.notifier)
+                          .updateBageCount(0);
+                      setState(() {
+                        _currentIndex = 1;
+                      });
+                    }
+                  },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,

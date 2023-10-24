@@ -25,11 +25,11 @@ class SharedPrefUtils {
 
   static Future<void> addOneNeedUpdateList(
       String value, SharedPreferences pref, String updateValue) async {
-    final pList = getNeedUpdateList(value, pref);
+    var pList = getNeedUpdateList(value, pref);
 
     pList.add(updateValue);
 
-    await pref.setStringList(needWorkoutUpdateList, pList);
+    await pref.setStringList(value, pList);
   }
 
   static Future<void> updateNeedUpdateList(

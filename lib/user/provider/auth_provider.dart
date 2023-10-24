@@ -6,6 +6,7 @@ import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
+import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
@@ -108,6 +109,16 @@ class AuthProvider extends ChangeNotifier {
               pageBuilder: (context, state) => _rightToLeftTransiton(
                 state,
                 const NotificationScreen(),
+              ),
+            ),
+            GoRoute(
+              path: 'threadDetail/:threadId',
+              name: ThreadDetailScreen.routeName,
+              pageBuilder: (context, state) => _rightToLeftTransiton(
+                state,
+                ThreadDetailScreen(
+                  threadId: int.parse(state.pathParameters['threadId']!),
+                ),
               ),
             ),
             GoRoute(

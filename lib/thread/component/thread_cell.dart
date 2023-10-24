@@ -527,7 +527,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
     Map<String, int> emojiCounts = {};
     List<Widget> emojiButtons = [];
 
-    for (var emoji in widget.emojis!) {
+    for (var emoji in widget.emojis!.toSet().toList()) {
       String emojiChar = emoji.emoji;
 
       if (!emojiCounts.containsKey(emojiChar)) {

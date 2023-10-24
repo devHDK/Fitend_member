@@ -110,12 +110,14 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       }
 
       if (pstate is WorkoutResultModelError) {
-        showDialog(
-          context: context,
-          builder: (context) => DialogWidgets.errorDialog(
-            message: pstate.message,
-            confirmText: '확인',
-            confirmOnTap: () => context.pop(),
+        return Scaffold(
+          backgroundColor: BACKGROUND_COLOR,
+          body: Center(
+            child: DialogWidgets.errorDialog(
+              message: pstate.message,
+              confirmText: '확인',
+              confirmOnTap: () => context.pop(),
+            ),
           ),
         );
       }

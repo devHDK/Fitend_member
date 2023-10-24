@@ -409,7 +409,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
     Map<String, int> emojiCounts = {};
     List<Widget> emojiButtons = [];
 
-    for (var emoji in model.emojis!) {
+    for (var emoji in model.emojis!.toSet().toList()) {
       String emojiChar = emoji.emoji;
 
       if (!emojiCounts.containsKey(emojiChar)) {

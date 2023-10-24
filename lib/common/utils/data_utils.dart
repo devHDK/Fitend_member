@@ -73,7 +73,7 @@ class DataUtils {
     switch (type) {
       case 'emojiCreate':
         return EmojiPushType.emojiCreate;
-      case 'emojitDelete':
+      case 'emojiDelete':
         return EmojiPushType.emojiDelete;
 
       default:

@@ -19,10 +19,12 @@ import 'package:fitend_member/thread/model/threads/thread_model.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 
 import 'package:fitend_member/thread/provider/thread_provider.dart';
+import 'package:fitend_member/thread/utils/thread_push_update_utils.dart';
 import 'package:fitend_member/thread/view/thread_create_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
+import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +33,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ThreadScreen extends ConsumerStatefulWidget {
+  static String get routeName => 'thread';
+
   const ThreadScreen({super.key});
 
   @override
@@ -59,6 +63,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       ref.read(notificationHomeProvider.notifier).updateBageCount(0);
+      threadBadgeCountReset();
     });
   }
 
@@ -108,7 +113,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        await checkThreadNeedUpdate();
+        await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
         break;
       case AppLifecycleState.inactive:
         break;
@@ -123,249 +128,28 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
 
   @override
   void didPush() async {
-    await checkThreadNeedUpdate();
+    await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
     super.didPush();
   }
 
   @override
   void didPop() async {
-    await checkThreadNeedUpdate();
+    await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
     super.didPop();
   }
 
-  Future<void> checkThreadNeedUpdate() async {
-    final pref = await ref.read(sharedPrefsProvider);
-    final isNeedListUpdate =
-        SharedPrefUtils.getIsNeedUpdate(needThreadUpdate, pref);
-    var threadUpdateList =
-        SharedPrefUtils.getNeedUpdateList(needThreadUpdateList, pref);
-    var threadDeleteList =
-        SharedPrefUtils.getNeedUpdateList(needThreadDelete, pref);
-    var commentCreateList =
-        SharedPrefUtils.getNeedUpdateList(needCommentCreate, pref);
-    var commentDeleteList =
-        SharedPrefUtils.getNeedUpdateList(needCommentDelete, pref);
-    var emojiCreateList =
-        SharedPrefUtils.getNeedUpdateList(needEmojiCreate, pref);
-    var emojiDeleteList =
-        SharedPrefUtils.getNeedUpdateList(needEmojiDelete, pref);
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
-    bool isListRefreshed = false;
-    List<int> detailRefreshedList = [];
-
-    if (isNeedListUpdate) {
-      ref
-          .read(threadProvider.notifier)
-          .paginate(startIndex: 0, isRefetch: true);
-
-      await SharedPrefUtils.updateIsNeedUpdate(needScheduleUpdate, pref, false);
-      await SharedPrefUtils.updateNeedUpdateList(needThreadDelete, pref, []);
-
-      await SharedPrefUtils.updateThreadBadgeCount(pref, 'add');
-      ref.read(notificationHomeProvider.notifier).addBageCount(1);
-      ref.read(notificationHomeProvider.notifier).updateIsConfirm(false);
-
-      threadDeleteList = [];
-      isListRefreshed = true;
-    }
-
-    if (threadUpdateList.isNotEmpty) {
-      for (var e in threadUpdateList) {
-        final tempState = ref.read(threadProvider);
-
-        final model = tempState as ThreadListModel;
-        final index = model.data.indexWhere((thread) {
-          return thread.id == int.parse(e);
-        });
-
-        if (index != -1) {
-          ref
-              .read(threadDetailProvider(int.parse(e)).notifier)
-              .getThreadDetail(threadId: int.parse(e));
-
-          detailRefreshedList.add(int.parse(e));
-        }
-      }
-    }
-
-    if (threadDeleteList.isNotEmpty && !isListRefreshed) {
-      for (var e in threadDeleteList) {
-        final tempState = ref.read(threadProvider);
-
-        final model = tempState as ThreadListModel;
-        final index = model.data.indexWhere((thread) {
-          return thread.id == int.parse(e);
-        });
-
-        if (index != -1) {
-          ref
-              .read(threadProvider.notifier)
-              .removeThreadWithId(int.parse(e), index);
-        }
-      }
-    }
-
-    if (commentCreateList.isNotEmpty) {
-      for (var e in commentCreateList) {
-        if (ref.read(threadDetailProvider(int.parse(e))) is ThreadModel &&
-            !detailRefreshedList.contains(int.parse(e))) {
-          ref
-              .read(threadDetailProvider(int.parse(e)).notifier)
-              .getThreadDetail(threadId: int.parse(e));
-
-          detailRefreshedList.add(int.parse(e));
-        }
-
-        var tempState = ref.read(threadProvider);
-        var model = tempState as ThreadListModel;
-
-        int index =
-            model.data.indexWhere((thread) => thread.id == int.parse(e));
-
-        if (index != -1 && !isListRefreshed) {
-          ref
-              .read(threadProvider.notifier)
-              .updateTrainerCommentCount(int.parse(e), 1);
-        }
-      }
-      await SharedPrefUtils.updateNeedUpdateList(needCommentCreate, pref, []);
-      ref.read(notificationHomeProvider.notifier).updateIsConfirm(false);
-      commentCreateList = [];
-    }
-
-    if (commentDeleteList.isNotEmpty) {
-      for (var e in commentDeleteList) {
-        if (ref.read(threadDetailProvider(int.parse(e))) is ThreadModel &&
-            !detailRefreshedList.contains(int.parse(e))) {
-          ref
-              .read(threadDetailProvider(int.parse(e)).notifier)
-              .getThreadDetail(threadId: int.parse(e));
-
-          detailRefreshedList.add(int.parse(e));
-        }
-
-        var tempState = ref.read(threadProvider);
-        var model = tempState as ThreadListModel;
-
-        int index =
-            model.data.indexWhere((thread) => thread.id == int.parse(e));
-
-        if (index != -1 && !isListRefreshed) {
-          ref
-              .read(threadProvider.notifier)
-              .updateTrainerCommentCount(int.parse(e), -1);
-        }
-      }
-    }
-
-    if (emojiCreateList.isNotEmpty) {
-      var tempList = emojiCreateList;
-
-      for (var emoji in tempList) {
-        var emojiMap = jsonDecode(emoji);
-        var emojiModel = EmojiModelFromPushData.fromJson(emojiMap);
-
-        if (emojiModel.commentId == null) {
-          //thread에 추가
-          if (!isListRefreshed) {
-            final tempState = ref.read(threadProvider) as ThreadListModel;
-            int index = tempState.data
-                .indexWhere((element) => element.id == emojiModel.threadId);
-
-            ref.read(threadProvider.notifier).addEmoji(null,
-                emojiModel.trainerId, emojiModel.emoji, index, emojiModel.id);
-          }
-
-          if (!detailRefreshedList.contains(emojiModel.threadId!)) {
-            ref
-                .read(threadDetailProvider(emojiModel.threadId!).notifier)
-                .addThreadEmoji(null, emojiModel.trainerId, emojiModel.emoji,
-                    emojiModel.id);
-          }
-        } else if (emojiModel.commentId != null &&
-            !detailRefreshedList.contains(emojiModel.threadId)) {
-          ThreadModel? tempState;
-          if (ref.read(threadDetailProvider(emojiModel.threadId!))
-              is ThreadModel) {
-            tempState = ref.read(threadDetailProvider(emojiModel.threadId!))
-                as ThreadModel;
-          }
-
-          if (tempState != null &&
-              tempState.comments != null &&
-              tempState.comments!.isNotEmpty) {
-            final index = tempState.comments!
-                .indexWhere((element) => element.id == emojiModel.commentId);
-
-            if (index != -1) {
-              ref
-                  .read(threadDetailProvider(emojiModel.threadId!).notifier)
-                  .addCommentEmoji(null, emojiModel.trainerId, emojiModel.emoji,
-                      index, emojiModel.id);
-            }
-          }
-        }
-
-        emojiCreateList.remove(emoji);
-      }
-
-      await SharedPrefUtils.updateNeedUpdateList(
-          needEmojiCreate, pref, emojiCreateList);
-    }
-
-    if (emojiDeleteList.isNotEmpty) {
-      var tempList = emojiDeleteList;
-
-      for (var emoji in tempList) {
-        var emojiMap = jsonDecode(emoji);
-        var emojiModel = EmojiModelFromPushData.fromJson(emojiMap);
-
-        if (emojiModel.commentId == null) {
-          //thread에서 삭제
-          if (!isListRefreshed) {
-            final tempState = ref.read(threadProvider) as ThreadListModel;
-            int index = tempState.data
-                .indexWhere((element) => element.id == emojiModel.threadId);
-
-            ref.read(threadProvider.notifier).removeEmoji(null,
-                emojiModel.trainerId, emojiModel.emoji, index, emojiModel.id);
-          }
-
-          if (!detailRefreshedList.contains(emojiModel.threadId!)) {
-            ref
-                .read(threadDetailProvider(emojiModel.threadId!).notifier)
-                .removeThreadEmoji(null, emojiModel.trainerId, emojiModel.emoji,
-                    emojiModel.id);
-          }
-        } else if (emojiModel.commentId != null &&
-            !detailRefreshedList.contains(emojiModel.threadId)) {
-          ThreadModel? tempState;
-          if (ref.read(threadDetailProvider(emojiModel.threadId!))
-              is ThreadModel) {
-            tempState = ref.read(threadDetailProvider(emojiModel.threadId!))
-                as ThreadModel;
-          }
-
-          if (tempState != null &&
-              tempState.comments != null &&
-              tempState.comments!.isNotEmpty) {
-            final index = tempState.comments!
-                .indexWhere((element) => element.id == emojiModel.commentId);
-
-            if (index != -1) {
-              ref
-                  .read(threadDetailProvider(emojiModel.threadId!).notifier)
-                  .removeCommentEmoji(null, emojiModel.trainerId,
-                      emojiModel.emoji, index, emojiModel.id);
-            }
-          }
-        }
-
-        emojiDeleteList.remove(emoji);
-      }
-      await SharedPrefUtils.updateNeedUpdateList(
-          needEmojiDelete, pref, emojiDeleteList);
-    }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ref
+        .read(routeObserverProvider)
+        .subscribe(this, ModalRoute.of(context) as PageRoute);
   }
 
   @override

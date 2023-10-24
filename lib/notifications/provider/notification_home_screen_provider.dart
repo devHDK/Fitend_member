@@ -45,7 +45,7 @@ class NotificationHomeStateNotifier
     }
   }
 
-  void updateBageCount(int count) {
+  void updateBageCount(int count) async {
     if (state is NotificationMainModel) {
       final pstate = state as NotificationMainModel;
 

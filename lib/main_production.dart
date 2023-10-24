@@ -76,6 +76,7 @@ void processPushMessage(RemoteMessage message) async {
         await SharedPrefUtils.updateIsNeedUpdate(
             needNotificationUpdate, pref, true);
         await SharedPrefUtils.updateIsNeedUpdate(needThreadUpdate, pref, true);
+
         break;
       case ThreadPushType.threadDelete:
         String threadId = message.data['threadId'].toString();
@@ -97,6 +98,7 @@ void processPushMessage(RemoteMessage message) async {
       case CommentPushType.commentCreate:
         await SharedPrefUtils.updateIsNeedUpdate(
             needNotificationUpdate, pref, true);
+
         String threadId = message.data['threadId'].toString();
         await SharedPrefUtils.addOneNeedUpdateList(
             needCommentCreate, pref, threadId);
@@ -117,13 +119,13 @@ void processPushMessage(RemoteMessage message) async {
       default:
         break;
     }
-  } else {
+  } else if (type.contains('emoji')) {
     switch (DataUtils.getEmojiPushType(type)) {
       case EmojiPushType.emojiCreate:
         final pushData = EmojiModelFromPushData.fromJson(message.data);
 
         await SharedPrefUtils.addOneNeedUpdateList(
-            needEmojiCreate, pref, pushData.toString());
+            needEmojiCreate, pref, json.encode(pushData.toJson()));
 
         var deleteList =
             SharedPrefUtils.getNeedUpdateList(needEmojiDelete, pref);
@@ -134,8 +136,9 @@ void processPushMessage(RemoteMessage message) async {
           Map<String, dynamic> emojiMap = jsonDecode(emoji);
           final deleteEmoji = EmojiModelFromPushData.fromJson(emojiMap);
 
-          if (deleteEmoji == pushData) {
-            deleteList.remove(emoji);
+          if (deleteEmoji.id == pushData.id &&
+              deleteEmoji.trainerId == pushData.trainerId) {
+            deleteList.remove(json.encode(emojiMap));
           }
         }
 
@@ -144,9 +147,8 @@ void processPushMessage(RemoteMessage message) async {
         break;
       case EmojiPushType.emojiDelete:
         final pushData = EmojiModelFromPushData.fromJson(message.data);
-
         await SharedPrefUtils.addOneNeedUpdateList(
-            needEmojiDelete, pref, pushData.toString());
+            needEmojiDelete, pref, json.encode(pushData.toJson()));
 
         var createList =
             SharedPrefUtils.getNeedUpdateList(needEmojiCreate, pref);
@@ -157,12 +159,13 @@ void processPushMessage(RemoteMessage message) async {
           Map<String, dynamic> emojiMap = jsonDecode(emoji);
           final deleteEmoji = EmojiModelFromPushData.fromJson(emojiMap);
 
-          if (deleteEmoji == pushData) {
-            createList.remove(emoji);
+          if (deleteEmoji.id == pushData.id &&
+              deleteEmoji.trainerId == pushData.trainerId) {
+            createList.remove(json.encode(emojiMap));
           }
         }
 
-        SharedPrefUtils.updateNeedUpdateList(needEmojiDelete, pref, createList);
+        SharedPrefUtils.updateNeedUpdateList(needEmojiCreate, pref, createList);
 
         break;
 

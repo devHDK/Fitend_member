@@ -91,9 +91,11 @@ class NotificationData {
 class Info {
   int? workoutScheduleId;
   int? reservationId;
+  int? threadId;
   Info({
     this.workoutScheduleId,
     this.reservationId,
+    this.threadId,
   });
 
   factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);

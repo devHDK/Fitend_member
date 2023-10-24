@@ -24,12 +24,12 @@ Map<String, dynamic> _$EmojiModelToJson(EmojiModel instance) =>
 EmojiModelFromPushData _$EmojiModelFromPushDataFromJson(
         Map<String, dynamic> json) =>
     EmojiModelFromPushData(
-      id: json['id'] as int,
+      id: json['id'] as String,
       emoji: json['emoji'] as String,
-      userId: json['userId'] as int?,
-      trainerId: json['trainerId'] as int?,
-      threadId: json['threadId'] as int?,
-      commentId: json['commentId'] as int?,
+      userId: json['userId'] as String?,
+      trainerId: json['trainerId'] as String?,
+      threadId: json['threadId'] as String?,
+      commentId: json['commentId'] as String?,
     );
 
 Map<String, dynamic> _$EmojiModelFromPushDataToJson(

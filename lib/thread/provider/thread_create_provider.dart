@@ -368,7 +368,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     if (editModel.gallery != null && editModel.gallery!.isNotEmpty) {
       for (var asset in editModel.gallery!) {
         final fileInfo =
-            await DefaultCacheManager().getFileFromCache(asset.url);
+            await DefaultCacheManager().getFileFromCache('$s3Url${asset.url}');
 
         if (fileInfo != null) {
           assetPaths.add(fileInfo.file.path);

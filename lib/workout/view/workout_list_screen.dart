@@ -145,9 +145,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     }
 
     if (state is WorkoutModelError) {
-      showDialog(
-        context: context,
-        builder: (context) => DialogWidgets.errorDialog(
+      return Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: DialogWidgets.errorDialog(
           message: state.message,
           confirmText: '확인',
           confirmOnTap: () {

@@ -217,7 +217,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                               edittingCommentId == -1)
                             Positioned(
                               top: -5,
-                              right: 15,
+                              right: 18,
                               child: InkWell(
                                 onTap: () => DialogWidgets.editBottomModal(
                                   context,

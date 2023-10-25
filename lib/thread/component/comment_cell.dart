@@ -145,6 +145,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(26, 7, 0, 7),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,10 +212,10 @@ class _CommentCellState extends ConsumerState<CommentCell> {
             ),
             if (mediaCount == 1 && linkUrls.length == 1)
               Padding(
-                padding: const EdgeInsets.fromLTRB(39, 10, 0, 10),
+                padding: const EdgeInsets.fromLTRB(39, 10, 28, 10),
                 child: LinkPreview(
                   url: linkUrls.first,
-                  width: 100.w - 110,
+                  width: 100.w - 110 - 28,
                   height: 90,
                 ),
               )
@@ -338,13 +339,16 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                   ),
                 ),
               ),
-            SizedBox(
-              height: emojiHeight,
-              width: 100.w - 135,
-              child: Wrap(
-                spacing: 2.0,
-                runSpacing: 5.0,
-                children: emojiButtons,
+            Padding(
+              padding: const EdgeInsets.only(left: 39),
+              child: SizedBox(
+                height: emojiHeight,
+                width: 100.w - 135,
+                child: Wrap(
+                  spacing: 2.0,
+                  runSpacing: 5.0,
+                  children: emojiButtons,
+                ),
               ),
             ),
           ],

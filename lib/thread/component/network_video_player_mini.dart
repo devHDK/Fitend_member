@@ -57,10 +57,18 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
 
   Future<void> videoInit() async {
     currentPosition = const Duration();
+    File? file;
+    final fileInfo = await DefaultCacheManager()
+        .getFileFromCache('$s3Url${widget.video.url}');
 
-    final file = await DefaultCacheManager().getSingleFile(
-        '$s3Url${widget.video.url}',
-        key: '$s3Url${widget.video.url}');
+    if (fileInfo != null) {
+      file = fileInfo.file;
+    } else {
+      debugPrint('video download...');
+      file = await DefaultCacheManager().getSingleFile(
+          '$s3Url${widget.video.url}',
+          key: '$s3Url${widget.video.url}');
+    }
 
     _videoController = VideoPlayerController.file(
       file,
@@ -112,7 +120,10 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
                     child: Container(
                       color: BACKGROUND_COLOR,
                       child: Center(
-                        child: VideoPlayer(_videoController!),
+                        child: VideoPlayer(
+                          _videoController!,
+                          key: ValueKey('$s3Url${widget.video.url}'),
+                        ),
                       ),
                     ),
                   ),

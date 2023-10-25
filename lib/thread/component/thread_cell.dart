@@ -339,7 +339,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: SizedBox(
                         height: 100,
-                        width: 100.w - 82,
+                        width: 100.w - 71,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {

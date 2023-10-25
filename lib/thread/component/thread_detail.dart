@@ -396,6 +396,9 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                 color: GRAY_COLOR,
               ),
             ),
+            const SizedBox(
+              width: 28,
+            ),
           ],
         ),
         const SizedBox(

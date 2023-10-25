@@ -87,7 +87,7 @@ class _MediaPageScreenState extends State<MediaPageScreen> {
                     child: InteractiveViewer(
                       transformationController: _transController,
                       minScale: 0.5,
-                      maxScale: 3.0,
+                      maxScale: 10.0,
                       child: CustomNetworkImage(
                         imageUrl: '$s3Url${widget.gallery[index].url}',
                         boxFit: BoxFit.contain,

@@ -6,7 +6,6 @@ import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_get_list_params_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
-import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/repository/thread_comment_repository.dart';
 import 'package:fitend_member/thread/repository/thread_emoji_repository.dart';
 import 'package:fitend_member/thread/repository/thread_repository.dart';
@@ -54,10 +53,10 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
   }) async {
     try {
       final isLoading = state is ThreadListModelLoading;
-      final isRefetching = state is ThreadListModelRefetching;
+      // final isRefetching = state is ThreadListModelRefetching;
       final isFetchMore = state is ThreadListModelFetchingMore;
 
-      if (fetchMore && (isLoading || isFetchMore || isRefetching)) {
+      if (isFetchMore && (isLoading || isFetchMore)) {
         return;
       }
 
@@ -81,9 +80,9 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
 
       try {
         threadResponse = await threadRepository.getThreads(
-            params: ThreadGetListParamsModel(start: startIndex, perPage: 15));
+            params: ThreadGetListParamsModel(start: startIndex, perPage: 20));
       } on DioException catch (e) {
-        debugPrint('getWorkoutSchedule error : $e');
+        debugPrint('thread paginate error : $e');
       }
 
       if (state is ThreadListModelFetchingMore && threadResponse != null) {

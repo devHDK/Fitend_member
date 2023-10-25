@@ -215,7 +215,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                 padding: const EdgeInsets.fromLTRB(39, 10, 28, 10),
                 child: LinkPreview(
                   url: linkUrls.first,
-                  width: 100.w - 110 - 28,
+                  width: 100.w - 110,
                   height: 90,
                 ),
               )

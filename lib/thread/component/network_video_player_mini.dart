@@ -109,49 +109,50 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: Stack(
-            children: [
-              SizedBox(
-                child: Center(
-                  child: AspectRatio(
-                    aspectRatio: widget.userOriginRatio!
-                        ? _videoController!.value.aspectRatio
-                        : 1 / 0.8,
-                    child: Container(
-                      color: BACKGROUND_COLOR,
-                      child: Center(
-                        child: VideoPlayer(
+          child: Container(
+            color: Colors.black38,
+            child: Center(
+              child: AspectRatio(
+                aspectRatio: widget.userOriginRatio!
+                    ? _videoController!.value.aspectRatio
+                    : 1 / 0.8,
+                child: Container(
+                  color: BACKGROUND_COLOR,
+                  child: Center(
+                    child: Stack(
+                      children: [
+                        VideoPlayer(
                           _videoController!,
                           key: ValueKey('$s3Url${widget.video.url}'),
                         ),
-                      ),
+                        Positioned(
+                          bottom: 5,
+                          left: 5,
+                          child: Container(
+                            width: 40,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              color: Colors.black38,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Center(
+                              child: Text(
+                                DataUtils.getTimeStringMinutes(
+                                  _videoController!.value.duration.inSeconds,
+                                ).toString(),
+                                style: s3SubTitle.copyWith(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 5,
-                left: 5,
-                child: Container(
-                  width: 40,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: Colors.black38,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Center(
-                    child: Text(
-                      DataUtils.getTimeStringMinutes(
-                        _videoController!.value.duration.inSeconds,
-                      ).toString(),
-                      style: s3SubTitle.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
+            ),
           ),
         ),
       ],

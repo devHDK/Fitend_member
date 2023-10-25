@@ -8,7 +8,7 @@ class PreviewImageNetwork extends StatefulWidget {
     this.width = 140,
     this.height = 112,
     required this.url,
-    this.boxFit = BoxFit.fitWidth,
+    this.boxFit = BoxFit.cover,
   });
 
   final int? width;

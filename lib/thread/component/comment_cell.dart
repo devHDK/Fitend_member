@@ -232,15 +232,18 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                     fullscreenDialog: true,
                   ),
                 ),
-                child: SizedBox(
-                  width: (100.w - 110),
-                  height: (100.w - 110) * 0.8,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: NetworkVideoPlayerMini(
-                        video: widget.gallery!.first,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(39, 10, 0, 10),
+                  child: SizedBox(
+                    width: (100.w - 110),
+                    height: (100.w - 110) * 0.8,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: NetworkVideoPlayerMini(
+                          video: widget.gallery!.first,
+                        ),
                       ),
                     ),
                   ),
@@ -276,7 +279,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(39, 0, 0, 10),
                 child: SizedBox(
-                  height: 112,
+                  height: 150,
                   width: 100.w,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
@@ -286,8 +289,8 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                           children: [
                             LinkPreview(
                               url: linkUrls[index - widget.gallery!.length],
-                              height: 140 * 0.8,
-                              width: 140,
+                              height: 150,
+                              width: 180,
                             ),
                             const SizedBox(
                               width: 10,
@@ -314,8 +317,8 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(20),
                                         child: SizedBox(
-                                          height: 140 * 0.8,
-                                          width: 140,
+                                          height: 150,
+                                          width: 180,
                                           child: NetworkVideoPlayerMini(
                                             video: widget.gallery![index],
                                           ),

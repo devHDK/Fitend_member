@@ -155,7 +155,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
     double linkHeight = linkUrls.length == 1 &&
             (widget.gallery == null || widget.gallery!.isEmpty)
-        ? 140.0 * linkUrls.length
+        ? 220.0 * linkUrls.length
         : 0;
 
     int mediaCount = widget.gallery != null
@@ -277,7 +277,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       child: LinkPreview(
                         url: linkUrls.first,
                         width: 100.w - 110,
-                        height: 120,
+                        height: 200,
                       ),
                     )
                   else if (mediaCount == 1 &&
@@ -299,8 +299,10 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                           borderRadius: BorderRadius.circular(20),
                           child: SizedBox(
                             height: 200,
+                            width: 100.w - 110,
                             child: NetworkVideoPlayerMini(
                               video: widget.gallery!.first,
+                              userOriginRatio: true,
                             ),
                           ),
                         ),
@@ -333,66 +335,75 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       height: 10,
                     ),
                   if (mediaCount > 1)
-                    SizedBox(
-                      height: 100,
-                      width: 100.w - 56 - 34 - 9,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          if (index >= widget.gallery!.length) {
-                            return Row(
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: SizedBox(
+                        height: 100,
+                        width: 100.w - 82,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            int galleryLenth = 0;
+
+                            if (widget.gallery != null) {
+                              galleryLenth = widget.gallery!.length;
+                            }
+
+                            if (index >= galleryLenth) {
+                              return Row(
+                                children: [
+                                  LinkPreview(
+                                    url: linkUrls[index - galleryLenth],
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                ],
+                              );
+                            }
+
+                            return Stack(
                               children: [
-                                LinkPreview(
-                                  url: linkUrls[index - widget.gallery!.length],
-                                ),
-                                const SizedBox(
-                                  width: 10,
+                                InkWell(
+                                  onTap: () => Navigator.of(context).push(
+                                    CupertinoPageRoute(
+                                      builder: (context) => MediaPageScreen(
+                                        pageIndex: index,
+                                        gallery: widget.gallery!,
+                                      ),
+                                      fullscreenDialog: true,
+                                    ),
+                                  ),
+                                  child: widget.gallery![index].type == 'video'
+                                      ? Row(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: SizedBox(
+                                                height: 150 * 0.8,
+                                                child: NetworkVideoPlayerMini(
+                                                  video: widget.gallery![index],
+                                                  userOriginRatio: true,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            )
+                                          ],
+                                        )
+                                      : PreviewImageNetwork(
+                                          url:
+                                              '$s3Url${widget.gallery![index].url}',
+                                          width: 150,
+                                        ),
                                 ),
                               ],
                             );
-                          }
-
-                          return Stack(
-                            children: [
-                              InkWell(
-                                onTap: () => Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => MediaPageScreen(
-                                      pageIndex: index,
-                                      gallery: widget.gallery!,
-                                    ),
-                                    fullscreenDialog: true,
-                                  ),
-                                ),
-                                child: widget.gallery![index].type == 'video'
-                                    ? Row(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: SizedBox(
-                                              height: 150 * 0.8,
-                                              width: 150,
-                                              child: NetworkVideoPlayerMini(
-                                                video: widget.gallery![index],
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          )
-                                        ],
-                                      )
-                                    : PreviewImageNetwork(
-                                        url:
-                                            '$s3Url${widget.gallery![index].url}',
-                                        width: 150,
-                                      ),
-                              ),
-                            ],
-                          );
-                        },
-                        itemCount: mediaCount,
+                          },
+                          itemCount: mediaCount,
+                        ),
                       ),
                     ),
                   const SizedBox(
@@ -476,7 +487,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
             widget.threadType == ThreadType.general.name)
           Positioned(
             top: -15,
-            right: -10,
+            right: 18,
             child: InkWell(
               onTap: () => DialogWidgets.editBottomModal(
                 context,

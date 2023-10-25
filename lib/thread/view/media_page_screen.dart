@@ -24,6 +24,7 @@ class MediaPageScreen extends StatefulWidget {
 
 class _MediaPageScreenState extends State<MediaPageScreen> {
   PageController? _pageController;
+  final TransformationController _transController = TransformationController();
 
   @override
   void initState() {
@@ -44,6 +45,7 @@ class _MediaPageScreenState extends State<MediaPageScreen> {
     ]);
 
     _pageController!.dispose();
+    _transController.dispose();
     super.dispose();
   }
 
@@ -51,31 +53,55 @@ class _MediaPageScreenState extends State<MediaPageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          icon: const Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Icon(Icons.close_sharp)),
+          color: Colors.white,
+        ),
+      ),
+      extendBodyBehindAppBar: true,
       body: SafeArea(
-        child: GestureDetector(
-          onVerticalDragEnd: (details) => context.pop(),
-          child: SizedBox(
-            width: 100.w,
-            height: 100.h,
-            child: PageView.builder(
-              controller: _pageController,
-              itemBuilder: (context, index) {
-                if (widget.gallery[index].type == 'image') {
-                  return Hero(
-                    tag: widget.gallery[index].url,
-                    child: CustomNetworkImage(
-                      imageUrl: '$s3Url${widget.gallery[index].url}',
-                      boxFit: BoxFit.contain,
+        child: SizedBox(
+          width: 100.w,
+          height: 100.h,
+          child: PageView.builder(
+            controller: _pageController,
+            onPageChanged: (value) {
+              _transController.value = Matrix4.identity();
+            },
+            itemBuilder: (context, index) {
+              if (widget.gallery[index].type == 'image') {
+                return Hero(
+                  tag: widget.gallery[index].url,
+                  child: GestureDetector(
+                    onDoubleTap: () {
+                      if (_transController.value != Matrix4.identity()) {
+                        _transController.value = Matrix4.identity();
+                      }
+                    },
+                    child: InteractiveViewer(
+                      transformationController: _transController,
+                      minScale: 0.5,
+                      maxScale: 3.0,
+                      child: CustomNetworkImage(
+                        imageUrl: '$s3Url${widget.gallery[index].url}',
+                        boxFit: BoxFit.contain,
+                      ),
                     ),
-                  );
-                } else {
-                  return NetworkVideoPlayer(
-                    video: widget.gallery[index],
-                  );
-                }
-              },
-              itemCount: widget.gallery.length,
-            ),
+                  ),
+                );
+              } else {
+                return NetworkVideoPlayer(
+                  video: widget.gallery[index],
+                );
+              }
+            },
+            itemCount: widget.gallery.length,
           ),
         ),
       ),

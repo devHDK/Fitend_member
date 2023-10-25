@@ -272,7 +272,11 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 28),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          const SizedBox(
+                            height: 50,
+                          ),
                           Text(
                             '아직 댓글이 없어요 :)',
                             style: s1SubTitle.copyWith(

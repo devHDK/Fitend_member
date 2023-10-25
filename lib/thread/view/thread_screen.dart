@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -13,10 +11,7 @@ import 'package:fitend_member/notifications/provider/notification_home_screen_pr
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/component/thread_cell.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
-import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
-import 'package:fitend_member/thread/model/threads/thread_model.dart';
-import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/utils/thread_push_update_utils.dart';
@@ -262,8 +257,9 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
             });
           },
           child: state.data.isEmpty
-              ? SingleChildScrollView(
-                  child: Center(
+              ? Scaffold(
+                  backgroundColor: BACKGROUND_COLOR,
+                  body: Center(
                     child: Text(
                       '아직 코치님과 함께한 쓰레드가 없어요 🙂',
                       style: s2SubTitle.copyWith(
@@ -273,7 +269,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                   ),
                 )
               : ScrollablePositionedList.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  padding: const EdgeInsets.only(left: 28),
                   itemScrollController: itemScrollController,
                   initialScrollIndex: state.scrollIndex ?? 0,
                   itemPositionsListener: itemPositionsListener,

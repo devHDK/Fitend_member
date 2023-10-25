@@ -143,7 +143,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
         color: widget.isEditting! ? Colors.black54 : null,
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 7),
+        padding: const EdgeInsets.fromLTRB(26, 7, 0, 7),
         child: Column(
           children: [
             Row(
@@ -215,7 +215,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                 child: LinkPreview(
                   url: linkUrls.first,
                   width: 100.w - 110,
-                  height: 120,
+                  height: 90,
                 ),
               )
             else if (mediaCount == 1 &&
@@ -276,7 +276,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                 padding: const EdgeInsets.fromLTRB(39, 0, 0, 10),
                 child: SizedBox(
                   height: 112,
-                  width: 100.w - 110,
+                  width: 100.w,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {

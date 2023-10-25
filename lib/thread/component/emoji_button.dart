@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +44,7 @@ class _EmojiButtonState extends State<EmojiButton> {
                     widget.emoji! + widget.count!.toString(),
                     style: s2SubTitle.copyWith(
                       color: Colors.white,
+                      letterSpacing: Platform.isIOS ? 0 : 3,
                     ),
                   ),
                 ],

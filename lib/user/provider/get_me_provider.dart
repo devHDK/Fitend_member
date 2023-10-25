@@ -7,6 +7,8 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/update_checker.dart';
+import 'package:fitend_member/schedule/provider/schedule_provider.dart';
+import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/model/put_fcm_token.dart';
@@ -23,11 +25,16 @@ final getMeProvider =
   final authRepository = ref.watch(authRepositoryProvider);
   final getMeRepository = ref.watch(getMeRepositoryProvider);
   final storage = ref.watch(secureStorageProvider);
+  final sProvider = ref.read(scheduleProvider.notifier);
+  final tProvider = ref.read(threadProvider.notifier);
 
   return GetMeStateNotifier(
-      authRepository: authRepository,
-      repository: getMeRepository,
-      storage: storage);
+    authRepository: authRepository,
+    repository: getMeRepository,
+    storage: storage,
+    sProvider: sProvider,
+    tProvider: tProvider,
+  );
 });
 
 Future<Map<String, dynamic>> getStoreVersionInfo() async {
@@ -49,11 +56,15 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   final AuthRepository authRepository;
   final GetMeRepository repository;
   final FlutterSecureStorage storage;
+  final ScheduleStateNotifier sProvider;
+  final ThreadStateNotifier tProvider;
 
   GetMeStateNotifier({
     required this.authRepository,
     required this.repository,
     required this.storage,
+    required this.sProvider,
+    required this.tProvider,
   }) : super(UserModelLoading()) {
     Future.delayed(
       const Duration(seconds: 2),
@@ -205,6 +216,9 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
       storage.delete(key: REFRESH_TOKEN_KEY),
       storage.delete(key: ACCESS_TOKEN_KEY),
     ]);
+
+    sProvider.logout();
+    tProvider.logout();
   }
 
   Future<void> confirmPassword({

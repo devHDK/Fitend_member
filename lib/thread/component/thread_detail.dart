@@ -133,7 +133,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
         : 0 + linkUrls.length;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 28),
+      padding: const EdgeInsets.only(left: 28),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -189,7 +189,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                   model.type == ThreadType.general.name)
                 Positioned(
                   top: -10,
-                  right: -10,
+                  right: 18,
                   child: InkWell(
                     onTap: () => DialogWidgets.editBottomModal(
                       context,
@@ -288,11 +288,12 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: LinkPreview(
                 url: linkUrls.first,
-                width: 100.w - 110,
-                height: 120,
+                width: 100.w - 56,
+                height: 200,
               ),
             )
           else if (mediaCount == 1 &&
+              model.gallery != null &&
               model.gallery!.length == 1 &&
               model.gallery!.first.type == 'video')
             InkWell(
@@ -305,12 +306,12 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                   fullscreenDialog: true,
                 ),
               ),
-              child: SizedBox(
-                height: 400,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: SizedBox(
+                    height: 400,
                     child: NetworkVideoPlayerMini(
                       video: model.gallery!.first,
                       userOriginRatio: true,
@@ -528,13 +529,19 @@ class _MediaListView extends StatelessWidget {
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
-            if (index >= model.gallery!.length) {
+            int galleryLenth = 0;
+
+            if (model.gallery != null) {
+              galleryLenth = model.gallery!.length;
+            }
+
+            if (index >= galleryLenth) {
               return Row(
                 children: [
                   LinkPreview(
                     width: (80.w.toInt() - 56),
                     height: (80.w.toInt() - 56) * 0.8,
-                    url: linkUrls[index - model.gallery!.length],
+                    url: linkUrls[index - galleryLenth],
                   ),
                   const SizedBox(
                     width: 10,
@@ -566,6 +573,7 @@ class _MediaListView extends StatelessWidget {
                                   height: (80.w - 56) * 0.8,
                                   child: NetworkVideoPlayerMini(
                                     video: model.gallery![index],
+                                    userOriginRatio: true,
                                   ),
                                 ),
                               ),

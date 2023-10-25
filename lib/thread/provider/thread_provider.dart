@@ -43,6 +43,10 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
     paginate(startIndex: 0);
   }
 
+  void logout() {
+    state = ThreadListModelLoading();
+  }
+
   Future<void> paginate({
     required int startIndex,
     bool fetchMore = false,

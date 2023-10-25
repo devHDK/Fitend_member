@@ -32,6 +32,10 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
     paginate(startDate: fifteenDaysAgo);
   }
 
+  void logout() {
+    state = ScheduleModelLoading();
+  }
+
   Future<void> paginate({
     required DateTime startDate,
     bool fetchMore = false,

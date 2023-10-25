@@ -130,15 +130,16 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
       child: Scaffold(
         backgroundColor: BACKGROUND_COLOR,
         body: _controller.initialized
-            ? SafeArea(
+            ? SizedBox(
+                height: 100.h,
+                width: 100.w,
                 child: Stack(
                   children: [
                     Column(
                       children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Expanded(
+                        const Spacer(),
+                        SizedBox(
+                          height: 55.h,
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
@@ -168,19 +169,21 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
                             ],
                           ),
                         ),
+                        const Spacer(),
                         SizedBox(
                           width: 100.w,
-                          child: Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: _trimSlider(),
-                            ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: _trimSlider(),
                           ),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
                         _bottomNavBar(widget.index),
+                        const SizedBox(
+                          height: 20,
+                        ),
                       ],
                     )
                   ],
@@ -192,77 +195,75 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
   }
 
   Widget _bottomNavBar(int index) {
-    return SafeArea(
-      child: SizedBox(
-        height: height,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton(
-              onPressed: () => context.pop(),
-              child: Text(
-                '취소',
-                style: h5Headline.copyWith(
-                  color: const Color(0xff0474f1),
-                  height: 1,
-                ),
+    return SizedBox(
+      height: height,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          TextButton(
+            onPressed: () => context.pop(),
+            child: Text(
+              '취소',
+              style: h5Headline.copyWith(
+                color: const Color(0xff0474f1),
+                height: 1,
               ),
             ),
-            const Spacer(),
-            // Expanded(
-            //   child: IconButton(
-            //     onPressed: () =>
-            //         _controller.rotate90Degrees(RotateDirection.left),
-            //     icon: const Icon(
-            //       Icons.rotate_left,
-            //       color: Colors.white,
-            //     ),
-            //   ),
-            // ),
-            // Expanded(
-            //   child: IconButton(
-            //     onPressed: () => Navigator.push(
-            //         context,
-            //         PageRouteBuilder(
-            //           pageBuilder: (context, animation, secondaryAnimation) =>
-            //               VideoCropScreen(controller: _controller),
-            //           transitionsBuilder:
-            //               (context, animation, secondaryAnimation, child) {
-            //             return FadeTransition(opacity: animation, child: child);
-            //           },
-            //         )),
-            //     icon: const Icon(
-            //       Icons.crop,
-            //       color: Colors.white,
-            //     ),
-            //   ),
-            // ),
-            // Expanded(
-            //   child: IconButton(
-            //     onPressed: () =>
-            //         _controller.rotate90Degrees(RotateDirection.right),
-            //     icon: const Icon(
-            //       Icons.rotate_right,
-            //       color: Colors.white,
-            //     ),
-            //   ),
-            // ),
-            TextButton(
-              onPressed: () {
-                _exportVideo(index);
+          ),
+          const Spacer(),
+          // Expanded(
+          //   child: IconButton(
+          //     onPressed: () =>
+          //         _controller.rotate90Degrees(RotateDirection.left),
+          //     icon: const Icon(
+          //       Icons.rotate_left,
+          //       color: Colors.white,
+          //     ),
+          //   ),
+          // ),
+          // Expanded(
+          //   child: IconButton(
+          //     onPressed: () => Navigator.push(
+          //         context,
+          //         PageRouteBuilder(
+          //           pageBuilder: (context, animation, secondaryAnimation) =>
+          //               VideoCropScreen(controller: _controller),
+          //           transitionsBuilder:
+          //               (context, animation, secondaryAnimation, child) {
+          //             return FadeTransition(opacity: animation, child: child);
+          //           },
+          //         )),
+          //     icon: const Icon(
+          //       Icons.crop,
+          //       color: Colors.white,
+          //     ),
+          //   ),
+          // ),
+          // Expanded(
+          //   child: IconButton(
+          //     onPressed: () =>
+          //         _controller.rotate90Degrees(RotateDirection.right),
+          //     icon: const Icon(
+          //       Icons.rotate_right,
+          //       color: Colors.white,
+          //     ),
+          //   ),
+          // ),
+          TextButton(
+            onPressed: () {
+              _exportVideo(index);
 
-                context.pop();
-              },
-              child: Text(
-                '저장',
-                style: h5Headline.copyWith(
-                  color: const Color(0xffffcc00),
-                  height: 1,
-                ),
+              context.pop();
+            },
+            child: Text(
+              '저장',
+              style: h5Headline.copyWith(
+                color: const Color(0xffffcc00),
+                height: 1,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -293,7 +294,7 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
                     color: Colors.white,
                   ),
                 ),
-                const Expanded(child: SizedBox()),
+                const Spacer(),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

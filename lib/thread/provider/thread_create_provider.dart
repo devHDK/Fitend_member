@@ -375,7 +375,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         } else {
           debugPrint('media 다운로드중...');
           final file = await DefaultCacheManager()
-              .getSingleFile('$s3Url${asset.url}', key: '$s3Url$asset.url');
+              .getSingleFile('$s3Url${asset.url}', key: '$s3Url${asset.url}');
 
           assetPaths.add(file.path);
         }

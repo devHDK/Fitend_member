@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
@@ -69,7 +71,13 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
     );
     await Future.wait([
       _videoController!.initialize(),
-    ]);
+    ]).then((value) {
+      _videoController!.play();
+      _videoController!.setVolume(0);
+      if (Platform.isAndroid) {
+        _videoController!.pause();
+      }
+    });
 
     // slider 변경
     _videoController!.addListener(
@@ -82,8 +90,6 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
     );
 
     _videoController!.addListener(videoListener);
-    _videoController!.play();
-    _videoController!.setVolume(0);
 
     setState(() {});
   }

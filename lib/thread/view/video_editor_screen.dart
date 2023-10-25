@@ -5,7 +5,6 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
-import 'package:fitend_member/thread/view/video_crop_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -75,18 +74,7 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
 
     final config = VideoFFmpegVideoEditorConfig(
       _controller,
-      // format: VideoExportFormat.gif,
-      // commandBuilder: (config, videoPath, outputPath) {
-      //   final List<String> filters = config.getExportFilters();
-      //   filters.add('hflip'); // add horizontal flip
-
-      //   return '-i $videoPath ${config.filtersCmd(filters)} -preset ultrafast $outputPath';
-      // },
     );
-
-    // setState(() {
-    //   isLoading = true;
-    // });
 
     await MediaUtils.runFFmpegCommand(
       await config.getExecuteConfig(),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -66,13 +68,17 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
         mixWithOthers: true,
       ),
     );
+
     await Future.wait([
       _videoController!.initialize(),
-    ]);
-
-    _videoController!.setVolume(0);
-    _videoController!.setLooping(true);
-    _videoController!.play();
+    ]).then((value) {
+      _videoController!.setVolume(0);
+      _videoController!.setLooping(true);
+      _videoController!.play();
+      if (Platform.isAndroid) {
+        _videoController!.pause();
+      }
+    });
 
     setState(() {});
   }

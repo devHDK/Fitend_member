@@ -587,7 +587,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
         enabledBorder: baseBorder,
         focusedBorder: baseBorder,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
+          horizontal: 28,
           vertical: 11,
         ),
         filled: true,
@@ -631,7 +631,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
         enabledBorder: baseBorder,
         focusedBorder: baseBorder,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
+          horizontal: 28,
           vertical: 11,
         ),
         filled: true,

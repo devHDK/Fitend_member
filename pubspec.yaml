@@ -73,6 +73,7 @@ dependencies:
   mime_type: ^1.0.0
   extended_image: ^8.1.1
   loading_animation_widget: ^1.2.0+4
+  native_camera_sound: ^0.0.3
 
   change_app_package_name: ^1.1.0
   path_provider: ^2.0.14

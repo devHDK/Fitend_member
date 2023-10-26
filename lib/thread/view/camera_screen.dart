@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:native_camera_sound/native_camera_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -108,8 +109,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
         cameras = value;
       });
 
-      print(cameras);
-
       onNewCameraSelected(cameras[0]);
     } on CameraException catch (e) {
       debugPrint('Error in fetching the cameras: $e');
@@ -126,6 +125,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
     try {
       XFile file = await cameraController.takePicture();
+
+      if (Platform.isAndroid) {
+        NativeCameraSound.playShutter();
+      }
+
       return file;
     } on CameraException catch (e) {
       debugPrint('Error occured while taking picture: $e');
@@ -135,7 +139,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   Future<void> startVideoRecording() async {
     final CameraController? cameraController = controller;
-
     if (controller!.value.isRecordingVideo) {
       // A recording has already started, do nothing.
       return;
@@ -144,6 +147,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     try {
       await cameraController!.startVideoRecording();
       setState(() {
+        NativeCameraSound.playStartRecord();
         _isRecordingInProgress = true;
         recordingTimerStart();
       });
@@ -161,6 +165,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     try {
       XFile file = await controller!.stopVideoRecording();
       setState(() {
+        NativeCameraSound.playStopRecord();
         _isRecordingInProgress = false;
         recordingTimerStop();
         recordingDuration = 0;
@@ -220,8 +225,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     if (mounted) {
       setState(() {
         controller = cameraController;
-        controller!.setFlashMode(FlashMode.off);
       });
+      await controller!.setFlashMode(FlashMode.off);
     }
 
     // Update UI if controller updated

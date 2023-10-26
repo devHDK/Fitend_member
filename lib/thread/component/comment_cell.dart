@@ -216,7 +216,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                 child: LinkPreview(
                   url: linkUrls.first,
                   width: 100.w - 110,
-                  height: 90,
+                  height: 150,
                 ),
               )
             else if (mediaCount == 1 &&
@@ -267,7 +267,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                   child: PreviewImageNetwork(
                     url: '$s3Url${widget.gallery!.first.url}',
                     width: (100.w - 110).toInt(),
-                    height: ((100.w - 110) * 0.8).toInt(),
+                    height: 150,
                   ),
                 ),
               ),
@@ -289,7 +289,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                           children: [
                             LinkPreview(
                               url: linkUrls[index - widget.gallery!.length],
-                              height: 150,
+                              height: 140,
                               width: 180,
                             ),
                             const SizedBox(
@@ -318,9 +318,9 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                                         borderRadius: BorderRadius.circular(20),
                                         child: SizedBox(
                                           height: 150,
-                                          width: 180,
                                           child: NetworkVideoPlayerMini(
                                             video: widget.gallery![index],
+                                            userOriginRatio: true,
                                           ),
                                         ),
                                       ),
@@ -332,7 +332,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                                 : PreviewImageNetwork(
                                     url: '$s3Url${widget.gallery![index].url}',
                                     width: 140,
-                                    height: (140 * 0.8).toInt(),
+                                    height: 150,
                                   ),
                           ),
                         ],

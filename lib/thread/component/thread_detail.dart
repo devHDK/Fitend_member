@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
@@ -338,16 +339,11 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Container(
-                  width: 100.w - 56.0,
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: PreviewImageNetwork(
-                    url: '$s3Url${model.gallery!.first.url}',
-                    width: (100.w - 66.0).toInt(),
-                    height: 300,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: CustomNetworkImage(
+                    imageUrl: '$s3Url${model.gallery!.first.url}',
+                    height: 320,
                     boxFit: BoxFit.contain,
                   ),
                 ),

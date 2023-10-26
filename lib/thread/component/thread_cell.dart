@@ -352,8 +352,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                               children: [
                                 LinkPreview(
                                   url: linkUrls[index - galleryLenth],
-                                  height: galleryHeight.toDouble() - 20,
-                                  width: (galleryHeight - 20) * 1.25,
+                                  height: galleryHeight - 20,
+                                  width: 100.w - 110,
                                 ),
                                 const SizedBox(
                                   width: 10,

@@ -289,7 +289,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               child: LinkPreview(
                 url: linkUrls.first,
                 width: 100.w - 56,
-                height: 200,
+                height: 300,
               ),
             )
           else if (mediaCount == 1 &&
@@ -308,13 +308,16 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: SizedBox(
-                    height: 400,
-                    child: NetworkVideoPlayerMini(
-                      video: model.gallery!.first,
-                      userOriginRatio: true,
+                child: SizedBox(
+                  width: 100.w - 56,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: SizedBox(
+                      height: 400,
+                      child: NetworkVideoPlayerMini(
+                        video: model.gallery!.first,
+                        userOriginRatio: true,
+                      ),
                     ),
                   ),
                 ),
@@ -335,11 +338,18 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: PreviewImageNetwork(
-                  url: '$s3Url${model.gallery!.first.url}',
-                  width: (100.w - 70.0).toInt(),
-                  height: 300,
-                  boxFit: BoxFit.contain,
+                child: Container(
+                  width: 100.w - 56.0,
+                  decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: PreviewImageNetwork(
+                    url: '$s3Url${model.gallery!.first.url}',
+                    width: (100.w - 66.0).toInt(),
+                    height: 300,
+                    boxFit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
@@ -528,7 +538,7 @@ class _MediaListView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: SizedBox(
-        height: (80.w.toInt() - 56) * 0.8,
+        height: 250,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
@@ -542,8 +552,8 @@ class _MediaListView extends StatelessWidget {
               return Row(
                 children: [
                   LinkPreview(
-                    width: (80.w.toInt() - 56),
-                    height: (80.w.toInt() - 56) * 0.8,
+                    width: 100.w - 56,
+                    height: 250,
                     url: linkUrls[index - galleryLenth],
                   ),
                   const SizedBox(
@@ -573,7 +583,7 @@ class _MediaListView extends StatelessWidget {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
                                 child: SizedBox(
-                                  height: (80.w - 56) * 0.8,
+                                  height: 250,
                                   child: NetworkVideoPlayerMini(
                                     video: model.gallery![index],
                                     userOriginRatio: true,
@@ -587,8 +597,8 @@ class _MediaListView extends StatelessWidget {
                           )
                         : PreviewImageNetwork(
                             url: '$s3Url${model.gallery![index].url}',
-                            width: 80.w.toInt() - 56,
-                            height: ((80.w - 56) * 0.8).toInt(),
+                            width: (100.w - 56).toInt(),
+                            height: 250,
                           ),
                   ),
                 ),

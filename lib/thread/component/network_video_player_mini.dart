@@ -110,7 +110,7 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
       children: [
         Expanded(
           child: Container(
-            color: Colors.black38,
+            color: Colors.black26,
             child: Center(
               child: AspectRatio(
                 aspectRatio: widget.userOriginRatio!

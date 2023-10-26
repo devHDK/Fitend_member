@@ -44,7 +44,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               color: GRAY_COLOR,
             ),
             const SizedBox(
-              height: 20,
+              height: 10,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -105,7 +105,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             if (Platform.isAndroid)
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
           ],
         ),

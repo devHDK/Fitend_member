@@ -155,7 +155,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
     double linkHeight = linkUrls.length == 1 &&
             (widget.gallery == null || widget.gallery!.isEmpty)
-        ? 220.0 * linkUrls.length
+        ? 250.0
         : 0;
 
     int mediaCount = widget.gallery != null
@@ -163,7 +163,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
         : 0 + linkUrls.length;
 
     final galleryHeight = mediaCount > 1
-        ? 200
+        ? 250
         : widget.gallery != null && widget.gallery!.length == 1
             ? 300
             : 0;
@@ -277,7 +277,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       child: LinkPreview(
                         url: linkUrls.first,
                         width: 100.w - 110,
-                        height: 200,
+                        height: linkHeight - 20,
                       ),
                     )
                   else if (mediaCount == 1 &&
@@ -397,8 +397,9 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                                     : PreviewImageNetwork(
                                         url:
                                             '$s3Url${widget.gallery![index].url}',
-                                        width: ((galleryHeight - 20) * 1.25)
-                                            .toInt(),
+                                        width: (100.w - 110).toInt(),
+                                        // ((galleryHeight - 20) * 1.25)
+                                        //     .toInt(),
                                         height: (galleryHeight - 20),
                                       ),
                               ),

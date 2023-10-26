@@ -74,9 +74,9 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
     ]).then((value) {
       _videoController!.play();
       _videoController!.setVolume(0);
-      if (Platform.isAndroid) {
-        _videoController!.pause();
-      }
+      // if (Platform.isAndroid) {
+      //   _videoController!.pause();
+      // }
     });
 
     // slider 변경

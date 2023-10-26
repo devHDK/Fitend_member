@@ -20,6 +20,7 @@
       android:name="${applicationName}" 
       android:icon="@mipmap/ic_launcher" 
       android:largeHeap="true" 
+      android:hardwareAccelerated="false"
       >
 
     <!--추가-->

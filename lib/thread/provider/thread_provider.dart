@@ -42,10 +42,6 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
     paginate(startIndex: 0);
   }
 
-  void logout() {
-    state = ThreadListModelLoading();
-  }
-
   Future<void> paginate({
     required int startIndex,
     bool fetchMore = false,
@@ -56,7 +52,7 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
       // final isRefetching = state is ThreadListModelRefetching;
       final isFetchMore = state is ThreadListModelFetchingMore;
 
-      if (isFetchMore && (isLoading || isFetchMore)) {
+      if (isRefetch && (isLoading || isFetchMore)) {
         return;
       }
 
@@ -76,16 +72,10 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
         }
       }
 
-      ThreadListModel? threadResponse;
+      final threadResponse = await threadRepository.getThreads(
+          params: ThreadGetListParamsModel(start: startIndex, perPage: 20));
 
-      try {
-        threadResponse = await threadRepository.getThreads(
-            params: ThreadGetListParamsModel(start: startIndex, perPage: 20));
-      } on DioException catch (e) {
-        debugPrint('thread paginate error : $e');
-      }
-
-      if (state is ThreadListModelFetchingMore && threadResponse != null) {
+      if (state is ThreadListModelFetchingMore) {
         final pState = state as ThreadListModel;
 
         state = ThreadListModel(
@@ -95,7 +85,7 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
           ],
           total: threadResponse.total,
         );
-      } else if (threadResponse != null) {
+      } else {
         final pstate = ThreadListModel(
           data: threadResponse.data,
           total: threadResponse.total,
@@ -104,8 +94,7 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
         state = pstate;
       }
     } catch (e) {
-      debugPrint('e : $e');
-
+      debugPrint('e : ThreadListModelError');
       state = ThreadListModelError(message: '데이터를 불러오지 못했습니다.');
     }
   }

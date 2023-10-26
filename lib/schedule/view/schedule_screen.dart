@@ -86,7 +86,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     ref.read(scheduleProvider.notifier).updateScrollIndex(minIndex);
 
-    if (maxIndex == itemCount - 1 && !isLoading) {
+    if (maxIndex > itemCount - 1 && !isLoading) {
       //스크롤을 아래로 내렸을때
       isLoading = true;
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -185,8 +185,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
   @override
   Widget build(BuildContext context) {
-    final notificationState = ref.watch(notificationHomeProvider);
     final state = ref.watch(scheduleProvider);
+    final notificationState = ref.watch(notificationHomeProvider);
 
     if (state is ScheduleModelLoading ||
         notificationState is NotificationMainModelLoading) {
@@ -202,9 +202,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         backgroundColor: BACKGROUND_COLOR,
         body: Center(
           child: DialogWidgets.errorDialog(
-            message: state.message,
-            confirmText: '확인',
-            confirmOnTap: () => context.pop(),
+            message: '데이터를 불러오지 못했습니다.',
+            confirmText: '새로 고침',
+            confirmOnTap: () {
+              ref.invalidate(scheduleProvider);
+            },
           ),
         ),
       );

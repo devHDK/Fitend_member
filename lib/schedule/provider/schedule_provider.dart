@@ -32,10 +32,6 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
     paginate(startDate: fifteenDaysAgo);
   }
 
-  void logout() {
-    state = ScheduleModelLoading();
-  }
-
   Future<void> paginate({
     required DateTime startDate,
     bool fetchMore = false,
@@ -65,31 +61,20 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
           state = ScheduleModelLoading();
         }
       }
-      ReservationScheduleModel? reservationResponse;
-      try {
-        reservationResponse =
-            await reservationRepository.getReservationSchedule(
-          params: SchedulePagenateParams(
-            startDate: startDate,
-            interval: 30,
-          ),
-        );
-      } on DioException catch (e) {
-        debugPrint('getReservationSchedule error : $e');
-      }
+      final reservationResponse =
+          await reservationRepository.getReservationSchedule(
+        params: SchedulePagenateParams(
+          startDate: startDate,
+          interval: 30,
+        ),
+      );
 
-      WorkoutScheduleModel? workoutResponse;
-
-      try {
-        workoutResponse = await workoutRepository.getWorkoutSchedule(
-          params: SchedulePagenateParams(
-            startDate: startDate,
-            interval: 30,
-          ),
-        );
-      } on DioException catch (e) {
-        debugPrint('getWorkoutSchedule error : $e');
-      }
+      final workoutResponse = await workoutRepository.getWorkoutSchedule(
+        params: SchedulePagenateParams(
+          startDate: startDate,
+          interval: 30,
+        ),
+      );
 
       List<ScheduleData> tempScheduleList = List.generate(
         31,
@@ -101,8 +86,7 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
 
       int index = 0;
 
-      if (reservationResponse != null &&
-          reservationResponse.data != null &&
+      if (reservationResponse.data != null &&
           reservationResponse.data!.isNotEmpty) {
         for (var e in tempScheduleList) {
           if (index >= reservationResponse.data!.length) {
@@ -130,9 +114,7 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
 
       index = 0;
 
-      if (workoutResponse != null &&
-          workoutResponse.data != null &&
-          workoutResponse.data!.isNotEmpty) {
+      if (workoutResponse.data != null && workoutResponse.data!.isNotEmpty) {
         for (var e in tempScheduleList) {
           if (index >= workoutResponse.data!.length) {
             break;

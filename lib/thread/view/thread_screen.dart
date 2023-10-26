@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
@@ -25,6 +26,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ThreadScreen extends ConsumerStatefulWidget {
@@ -82,8 +84,10 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     if (minIndex < 0) minIndex = 0;
     ref.read(threadProvider.notifier).updateScrollIndex(minIndex);
 
+    // print(maxIndex);
+
     if (pstate.data.isNotEmpty &&
-        maxIndex == pstate.data.length - 2 &&
+        maxIndex > pstate.data.length - 2 &&
         pstate.total > pstate.data.length &&
         !isLoading) {
       //스크롤을 아래로 내렸을때
@@ -94,6 +98,8 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
             .paginate(startIndex: startIndex, fetchMore: true)
             .then((value) {
           isLoading = false;
+
+          setState(() {});
         });
       });
     }
@@ -149,8 +155,8 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(threadProvider);
     final userState = ref.watch(getMeProvider);
+    final state = ref.watch(threadProvider);
     final notificationState = ref.watch(notificationHomeProvider);
 
     if (state is ThreadListModelLoading) {
@@ -162,7 +168,18 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     }
 
     if (state is ThreadListModelError) {
-      return ErrorDialog(error: state.message);
+      return Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+          child: DialogWidgets.errorDialog(
+            message: '데이터를 불러오지 못했습니다.',
+            confirmText: '새로 고침',
+            confirmOnTap: () {
+              ref.invalidate(threadProvider);
+            },
+          ),
+        ),
+      );
     }
 
     final user = userState as UserModel;
@@ -276,6 +293,9 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                   itemCount: state.data.length + 1,
                   itemBuilder: (context, index) {
                     if (index == state.data.length) {
+                      print(index);
+                      print(state.total);
+
                       if (state.data.length == state.total) {
                         return const SizedBox(
                           height: 100,

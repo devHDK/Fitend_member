@@ -3,11 +3,21 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/notifications/model/notification_model.dart';
 import 'package:fitend_member/notifications/model/notification_setting_model.dart';
+import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
+import 'package:fitend_member/notifications/provider/notification_provider.dart';
 import 'package:fitend_member/notifications/repository/notifications_repository.dart';
+import 'package:fitend_member/schedule/model/schedule_model.dart';
+import 'package:fitend_member/schedule/provider/schedule_provider.dart';
+import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
+import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
+import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/password_confirm_screen.dart';
+import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -207,8 +217,14 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                     message: '로그아웃 하시겠습니까?',
                     confirmText: '확인',
                     cancelText: '취소',
-                    confirmOnTap: () {
-                      ref.read(getMeProvider.notifier).logout();
+                    confirmOnTap: () async {
+                      await ref.read(getMeProvider.notifier).logout();
+
+                      ref.invalidate(threadProvider);
+                      ref.invalidate(scheduleProvider);
+                      ref.invalidate(notificationProvider);
+                      ref.invalidate(threadCreateProvider);
+                      ref.invalidate(notificationHomeProvider);
                     },
                     cancelOnTap: () => context.pop(),
                   ),

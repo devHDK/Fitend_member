@@ -27,9 +27,7 @@ class NotificationHomeStateNotifier
   NotificationHomeStateNotifier({
     required this.repository,
     required this.sharedPref,
-  }) : super(NotificationMainModelLoading()) {
-    init();
-  }
+  }) : super(NotificationMainModelLoading());
 
   Future<void> init() async {
     try {

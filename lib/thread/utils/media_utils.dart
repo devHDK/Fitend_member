@@ -62,7 +62,7 @@ class MediaUtils {
       imageFormat: ImageFormat.JPEG,
       maxWidth:
           256, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
-      quality: 50,
+      quality: 100,
     );
 
     if (path != null) {

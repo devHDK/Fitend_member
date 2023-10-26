@@ -1,12 +1,16 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/provider/avail_camera_provider.dart';
 import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
+import 'package:fitend_member/notifications/model/notification_model.dart';
 import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/thread/view/thread_screen.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -24,8 +28,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final children = [const ScheduleScreen(), const ThreadScreen()];
 
   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ref.watch(notificationHomeProvider.notifier).init();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     NotificationMainModel? model;
+
     final notificationState = ref.watch(notificationHomeProvider);
     if (notificationState is NotificationMainModel) model = notificationState;
 

@@ -37,6 +37,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
   @override
   void initState() {
     super.initState();
+
     controller.addListener(listener);
     WidgetsBinding.instance.addObserver(this);
   }

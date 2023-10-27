@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/provider/comment_create_provider.dart';
@@ -60,14 +61,6 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
     super.dispose();
   }
 
-  void _showErrorSnackBar(String message) =>
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          duration: const Duration(seconds: 1),
-        ),
-      );
-
   void _exportVideo(int index) async {
     _exportingProgress.value = 0;
     _isExporting.value = true;
@@ -81,17 +74,40 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
       onProgress: (stats) {
         _exportingProgress.value = config.getFFmpegProgress(stats.getTime());
       },
-      onError: (e, s) => _showErrorSnackBar("Error on export video :("),
+      onError: (e, s) {
+        debugPrint('$e');
+        DialogWidgets.showToast("저장이 실패하였습니다.");
+      },
       onCompleted: (file) {
         _isExporting.value = false;
-        if (!mounted) return;
+        // if (!mounted) return;
 
         if (widget.isComment!) {
           ref
               .read(commentCreateProvider(widget.threadId!).notifier)
               .changeAsset(index, file.path);
+
+          if (ref
+                      .read(commentCreateProvider(widget.threadId!))
+                      .isEditedAssets !=
+                  null &&
+              ref
+                  .read(commentCreateProvider(widget.threadId!))
+                  .isEditedAssets!
+                  .isNotEmpty) {
+            ref
+                .read(commentCreateProvider(widget.threadId!).notifier)
+                .updateFileCheck('change', index);
+          }
         } else {
           ref.read(threadCreateProvider.notifier).changeAsset(index, file.path);
+
+          if (ref.read(threadCreateProvider).isEditedAssets != null &&
+              ref.read(threadCreateProvider).isEditedAssets!.isNotEmpty) {
+            ref
+                .read(threadCreateProvider.notifier)
+                .updateFileCheck('change', index);
+          }
         }
       },
     ).then((value) {

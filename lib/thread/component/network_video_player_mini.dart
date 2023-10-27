@@ -53,9 +53,11 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.video != widget.video) {
-      _videoController!.dispose().then((value) {
-        videoInit();
-      });
+      if (_videoController != null) {
+        _videoController!.dispose().then((value) {
+          videoInit();
+        });
+      }
     }
   }
 

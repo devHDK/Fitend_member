@@ -543,6 +543,8 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         ...addGallery,
       ];
 
+      print(model.gallery!.length);
+
       await threadRepository.putThreadWithId(id: threadId, model: model);
 
       init();
@@ -578,6 +580,8 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         pstate.isEditedAssets![index] = true;
         break;
     }
+
+    print(pstate.isEditedAssets!);
 
     state = pstate.copyWith();
   }

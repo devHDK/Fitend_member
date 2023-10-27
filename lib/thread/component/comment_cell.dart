@@ -203,9 +203,6 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 5,
-                    )
                   ],
                 ),
               ],
@@ -240,7 +237,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(12),
                         child: NetworkVideoPlayerMini(
                           video: widget.gallery!.first,
                         ),
@@ -315,7 +312,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                                 ? Row(
                                     children: [
                                       ClipRRect(
-                                        borderRadius: BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(12),
                                         child: SizedBox(
                                           height: 150,
                                           child: NetworkVideoPlayerMini(
@@ -343,7 +340,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.only(left: 39),
+              padding: const EdgeInsets.fromLTRB(39, 5, 0, 0),
               child: SizedBox(
                 height: emojiHeight,
                 width: 100.w - 135,

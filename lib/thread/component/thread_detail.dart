@@ -312,7 +312,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                 child: SizedBox(
                   width: 100.w - 56,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(12),
                     child: SizedBox(
                       height: 400,
                       child: NetworkVideoPlayerMini(
@@ -340,7 +340,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(12),
                   child: CustomNetworkImage(
                     imageUrl: '$s3Url${model.gallery!.first.url}',
                     height: 320,
@@ -577,7 +577,7 @@ class _MediaListView extends StatelessWidget {
                         ? Row(
                             children: [
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(12),
                                 child: SizedBox(
                                   height: 250,
                                   child: NetworkVideoPlayerMini(

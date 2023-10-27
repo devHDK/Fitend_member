@@ -296,7 +296,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(12),
                           child: SizedBox(
                             height: galleryHeight.toDouble() - 20,
                             width: 100.w - 110,
@@ -379,7 +379,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                                         children: [
                                           ClipRRect(
                                             borderRadius:
-                                                BorderRadius.circular(20),
+                                                BorderRadius.circular(12),
                                             child: SizedBox(
                                               height:
                                                   galleryHeight.toDouble() - 20,

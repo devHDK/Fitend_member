@@ -47,7 +47,7 @@ class _PreviewImageState extends State<PreviewImage> {
               : null,
           child: ClipRRect(
             borderRadius: widget.isCircle!
-                ? BorderRadius.circular(20)
+                ? BorderRadius.circular(12)
                 : BorderRadius.circular(0),
             child: Image.file(
               widget.file,

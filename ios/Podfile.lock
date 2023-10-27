@@ -215,8 +215,6 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - soundpool (0.0.1):
-    - Flutter
   - sqflite (0.0.3):
     - Flutter
     - FMDB (>= 2.7.5)
@@ -259,7 +257,6 @@ DEPENDENCIES:
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - photo_manager (from `.symlinks/plugins/photo_manager/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - soundpool (from `.symlinks/plugins/soundpool/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - store_redirect (from `.symlinks/plugins/store_redirect/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
@@ -344,8 +341,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/photo_manager/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
-  soundpool:
-    :path: ".symlinks/plugins/soundpool/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
   store_redirect:
@@ -405,7 +400,6 @@ SPEC CHECKSUMS:
   PromisesSwift: 28dca69a9c40779916ac2d6985a0192a5cb4a265
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
-  soundpool: c7f4422ca206e77f8900ed3c4ee6a6ff5a0e38a9
   sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
   store_redirect: 2977747cf81689a39bd62c248c2deacb7a0d131e
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196

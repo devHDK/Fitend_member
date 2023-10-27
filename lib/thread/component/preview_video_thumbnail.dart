@@ -70,7 +70,7 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
               height: widget.width!.toDouble() * 0.8,
               child: ClipRRect(
                 borderRadius: widget.isCircle!
-                    ? BorderRadius.circular(20)
+                    ? BorderRadius.circular(12)
                     : BorderRadius.circular(0),
                 child: thumbNail != null
                     ? Image.file(

@@ -37,7 +37,7 @@ class _PreviewImageNetworkState extends State<PreviewImageNetwork> {
           width: widget.width!.toDouble(),
           height: widget.height!.toDouble(),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(12),
             child: CustomNetworkImage(
               key: ValueKey('$s3Url${widget.url}'),
               imageUrl: widget.url,

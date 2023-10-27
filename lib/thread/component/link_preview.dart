@@ -3,6 +3,7 @@ import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class LinkPreview extends StatefulWidget {
@@ -43,11 +44,14 @@ class _LinkPreviewState extends State<LinkPreview> {
         bodyStyle: s3SubTitle.copyWith(
           color: GRAY_COLOR,
         ),
+        bodyMaxLines: 2,
         errorWidget: GestureDetector(
           onTap: () => DataUtils.launchURL(widget.url),
           child: Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10), color: Colors.white),
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+            ),
             child: Center(
               child: Text(
                 widget.url,

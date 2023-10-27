@@ -339,13 +339,11 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: CustomNetworkImage(
-                    imageUrl: '$s3Url${model.gallery!.first.url}',
-                    height: 320,
-                    boxFit: BoxFit.contain,
-                  ),
+                child: PreviewImageNetwork(
+                  url: '$s3Url${model.gallery!.first.url}',
+                  width: (100.w - 56).toInt(),
+                  height: 320,
+                  boxFit: BoxFit.cover,
                 ),
               ),
             ),

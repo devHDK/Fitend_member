@@ -233,13 +233,14 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                   padding: const EdgeInsets.fromLTRB(39, 10, 0, 10),
                   child: SizedBox(
                     width: (100.w - 110),
-                    height: (100.w - 110) * 0.8,
+                    height: 220,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: NetworkVideoPlayerMini(
                           video: widget.gallery!.first,
+                          userOriginRatio: true,
                         ),
                       ),
                     ),
@@ -264,7 +265,8 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                   child: PreviewImageNetwork(
                     url: '$s3Url${widget.gallery!.first.url}',
                     width: (100.w - 110).toInt(),
-                    height: 150,
+                    height: 250,
+                    boxFit: BoxFit.cover,
                   ),
                 ),
               ),

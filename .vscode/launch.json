@@ -33,6 +33,18 @@
       "request": "launch",
       "type": "dart",
       "args": ["--flavor", "production", "-t", "lib/main_production.dart"]
+    },
+    {
+      "name": "fitend_member (production - release)",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--flavor",
+        "production",
+        "-t",
+        "lib/main_production.dart",
+        "--release"
+      ]
     }
   ]
 }

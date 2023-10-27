@@ -42,6 +42,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   late Timer timer;
   int recordingDuration = 0;
+  int takedAssetsCount = 0;
 
   // Initial values
   bool _isCameraInitialized = false;
@@ -75,7 +76,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   void onTick(Timer timer) {
     setState(() {
       recordingDuration++;
-      debugPrint(recordingDuration.toString());
     });
   }
 
@@ -124,6 +124,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     }
 
     try {
+      // cameraController.setFlashMode(FlashMode.auto);
+      cameraController.setFlashMode(FlashMode.off);
+
       XFile file = await cameraController.takePicture();
 
       if (Platform.isAndroid) {
@@ -226,7 +229,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       setState(() {
         controller = cameraController;
       });
-      await controller!.setFlashMode(FlashMode.off);
+      controller!.setFlashMode(FlashMode.off);
     }
 
     // Update UI if controller updated
@@ -534,13 +537,6 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                     setState(() {
                                                       _isRearCameraSelected =
                                                           !_isRearCameraSelected;
-
-                                                      if (!_isRearCameraSelected) {
-                                                        controller!
-                                                            .setFlashMode(
-                                                          FlashMode.off,
-                                                        );
-                                                      }
                                                     });
                                                   },
                                             child: Stack(
@@ -586,6 +582,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                           .saveFile(
                                                         videoFile.path,
                                                       );
+
+                                                      setState(() {
+                                                        takedAssetsCount++;
+                                                      });
                                                     } else {
                                                       await startVideoRecording();
                                                     }
@@ -598,14 +598,15 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                       File imageFile =
                                                           File(rawImage.path);
 
-                                                      final path =
-                                                          await ImageGallerySaver
-                                                              .saveFile(
+                                                      await ImageGallerySaver
+                                                          .saveFile(
                                                         imageFile.path,
                                                         isReturnPathOfIOS: true,
                                                       );
 
-                                                      debugPrint(path);
+                                                      setState(() {
+                                                        takedAssetsCount++;
+                                                      });
                                                     } else {
                                                       debugPrint('save fail');
                                                     }
@@ -643,6 +644,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                               context,
                                               widget.isComment!,
                                               widget.threadId,
+                                              takedAssetsCount,
                                             )
                                           else
                                             const SizedBox(
@@ -764,7 +766,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     );
   }
 
-  InkWell _pickImage(BuildContext context, bool isComment, int? threadId) {
+  InkWell _pickImage(
+      BuildContext context, bool isComment, int? threadId, int count) {
     return InkWell(
       onTap: isComment && threadId != null
           ? () async {
@@ -796,6 +799,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                       ref
                           .read(commentCreateProvider(threadId).notifier)
                           .updateIsLoading(false);
+
+                      context.pop();
                     } else {
                       debugPrint('assets: $assets');
                     }
@@ -833,6 +838,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                     ref
                         .read(threadCreateProvider.notifier)
                         .updateIsLoading(false);
+
+                    context.pop();
                   } else {
                     debugPrint('assets: $assets');
                   }
@@ -841,14 +848,20 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                 DialogWidgets.showToast('사진 또는 영상은 10개까지만 첨부할수있습니다!');
               }
             },
-      child: const Stack(
+      child: Stack(
         children: [
-          Icon(
-            Icons.square_rounded,
-            size: 50,
-            color: Colors.black38,
+          Badge(
+            label: Text(
+              count.toString(),
+            ),
+            isLabelVisible: count > 0,
+            child: const Icon(
+              Icons.square_rounded,
+              size: 50,
+              color: Colors.black38,
+            ),
           ),
-          Positioned(
+          const Positioned(
             top: 10,
             left: 10,
             child: Icon(

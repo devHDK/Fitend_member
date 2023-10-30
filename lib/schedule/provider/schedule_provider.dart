@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
@@ -29,7 +30,7 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
     required this.reservationRepository,
   }) : super(ScheduleModelLoading()) {
     DateTime fifteenDaysAgo = DateTime.now().subtract(const Duration(days: 15));
-    paginate(startDate: fifteenDaysAgo);
+    paginate(startDate: DataUtils.getDate(fifteenDaysAgo));
   }
 
   Future<void> paginate({
@@ -182,6 +183,8 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
     //이전 스케줄 인덱스
     final beforeChangeScheduleIndex = scheduleListGlobal.indexWhere(
       (element) {
+        print(element.startDate);
+        print(startDate);
         return element.startDate == startDate;
       },
     );

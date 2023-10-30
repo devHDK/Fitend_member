@@ -263,7 +263,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 gender: userModel.user.gender,
                               ),
                               title:
-                                  '${workoutModel.exercises[model.exerciseIndex].name} ${model.exerciseIndex + 1}SET',
+                                  '${workoutModel.exercises[model.exerciseIndex].name} ${model.setInfoCompleteList[model.exerciseIndex] + 1}SET',
                             );
                           },
                           context: context));

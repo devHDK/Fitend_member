@@ -40,11 +40,10 @@ class TimerProgressCard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<TimerProgressCard> createState() =>
-      _WeightWrepsProgressCardState();
+  ConsumerState<TimerProgressCard> createState() => _TimerProgressCardState();
 }
 
-class _WeightWrepsProgressCardState extends ConsumerState<TimerProgressCard> {
+class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
   DateTime resumedTime = DateTime(
     DateTime.now().year,
     DateTime.now().month,

@@ -183,8 +183,6 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
     //이전 스케줄 인덱스
     final beforeChangeScheduleIndex = scheduleListGlobal.indexWhere(
       (element) {
-        print(element.startDate);
-        print(startDate);
         return element.startDate == startDate;
       },
     );

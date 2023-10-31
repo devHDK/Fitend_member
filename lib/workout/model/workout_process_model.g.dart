@@ -27,6 +27,7 @@ WorkoutProcessModel _$WorkoutProcessModelFromJson(Map<String, dynamic> json) =>
         (k, e) => MapEntry(int.parse(k), e as int),
       ),
       totalTime: json['totalTime'] as int,
+      isQuitting: json['isQuitting'] as bool,
     );
 
 Map<String, dynamic> _$WorkoutProcessModelToJson(
@@ -42,4 +43,5 @@ Map<String, dynamic> _$WorkoutProcessModelToJson(
       'groupCounts':
           instance.groupCounts.map((k, e) => MapEntry(k.toString(), e)),
       'totalTime': instance.totalTime,
+      'isQuitting': instance.isQuitting,
     };

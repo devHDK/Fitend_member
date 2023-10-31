@@ -443,6 +443,12 @@ class WorkoutProcessStateNotifier
     state = pstate;
   }
 
+  void workoutIsQuttingChange(bool isQuitting) {
+    final pstate = state as WorkoutProcessModel;
+    pstate.isQuitting = isQuitting;
+    state = pstate;
+  }
+
   //운동 종료
   Future<void> quitWorkout({
     required String title,
@@ -450,9 +456,11 @@ class WorkoutProcessStateNotifier
     required int trainerId,
   }) async {
     try {
-      final pstate = state as WorkoutProcessModel;
+      var pstate = state as WorkoutProcessModel;
 
-      state = pstate.copyWith(isQuitting: true);
+      pstate.isQuitting = true;
+
+      state = pstate;
 
       List<WorkoutRecordSimple> tempRecordList = [];
 
@@ -539,7 +547,7 @@ class WorkoutProcessStateNotifier
           ),
         );
       } on DioException catch (e) {
-        debugPrint('$e');
+        debugPrint('postWorkoutRecords error: $e');
         throw DioException(
           requestOptions: e.requestOptions,
           type: DioExceptionType.badResponse,

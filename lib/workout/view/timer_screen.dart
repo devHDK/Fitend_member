@@ -1,14 +1,20 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
 import 'package:fitend_member/workout/provider/workout_process_provider.dart';
+import 'package:fitend_member/workout/provider/workout_provider.dart';
+import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
@@ -217,6 +223,13 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
 
   @override
   Widget build(BuildContext context) {
+    final workoutProcessModel =
+        ref.watch(workoutProcessProvider(widget.workoutScheduleId))
+            as WorkoutProcessModel;
+
+    print(
+        'workoutProcessModel.isQuitting ===> ${workoutProcessModel.isQuitting}');
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -369,26 +382,152 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
             SizedBox(
               height: 5.h,
             ),
-            if (totalSeconds == 0)
+            if (totalSeconds == 0 && !workoutProcessModel.isQuitting)
               TextButton(
-                onPressed: () {
-                  context.pop();
+                onPressed: workoutProcessModel.isQuitting
+                    ? null
+                    : () {
+                        // context.pop();
 
-                  ref
-                      .read(workoutProcessProvider(widget.workoutScheduleId)
-                          .notifier)
-                      .nextWorkout();
-                },
-                child: Text(
-                  '다음 운동',
-                  style: h5Headline.copyWith(
-                    color: POINT_COLOR,
-                  ),
-                ),
+                        ref
+                            .read(
+                                workoutProcessProvider(widget.workoutScheduleId)
+                                    .notifier)
+                            .nextWorkout()
+                            .then(
+                          (value) async {
+                            if (value != null) {
+                              if (value == -1) {
+                                final workoutModel = ref.read(workoutProvider(
+                                    widget.workoutScheduleId)) as WorkoutModel;
+
+                                ref
+                                    .read(workoutProcessProvider(
+                                            workoutModel.workoutScheduleId)
+                                        .notifier)
+                                    .workoutIsQuttingChange(true);
+
+                                await ref
+                                    .read(workoutProcessProvider(
+                                            workoutModel.workoutScheduleId)
+                                        .notifier)
+                                    .quitWorkout(
+                                      title: workoutModel.workoutTitle,
+                                      subTitle: workoutModel.workoutSubTitle,
+                                      trainerId: workoutModel.trainerId,
+                                    )
+                                    .then((_) {
+                                  final id = workoutModel.workoutScheduleId;
+                                  final date = workoutModel.startDate;
+                                  context.pop(); //timerScreen pop
+                                  context.pop(); //workoutScreen pop
+
+                                  GoRouter.of(context).pushNamed(
+                                    WorkoutFeedbackScreen.routeName,
+                                    pathParameters: {
+                                      'workoutScheduleId': id.toString(),
+                                    },
+                                    extra: workoutModel.exercises,
+                                    queryParameters: {
+                                      'startDate': DateFormat('yyyy-MM-dd')
+                                          .format(DateTime.parse(date)),
+                                    },
+                                  );
+                                });
+                              } else {
+                                final workoutModel = ref.read(workoutProvider(
+                                    widget.workoutScheduleId)) as WorkoutModel;
+
+                                _showUncompleteExerciseDialog(
+                                  context,
+                                  value,
+                                  workoutModel,
+                                );
+                              }
+                            } else {
+                              context.pop(); //timerScreen pop
+                            }
+                          },
+                        );
+                      },
+                child: workoutProcessModel.isQuitting
+                    ? const SizedBox(
+                        width: 15,
+                        height: 15,
+                        child: CircularProgressIndicator(
+                          color: POINT_COLOR,
+                        ),
+                      )
+                    : Text(
+                        '다음 운동',
+                        style: h5Headline.copyWith(
+                          color: POINT_COLOR,
+                        ),
+                      ),
               )
           ],
         ),
       ),
+    );
+  }
+
+  Future<dynamic> _showUncompleteExerciseDialog(
+    BuildContext context,
+    int index,
+    WorkoutModel model,
+  ) {
+    return showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return DialogWidgets.confirmDialog(
+          dismissable: false,
+          message: '완료하지 않은 운동이 있어요🤓\n 마저 진행할까요?',
+          confirmText: '네, 마저할게요',
+          cancelText: '아니요, 그만할래요',
+          confirmOnTap: () {
+            ref
+                .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+                .exerciseChange(index);
+
+            context.pop();
+          },
+          cancelOnTap: () async {
+            //완료!!!
+            try {
+              await ref
+                  .read(
+                      workoutProcessProvider(widget.workoutScheduleId).notifier)
+                  .quitWorkout(
+                    title: model.workoutTitle,
+                    subTitle: model.workoutSubTitle,
+                    trainerId: model.trainerId,
+                  )
+                  .then((value) {
+                final id = widget.workoutScheduleId;
+                final date = model.startDate;
+
+                context.pop();
+                context.pop();
+
+                GoRouter.of(context).goNamed(
+                  WorkoutFeedbackScreen.routeName,
+                  pathParameters: {
+                    'workoutScheduleId': id.toString(),
+                  },
+                  extra: model.exercises,
+                  queryParameters: {
+                    'startDate':
+                        DateFormat('yyyy-MM-dd').format(DateTime.parse(date)),
+                  },
+                );
+              });
+            } on DioException catch (e) {
+              debugPrint('$e');
+            }
+          },
+        );
+      },
     );
   }
 }

@@ -288,30 +288,36 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                     width: 9,
                   ),
                   GestureDetector(
-                    onTap: () async {
-                      FirebaseAnalytics.instance
-                          .logEvent(name: 'click_large_next_button');
+                    onTap: model.isQuitting
+                        ? null
+                        : () async {
+                            FirebaseAnalytics.instance
+                                .logEvent(name: 'click_large_next_button');
 
-                      await _onTapNext(context, model);
+                            await _onTapNext(context, model);
 
-                      isTooltipVisible = false;
-                      tooltipCount = 0;
-                      onTooltipPressed();
-                      tooltipSeq = 0;
-                      setState(() {});
+                            isTooltipVisible = false;
+                            tooltipCount = 0;
+                            onTooltipPressed();
+                            tooltipSeq = 0;
+                            setState(() {});
 
-                      if (isSwipeUp) {
-                        final index = model
-                                    .setInfoCompleteList[model.exerciseIndex] ==
-                                model.maxSetInfoList[model.exerciseIndex]
-                            ? model.setInfoCompleteList[model.exerciseIndex] - 1
-                            : model.setInfoCompleteList[model.exerciseIndex];
-                        if (model.setInfoCompleteList[model.exerciseIndex] >
-                            5) {
-                          _movetoRecentSetInfo(index);
-                        }
-                      }
-                    },
+                            if (isSwipeUp) {
+                              final index = model.setInfoCompleteList[
+                                          model.exerciseIndex] ==
+                                      model.maxSetInfoList[model.exerciseIndex]
+                                  ? model.setInfoCompleteList[
+                                          model.exerciseIndex] -
+                                      1
+                                  : model
+                                      .setInfoCompleteList[model.exerciseIndex];
+                              if (model.setInfoCompleteList[
+                                      model.exerciseIndex] >
+                                  5) {
+                                _movetoRecentSetInfo(index);
+                              }
+                            }
+                          },
                     child: Container(
                       width: size.width - 56 - 107,
                       height: 44,
@@ -320,13 +326,21 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         color: POINT_COLOR,
                       ),
                       child: Center(
-                        child: Text(
-                          '다음 운동',
-                          style: h2Headline.copyWith(
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
-                        ),
+                        child: model.isQuitting
+                            ? const SizedBox(
+                                width: 15,
+                                height: 15,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Text(
+                                '다음 운동',
+                                style: h2Headline.copyWith(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -584,36 +598,38 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 },
                               );
                             },
-                            proccessOnTap: () async {
-                              FirebaseAnalytics.instance
-                                  .logEvent(name: 'click_small_next_button');
+                            proccessOnTap: model.isQuitting
+                                ? () {}
+                                : () async {
+                                    FirebaseAnalytics.instance.logEvent(
+                                        name: 'click_small_next_button');
 
-                              await _onTapNext(context, model);
+                                    await _onTapNext(context, model);
 
-                              isTooltipVisible = false;
-                              tooltipCount = 0;
-                              onTooltipPressed();
-                              tooltipSeq = 0;
+                                    isTooltipVisible = false;
+                                    tooltipCount = 0;
+                                    onTooltipPressed();
+                                    tooltipSeq = 0;
 
-                              setState(() {});
-                              if (isSwipeUp) {
-                                final index = model.setInfoCompleteList[
-                                            model.exerciseIndex] ==
-                                        model
-                                            .maxSetInfoList[model.exerciseIndex]
-                                    ? model.setInfoCompleteList[
-                                            model.exerciseIndex] -
-                                        1
-                                    : model.setInfoCompleteList[
-                                        model.exerciseIndex];
+                                    setState(() {});
+                                    if (isSwipeUp) {
+                                      final index = model.setInfoCompleteList[
+                                                  model.exerciseIndex] ==
+                                              model.maxSetInfoList[
+                                                  model.exerciseIndex]
+                                          ? model.setInfoCompleteList[
+                                                  model.exerciseIndex] -
+                                              1
+                                          : model.setInfoCompleteList[
+                                              model.exerciseIndex];
 
-                                if (model.setInfoCompleteList[
-                                        model.exerciseIndex] >
-                                    5) {
-                                  _movetoRecentSetInfo(index);
-                                }
-                              }
-                            },
+                                      if (model.setInfoCompleteList[
+                                              model.exerciseIndex] >
+                                          5) {
+                                        _movetoRecentSetInfo(index);
+                                      }
+                                    }
+                                  },
                           )
                         // Timer
                         else if ((model.modifiedExercises[model.exerciseIndex]
@@ -674,35 +690,37 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 },
                               );
                             },
-                            proccessOnTap: () async {
-                              FirebaseAnalytics.instance
-                                  .logEvent(name: 'click_small_next_button');
-                              await _onTapNext(context, model);
+                            proccessOnTap: model.isQuitting
+                                ? () {}
+                                : () async {
+                                    FirebaseAnalytics.instance.logEvent(
+                                        name: 'click_small_next_button');
+                                    await _onTapNext(context, model);
 
-                              isTooltipVisible = false;
-                              tooltipCount = 0;
-                              onTooltipPressed();
-                              tooltipSeq = 0;
+                                    isTooltipVisible = false;
+                                    tooltipCount = 0;
+                                    onTooltipPressed();
+                                    tooltipSeq = 0;
 
-                              setState(() {});
-                              if (isSwipeUp) {
-                                final index = model.setInfoCompleteList[
-                                            model.exerciseIndex] ==
-                                        model
-                                            .maxSetInfoList[model.exerciseIndex]
-                                    ? model.setInfoCompleteList[
-                                            model.exerciseIndex] -
-                                        1
-                                    : model.setInfoCompleteList[
-                                        model.exerciseIndex];
+                                    setState(() {});
+                                    if (isSwipeUp) {
+                                      final index = model.setInfoCompleteList[
+                                                  model.exerciseIndex] ==
+                                              model.maxSetInfoList[
+                                                  model.exerciseIndex]
+                                          ? model.setInfoCompleteList[
+                                                  model.exerciseIndex] -
+                                              1
+                                          : model.setInfoCompleteList[
+                                              model.exerciseIndex];
 
-                                if (model.setInfoCompleteList[
-                                        model.exerciseIndex] >
-                                    5) {
-                                  _movetoRecentSetInfo(index);
-                                }
-                              }
-                            },
+                                      if (model.setInfoCompleteList[
+                                              model.exerciseIndex] >
+                                          5) {
+                                        _movetoRecentSetInfo(index);
+                                      }
+                                    }
+                                  },
                             resetSet: () {},
                             refresh: () {
                               setState(() {});

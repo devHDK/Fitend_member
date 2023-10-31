@@ -88,16 +88,16 @@ class WorkoutProcessStateNotifier
     state = WorkoutProcessModelLoading();
 
     WorkoutProcessModel tempState = WorkoutProcessModel(
-      exerciseIndex: 0,
-      maxExerciseIndex: 0,
-      setInfoCompleteList: [],
-      maxSetInfoList: [],
-      exercises: [],
-      modifiedExercises: [],
-      workoutFinished: false,
-      groupCounts: {},
-      totalTime: 0,
-    );
+        exerciseIndex: 0,
+        maxExerciseIndex: 0,
+        setInfoCompleteList: [],
+        maxSetInfoList: [],
+        exercises: [],
+        modifiedExercises: [],
+        workoutFinished: false,
+        groupCounts: {},
+        totalTime: 0,
+        isQuitting: false);
     List<Exercise> tempExercises = [];
     final workoutProviderState = workoutProvider.state as WorkoutModel;
 
@@ -204,6 +204,7 @@ class WorkoutProcessStateNotifier
       workoutFinished: tempState.workoutFinished,
       groupCounts: tempState.groupCounts,
       totalTime: tempState.totalTime,
+      isQuitting: tempState.isQuitting,
     );
   }
 
@@ -450,6 +451,9 @@ class WorkoutProcessStateNotifier
   }) async {
     try {
       final pstate = state as WorkoutProcessModel;
+
+      state = pstate.copyWith(isQuitting: true);
+
       List<WorkoutRecordSimple> tempRecordList = [];
 
       workoutRecordSimpleBox.whenData(

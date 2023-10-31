@@ -230,6 +230,16 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
     print(
         'workoutProcessModel.isQuitting ===> ${workoutProcessModel.isQuitting}');
 
+    if (workoutProcessModel.isQuitting) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            color: POINT_COLOR,
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -406,6 +416,8 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                                             workoutModel.workoutScheduleId)
                                         .notifier)
                                     .workoutIsQuttingChange(true);
+
+                                setState(() {});
 
                                 await ref
                                     .read(workoutProcessProvider(

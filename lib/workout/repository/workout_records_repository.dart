@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
+import 'package:fitend_member/thread/model/common/create_resp_model.dart';
 import 'package:fitend_member/workout/model/get_workout_records_params.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
@@ -23,7 +24,7 @@ abstract class WorkoutRecordsRepository {
   @Headers({
     'accessToken': 'true',
   })
-  Future<void> postWorkoutRecords({
+  Future<CreateRespModel?> postWorkoutRecords({
     @Body() required PostWorkoutRecordModel body,
   });
 

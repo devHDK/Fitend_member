@@ -9,8 +9,13 @@ import 'package:fitend_member/common/provider/hive_workout_result_provider.dart'
 import 'package:fitend_member/common/utils/hive_box_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
-import 'package:fitend_member/exercise/model/target_muscle_model.dart';
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/common/thread_workout_info_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_model.dart';
+import 'package:fitend_member/thread/provider/thread_provider.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/workout/model/post_workout_record_model.dart';
 import 'package:fitend_member/workout/model/schedule_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -26,6 +31,8 @@ final workoutProcessProvider = StateNotifierProvider.family<
     WorkoutProcessStateNotifier, WorkoutProcessModelBase?, int>((ref, id) {
   final repository = ref.watch(workoutRecordsRepositoryProvider);
   final provider = ref.read(workoutProvider(id).notifier);
+  final tProvider = ref.read(threadProvider.notifier);
+  final meProvider = ref.read(getMeProvider.notifier);
   final AsyncValue<Box> workoutRecordSimpleBox =
       ref.watch(hiveWorkoutRecordSimpleProvider);
   final AsyncValue<Box> workoutRecordForResultBox =
@@ -42,6 +49,8 @@ final workoutProcessProvider = StateNotifierProvider.family<
     repository: repository,
     id: id,
     workoutProvider: provider,
+    threadProvider: tProvider,
+    getMeProvider: meProvider,
     workoutRecordSimpleBox: workoutRecordSimpleBox,
     workoutRecordForResultBox: workoutRecordForResultBox,
     timerWorkoutBox: timerWorkoutBox,
@@ -57,6 +66,8 @@ class WorkoutProcessStateNotifier
   final WorkoutRecordsRepository repository;
   final int id;
   final WorkoutStateNotifier workoutProvider;
+  final ThreadStateNotifier threadProvider;
+  final GetMeStateNotifier getMeProvider;
   final AsyncValue<Box> workoutRecordSimpleBox;
   final AsyncValue<Box> workoutRecordForResultBox;
   final AsyncValue<Box> timerWorkoutBox;
@@ -69,6 +80,8 @@ class WorkoutProcessStateNotifier
     required this.repository,
     required this.id,
     required this.workoutProvider,
+    required this.threadProvider,
+    required this.getMeProvider,
     required this.workoutRecordSimpleBox,
     required this.workoutRecordForResultBox,
     required this.timerWorkoutBox,
@@ -528,7 +541,8 @@ class WorkoutProcessStateNotifier
         }
 
         //운동 기록 서버로
-        await repository.postWorkoutRecords(
+        await repository
+            .postWorkoutRecords(
           body: PostWorkoutRecordModel(
             records: tempRecordList,
             scheduleRecords: ScheduleRecordsModel(
@@ -545,7 +559,44 @@ class WorkoutProcessStateNotifier
               totalSet: totalSetCount,
             ),
           ),
-        );
+        )
+            .then((value) {
+          if (value != null) {
+            final userModel = getMeProvider.state as UserModel;
+
+            threadProvider.addThread(
+              ThreadModel(
+                id: value.id,
+                writerType: 'user',
+                type: 'record',
+                title: title,
+                content: '오늘의 운동을 완료했어요!',
+                gallery: [],
+                workoutInfo: ThreadWorkoutInfo(
+                  workoutScheduleId: id,
+                  trainerId: trainerId,
+                  targetMuscleIds: targetMuscles.toSet().toList(),
+                  title: title,
+                  subTitle: subTitle,
+                  workoutDuration: pstate.totalTime,
+                  totalSet: totalSetCount,
+                ),
+                user: ThreadUser(
+                    id: userModel.user.id,
+                    nickname: userModel.user.nickname,
+                    gender: userModel.user.gender),
+                trainer: ThreadTrainer(
+                  id: userModel.user.activeTrainers.first.id,
+                  nickname: userModel.user.activeTrainers.first.nickname,
+                  profileImage:
+                      userModel.user.activeTrainers.first.profileImage,
+                ),
+                emojis: [],
+                createdAt: DateTime.now().toUtc().toIso8601String(),
+              ),
+            );
+          }
+        });
       } on DioException catch (e) {
         debugPrint('postWorkoutRecords error: $e');
         throw DioException(

@@ -227,9 +227,6 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
         ref.watch(workoutProcessProvider(widget.workoutScheduleId))
             as WorkoutProcessModel;
 
-    print(
-        'workoutProcessModel.isQuitting ===> ${workoutProcessModel.isQuitting}');
-
     if (workoutProcessModel.isQuitting) {
       return const Scaffold(
         body: Center(

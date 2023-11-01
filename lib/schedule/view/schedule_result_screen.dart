@@ -152,6 +152,26 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       }
     }
 
+    if (pstate is WorkoutResultModelLoading) {
+      return const Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: POINT_COLOR,
+          ),
+        ),
+      );
+    }
+
+    if (pstate is WorkoutResultModelError) {
+      // context.pop();
+      DialogWidgets.showToast('운동 평가를 완료해주세요');
+      context.pop();
+      return const Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+      );
+    }
+
     var state = pstate as WorkoutResultModel;
 
     return Scaffold(

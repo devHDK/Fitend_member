@@ -9,7 +9,7 @@ import 'package:fitend_member/thread/model/comments/thread_comment_create_model.
 import 'package:fitend_member/thread/model/comments/thread_comment_model.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
-import 'package:fitend_member/thread/model/exception/thread_exceptios.dart';
+import 'package:fitend_member/thread/model/exception/exceptios.dart';
 import 'package:fitend_member/thread/model/files/file_upload_request_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_comment_edit_model.dart';
 import 'package:fitend_member/thread/provider/thread_detail_provider.dart';

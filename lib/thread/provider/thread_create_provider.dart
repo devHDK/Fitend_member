@@ -8,7 +8,7 @@ import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
-import 'package:fitend_member/thread/model/exception/thread_exceptios.dart';
+import 'package:fitend_member/thread/model/exception/exceptios.dart';
 import 'package:fitend_member/thread/model/files/file_upload_request_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';

@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:fitend_member/workout/model/get_workout_records_params.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final workoutResultProvider = StateNotifierProvider.family<
@@ -30,6 +32,7 @@ class WorkoutRecordStateNotifier
   }) async {
     try {
       final isLoading = state is WorkoutResultModelLoading;
+
       if (isLoading) return;
 
       state = WorkoutResultModelLoading();
@@ -42,9 +45,15 @@ class WorkoutRecordStateNotifier
 
       state = response;
     } catch (e) {
-      state = WorkoutResultModelError(
-        message: '데이터를 불러올수없습니다',
-      );
+      if (e is DioException) {
+        debugPrint('getWorkoutResultsError : ${e.response!.statusCode}');
+        state = WorkoutResultModelError(
+            message: 'dioException : ${e.error} ${e.message}');
+      } else {
+        state = WorkoutResultModelError(
+          message: '데이터를 불러올수없습니다',
+        );
+      }
     }
   }
 }

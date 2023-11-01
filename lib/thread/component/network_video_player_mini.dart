@@ -62,8 +62,6 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
   }
 
   Future<void> videoInit() async {
-    // print('video init! $s3Url${widget.video.url} ');
-
     currentPosition = const Duration();
     File? file;
     final fileInfo = await DefaultCacheManager()

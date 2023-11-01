@@ -543,10 +543,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
     List<EmojiModel> tempEmojis = widget.emojis!;
 
-    print('_buildEmojiButtons list');
-    print(tempEmojis);
     tempEmojis = tempEmojis.toSet().toList();
-    print(tempEmojis);
 
     for (var emoji in tempEmojis) {
       String emojiChar = emoji.emoji;

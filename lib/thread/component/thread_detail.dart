@@ -419,11 +419,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
     List<Widget> emojiButtons = [];
 
     List<EmojiModel> tempEmojis = model.emojis!;
-
-    print('_buildEmojiButtons detail');
-    print(tempEmojis);
     tempEmojis = tempEmojis.toSet().toList();
-    print(tempEmojis);
 
     for (var emoji in tempEmojis) {
       String emojiChar = emoji.emoji;

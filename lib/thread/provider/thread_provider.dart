@@ -214,8 +214,6 @@ class ThreadStateNotifier extends StateNotifier<ThreadListModelBase> {
     final pstate = state as ThreadListModel;
 
     pstate.data[index].emojis!.removeWhere((emoji) {
-      print('remove ${emoji.id == emojiId} ');
-
       return emoji.id == emojiId &&
           (emoji.userId == userId || emoji.trainerId == trainerId);
     });

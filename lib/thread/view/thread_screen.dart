@@ -84,8 +84,6 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     if (minIndex < 0) minIndex = 0;
     ref.read(threadProvider.notifier).updateScrollIndex(minIndex);
 
-    // print(maxIndex);
-
     if (pstate.data.isNotEmpty &&
         maxIndex > pstate.data.length - 2 &&
         pstate.total > pstate.data.length &&
@@ -293,9 +291,6 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                   itemCount: state.data.length + 1,
                   itemBuilder: (context, index) {
                     if (index == state.data.length) {
-                      print(index);
-                      print(state.total);
-
                       if (state.data.length == state.total) {
                         return const SizedBox(
                           height: 100,

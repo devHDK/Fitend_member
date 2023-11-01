@@ -364,7 +364,14 @@ class _CommentCellState extends ConsumerState<CommentCell> {
 
     List<Widget> emojiButtons = [];
 
-    for (var emoji in widget.emojis.toSet().toList()) {
+    List<EmojiModel> tempEmojis = widget.emojis;
+
+    print('_buildEmojiButtons comment');
+    print(tempEmojis);
+    tempEmojis = tempEmojis.toSet().toList();
+    print(tempEmojis);
+
+    for (var emoji in tempEmojis) {
       String emojiChar = emoji.emoji;
 
       if (!emojiCounts.containsKey(emojiChar)) {

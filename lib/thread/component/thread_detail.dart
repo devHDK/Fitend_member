@@ -12,6 +12,7 @@ import 'package:fitend_member/thread/component/network_video_player_mini.dart';
 import 'package:fitend_member/thread/component/preview_image_network.dart';
 import 'package:fitend_member/thread/component/profile_image.dart';
 import 'package:fitend_member/thread/component/thread_cell.dart';
+import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_edit_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_model.dart';
@@ -417,7 +418,14 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
     Map<String, int> emojiCounts = {};
     List<Widget> emojiButtons = [];
 
-    for (var emoji in model.emojis!.toSet().toList()) {
+    List<EmojiModel> tempEmojis = model.emojis!;
+
+    print('_buildEmojiButtons detail');
+    print(tempEmojis);
+    tempEmojis = tempEmojis.toSet().toList();
+    print(tempEmojis);
+
+    for (var emoji in tempEmojis) {
       String emojiChar = emoji.emoji;
 
       if (!emojiCounts.containsKey(emojiChar)) {

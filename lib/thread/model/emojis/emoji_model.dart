@@ -13,6 +13,20 @@ class EmojiModel {
   @JsonKey(name: "trainerId")
   int? trainerId;
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is EmojiModel &&
+        other.id == id &&
+        other.emoji == emoji &&
+        (other.userId == userId || other.trainerId == trainerId);
+  }
+
+  @override
+  int get hashCode =>
+      id.hashCode ^ emoji.hashCode ^ userId.hashCode ^ trainerId.hashCode;
+
   EmojiModel({
     required this.id,
     required this.emoji,

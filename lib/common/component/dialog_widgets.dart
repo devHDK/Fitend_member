@@ -486,6 +486,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
     } catch (e) {
       // debugPrint(e);
 
+      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (context) => DialogWidgets.errorDialog(

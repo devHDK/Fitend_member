@@ -6,7 +6,6 @@ import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
-import 'package:fitend_member/thread/model/comments/thread_comment_model.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/exception/exceptios.dart';

@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';

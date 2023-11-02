@@ -1,5 +1,4 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/component/error_dialog.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
@@ -26,7 +25,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ThreadScreen extends ConsumerStatefulWidget {

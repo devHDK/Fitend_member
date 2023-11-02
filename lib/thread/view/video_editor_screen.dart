@@ -75,12 +75,15 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
         _exportingProgress.value = config.getFFmpegProgress(stats.getTime());
       },
       onError: (e, s) {
-        debugPrint('$e');
+        debugPrint('video edit error ===> $e');
+        debugPrint('video edit error ===> $s');
+
         DialogWidgets.showToast("저장이 실패하였습니다.");
       },
       onCompleted: (file) {
+        if (!mounted) return;
+
         _isExporting.value = false;
-        // if (!mounted) return;
 
         if (widget.isComment!) {
           ref
@@ -110,11 +113,7 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
           }
         }
       },
-    ).then((value) {
-      // setState(() {
-      //   isLoading = false;
-      // });
-    });
+    );
   }
 
   // void _exportCover() async {
@@ -201,6 +200,22 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
                           height: 20,
                         ),
                       ],
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: _isExporting,
+                      builder: (_, bool export, Widget? child) => AnimatedSize(
+                        duration: kThemeAnimationDuration,
+                        child: export ? child : null,
+                      ),
+                      child: AlertDialog(
+                        title: ValueListenableBuilder(
+                          valueListenable: _exportingProgress,
+                          builder: (_, double value, __) => Text(
+                            "${(value * 100).ceil()}%",
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ),
                     )
                   ],
                 ),

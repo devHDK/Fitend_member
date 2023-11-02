@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:fitend_member/common/component/custom_network_image.dart';
-import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -9,7 +8,6 @@ import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 

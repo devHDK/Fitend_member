@@ -63,10 +63,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
     final AsyncValue<Box> modifiedExerciseBox =
         ref.read(hiveModifiedExerciseProvider);
 
-    final state = ref
-        .watch(
-            workoutProcessProvider(widget.workout.workoutScheduleId).notifier)
-        .state as WorkoutProcessModel;
+    final state =
+        ref.watch(workoutProcessProvider(widget.workout.workoutScheduleId))
+            as WorkoutProcessModel;
 
     var model = widget.workout;
 

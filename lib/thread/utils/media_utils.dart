@@ -61,7 +61,7 @@ class MediaUtils {
       thumbnailPath: (await getTemporaryDirectory()).path,
       imageFormat: ImageFormat.JPEG,
       maxWidth:
-          256, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+          512, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
       quality: 100,
     );
 

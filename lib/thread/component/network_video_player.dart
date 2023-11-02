@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';

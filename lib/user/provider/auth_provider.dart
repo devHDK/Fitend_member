@@ -5,7 +5,6 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
-import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';

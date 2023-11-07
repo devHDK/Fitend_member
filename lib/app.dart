@@ -51,11 +51,12 @@ class _AppState extends ConsumerState<App> {
       debugPrint("message: ${message.data}");
       if (message.data['type'] == 'commentCreate' ||
           message.data['type'] == 'threadCreate') {
-        ref
-            .read(routerProvider)
-            .goNamed(ThreadDetailScreen.routeName, pathParameters: {
-          'threadId': message.data['threadId'],
-        });
+        ref.read(routerProvider).goNamed(
+          ThreadDetailScreen.routeName,
+          pathParameters: {
+            'threadId': message.data['threadId'],
+          },
+        );
       } else if (message.data['type'].toString().contains('reservation')) {
         ref.read(routerProvider).goNamed(NotificationScreen.routeName);
       }

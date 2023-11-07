@@ -13,6 +13,7 @@ import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:fitend_member/workout/view/home_screen.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:fitend_member/workout/view/workout_list_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -105,19 +106,13 @@ class AuthProvider extends ChangeNotifier {
             GoRoute(
               path: 'notification',
               name: NotificationScreen.routeName,
-              pageBuilder: (context, state) => _rightToLeftTransiton(
-                state,
-                const NotificationScreen(),
-              ),
+              builder: (context, state) => const NotificationScreen(),
             ),
             GoRoute(
               path: 'threadDetail/:threadId',
               name: ThreadDetailScreen.routeName,
-              pageBuilder: (context, state) => _rightToLeftTransiton(
-                state,
-                ThreadDetailScreen(
-                  threadId: int.parse(state.pathParameters['threadId']!),
-                ),
+              builder: (context, state) => ThreadDetailScreen(
+                threadId: int.parse(state.pathParameters['threadId']!),
               ),
             ),
             GoRoute(
@@ -207,6 +202,29 @@ class AuthProvider extends ChangeNotifier {
       ),
     );
   }
+
+  CustomTransitionPage buildPageWithDefaultTransition<T>({
+    required BuildContext context,
+    required GoRouterState state,
+    required Widget child,
+  }) {
+    return CustomTransitionPage<T>(
+      key: state.pageKey,
+      child: child,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+          FadeTransition(opacity: animation, child: child),
+    );
+  }
+
+  Page<dynamic> Function(BuildContext, GoRouterState) defaultPageBuilder<T>(
+          Widget child) =>
+      (BuildContext context, GoRouterState state) {
+        return buildPageWithDefaultTransition<T>(
+          context: context,
+          state: state,
+          child: child,
+        );
+      };
 
   Future<String?> redirectLogic(
       BuildContext context, GoRouterState state) async {

@@ -107,7 +107,7 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
                       Text(
                         '${fileSize}MB',
                         style: c2Caption.copyWith(
-                          color: fileSize < 200 ? Colors.white : Colors.red,
+                          color: fileSize < 400 ? Colors.white : Colors.red,
                         ),
                       ),
                     ],

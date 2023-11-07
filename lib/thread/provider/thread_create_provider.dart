@@ -25,6 +25,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -160,53 +161,82 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
               ),
             );
           } else if (type == MediaType.video) {
-            final mimeType = mime(filePath);
+            try {
+              final mimeType = mime(filePath);
 
-            final thumbnail = await MediaUtils.getVideoThumbNail(filePath);
-            final thumbnailMimeType = mime(thumbnail);
+              final thumbnail = await MediaUtils.getVideoThumbNail(filePath);
+              final thumbnailMimeType = mime(thumbnail);
 
-            final retVideo = await fileRepository.getFileUpload(
-              model: FileRequestModel(type: 'video', mimeType: mimeType!),
-            );
+              final retVideo = await fileRepository.getFileUpload(
+                model: FileRequestModel(type: 'video', mimeType: mimeType!),
+              );
 
-            final file = File(filePath);
-            final bytes = await file.readAsBytes();
+              debugPrint('압축 시작 ===> ${DateTime.now()}');
+              await VideoCompress.setLogLevel(0);
+              final mediaInfo = await VideoCompress.compressVideo(
+                filePath,
+                quality: VideoQuality.Res1280x720Quality,
+                includeAudio: true,
+              );
+              debugPrint('압축 종료 ===> ${DateTime.now()}');
 
-            await dioUpload.put(
-              retVideo.url,
-              data: bytes,
-              options: Options(
-                headers: {
-                  "Content-Type": mimeType,
-                },
-              ),
-            );
+              File file;
+              if (mediaInfo != null && mediaInfo.file != null) {
+                file = mediaInfo.file!;
+              } else {
+                file = File(filePath);
+              }
 
-            final retThumbnail = await fileRepository.getFileUpload(
-              model:
-                  FileRequestModel(type: 'image', mimeType: thumbnailMimeType!),
-            );
+              final bytes = await file.readAsBytes();
 
-            final thumbnailFile = File(thumbnail!);
-            final thumbnailBytes = await thumbnailFile.readAsBytes();
+              await dioUpload.put(
+                retVideo.url,
+                data: bytes,
+                options: Options(
+                  headers: {
+                    "Content-Type": mimeType,
+                  },
+                ),
+              );
 
-            await dioUpload.put(
-              retThumbnail.url,
-              data: thumbnailBytes,
-              options: Options(
-                headers: {
-                  "Content-Type": thumbnailMimeType,
-                },
-              ),
-            );
+              final retThumbnail = await fileRepository.getFileUpload(
+                model: FileRequestModel(
+                    type: 'image', mimeType: thumbnailMimeType!),
+              );
 
-            model.gallery!.add(
-              GalleryModel(
-                type: 'video',
-                url: retVideo.path,
-                thumbnail: retThumbnail.path,
-              ),
-            );
+              final thumbnailFile = File(thumbnail!);
+              final thumbnailBytes = await thumbnailFile.readAsBytes();
+
+              await dioUpload.put(
+                retThumbnail.url,
+                data: thumbnailBytes,
+                options: Options(
+                  headers: {
+                    "Content-Type": thumbnailMimeType,
+                  },
+                ),
+              );
+
+              model.gallery!.add(
+                GalleryModel(
+                  type: 'video',
+                  url: retVideo.path,
+                  thumbnail: retThumbnail.path,
+                ),
+              );
+
+              if (mediaInfo != null) {
+                final compressFile = File(mediaInfo.path!);
+
+                if (await compressFile.exists()) {
+                  await compressFile.delete();
+                  print('압축파일 삭제');
+                }
+              }
+            } catch (e) {
+              debugPrint('video upload error ===> $e');
+              throw UploadException(message: 'error');
+            }
           }
 
           final tempState1 = state.copyWith();

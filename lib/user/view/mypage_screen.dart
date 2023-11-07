@@ -15,10 +15,12 @@ import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/password_confirm_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MyPageScreen extends ConsumerStatefulWidget {
   static String get routeName => 'mypage';
@@ -227,6 +229,25 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               },
               child: _renderLabel(
                 name: '로그아웃',
+              ),
+            ),
+            const Divider(
+              color: DARK_GRAY_COLOR,
+              height: 1,
+            ),
+            InkWell(
+              onTap: () async {
+                var tempDir = await getTemporaryDirectory();
+
+                // print(tempDir);
+
+                if (tempDir.existsSync()) {
+                  tempDir.deleteSync(recursive: true);
+                  DialogWidgets.showToast('캐시가 삭제되었습니다!');
+                }
+              },
+              child: _renderLabel(
+                name: '캐시 비우기',
               ),
             ),
             const Divider(

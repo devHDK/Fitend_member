@@ -81,6 +81,8 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
     );
 
     _videoController!.addListener(videoListener);
+    _videoController!.play();
+    _videoController!.pause();
 
     setState(() {});
   }

@@ -61,7 +61,7 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
     super.dispose();
   }
 
-  void _exportVideo(int index) async {
+  Future<void> _exportVideo(int index) async {
     _exportingProgress.value = 0;
     _isExporting.value = true;
 
@@ -76,14 +76,12 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
       },
       onError: (e, s) {
         debugPrint('video edit error ===> $e');
-        debugPrint('video edit error ===> $s');
+        debugPrint('video edit stackTrace ===> $s');
 
         DialogWidgets.showToast("저장이 실패하였습니다.");
       },
-      onCompleted: (file) {
+      onCompleted: (file) async {
         if (!mounted) return;
-
-        _isExporting.value = false;
 
         if (widget.isComment!) {
           ref
@@ -112,6 +110,10 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
                 .updateFileCheck('change', index);
           }
         }
+
+        _isExporting.value = false;
+
+        context.pop();
       },
     );
   }
@@ -281,10 +283,8 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
           //   ),
           // ),
           TextButton(
-            onPressed: () {
-              _exportVideo(index);
-
-              context.pop();
+            onPressed: () async {
+              await _exportVideo(index);
             },
             child: Text(
               '저장',

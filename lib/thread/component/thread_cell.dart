@@ -178,7 +178,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
               (widget.title != null ? 24 : 0) +
               _calculateLinesHeight(widget.content, s1SubTitle, 100.w - 120)
                       .toInt() *
-                  24 +
+                  21 +
               10 +
               20 + //padding
               24 +
@@ -339,76 +339,6 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                     SizedBox(
                       height: galleryHeight.toDouble() - 20,
                       width: 100.w - 71,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          int galleryLenth = 0;
-
-                          if (widget.gallery != null) {
-                            galleryLenth = widget.gallery!.length;
-                          }
-
-                          if (index >= galleryLenth) {
-                            return Row(
-                              children: [
-                                LinkPreview(
-                                  url: linkUrls[index - galleryLenth],
-                                  height: galleryHeight - 20,
-                                  width: 100.w - 110,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                              ],
-                            );
-                          }
-
-                          return Stack(
-                            children: [
-                              InkWell(
-                                onTap: () => Navigator.of(context).push(
-                                  CupertinoPageRoute(
-                                    builder: (context) => MediaPageScreen(
-                                      pageIndex: index,
-                                      gallery: widget.gallery!,
-                                    ),
-                                    fullscreenDialog: true,
-                                  ),
-                                ),
-                                child: widget.gallery![index].type == 'video'
-                                    ? Row(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            child: SizedBox(
-                                              height:
-                                                  galleryHeight.toDouble() - 20,
-                                              child: NetworkVideoPlayerMini(
-                                                video: widget.gallery![index],
-                                                userOriginRatio: true,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          )
-                                        ],
-                                      )
-                                    : PreviewImageNetwork(
-                                        url:
-                                            '$s3Url${widget.gallery![index].url}',
-                                        width: (100.w - 110).toInt(),
-                                        // ((galleryHeight - 20) * 1.25)
-                                        //     .toInt(),
-                                        height: (galleryHeight - 20),
-                                      ),
-                              ),
-                            ],
-                          );
-                        },
-                        itemCount: mediaCount,
-                      ),
                     ),
                   const SizedBox(
                     height: 10,
@@ -534,7 +464,92 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                 child: SvgPicture.asset('asset/img/icon_edit.svg'),
               ),
             ),
-          )
+          ),
+        if (mediaCount > 1)
+          Positioned(
+            top: 24 +
+                (widget.title != null ? 24 : 0) +
+                _calculateLinesHeight(widget.content, s1SubTitle, 100.w - 120)
+                        .toInt() *
+                    21,
+            child: SizedBox(
+              height: galleryHeight.toDouble() - 20,
+              width: 100.w - 28,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  int galleryLenth = 0;
+
+                  if (widget.gallery != null) {
+                    galleryLenth = widget.gallery!.length;
+                  }
+
+                  if (index == 0) {
+                    return const SizedBox(
+                      width: 45,
+                    );
+                  }
+
+                  if (index >= galleryLenth + 1) {
+                    return Row(
+                      children: [
+                        LinkPreview(
+                          url: linkUrls[index - (galleryLenth + 1)],
+                          height: galleryHeight - 20,
+                          width: 100.w - 110,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Stack(
+                    children: [
+                      InkWell(
+                        onTap: () => Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (context) => MediaPageScreen(
+                              pageIndex: index - 1,
+                              gallery: widget.gallery!,
+                            ),
+                            fullscreenDialog: true,
+                          ),
+                        ),
+                        child: widget.gallery![index - 1].type == 'video'
+                            ? Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: SizedBox(
+                                      height: galleryHeight.toDouble() - 20,
+                                      child: NetworkVideoPlayerMini(
+                                        video: widget.gallery![index - 1],
+                                        userOriginRatio: true,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  )
+                                ],
+                              )
+                            : PreviewImageNetwork(
+                                url: '$s3Url${widget.gallery![index - 1].url}',
+                                width: (100.w - 110).toInt(),
+                                // ((galleryHeight - 20) * 1.25)
+                                //     .toInt(),
+                                height: (galleryHeight - 20),
+                              ),
+                      ),
+                    ],
+                  );
+                },
+                itemCount: mediaCount + 1,
+              ),
+            ),
+          ),
       ],
     );
   }

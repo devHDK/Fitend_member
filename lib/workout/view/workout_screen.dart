@@ -15,6 +15,7 @@ import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/view/thread_create_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -35,6 +36,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -212,6 +214,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     final state = ref.watch(workoutProcessProvider(widget.workoutScheduleId));
     final userState = ref.watch(getMeProvider);
     final workoutState = ref.watch(workoutProvider(widget.workoutScheduleId));
+    final threadCreateState = ref.watch(threadCreateProvider);
 
     if (state is WorkoutProcessModelLoading) {
       return const Center(
@@ -244,28 +247,32 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(CupertinoDialogRoute(
-                          builder: (context) {
-                            return ThreadCreateScreen(
-                              trainer: ThreadTrainer(
-                                id: userModel.user.activeTrainers.first.id,
-                                nickname: userModel
-                                    .user.activeTrainers.first.nickname,
-                                profileImage: userModel
-                                    .user.activeTrainers.first.profileImage,
-                              ),
-                              user: ThreadUser(
-                                id: userModel.user.id,
-                                nickname: userModel.user.nickname,
-                                gender: userModel.user.gender,
-                              ),
-                              title:
-                                  '${workoutModel.exercises[model.exerciseIndex].name} ${model.setInfoCompleteList[model.exerciseIndex] + 1}SET',
-                            );
+                    onTap: threadCreateState.isUploading ||
+                            threadCreateState.isLoading
+                        ? null
+                        : () {
+                            Navigator.of(context).push(CupertinoDialogRoute(
+                                builder: (context) {
+                                  return ThreadCreateScreen(
+                                    trainer: ThreadTrainer(
+                                      id: userModel
+                                          .user.activeTrainers.first.id,
+                                      nickname: userModel
+                                          .user.activeTrainers.first.nickname,
+                                      profileImage: userModel.user
+                                          .activeTrainers.first.profileImage,
+                                    ),
+                                    user: ThreadUser(
+                                      id: userModel.user.id,
+                                      nickname: userModel.user.nickname,
+                                      gender: userModel.user.gender,
+                                    ),
+                                    title:
+                                        '${workoutModel.exercises[model.exerciseIndex].name} ${model.setInfoCompleteList[model.exerciseIndex] + 1}SET',
+                                  );
+                                },
+                                context: context));
                           },
-                          context: context));
-                    },
                     child: Container(
                       width: 98,
                       height: 44,
@@ -274,11 +281,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         color: DARK_GRAY_COLOR,
                       ),
                       child: Center(
-                        child: SvgPicture.asset(
-                          'asset/img/icon_message.svg',
-                          width: 25,
-                          height: 25,
-                        ),
+                        child: threadCreateState.isUploading
+                            ? LoadingAnimationWidget.dotsTriangle(
+                                color: Colors.white,
+                                size: 25,
+                              )
+                            : SvgPicture.asset(
+                                'asset/img/icon_message.svg',
+                                width: 25,
+                                height: 25,
+                              ),
                       ),
                     ),
                   ),

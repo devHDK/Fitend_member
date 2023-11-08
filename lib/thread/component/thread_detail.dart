@@ -57,6 +57,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
     final userModel = userState as UserModel;
 
     final state = ref.watch(threadDetailProvider(widget.threadId));
+    final threadCreateState = ref.watch(threadCreateProvider);
 
     final model = state as ThreadModel;
     final threadListModel = threadListState as ThreadListModel;
@@ -187,7 +188,8 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               ),
               if (model.writerType == 'user' &&
                   model.user.id == userModel.user.id &&
-                  model.type == ThreadType.general.name)
+                  model.type == ThreadType.general.name &&
+                  !threadCreateState.isUploading)
                 Positioned(
                   top: -10,
                   right: 18,

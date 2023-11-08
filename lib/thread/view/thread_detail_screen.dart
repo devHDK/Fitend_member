@@ -29,6 +29,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -214,7 +215,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                           ),
                           if (commentModel.user != null &&
                               model.user.id == commentModel.user!.id &&
-                              edittingCommentId == -1)
+                              edittingCommentId == -1 &&
+                              !commentState.isUploading)
                             Positioned(
                               top: -5,
                               right: 18,
@@ -358,7 +360,9 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                   ),
                   SizedBox(
                     width: 100.w - 56 - 34,
-                    child: _commentTextFormField(),
+                    child: commentState.isUploading
+                        ? null
+                        : _commentTextFormField(),
                   ),
                 ],
               ),
@@ -401,16 +405,18 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                     child: InkWell(
                                       splashColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
-                                      onTap: () => Navigator.of(context).push(
-                                        CupertinoPageRoute(
-                                          builder: (context) {
-                                            return CommentAssetEditScreen(
-                                              pageIndex: index,
-                                              threadId: widget.threadId,
-                                            );
-                                          },
-                                        ),
-                                      ),
+                                      onTap: () => commentState.isUploading
+                                          ? null
+                                          : Navigator.of(context).push(
+                                              CupertinoPageRoute(
+                                                builder: (context) {
+                                                  return CommentAssetEditScreen(
+                                                    pageIndex: index,
+                                                    threadId: widget.threadId,
+                                                  );
+                                                },
+                                              ),
+                                            ),
                                       child: type == MediaType.image
                                           ? Hero(
                                               tag: file.path,
@@ -430,279 +436,327 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                     ),
                                   ),
                                 ),
-                                Positioned(
-                                  right: -13,
-                                  top: -13,
-                                  child: IconButton(
-                                    highlightColor: Colors.transparent,
-                                    splashColor: Colors.transparent,
-                                    onPressed: () {
-                                      ref
-                                          .read(commentCreateProvider(
-                                                  widget.threadId)
-                                              .notifier)
-                                          .removeAsset(index);
-
-                                      if (edittingCommentId != -1) {
+                                if (!commentState.isUploading)
+                                  Positioned(
+                                    right: -13,
+                                    top: -13,
+                                    child: IconButton(
+                                      highlightColor: Colors.transparent,
+                                      splashColor: Colors.transparent,
+                                      onPressed: () {
                                         ref
                                             .read(commentCreateProvider(
                                                     widget.threadId)
                                                 .notifier)
-                                            .updateFileCheck('remove', index);
+                                            .removeAsset(index);
 
-                                        ref
-                                            .read(commentCreateProvider(
-                                                    commentState.threadId)
-                                                .notifier)
-                                            .removeAssetFromGallery(index);
-                                      }
-                                    },
-                                    icon: const Icon(
-                                      Icons.cancel,
-                                      color: LIGHT_GRAY_COLOR,
+                                        if (edittingCommentId != -1) {
+                                          ref
+                                              .read(commentCreateProvider(
+                                                      widget.threadId)
+                                                  .notifier)
+                                              .updateFileCheck('remove', index);
+
+                                          ref
+                                              .read(commentCreateProvider(
+                                                      commentState.threadId)
+                                                  .notifier)
+                                              .removeAssetFromGallery(index);
+                                        }
+                                      },
+                                      icon: const Icon(
+                                        Icons.cancel,
+                                        color: LIGHT_GRAY_COLOR,
+                                      ),
                                     ),
                                   ),
-                                ),
                               ],
                             );
                           },
                           itemCount: tempList.length,
                         ),
                 ),
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      await ref
-                          .read(commentCreateProvider(widget.threadId).notifier)
-                          .pickCamera(context);
-                    },
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(top: 10, bottom: 10, right: 10),
-                      child: SvgPicture.asset('asset/img/icon_camera.svg'),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      if (commentState.assetsPaths.length < 10) {
-                        await ref
-                            .read(
-                                commentCreateProvider(widget.threadId).notifier)
-                            .pickImage(
-                                context, 10 - commentState.assetsPaths.length)
-                            .then(
-                          (assets) async {
-                            if (assets != null && assets.isNotEmpty) {
-                              ref
+              commentState.isUploading
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'UPLOADING',
+                            style: h6Headline.copyWith(
+                              color: Colors.white,
+                              height: 1,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          LoadingAnimationWidget.dotsTriangle(
+                            color: Colors.white,
+                            size: 15,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: LinearProgressIndicator(
+                              color: POINT_COLOR,
+                              value: (commentState.doneCount) /
+                                  commentState.totalCount,
+                              backgroundColor: GRAY_COLOR,
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  : Row(
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            await ref
+                                .read(commentCreateProvider(widget.threadId)
+                                    .notifier)
+                                .pickCamera(context);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 10, bottom: 10, right: 10),
+                            child:
+                                SvgPicture.asset('asset/img/icon_camera.svg'),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            if (commentState.assetsPaths.length < 10) {
+                              await ref
                                   .read(commentCreateProvider(widget.threadId)
                                       .notifier)
-                                  .updateIsLoading(true);
-
-                              for (var asset in assets) {
-                                if (await asset.file != null) {
-                                  final file = await asset.file;
-
-                                  ref
-                                      .read(
-                                          commentCreateProvider(widget.threadId)
-                                              .notifier)
-                                      .addAssets(file!.path);
-
-                                  if (edittingCommentId != -1) {
+                                  .pickImage(context,
+                                      10 - commentState.assetsPaths.length)
+                                  .then(
+                                (assets) async {
+                                  if (assets != null && assets.isNotEmpty) {
                                     ref
                                         .read(commentCreateProvider(
                                                 widget.threadId)
                                             .notifier)
-                                        .updateFileCheck('add', 0);
+                                        .updateIsLoading(true);
+
+                                    for (var asset in assets) {
+                                      if (await asset.file != null) {
+                                        final file = await asset.file;
+
+                                        ref
+                                            .read(commentCreateProvider(
+                                                    widget.threadId)
+                                                .notifier)
+                                            .addAssets(file!.path);
+
+                                        if (edittingCommentId != -1) {
+                                          ref
+                                              .read(commentCreateProvider(
+                                                      widget.threadId)
+                                                  .notifier)
+                                              .updateFileCheck('add', 0);
+                                        }
+
+                                        debugPrint('file.path : ${file.path}');
+                                      }
+                                    }
+
+                                    ref
+                                        .read(commentCreateProvider(
+                                                widget.threadId)
+                                            .notifier)
+                                        .updateIsLoading(false);
+                                  } else {
+                                    debugPrint('assets: $assets');
                                   }
-
-                                  debugPrint('file.path : ${file.path}');
-                                }
-                              }
-
-                              ref
-                                  .read(commentCreateProvider(widget.threadId)
-                                      .notifier)
-                                  .updateIsLoading(false);
+                                },
+                              );
                             } else {
-                              debugPrint('assets: $assets');
+                              DialogWidgets.showToast(
+                                  '사진 또는 영상은 10개까지만 첨부할수있습니다!');
                             }
                           },
-                        );
-                      } else {
-                        DialogWidgets.showToast('사진 또는 영상은 10개까지만 첨부할수있습니다!');
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: SvgPicture.asset('asset/img/icon_picture.svg'),
-                    ),
-                  ),
-                  const Spacer(),
-                  if (edittingCommentId == -1)
-                    InkWell(
-                      onTap: commentState.isLoading ||
-                              commentController.text.isEmpty
-                          ? null
-                          : () async {
-                              try {
-                                await ref
-                                    .read(commentCreateProvider(widget.threadId)
-                                        .notifier)
-                                    .createComment(widget.threadId, model.user)
-                                    .then((value) {
-                                  setState(() {
-                                    commentController.text = '';
-                                  });
-                                });
-                              } catch (e) {
-                                if (e is UploadException) {
-                                  if (e.message ==
-                                      'oversize_file_include_error') {
-                                    DialogWidgets.showToast(
-                                        '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
-                                  } else {
-                                    DialogWidgets.showToast(
-                                        '업로드 중 문제가 발생하였습니다.');
-                                  }
-                                }
-                              }
-                            },
-                      child: Container(
-                        width: 53,
-                        height: 25,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: commentController.text.isNotEmpty
-                              ? POINT_COLOR
-                              : POINT_COLOR.withOpacity(0.5),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child:
+                                SvgPicture.asset('asset/img/icon_picture.svg'),
+                          ),
                         ),
-                        child: Center(
-                          child:
-                              commentState.isLoading || commentState.isUploading
-                                  ? const SizedBox(
+                        const Spacer(),
+                        if (edittingCommentId == -1)
+                          InkWell(
+                            onTap: commentState.isLoading ||
+                                    commentController.text.isEmpty
+                                ? null
+                                : () async {
+                                    try {
+                                      await ref
+                                          .read(commentCreateProvider(
+                                                  widget.threadId)
+                                              .notifier)
+                                          .createComment(
+                                              widget.threadId, model.user)
+                                          .then((value) {
+                                        setState(() {
+                                          commentController.text = '';
+                                        });
+                                      });
+                                    } catch (e) {
+                                      if (e is UploadException) {
+                                        if (e.message ==
+                                            'oversize_file_include_error') {
+                                          DialogWidgets.showToast(
+                                              '400MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
+                                        } else {
+                                          DialogWidgets.showToast(
+                                              '업로드 중 문제가 발생하였습니다.');
+                                        }
+                                      }
+                                    }
+                                  },
+                            child: Container(
+                              width: 53,
+                              height: 25,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: commentController.text.isNotEmpty
+                                    ? POINT_COLOR
+                                    : POINT_COLOR.withOpacity(0.5),
+                              ),
+                              child: Center(
+                                child: commentState.isLoading ||
+                                        commentState.isUploading
+                                    ? const SizedBox(
+                                        height: 15,
+                                        width: 15,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : Text(
+                                        '등록',
+                                        style: h6Headline.copyWith(
+                                          color: commentController
+                                                  .text.isNotEmpty
+                                              ? Colors.white
+                                              : Colors.white.withOpacity(0.5),
+                                          height: 1,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          )
+                        else
+                          commentState.isLoading || commentState.isUploading
+                              ? Container(
+                                  width: 53,
+                                  height: 25,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: POINT_COLOR.withOpacity(0.5),
+                                  ),
+                                  child: const Center(
+                                    child: SizedBox(
                                       height: 15,
                                       width: 15,
                                       child: CircularProgressIndicator(
                                         color: Colors.white,
                                       ),
-                                    )
-                                  : Text(
-                                      '등록',
-                                      style: h6Headline.copyWith(
-                                        color: commentController.text.isNotEmpty
-                                            ? Colors.white
-                                            : Colors.white.withOpacity(0.5),
-                                        height: 1,
+                                    ),
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        ref
+                                            .read(
+                                                commentCreateProvider(model.id)
+                                                    .notifier)
+                                            .init();
+
+                                        commentController.text = '';
+
+                                        setState(() {
+                                          edittingCommentId = -1;
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 45,
+                                        height: 25,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: POINT_COLOR, width: 1),
+                                        ),
+                                        child: const Icon(Icons.close,
+                                            color: POINT_COLOR),
                                       ),
                                     ),
-                        ),
-                      ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        try {
+                                          await ref
+                                              .read(commentCreateProvider(
+                                                      commentState.threadId)
+                                                  .notifier)
+                                              .updateComment(
+                                                edittingCommentId,
+                                                commentState.gallery,
+                                              )
+                                              .then((value) {
+                                            ref
+                                                .read(commentCreateProvider(
+                                                        commentState.threadId)
+                                                    .notifier)
+                                                .init();
+
+                                            setState(() {
+                                              edittingCommentId = -1;
+                                              commentController.text = '';
+                                            });
+                                          });
+                                        } catch (e) {
+                                          if (e is UploadException) {
+                                            if (e.message ==
+                                                'oversize_file_include_error') {
+                                              DialogWidgets.showToast(
+                                                  '400MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
+                                            } else {
+                                              DialogWidgets.showToast(
+                                                  '업로드 중 문제가 발생하였습니다.');
+                                            }
+                                          }
+                                        }
+                                      },
+                                      child: Container(
+                                        width: 45,
+                                        height: 25,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: POINT_COLOR,
+                                        ),
+                                        child: SvgPicture.asset(
+                                          'asset/img/icon_check_save.svg',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                      ],
                     )
-                  else
-                    commentState.isLoading || commentState.isUploading
-                        ? Container(
-                            width: 53,
-                            height: 25,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: POINT_COLOR.withOpacity(0.5),
-                            ),
-                            child: const Center(
-                              child: SizedBox(
-                                height: 15,
-                                width: 15,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  ref
-                                      .read(commentCreateProvider(model.id)
-                                          .notifier)
-                                      .init();
-
-                                  commentController.text = '';
-
-                                  setState(() {
-                                    edittingCommentId = -1;
-                                  });
-                                },
-                                child: Container(
-                                  width: 45,
-                                  height: 25,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        color: POINT_COLOR, width: 1),
-                                  ),
-                                  child: const Icon(Icons.close,
-                                      color: POINT_COLOR),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              GestureDetector(
-                                onTap: () async {
-                                  try {
-                                    await ref
-                                        .read(commentCreateProvider(
-                                                commentState.threadId)
-                                            .notifier)
-                                        .updateComment(
-                                          edittingCommentId,
-                                          commentState.gallery,
-                                        )
-                                        .then((value) {
-                                      ref
-                                          .read(commentCreateProvider(
-                                                  commentState.threadId)
-                                              .notifier)
-                                          .init();
-
-                                      setState(() {
-                                        edittingCommentId = -1;
-                                        commentController.text = '';
-                                      });
-                                    });
-                                  } catch (e) {
-                                    if (e is UploadException) {
-                                      if (e.message ==
-                                          'oversize_file_include_error') {
-                                        DialogWidgets.showToast(
-                                            '200MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
-                                      } else {
-                                        DialogWidgets.showToast(
-                                            '업로드 중 문제가 발생하였습니다.');
-                                      }
-                                    }
-                                  }
-                                },
-                                child: Container(
-                                  width: 45,
-                                  height: 25,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: POINT_COLOR,
-                                  ),
-                                  child: SvgPicture.asset(
-                                    'asset/img/icon_check_save.svg',
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
-                ],
-              )
             ],
           ),
         ),

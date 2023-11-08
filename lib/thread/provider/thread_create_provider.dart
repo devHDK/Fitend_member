@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
@@ -164,21 +166,20 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
             try {
               final mimeType = mime(filePath);
 
-              final thumbnail = await MediaUtils.getVideoThumbNail(filePath);
-              final thumbnailMimeType = mime(thumbnail);
-
               final retVideo = await fileRepository.getFileUpload(
                 model: FileRequestModel(type: 'video', mimeType: mimeType!),
               );
 
-              debugPrint('압축 시작 ===> ${DateTime.now()}');
+              final compressStart = DateTime.now();
               await VideoCompress.setLogLevel(0);
               final mediaInfo = await VideoCompress.compressVideo(
                 filePath,
                 quality: VideoQuality.Res1280x720Quality,
                 includeAudio: true,
               );
-              debugPrint('압축 종료 ===> ${DateTime.now()}');
+              final compressEnd = DateTime.now();
+
+              log('compress duration ===> ${compressStart.difference(compressEnd)}');
 
               File file;
               if (mediaInfo != null && mediaInfo.file != null) {
@@ -186,6 +187,9 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
               } else {
                 file = File(filePath);
               }
+
+              final thumbnail = await MediaUtils.getVideoThumbNail(file.path);
+              final thumbnailMimeType = mime(thumbnail);
 
               final bytes = await file.readAsBytes();
 
@@ -265,8 +269,8 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
           comments: [],
         ),
       );
-
       init();
+      DialogWidgets.showToast('업로드가 완료되었습니다!');
     } catch (e) {
       final tstate = state.copyWith();
       tstate.isUploading = false;
@@ -505,14 +509,27 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
               state.isEditedAssets![index]) {
             final mimeType = mime(filePath);
 
-            final thumbnail = await MediaUtils.getVideoThumbNail(filePath);
-            final thumbnailMimeType = mime(thumbnail);
-
             final retVideo = await fileRepository.getFileUpload(
               model: FileRequestModel(type: 'video', mimeType: mimeType!),
             );
 
-            final file = File(filePath);
+            await VideoCompress.setLogLevel(0);
+            final mediaInfo = await VideoCompress.compressVideo(
+              filePath,
+              quality: VideoQuality.Res1280x720Quality,
+              includeAudio: true,
+            );
+
+            File file;
+            if (mediaInfo != null && mediaInfo.file != null) {
+              file = mediaInfo.file!;
+            } else {
+              file = File(filePath);
+            }
+
+            final thumbnail = await MediaUtils.getVideoThumbNail(file.path);
+            final thumbnailMimeType = mime(thumbnail);
+
             final bytes = await file.readAsBytes();
 
             await dioUpload.put(
@@ -576,6 +593,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       await threadRepository.putThreadWithId(id: threadId, model: model);
 
       init();
+      DialogWidgets.showToast('수정이 완료되었습니다!');
 
       return model;
     } catch (e) {

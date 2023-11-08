@@ -95,6 +95,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
         titleController = TextEditingController(
           text: widget.title,
         );
+        ref.read(threadCreateProvider.notifier).updateTitle(widget.title);
         contentsController = TextEditingController();
 
         setState(() {});
@@ -179,75 +180,6 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
       ...linkUrls,
     ];
 
-    if (state.isUploading && state.totalCount > 0) {
-      return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
-        body: SizedBox(
-          height: 100.h,
-          width: 100.w,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Stack(
-                  children: [
-                    SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: CircularProgressIndicator(
-                        color: POINT_COLOR,
-                        backgroundColor: Colors.transparent,
-                        value: (state.doneCount) / state.totalCount,
-                        strokeWidth: 15,
-                        strokeCap: StrokeCap.round,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: Center(
-                        child: Text(
-                          '${(state.doneCount / state.totalCount * 100).toInt()}%',
-                          style: h4Headline.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'UPLOADING',
-                      style: h4Headline.copyWith(
-                        color: Colors.white,
-                        height: 1,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    LoadingAnimationWidget.staggeredDotsWave(
-                      color: Colors.white,
-                      size: 20,
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
@@ -262,6 +194,42 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
             child: Icon(Icons.close_sharp),
           ),
         ),
+        bottom: state.isUploading && state.totalCount > 0
+            ? PreferredSize(
+                preferredSize: Size(100.w, 30),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  child: Row(
+                    children: [
+                      Text(
+                        'UPLOADING',
+                        style: h6Headline.copyWith(
+                          color: Colors.white,
+                          height: 1,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      LoadingAnimationWidget.dotsTriangle(
+                        color: Colors.white,
+                        size: 15,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: LinearProgressIndicator(
+                          color: POINT_COLOR,
+                          value: (state.doneCount) / state.totalCount,
+                          backgroundColor: GRAY_COLOR,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            : null,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 18),
@@ -271,13 +239,14 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                   : widget.threadEditModel == null
                       ? () async {
                           try {
-                            await ref
+                            ref
                                 .read(threadCreateProvider.notifier)
                                 .createThread(
                                   widget.user,
                                   widget.trainer,
-                                )
-                                .then((value) => context.pop());
+                                );
+
+                            context.pop();
                           } catch (e) {
                             if (e is UploadException) {
                               if (e.message == 'oversize_file_include_error') {
@@ -364,95 +333,101 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
           )
         ],
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: SizedBox(
-          height: 40,
-          child: Stack(
-            children: [
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      await ref
-                          .read(threadCreateProvider.notifier)
-                          .pickCamera(context);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: SvgPicture.asset('asset/img/icon_camera.svg'),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      if (state.assetsPaths!.length < 10) {
-                        await ref
-                            .read(threadCreateProvider.notifier)
-                            .pickImage(context, 10 - state.assetsPaths!.length)
-                            .then((assets) async {
-                          if (assets != null && assets.isNotEmpty) {
-                            ref
+      floatingActionButton: state.isUploading || state.isLoading
+          ? null
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: SizedBox(
+                height: 40,
+                child: Stack(
+                  children: [
+                    Row(
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            await ref
                                 .read(threadCreateProvider.notifier)
-                                .updateIsLoading(true);
-
-                            for (var asset in assets) {
-                              if (await asset.file != null) {
-                                final file = await asset.file;
-
-                                ref
-                                    .read(threadCreateProvider.notifier)
-                                    .addAssets(file!.path);
-
-                                if (widget.threadEditModel != null) {
+                                .pickCamera(context);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child:
+                                SvgPicture.asset('asset/img/icon_camera.svg'),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            if (state.assetsPaths!.length < 10) {
+                              await ref
+                                  .read(threadCreateProvider.notifier)
+                                  .pickImage(
+                                      context, 10 - state.assetsPaths!.length)
+                                  .then((assets) async {
+                                if (assets != null && assets.isNotEmpty) {
                                   ref
                                       .read(threadCreateProvider.notifier)
-                                      .updateFileCheck('add', 0);
+                                      .updateIsLoading(true);
+
+                                  for (var asset in assets) {
+                                    if (await asset.file != null) {
+                                      final file = await asset.file;
+
+                                      ref
+                                          .read(threadCreateProvider.notifier)
+                                          .addAssets(file!.path);
+
+                                      if (widget.threadEditModel != null) {
+                                        ref
+                                            .read(threadCreateProvider.notifier)
+                                            .updateFileCheck('add', 0);
+                                      }
+
+                                      debugPrint('file.path : ${file.path}');
+                                    }
+                                  }
+
+                                  ref
+                                      .read(threadCreateProvider.notifier)
+                                      .updateIsLoading(false);
+                                } else {
+                                  debugPrint('assets: $assets');
                                 }
-
-                                debugPrint('file.path : ${file.path}');
-                              }
+                              });
+                            } else {
+                              DialogWidgets.showToast(
+                                  '사진 또는 영상은 10개까지만 첨부할수있습니다!');
                             }
-
-                            ref
-                                .read(threadCreateProvider.notifier)
-                                .updateIsLoading(false);
-                          } else {
-                            debugPrint('assets: $assets');
-                          }
-                        });
-                      } else {
-                        DialogWidgets.showToast('사진 또는 영상은 10개까지만 첨부할수있습니다!');
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: SvgPicture.asset('asset/img/icon_picture.svg'),
-                    ),
-                  ),
-                ],
-              ),
-              KeyboardVisibilityBuilder(
-                builder: (p0, isKeyboardVisible) {
-                  if (isKeyboardVisible) {
-                    return Positioned(
-                      right: 10,
-                      top: 0,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          '완료',
-                          style: h6Headline.copyWith(color: Colors.white),
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child:
+                                SvgPicture.asset('asset/img/icon_picture.svg'),
+                          ),
                         ),
-                      ),
-                    );
-                  }
-                  return const SizedBox();
-                },
+                      ],
+                    ),
+                    KeyboardVisibilityBuilder(
+                      builder: (p0, isKeyboardVisible) {
+                        if (isKeyboardVisible) {
+                          return Positioned(
+                            right: 10,
+                            top: 0,
+                            child: TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                '완료',
+                                style: h6Headline.copyWith(color: Colors.white),
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox();
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniStartDocked,
       body: SingleChildScrollView(
@@ -495,19 +470,22 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                 child: InkWell(
                                   splashColor: Colors.transparent,
                                   highlightColor: Colors.transparent,
-                                  onTap: () => Navigator.of(context).push(
-                                    CupertinoPageRoute(
-                                      builder: (context) {
-                                        return ThreadAssetEditScreen(
-                                          pageIndex: index,
-                                          isThreadEdit:
-                                              widget.threadEditModel != null
-                                                  ? true
-                                                  : false,
-                                        );
-                                      },
-                                    ),
-                                  ),
+                                  onTap: () => state.isUploading
+                                      ? null
+                                      : Navigator.of(context).push(
+                                          CupertinoPageRoute(
+                                            builder: (context) {
+                                              return ThreadAssetEditScreen(
+                                                pageIndex: index,
+                                                isThreadEdit:
+                                                    widget.threadEditModel !=
+                                                            null
+                                                        ? true
+                                                        : false,
+                                              );
+                                            },
+                                          ),
+                                        ),
                                   child: type == MediaType.image
                                       ? Hero(
                                           tag: file.path,
@@ -524,33 +502,34 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                 ),
                               ),
                             ),
-                            Positioned(
-                              right: -13,
-                              top: -13,
-                              child: IconButton(
-                                highlightColor: Colors.transparent,
-                                splashColor: Colors.transparent,
-                                onPressed: () {
-                                  ref
-                                      .read(threadCreateProvider.notifier)
-                                      .removeAsset(index);
-
-                                  if (widget.threadEditModel != null) {
+                            if (!state.isUploading)
+                              Positioned(
+                                right: -13,
+                                top: -13,
+                                child: IconButton(
+                                  highlightColor: Colors.transparent,
+                                  splashColor: Colors.transparent,
+                                  onPressed: () {
                                     ref
                                         .read(threadCreateProvider.notifier)
-                                        .updateFileCheck('remove', index);
+                                        .removeAsset(index);
 
-                                    ref
-                                        .read(threadCreateProvider.notifier)
-                                        .removeAssetFromGallery(index);
-                                  }
-                                },
-                                icon: const Icon(
-                                  Icons.cancel,
-                                  color: LIGHT_GRAY_COLOR,
+                                    if (widget.threadEditModel != null) {
+                                      ref
+                                          .read(threadCreateProvider.notifier)
+                                          .updateFileCheck('remove', index);
+
+                                      ref
+                                          .read(threadCreateProvider.notifier)
+                                          .removeAssetFromGallery(index);
+                                    }
+                                  },
+                                  icon: const Icon(
+                                    Icons.cancel,
+                                    color: LIGHT_GRAY_COLOR,
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         );
                       },

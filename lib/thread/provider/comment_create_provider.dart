@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
@@ -23,6 +24,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 final commentCreateProvider = StateNotifierProvider.family<
@@ -148,14 +150,27 @@ class CommentCreateStateNotifier
           } else if (type == MediaType.video) {
             final mimeType = mime(filePath);
 
-            final thumbnail = await MediaUtils.getVideoThumbNail(filePath);
-            final thumbnailMimeType = mime(thumbnail);
-
             final retVideo = await fileRepository.getFileUpload(
               model: FileRequestModel(type: 'video', mimeType: mimeType!),
             );
 
-            final file = File(filePath);
+            await VideoCompress.setLogLevel(0);
+            final mediaInfo = await VideoCompress.compressVideo(
+              filePath,
+              quality: VideoQuality.Res1280x720Quality,
+              includeAudio: true,
+            );
+
+            File file;
+            if (mediaInfo != null && mediaInfo.file != null) {
+              file = mediaInfo.file!;
+            } else {
+              file = File(filePath);
+            }
+
+            final thumbnail = await MediaUtils.getVideoThumbNail(file.path);
+            final thumbnailMimeType = mime(thumbnail);
+
             final bytes = await file.readAsBytes();
 
             await dioUpload.put(
@@ -215,6 +230,8 @@ class CommentCreateStateNotifier
       );
 
       threadListState.updateUserCommentCount(threadId, 1);
+
+      DialogWidgets.showToast('업로드가 완료되었습니다!');
 
       init();
     } catch (e) {
@@ -388,14 +405,27 @@ class CommentCreateStateNotifier
               state.isEditedAssets![index]) {
             final mimeType = mime(filePath);
 
-            final thumbnail = await MediaUtils.getVideoThumbNail(filePath);
-            final thumbnailMimeType = mime(thumbnail);
-
             final retVideo = await fileRepository.getFileUpload(
               model: FileRequestModel(type: 'video', mimeType: mimeType!),
             );
 
-            final file = File(filePath);
+            await VideoCompress.setLogLevel(0);
+            final mediaInfo = await VideoCompress.compressVideo(
+              filePath,
+              quality: VideoQuality.Res1280x720Quality,
+              includeAudio: true,
+            );
+
+            File file;
+            if (mediaInfo != null && mediaInfo.file != null) {
+              file = mediaInfo.file!;
+            } else {
+              file = File(filePath);
+            }
+
+            final thumbnail = await MediaUtils.getVideoThumbNail(file.path);
+            final thumbnailMimeType = mime(thumbnail);
+
             final bytes = await file.readAsBytes();
 
             await dioUpload.put(
@@ -462,6 +492,8 @@ class CommentCreateStateNotifier
         commentId,
         model,
       );
+
+      DialogWidgets.showToast('수정이 완료되었습니다!');
 
       return model;
     } catch (e) {

@@ -12,6 +12,7 @@ import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/component/thread_cell.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/utils/thread_push_update_utils.dart';
@@ -25,6 +26,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ThreadScreen extends ConsumerStatefulWidget {
@@ -154,6 +157,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     final userState = ref.watch(getMeProvider);
     final state = ref.watch(threadProvider);
     final notificationState = ref.watch(notificationHomeProvider);
+    final threadCreateState = ref.watch(threadCreateProvider);
 
     if (state is ThreadListModelLoading) {
       return const Center(
@@ -235,24 +239,67 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
               ),
             ),
           ],
+          bottom: threadCreateState.isUploading &&
+                  threadCreateState.totalCount > 0
+              ? PreferredSize(
+                  preferredSize: Size(100.w, 30),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 28, vertical: 5),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'UPLOADING',
+                          style: h6Headline.copyWith(
+                            color: LIGHT_GRAY_COLOR,
+                            height: 1,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        LoadingAnimationWidget.dotsTriangle(
+                          color: LIGHT_GRAY_COLOR,
+                          size: 15,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: LinearProgressIndicator(
+                            color: POINT_COLOR,
+                            value: (threadCreateState.doneCount) /
+                                threadCreateState.totalCount,
+                            backgroundColor: GRAY_COLOR,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              : null,
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (context) => ThreadCreateScreen(
-                    trainer: user.user.activeTrainers.first,
-                    user: ThreadUser(
-                      id: user.user.id,
-                      gender: user.user.gender,
-                      nickname: user.user.nickname,
-                    )),
+        floatingActionButton: threadCreateState.isUploading
+            ? null
+            : FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (context) => ThreadCreateScreen(
+                          trainer: user.user.activeTrainers.first,
+                          user: ThreadUser(
+                            id: user.user.id,
+                            gender: user.user.gender,
+                            nickname: user.user.nickname,
+                          )),
+                    ),
+                  );
+                },
+                backgroundColor: Colors.transparent,
+                child:
+                    SvgPicture.asset('asset/img/icon_thread_create_button.svg'),
               ),
-            );
-          },
-          backgroundColor: Colors.transparent,
-          child: SvgPicture.asset('asset/img/icon_thread_create_button.svg'),
-        ),
         body: RefreshIndicator(
           backgroundColor: BACKGROUND_COLOR,
           color: POINT_COLOR,

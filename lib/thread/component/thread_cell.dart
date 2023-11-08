@@ -81,6 +81,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
   @override
   Widget build(BuildContext context) {
     final userState = ref.watch(getMeProvider);
+    final threadCreateState = ref.watch(threadCreateProvider);
 
     final userModel = userState as UserModel;
 
@@ -487,7 +488,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
         ),
         if (widget.writerType == 'user' &&
             widget.user.id == userModel.user.id &&
-            widget.threadType == ThreadType.general.name)
+            widget.threadType == ThreadType.general.name &&
+            !threadCreateState.isUploading)
           Positioned(
             top: -15,
             right: 18,
@@ -721,7 +723,7 @@ class RecordTypeThread extends StatelessWidget {
                         ),
                       ],
                     );
-                  }).toList()
+                  })
                 ],
               ),
               const SizedBox(

@@ -25,6 +25,7 @@ import 'package:fitend_member/thread/view/comment_asset_edit_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -192,7 +193,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                     itemBuilder: (context, index) {
                       if (index != 0 && index == model.comments!.length) {
                         return const SizedBox(
-                          height: 150,
+                          height: 300,
                         );
                       }
 

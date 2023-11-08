@@ -66,6 +66,8 @@ class _MediaPageScreenState extends State<MediaPageScreen> {
       ),
       extendBodyBehindAppBar: true,
       body: SafeArea(
+        top: false,
+        bottom: false,
         child: SizedBox(
           width: 100.w,
           height: 100.h,
@@ -84,6 +86,11 @@ class _MediaPageScreenState extends State<MediaPageScreen> {
                         _transController.value = Matrix4.identity();
                       }
                     },
+                    onVerticalDragEnd: (details) {
+                      if (details.velocity.pixelsPerSecond.dy > 1) {
+                        context.pop();
+                      }
+                    },
                     child: InteractiveViewer(
                       transformationController: _transController,
                       minScale: 0.5,
@@ -96,8 +103,25 @@ class _MediaPageScreenState extends State<MediaPageScreen> {
                   ),
                 );
               } else {
-                return NetworkVideoPlayer(
-                  video: widget.gallery[index],
+                return GestureDetector(
+                  onVerticalDragEnd: (details) {
+                    if (details.velocity.pixelsPerSecond.dy > 1) {
+                      context.pop();
+                    }
+                  },
+                  onDoubleTap: () {
+                    if (_transController.value != Matrix4.identity()) {
+                      _transController.value = Matrix4.identity();
+                    }
+                  },
+                  child: InteractiveViewer(
+                    transformationController: _transController,
+                    minScale: 0.5,
+                    maxScale: 10.0,
+                    child: NetworkVideoPlayer(
+                      video: widget.gallery[index],
+                    ),
+                  ),
                 );
               }
             },

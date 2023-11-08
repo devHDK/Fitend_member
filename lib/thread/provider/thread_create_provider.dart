@@ -231,11 +231,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
 
               if (mediaInfo != null) {
                 final compressFile = File(mediaInfo.path!);
-
-                if (await compressFile.exists()) {
-                  await compressFile.delete();
-                  print('압축파일 삭제');
-                }
+                if (await compressFile.exists()) await compressFile.delete();
               }
             } catch (e) {
               debugPrint('video upload error ===> $e');
@@ -574,6 +570,11 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
                 url: retVideo.path,
                 thumbnail: retThumbnail.path,
               );
+            }
+
+            if (mediaInfo != null) {
+              final compressFile = File(mediaInfo.path!);
+              if (await compressFile.exists()) await compressFile.delete();
             }
           }
 

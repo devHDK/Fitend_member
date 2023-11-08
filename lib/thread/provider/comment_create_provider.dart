@@ -208,6 +208,11 @@ class CommentCreateStateNotifier
                 thumbnail: retThumbnail.path,
               ),
             );
+
+            if (mediaInfo != null) {
+              final compressFile = File(mediaInfo.path!);
+              if (await compressFile.exists()) await compressFile.delete();
+            }
           }
 
           final tempState1 = state.copyWith();
@@ -470,6 +475,11 @@ class CommentCreateStateNotifier
                 url: retVideo.path,
                 thumbnail: retThumbnail.path,
               );
+            }
+
+            if (mediaInfo != null) {
+              final compressFile = File(mediaInfo.path!);
+              if (await compressFile.exists()) await compressFile.delete();
             }
           }
 

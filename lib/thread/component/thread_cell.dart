@@ -121,7 +121,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
       onMatch: (m) {
         contentTextSpans.add(TextSpan(
           text: '${m.group(0)} ',
-          style: const TextStyle(color: Colors.blue),
+          style: s1SubTitle.copyWith(color: Colors.blue),
           recognizer: TapAndPanGestureRecognizer()
             ..onTapDown = (detail) => DataUtils.launchURL('${m.group(0)}'),
         ));
@@ -134,7 +134,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
             contentTextSpans.add(
               TextSpan(
                 text: '$part ',
-                style: s2SubTitle.copyWith(
+                style: s1SubTitle.copyWith(
                   color: Colors.white,
                 ),
               ),
@@ -143,7 +143,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
             contentTextSpans.add(
               TextSpan(
                 text: '$part ',
-                style: s2SubTitle.copyWith(
+                style: s1SubTitle.copyWith(
                   color: Colors.white,
                 ),
               ),
@@ -170,17 +170,16 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
             : 0;
 
     double recordHeight = widget.workoutInfo != null ? 195 : 0;
-    print(
-        'heidht : ${_calculateLinesHeight(widget.content, s1SubTitle, 100.w - 130).toInt()}');
+
     return Stack(
       children: [
         Container(
           margin: const EdgeInsets.only(left: 28),
-          height: 24 +
+          height: 26 +
               (widget.title != null ? 25 : 0) +
               _calculateLinesHeight(widget.content, s1SubTitle, 100.w - 130)
                       .toInt() *
-                  20 +
+                  22 +
               10 +
               20 + //padding
               28 + //댓글 높이
@@ -471,9 +470,11 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
           Positioned(
             top: 24 +
                 (widget.title != null ? 25 : 0) +
-                (_calculateLinesHeight(widget.content, s1SubTitle, 100.w - 130)
+                ((_calculateLinesHeight(
+                                widget.content, s1SubTitle, 100.w - 130) -
+                            1)
                         .toInt() *
-                    20),
+                    23),
             child: SizedBox(
               height: galleryHeight.toDouble() - 20,
               width: 100.w,
@@ -651,7 +652,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
       textDirection: TextDirection.ltr,
     )..layout(minWidth: 0, maxWidth: width);
 
-    return textPainter.computeLineMetrics().length;
+    return textPainter.computeLineMetrics().length + 1;
   }
 }
 

@@ -92,16 +92,18 @@ class _CommentCellState extends ConsumerState<CommentCell> {
     widget.content.splitMapJoin(
       urlRegExp,
       onMatch: (m) {
-        contentTextSpans.add(TextSpan(
-          text: '${m.group(0)} ',
-          style: const TextStyle(color: Colors.blue),
-          recognizer: TapAndPanGestureRecognizer()
-            ..onTapDown = (detail) => DataUtils.launchURL(
-                  m.group(0)!.contains('https://')
-                      ? '${m.group(0)} '
-                      : 'https://${m.group(0)}',
-                ),
-        ));
+        contentTextSpans.add(
+          TextSpan(
+            text: '${m.group(0)} ',
+            style: s2SubTitle.copyWith(color: Colors.blue),
+            recognizer: TapAndPanGestureRecognizer()
+              ..onTapDown = (detail) => DataUtils.launchURL(
+                    m.group(0)!.contains('https://')
+                        ? '${m.group(0)} '
+                        : 'https://${m.group(0)}',
+                  ),
+          ),
+        );
         return m.group(0)!;
       },
       onNonMatch: (n) {

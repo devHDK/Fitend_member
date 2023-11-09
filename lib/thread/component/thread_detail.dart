@@ -538,7 +538,8 @@ class _MediaListView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: SizedBox(
         height: 250,
-        child: ListView.builder(
+        child: ListView.separated(
+          separatorBuilder: (context, index) => const SizedBox(width: 10),
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
             int galleryLenth = 0;
@@ -548,17 +549,10 @@ class _MediaListView extends StatelessWidget {
             }
 
             if (index >= galleryLenth) {
-              return Row(
-                children: [
-                  LinkPreview(
-                    width: 100.w - 56,
-                    height: 250,
-                    url: linkUrls[index - galleryLenth],
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                ],
+              return LinkPreview(
+                width: 100.w - 56,
+                height: 250,
+                url: linkUrls[index - galleryLenth],
               );
             }
 
@@ -577,22 +571,17 @@ class _MediaListView extends StatelessWidget {
                   child: Hero(
                     tag: model.gallery![index].url,
                     child: model.gallery![index].type == 'video'
-                        ? Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: SizedBox(
-                                  height: 250,
-                                  child: NetworkVideoPlayerMini(
-                                    video: model.gallery![index],
-                                    userOriginRatio: true,
-                                  ),
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              constraints: BoxConstraints(maxWidth: 100.w - 56),
+                              child: IntrinsicWidth(
+                                child: NetworkVideoPlayerMini(
+                                  video: model.gallery![index],
+                                  userOriginRatio: true,
                                 ),
                               ),
-                              const SizedBox(
-                                width: 10,
-                              )
-                            ],
+                            ),
                           )
                         : PreviewImageNetwork(
                             url: '$s3Url${model.gallery![index].url}',

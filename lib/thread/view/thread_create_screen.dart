@@ -443,7 +443,10 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                         color: POINT_COLOR,
                       ),
                     )
-                  : ListView.builder(
+                  : ListView.separated(
+                      separatorBuilder: (context, index) => const SizedBox(
+                        width: 10,
+                      ),
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         if (index >= state.assetsPaths!.length) {

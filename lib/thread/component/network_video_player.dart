@@ -16,10 +16,10 @@ class NetworkVideoPlayer extends ConsumerStatefulWidget {
   final GalleryModel video;
 
   @override
-  ConsumerState<NetworkVideoPlayer> createState() => _EditVideoPlayerState();
+  ConsumerState<NetworkVideoPlayer> createState() => _NetworkVideoPlayerState();
 }
 
-class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
+class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
   VideoPlayerController? _videoController;
 
   Duration currentPosition = const Duration();
@@ -96,7 +96,7 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    if (_videoController == null || _videoController!.value.isBuffering) {
+    if (_videoController == null) {
       return Container(
         color: BACKGROUND_COLOR,
         child: const Center(

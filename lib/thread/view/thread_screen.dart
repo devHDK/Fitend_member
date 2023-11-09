@@ -329,7 +329,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                   ),
                 )
               : ScrollablePositionedList.builder(
-                  padding: const EdgeInsets.only(left: 28),
+                  // padding: const EdgeInsets.only(left: 28),
                   itemScrollController: itemScrollController,
                   initialScrollIndex: state.scrollIndex ?? 0,
                   itemPositionsListener: itemPositionsListener,
@@ -365,7 +365,8 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                                     .toUtc()
                                     .toLocal()))
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 28),
                             child: Text(
                               DataUtils.getDateFromDateTime(
                                           DateTime.parse(model.createdAt)

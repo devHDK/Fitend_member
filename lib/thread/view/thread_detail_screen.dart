@@ -473,7 +473,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                           itemCount: tempList.length,
                         ),
                 ),
-              commentState.isUploading
+              commentState.isUploading && commentState.totalCount > 0
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Row(

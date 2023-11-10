@@ -390,7 +390,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                               style: h4Headline.copyWith(color: Colors.white),
                             ),
                           ),
-                        InkWell(
+                        GestureDetector(
                           onTap: () =>
                               Navigator.of(context).push(CupertinoPageRoute(
                             builder: (context) => ThreadDetailScreen(

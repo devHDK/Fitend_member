@@ -266,7 +266,9 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         ),
       );
       init();
-      DialogWidgets.showToast('업로드가 완료되었습니다!');
+      if (state.assetsPaths!.isNotEmpty) {
+        DialogWidgets.showToast('업로드가 완료되었습니다!');
+      }
     } catch (e) {
       final tstate = state.copyWith();
       tstate.isUploading = false;

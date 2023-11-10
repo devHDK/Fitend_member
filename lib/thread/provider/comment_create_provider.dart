@@ -237,7 +237,10 @@ class CommentCreateStateNotifier
       threadListState.updateUserCommentCount(threadId, 1);
 
       init();
-      DialogWidgets.showToast('업로드가 완료되었습니다!');
+
+      if (state.assetsPaths.isNotEmpty) {
+        DialogWidgets.showToast('업로드가 완료되었습니다!');
+      }
     } catch (e) {
       debugPrint('comment create error : $e');
       final tstate = state.copyWith();
@@ -502,9 +505,9 @@ class CommentCreateStateNotifier
         model,
       );
 
-      DialogWidgets.showToast('수정이 완료되었습니다!');
-
       init();
+
+      DialogWidgets.showToast('수정이 완료되었습니다!');
 
       return model;
     } catch (e) {

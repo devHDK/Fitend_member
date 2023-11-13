@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/thread/view/video_editor_screen.dart';
 import 'package:flutter/material.dart';
@@ -172,6 +173,8 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
             children: [
               IconButton(
                 onPressed: () {
+                  FirebaseAnalytics.instance
+                      .logEvent(name: 'click_video_crop_button');
                   _videoController!.pause();
 
                   Navigator.of(context).push(

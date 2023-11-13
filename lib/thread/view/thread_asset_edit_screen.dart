@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/thread/component/edit_video_player.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
@@ -171,6 +172,9 @@ class _AssetEditScreenState extends ConsumerState<ThreadAssetEditScreen> {
             children: [
               IconButton(
                 onPressed: () async {
+                  FirebaseAnalytics.instance
+                      .logEvent(name: 'click_photo_crop_button');
+
                   final croppedFile = await ImageCropper().cropImage(
                     sourcePath: state.assetsPaths![fileIndex],
                     compressFormat: ImageCompressFormat.jpg,

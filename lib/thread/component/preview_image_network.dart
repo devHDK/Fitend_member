@@ -33,21 +33,22 @@ class _PreviewImageNetworkState extends State<PreviewImageNetwork> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SizedBox(
-          width: widget.width!.toDouble(),
-          height: widget.height!.toDouble(),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: CustomNetworkImage(
-              key: ValueKey('$s3Url${widget.url}'),
-              imageUrl: widget.url,
-              boxFit: widget.boxFit!,
+        Row(
+          children: [
+            SizedBox(
+              width: widget.width!.toDouble(),
+              height: widget.height!.toDouble(),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CustomNetworkImage(
+                  key: ValueKey('$s3Url${widget.url}'),
+                  imageUrl: widget.url,
+                  boxFit: widget.boxFit!,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-        const SizedBox(
-          width: 10,
-        )
       ],
     );
   }

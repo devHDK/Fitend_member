@@ -121,7 +121,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
       onMatch: (m) {
         contentTextSpans.add(TextSpan(
           text: '${m.group(0)} ',
-          style: const TextStyle(color: Colors.blue),
+          style: s1SubTitle.copyWith(color: Colors.blue),
           recognizer: TapAndPanGestureRecognizer()
             ..onTapDown = (detail) => DataUtils.launchURL('${m.group(0)}'),
         ));
@@ -134,7 +134,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
             contentTextSpans.add(
               TextSpan(
                 text: '$part ',
-                style: s2SubTitle.copyWith(
+                style: s1SubTitle.copyWith(
                   color: Colors.white,
                 ),
               ),
@@ -143,7 +143,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
             contentTextSpans.add(
               TextSpan(
                 text: '$part ',
-                style: s2SubTitle.copyWith(
+                style: s1SubTitle.copyWith(
                   color: Colors.white,
                 ),
               ),
@@ -173,15 +173,16 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
     return Stack(
       children: [
-        SizedBox(
-          height: 16 +
-              (widget.title != null ? 24 : 0) +
-              _calculateLinesHeight(widget.content, s1SubTitle, 100.w - 120)
+        Container(
+          margin: const EdgeInsets.only(left: 28),
+          height: 26 +
+              (widget.title != null ? 25 : 0) +
+              _calculateLinesHeight(widget.content, s1SubTitle, 100.w - 130)
                       .toInt() *
-                  21 +
+                  22 +
               10 +
               20 + //padding
-              24 +
+              28 + //댓글 높이
               emojiHeight +
               galleryHeight.toDouble() +
               linkHeight +
@@ -468,15 +469,20 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
         if (mediaCount > 1)
           Positioned(
             top: 24 +
-                (widget.title != null ? 24 : 0) +
-                _calculateLinesHeight(widget.content, s1SubTitle, 100.w - 120)
+                (widget.title != null ? 25 : 0) +
+                ((_calculateLinesHeight(
+                                widget.content, s1SubTitle, 100.w - 130) -
+                            1)
                         .toInt() *
-                    21,
+                    23),
             child: SizedBox(
               height: galleryHeight.toDouble() - 20,
-              width: 100.w - 28,
-              child: ListView.builder(
+              width: 100.w,
+              child: ListView.separated(
                 scrollDirection: Axis.horizontal,
+                separatorBuilder: (context, index) => const SizedBox(
+                  width: 10,
+                ),
                 itemBuilder: (context, index) {
                   int galleryLenth = 0;
 
@@ -486,22 +492,15 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
 
                   if (index == 0) {
                     return const SizedBox(
-                      width: 45,
+                      width: 60,
                     );
                   }
 
                   if (index >= galleryLenth + 1) {
-                    return Row(
-                      children: [
-                        LinkPreview(
-                          url: linkUrls[index - (galleryLenth + 1)],
-                          height: galleryHeight - 20,
-                          width: 100.w - 110,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                      ],
+                    return LinkPreview(
+                      url: linkUrls[index - (galleryLenth + 1)],
+                      height: galleryHeight - 20,
+                      width: 100.w - 110,
                     );
                   }
 
@@ -518,22 +517,22 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                           ),
                         ),
                         child: widget.gallery![index - 1].type == 'video'
-                            ? Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: SizedBox(
-                                      height: galleryHeight.toDouble() - 20,
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: SizedBox(
+                                  height: galleryHeight.toDouble() - 20,
+                                  child: Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth: 95.w,
+                                    ),
+                                    child: IntrinsicWidth(
                                       child: NetworkVideoPlayerMini(
                                         video: widget.gallery![index - 1],
                                         userOriginRatio: true,
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: 10,
-                                  )
-                                ],
+                                ),
                               )
                             : PreviewImageNetwork(
                                 url: '$s3Url${widget.gallery![index - 1].url}',
@@ -653,7 +652,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
       textDirection: TextDirection.ltr,
     )..layout(minWidth: 0, maxWidth: width);
 
-    return textPainter.computeLineMetrics().length;
+    return textPainter.computeLineMetrics().length + 1;
   }
 }
 

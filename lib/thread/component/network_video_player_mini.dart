@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fitend_member/common/component/custom_network_image.dart';
+import 'package:fitend_member/common/const/colors.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -8,6 +9,7 @@ import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -120,7 +122,7 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
         onVisibilityChanged: (info) {
           var visiblePercentage = info.visibleFraction * 100;
 
-          if (visiblePercentage > 60) {
+          if (visiblePercentage > 80) {
             videoInit().then((value) {
               setState(() {
                 videoDisposed = false;
@@ -129,11 +131,38 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
           }
         },
         child: Container(
-          // width: 100.w - 110,
           color: Colors.black26,
-          child: CustomNetworkImage(
-            imageUrl: '$s3Url${widget.video.thumbnail}',
-            boxFit: BoxFit.fitWidth,
+          child: Center(
+            child: Stack(
+              children: [
+                CustomNetworkImage(
+                  imageUrl: '$s3Url${widget.video.thumbnail}',
+                  boxFit: BoxFit.fitWidth,
+                ),
+                Positioned(
+                  bottom: 5,
+                  left: 5,
+                  child: Container(
+                    width: 40,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.black38,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.videocam,
+                          size: 15,
+                          color: LIGHT_GRAY_COLOR,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       );
@@ -143,7 +172,7 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
         onVisibilityChanged: (info) {
           var visiblePercentage = info.visibleFraction * 100;
 
-          if (visiblePercentage < 20) {
+          if (visiblePercentage < 80) {
             _videoController?.pause();
             _videoController?.dispose();
             _videoController = null;
@@ -152,12 +181,16 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
             });
           }
 
-          if (visiblePercentage > 60) {
+          if (visiblePercentage > 80) {
             _videoController?.play();
           }
         },
         child: Container(
           color: Colors.black26,
+          // constraints: BoxConstraints(
+          //   maxWidth: 100.w,
+          //   minWidth: 10,
+          // ),
           child: Center(
             child: AspectRatio(
               aspectRatio: widget.userOriginRatio! && _videoController != null

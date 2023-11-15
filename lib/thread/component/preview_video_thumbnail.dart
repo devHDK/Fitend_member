@@ -52,73 +52,66 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Stack(
       children: [
-        Stack(
-          children: [
-            Container(
-              decoration: widget.isBorder!
-                  ? BoxDecoration(
-                      border: Border.all(
-                        color: POINT_COLOR,
-                        width: 2,
-                      ),
-                    )
-                  : null,
-              width: widget.width!.toDouble(),
-              height: widget.width!.toDouble() * 0.8,
-              child: ClipRRect(
-                borderRadius: widget.isCircle!
-                    ? BorderRadius.circular(12)
-                    : BorderRadius.circular(0),
-                child: thumbNail != null
-                    ? Image.file(
-                        thumbNail!,
-                        fit: BoxFit.cover,
-                      )
-                    : const Center(
-                        child: CircularProgressIndicator(
-                          color: POINT_COLOR,
-                        ),
-                      ),
-              ),
-            ),
-            Positioned(
-              left: 5,
-              bottom: 1,
-              child: Icon(
-                Icons.videocam,
-                color: Colors.black.withOpacity(0.6),
-                size: 22,
-              ),
-            ),
-            Positioned(
-              right: 8,
-              bottom: 5,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(1),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(1),
-                  child: Row(
-                    children: [
-                      Text(
-                        '${fileSize}MB',
-                        style: c2Caption.copyWith(
-                          color: fileSize < 400 ? Colors.white : Colors.red,
-                        ),
-                      ),
-                    ],
+        Container(
+          decoration: widget.isBorder!
+              ? BoxDecoration(
+                  border: Border.all(
+                    color: POINT_COLOR,
+                    width: 2,
                   ),
-                ),
-              ),
-            )
-          ],
+                )
+              : null,
+          width: widget.width!.toDouble(),
+          height: widget.width!.toDouble() * 0.8,
+          child: ClipRRect(
+            borderRadius: widget.isCircle!
+                ? BorderRadius.circular(12)
+                : BorderRadius.circular(0),
+            child: thumbNail != null
+                ? Image.file(
+                    thumbNail!,
+                    fit: BoxFit.cover,
+                  )
+                : const Center(
+                    child: CircularProgressIndicator(
+                      color: POINT_COLOR,
+                    ),
+                  ),
+          ),
         ),
-        const SizedBox(
-          width: 10,
+        Positioned(
+          left: 5,
+          bottom: 1,
+          child: Icon(
+            Icons.videocam,
+            color: Colors.black.withOpacity(0.6),
+            size: 22,
+          ),
+        ),
+        Positioned(
+          right: 8,
+          bottom: 5,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(1),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(1),
+              child: Row(
+                children: [
+                  Text(
+                    '${fileSize}MB',
+                    style: c2Caption.copyWith(
+                      color: fileSize < 400 ? Colors.white : Colors.red,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         )
       ],
     );

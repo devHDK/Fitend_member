@@ -3,7 +3,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -202,7 +204,7 @@ void showFlutterNotification(RemoteMessage message) async {
   }
 }
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   F.appFlavor = Flavor.production;
 
@@ -228,6 +230,19 @@ void main() async {
   // FirebaseMessaging.onMessage.listen(showFlutterNotification);
   // background 수신처리
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  //firebase analystic 설정
+  await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+
+  //FirebaseCrashlytics 설정
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
 
   //hive 세팅
   final appDocumentDirectory = await getApplicationDocumentsDirectory();

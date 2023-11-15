@@ -376,21 +376,17 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                             color: POINT_COLOR,
                           ),
                         )
-                      : ListView.builder(
+                      : ListView.separated(
                           scrollDirection: Axis.horizontal,
+                          separatorBuilder: (context, index) => const SizedBox(
+                            width: 10,
+                          ),
                           itemBuilder: (context, index) {
                             if (index >= commentState.assetsPaths.length) {
-                              return Row(
-                                children: [
-                                  LinkPreview(
-                                    url: tempList[index],
-                                    width: 100,
-                                    height: 80,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                ],
+                              return LinkPreview(
+                                url: tempList[index],
+                                width: 100,
+                                height: 80,
                               );
                             }
 
@@ -477,7 +473,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                           itemCount: tempList.length,
                         ),
                 ),
-              commentState.isUploading
+              commentState.isUploading && commentState.totalCount > 0
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Row(

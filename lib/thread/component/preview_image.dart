@@ -32,33 +32,26 @@ class _PreviewImageState extends State<PreviewImage> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: widget.width!.toDouble(),
-          height: widget.width!.toDouble() * 0.8,
-          decoration: widget.isBorder!
-              ? BoxDecoration(
-                  border: Border.all(
-                    color: POINT_COLOR,
-                    width: 2,
-                  ),
-                )
-              : null,
-          child: ClipRRect(
-            borderRadius: widget.isCircle!
-                ? BorderRadius.circular(12)
-                : BorderRadius.circular(0),
-            child: Image.file(
-              widget.file,
-              fit: BoxFit.cover,
-            ),
-          ),
+    return Container(
+      width: widget.width!.toDouble(),
+      height: widget.width!.toDouble() * 0.8,
+      decoration: widget.isBorder!
+          ? BoxDecoration(
+              border: Border.all(
+                color: POINT_COLOR,
+                width: 2,
+              ),
+            )
+          : null,
+      child: ClipRRect(
+        borderRadius: widget.isCircle!
+            ? BorderRadius.circular(12)
+            : BorderRadius.circular(0),
+        child: Image.file(
+          widget.file,
+          fit: BoxFit.cover,
         ),
-        const SizedBox(
-          width: 10,
-        )
-      ],
+      ),
     );
   }
 }

@@ -451,6 +451,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                                   context,
                                   value,
                                   workoutModel,
+                                  workoutProcessModel.isQuitting,
                                 );
                               }
                             } else {
@@ -484,6 +485,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
     BuildContext context,
     int index,
     WorkoutModel model,
+    bool isQuitting,
   ) {
     return showDialog(
       barrierDismissible: false,
@@ -501,40 +503,42 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
 
             context.pop();
           },
-          cancelOnTap: () async {
-            //완료!!!
-            try {
-              await ref
-                  .read(
-                      workoutProcessProvider(widget.workoutScheduleId).notifier)
-                  .quitWorkout(
-                    title: model.workoutTitle,
-                    subTitle: model.workoutSubTitle,
-                    trainerId: model.trainerId,
-                  )
-                  .then((value) {
-                final id = widget.workoutScheduleId;
-                final date = model.startDate;
+          cancelOnTap: isQuitting
+              ? () {}
+              : () async {
+                  //완료!!!
+                  try {
+                    await ref
+                        .read(workoutProcessProvider(widget.workoutScheduleId)
+                            .notifier)
+                        .quitWorkout(
+                          title: model.workoutTitle,
+                          subTitle: model.workoutSubTitle,
+                          trainerId: model.trainerId,
+                        )
+                        .then((value) {
+                      final id = widget.workoutScheduleId;
+                      final date = model.startDate;
 
-                context.pop();
-                context.pop();
+                      context.pop();
+                      context.pop();
 
-                GoRouter.of(context).goNamed(
-                  WorkoutFeedbackScreen.routeName,
-                  pathParameters: {
-                    'workoutScheduleId': id.toString(),
-                  },
-                  extra: model.exercises,
-                  queryParameters: {
-                    'startDate':
-                        DateFormat('yyyy-MM-dd').format(DateTime.parse(date)),
-                  },
-                );
-              });
-            } on DioException catch (e) {
-              debugPrint('$e');
-            }
-          },
+                      GoRouter.of(context).goNamed(
+                        WorkoutFeedbackScreen.routeName,
+                        pathParameters: {
+                          'workoutScheduleId': id.toString(),
+                        },
+                        extra: model.exercises,
+                        queryParameters: {
+                          'startDate': DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(date)),
+                        },
+                      );
+                    });
+                  } on DioException catch (e) {
+                    debugPrint('$e');
+                  }
+                },
         );
       },
     );

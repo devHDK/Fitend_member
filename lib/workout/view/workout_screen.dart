@@ -391,42 +391,45 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                           confirmOnTap: () {
                             context.pop();
                           },
-                          cancelOnTap: () async {
-                            try {
-                              await ref
-                                  .read(workoutProcessProvider(
-                                          widget.workoutScheduleId)
-                                      .notifier)
-                                  .quitWorkout(
-                                    title: widget.workout.workoutTitle,
-                                    subTitle: widget.workout.workoutSubTitle,
-                                    trainerId: widget.workout.trainerId,
-                                  )
-                                  .then((value) {
-                                final id = widget.workoutScheduleId;
-                                final date = widget.workout.startDate;
+                          cancelOnTap: model.isQuitting
+                              ? () {}
+                              : () async {
+                                  try {
+                                    await ref
+                                        .read(workoutProcessProvider(
+                                                widget.workoutScheduleId)
+                                            .notifier)
+                                        .quitWorkout(
+                                          title: widget.workout.workoutTitle,
+                                          subTitle:
+                                              widget.workout.workoutSubTitle,
+                                          trainerId: widget.workout.trainerId,
+                                        )
+                                        .then((value) {
+                                      final id = widget.workoutScheduleId;
+                                      final date = widget.workout.startDate;
 
-                                context.pop();
-                                context.pop();
+                                      context.pop();
+                                      context.pop();
 
-                                GoRouter.of(context).pushNamed(
-                                  WorkoutFeedbackScreen.routeName,
-                                  pathParameters: {
-                                    'workoutScheduleId': id.toString(),
-                                  },
-                                  extra: widget.exercises,
-                                  queryParameters: {
-                                    'startDate': DateFormat('yyyy-MM-dd')
-                                        .format(DateTime.parse(date)),
-                                  },
-                                );
-                              });
-                            } on DioException catch (e) {
-                              debugPrint('$e');
-                            }
+                                      GoRouter.of(context).pushNamed(
+                                        WorkoutFeedbackScreen.routeName,
+                                        pathParameters: {
+                                          'workoutScheduleId': id.toString(),
+                                        },
+                                        extra: widget.exercises,
+                                        queryParameters: {
+                                          'startDate': DateFormat('yyyy-MM-dd')
+                                              .format(DateTime.parse(date)),
+                                        },
+                                      );
+                                    });
+                                  } on DioException catch (e) {
+                                    debugPrint('$e');
+                                  }
 
-                            //완료!!!!!!!!!
-                          },
+                                  //완료!!!!!!!!!
+                                },
                         );
                       },
                     );
@@ -1026,10 +1029,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             );
           });
         } else {
-          _showUncompleteExerciseDialog(
-            context,
-            value,
-          );
+          _showUncompleteExerciseDialog(context, value, model.isQuitting);
         }
       }
     });
@@ -1040,6 +1040,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   Future<dynamic> _showUncompleteExerciseDialog(
     BuildContext context,
     int index,
+    bool isQuitting,
   ) {
     return showDialog(
       barrierDismissible: false,
@@ -1057,40 +1058,42 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
             context.pop();
           },
-          cancelOnTap: () async {
-            //완료!!!
-            try {
-              await ref
-                  .read(
-                      workoutProcessProvider(widget.workoutScheduleId).notifier)
-                  .quitWorkout(
-                    title: widget.workout.workoutTitle,
-                    subTitle: widget.workout.workoutSubTitle,
-                    trainerId: widget.workout.trainerId,
-                  )
-                  .then((value) {
-                final id = widget.workoutScheduleId;
-                final date = widget.workout.startDate;
+          cancelOnTap: isQuitting
+              ? () {}
+              : () async {
+                  //완료!!!
+                  try {
+                    await ref
+                        .read(workoutProcessProvider(widget.workoutScheduleId)
+                            .notifier)
+                        .quitWorkout(
+                          title: widget.workout.workoutTitle,
+                          subTitle: widget.workout.workoutSubTitle,
+                          trainerId: widget.workout.trainerId,
+                        )
+                        .then((value) {
+                      final id = widget.workoutScheduleId;
+                      final date = widget.workout.startDate;
 
-                context.pop();
-                context.pop();
+                      context.pop();
+                      context.pop();
 
-                GoRouter.of(context).goNamed(
-                  WorkoutFeedbackScreen.routeName,
-                  pathParameters: {
-                    'workoutScheduleId': id.toString(),
-                  },
-                  extra: widget.exercises,
-                  queryParameters: {
-                    'startDate':
-                        DateFormat('yyyy-MM-dd').format(DateTime.parse(date)),
-                  },
-                );
-              });
-            } on DioException catch (e) {
-              debugPrint('$e');
-            }
-          },
+                      GoRouter.of(context).goNamed(
+                        WorkoutFeedbackScreen.routeName,
+                        pathParameters: {
+                          'workoutScheduleId': id.toString(),
+                        },
+                        extra: widget.exercises,
+                        queryParameters: {
+                          'startDate': DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(date)),
+                        },
+                      );
+                    });
+                  } on DioException catch (e) {
+                    debugPrint('$e');
+                  }
+                },
         );
       },
     );

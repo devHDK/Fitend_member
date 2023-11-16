@@ -38,7 +38,7 @@ class WorkoutBanner extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('asset/img/schedule_image_pt.png'),
+          image: AssetImage(IMGConstants.scheduleOnline),
           fit: BoxFit.fill,
           opacity: 0.4,
         ),

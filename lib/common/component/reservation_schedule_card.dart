@@ -80,7 +80,7 @@ class _ScheduleCardState extends ConsumerState<ReservationScheduleCard> {
         color: Colors.transparent,
         image: widget.selected
             ? const DecorationImage(
-                image: AssetImage("asset/img/schedule_image_offline_pt.png"),
+                image: AssetImage(IMGConstants.scheduleOffline),
                 fit: BoxFit.fill,
                 opacity: 0.3,
               )
@@ -186,7 +186,6 @@ class _ScheduleCardState extends ConsumerState<ReservationScheduleCard> {
                     width: 24,
                   )
                 else if ((widget.isComplete!) || widget.isNoshow!)
-                  // Image.asset('asset/img/round_success.png'),
                   SvgPicture.asset(SVGConstants.checkComplete)
                 else if (!widget.isComplete!) //스케줄이 미완료
                   SvgPicture.asset(

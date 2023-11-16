@@ -86,7 +86,7 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
         color: Colors.transparent,
         image: widget.selected
             ? const DecorationImage(
-                image: AssetImage("asset/img/schedule_image_pt.png"),
+                image: AssetImage(IMGConstants.scheduleOnline),
                 fit: BoxFit.fill,
                 opacity: 0.3)
             : null,
@@ -193,7 +193,6 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                 else if (!widget.isComplete!) //오늘, 오늘 이후 스케줄이 미완료
                   SvgPicture.asset(SVGConstants.checkEmpty)
                 else if (widget.isComplete!)
-                  // Image.asset('asset/img/round_success.png'),
                   SvgPicture.asset(SVGConstants.checkComplete) // 스케줄이 완료 일때
               ],
             ),

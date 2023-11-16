@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
@@ -15,7 +16,7 @@ class SplashScreen extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-            image: AssetImage("asset/img/couple-training-together-gym2.png"),
+            image: AssetImage(IMGConstants.splash),
             fit: BoxFit.fill,
             opacity: 0.4),
       ),

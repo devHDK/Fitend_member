@@ -52,3 +52,10 @@ class SVGConstants {
   static const String tunrLine = '${_svgPath}icon_turn_line.svg';
   static const String turnUp = '${_svgPath}icon_turn_up.svg';
 }
+
+class IMGConstants {
+  static const String _imgPath = 'asset/img/';
+  static const String splash = '${_imgPath}splash.png';
+  static const String scheduleOffline = '${_imgPath}schedule_offline.png';
+  static const String scheduleOnline = '${_imgPath}schedule_online.png';
+}

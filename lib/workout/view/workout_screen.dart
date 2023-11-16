@@ -6,7 +6,7 @@ import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/guide_video_player.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -219,7 +219,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     if (state is WorkoutProcessModelLoading) {
       return const Center(
         child: CircularProgressIndicator(
-          color: POINT_COLOR,
+          color: Pallete.point,
         ),
       );
     }
@@ -240,7 +240,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: GRAY_COLOR,
+        backgroundColor: Pallete.gray,
         floatingActionButton: isSwipeUp
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -278,7 +278,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       height: 44,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: DARK_GRAY_COLOR,
+                        color: Pallete.darkGray,
                       ),
                       child: Center(
                         child: threadCreateState.isUploading
@@ -333,7 +333,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       height: 44,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: POINT_COLOR,
+                        color: Pallete.point,
                       ),
                       child: Center(
                         child: model.isQuitting
@@ -451,7 +451,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               child: Text(
                 DataUtils.getTimeStringMinutes(model.totalTime),
                 style: s1SubTitle.copyWith(
-                  color: DARK_GRAY_COLOR,
+                  color: Pallete.darkGray,
                   fontSize: 18,
                   height: 1.1,
                 ),
@@ -551,7 +551,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               width: 44,
                               height: 4,
                               decoration: BoxDecoration(
-                                  color: LIGHT_GRAY_COLOR,
+                                  color: Pallete.lightGray,
                                   borderRadius: BorderRadius.circular(2)),
                             ),
                           ),
@@ -749,7 +749,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             Expanded(
                               child: Container(
                                 height: 1,
-                                color: LIGHT_GRAY_COLOR,
+                                color: Pallete.lightGray,
                               ),
                             ),
                             const SizedBox(
@@ -758,7 +758,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             Text(
                               '${model.modifiedExercises[model.exerciseIndex].setInfo.length} SET',
                               style:
-                                  s1SubTitle.copyWith(color: LIGHT_GRAY_COLOR),
+                                  s1SubTitle.copyWith(color: Pallete.lightGray),
                             ),
                             const SizedBox(
                               width: 3,
@@ -766,7 +766,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             Expanded(
                               child: Container(
                                 height: 1,
-                                color: LIGHT_GRAY_COLOR,
+                                color: Pallete.lightGray,
                               ),
                             ),
                           ],
@@ -851,7 +851,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                           }
                         } else {
                           return Container(
-                            color: LIGHT_GRAY_COLOR.withOpacity(0.15),
+                            color: Pallete.lightGray.withOpacity(0.15),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 28,

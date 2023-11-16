@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/notifications/model/notification_model.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +17,7 @@ class NotificationCell extends StatelessWidget {
     final temp = tempContents.last.replaceAll("|", '∙');
 
     return Container(
-      color: notificationData.isConfirm ? BACKGROUND_COLOR : DARK_GRAY_COLOR,
+      color: notificationData.isConfirm ? Pallete.background : Pallete.darkGray,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Column(
@@ -38,7 +38,7 @@ class NotificationCell extends StatelessWidget {
             Text(
               temp,
               style: s2SubTitle.copyWith(
-                color: LIGHT_GRAY_COLOR,
+                color: Pallete.lightGray,
               ),
             ),
             const SizedBox(

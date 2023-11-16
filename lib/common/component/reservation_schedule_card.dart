@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
@@ -172,7 +172,7 @@ class _ScheduleCardState extends ConsumerState<ReservationScheduleCard> {
                       Text(
                         widget.subTitle != null ? widget.subTitle! : '',
                         style: s2SubTitle.copyWith(
-                          color: LIGHT_GRAY_COLOR,
+                          color: Pallete.lightGray,
                           overflow: TextOverflow.ellipsis,
                         ),
                         maxLines: 1,
@@ -200,7 +200,7 @@ class _ScheduleCardState extends ConsumerState<ReservationScheduleCard> {
                   ),
                   const Divider(
                     height: 1,
-                    color: LIGHT_GRAY_COLOR,
+                    color: Pallete.lightGray,
                   ),
                   SizedBox(
                     width: 100.w,
@@ -217,14 +217,14 @@ class _ScheduleCardState extends ConsumerState<ReservationScheduleCard> {
                       Text(
                         '/ ${widget.totalSession}회',
                         style: s2SubTitle.copyWith(
-                          color: LIGHT_GRAY_COLOR,
+                          color: Pallete.lightGray,
                         ),
                       ),
                       const Expanded(child: SizedBox()),
                       Text(
                         '${DateFormat('yyyy.MM.dd').format(DateTime.parse(widget.ticketStartedAt!))} ~ ${DateFormat('yyyy.MM.dd').format(DateTime.parse(widget.ticketExpiredAt!))} ',
                         style: s2SubTitle.copyWith(
-                          color: LIGHT_GRAY_COLOR,
+                          color: Pallete.lightGray,
                         ),
                       ),
                     ],
@@ -236,7 +236,7 @@ class _ScheduleCardState extends ConsumerState<ReservationScheduleCard> {
                 height: 35,
               ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
           ],

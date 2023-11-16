@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
@@ -36,7 +36,7 @@ class ErrorDialog extends StatelessWidget {
             height: 44,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: POINT_COLOR,
+              color: Pallete.point,
             ),
             child: ElevatedButton(
               onPressed: () {

@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,9 +40,9 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
             children: [
               NumberPicker(
                 haptics: true,
-                textStyle: h1Headline.copyWith(color: GRAY_COLOR),
+                textStyle: h1Headline.copyWith(color: Pallete.gray),
                 selectedTextStyle: h1Headline.copyWith(
-                  color: POINT_COLOR,
+                  color: Pallete.point,
                 ),
                 minValue: 0,
                 maxValue: 100,
@@ -61,9 +61,9 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
               ),
               NumberPicker(
                 haptics: true,
-                textStyle: h1Headline.copyWith(color: GRAY_COLOR),
+                textStyle: h1Headline.copyWith(color: Pallete.gray),
                 selectedTextStyle: h1Headline.copyWith(
-                  color: POINT_COLOR,
+                  color: Pallete.point,
                 ),
                 minValue: 0,
                 maxValue: 59,
@@ -97,7 +97,7 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
                   height: 44,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: GRAY_COLOR,
+                    color: Pallete.gray,
                   ),
                   child: Center(
                     child: Text(
@@ -119,7 +119,7 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
                   height: 44,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: POINT_COLOR,
+                    color: Pallete.point,
                   ),
                   child: Center(
                     child: Text(

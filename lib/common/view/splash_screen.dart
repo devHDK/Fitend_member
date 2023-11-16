@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +55,7 @@ class _BottomView extends StatelessWidget {
           AutoSizeText(
             'Routine for 4 Weeks!\n디지털 PT의 새로운 패러다임을 지금 바로 경험해보세요!',
             style: s2SubTitle.copyWith(
-              color: LIGHT_GRAY_COLOR,
+              color: Pallete.lightGray,
             ),
             maxLines: 2,
           ),
@@ -68,7 +68,7 @@ class _BottomView extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: POINT_COLOR,
+                  backgroundColor: Pallete.point,
                 ),
                 onPressed: () {
                   context.goNamed(LoginScreen.routeName);

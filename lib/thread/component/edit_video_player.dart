@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/thread/view/video_editor_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -94,11 +94,11 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
   Widget build(BuildContext context) {
     if (_videoController == null || _videoController!.value.isBuffering) {
       return Container(
-        color: BACKGROUND_COLOR,
+        color: Pallete.background,
         child: const Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
-            backgroundColor: BACKGROUND_COLOR,
+            color: Pallete.point,
+            backgroundColor: Pallete.background,
           ),
         ),
       );
@@ -123,10 +123,10 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
                       // !_videoController!.value.isInitialized ||
                       //         _videoController!.value.isBuffering
                       // ? Container(
-                      //     color: BACKGROUND_COLOR,
+                      //     color: Pallete.background,
                       //     child: const Center(
                       //       child: CircularProgressIndicator(
-                      //         color: POINT_COLOR,
+                      //         color: Pallete.point,
                       //         backgroundColor: Colors.black,
                       //       ),
                       //     ),
@@ -135,7 +135,7 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
                       Hero(
                         tag: widget.file.path,
                         child: Container(
-                          color: BACKGROUND_COLOR,
+                          color: Pallete.background,
                           child: Center(
                             child: AspectRatio(
                               aspectRatio: _videoController!.value.aspectRatio,
@@ -326,8 +326,8 @@ class _Slider extends StatelessWidget {
                 min: 0,
                 max: maxPpsition.inSeconds.toDouble(),
                 value: currentPosition.inSeconds.toDouble(),
-                thumbColor: POINT_COLOR,
-                activeColor: POINT_COLOR.withOpacity(0.7),
+                thumbColor: Pallete.point,
+                activeColor: Pallete.point.withOpacity(0.7),
                 inactiveColor: Colors.white.withOpacity(0.7),
                 onChanged: onSlideChanged,
               ),

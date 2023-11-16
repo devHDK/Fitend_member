@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/guide_video_player.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/component/muscle_card.dart';
@@ -51,10 +51,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
         backgroundColor:
-            _scrollOffset <= 5.0 ? Colors.transparent : BACKGROUND_COLOR,
+            _scrollOffset <= 5.0 ? Colors.transparent : Pallete.background,
         elevation: _scrollOffset <= 5.0 ? 0.0 : 1.0,
         leading: IconButton(
           onPressed: () => context.pop(),
@@ -70,7 +70,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         slivers: [
           SliverToBoxAdapter(
             child: Container(
-              color: GRAY_COLOR,
+              color: Pallete.gray,
               child: Center(
                 child: SizedBox(
                   width: 100.w > 600 //테블릿이면
@@ -114,7 +114,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ),
                       const Divider(
                         height: 1,
-                        color: LIGHT_GRAY_COLOR,
+                        color: Pallete.lightGray,
                       ),
                     ],
                   ),
@@ -133,7 +133,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           GestureDetector(
                             onTap: () {},
                             child: CircleAvatar(
-                              backgroundColor: POINT_COLOR,
+                              backgroundColor: Pallete.point,
                               child: CustomNetworkImage(
                                 imageUrl:
                                     '$s3Url${widget.exercise.trainerProfileImage}',
@@ -159,7 +159,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                               Text(
                                 'by ${widget.exercise.trainerNickname}',
                                 style: s3SubTitle.copyWith(
-                                  color: LIGHT_GRAY_COLOR,
+                                  color: Pallete.lightGray,
                                 ),
                               )
                             ],
@@ -180,7 +180,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       ),
                       const Divider(
                         height: 1,
-                        color: LIGHT_GRAY_COLOR,
+                        color: Pallete.lightGray,
                       ),
                     ],
                   ),

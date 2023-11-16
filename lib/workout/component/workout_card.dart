@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:fitend_member/common/component/custom_network_image.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
@@ -109,8 +109,8 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: index <= widget.completeSetCount - 1
-                          ? POINT_COLOR
-                          : LIGHT_GRAY_COLOR,
+                          ? Pallete.point
+                          : Pallete.lightGray,
                     ),
                     child: Center(
                       child: Text(
@@ -124,7 +124,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                         style: s1SubTitle.copyWith(
                           color: index <= widget.completeSetCount - 1
                               ? Colors.white
-                              : GRAY_COLOR,
+                              : Pallete.gray,
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                         ),
@@ -154,9 +154,9 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                                     (modifiedSetInfo.seconds == 0
                                         ? widget.exercise.setInfo[0].seconds!
                                         : modifiedSetInfo.seconds!)),
-                            backgroundColor: LIGHT_GRAY_COLOR,
+                            backgroundColor: Pallete.lightGray,
                             valueColor: const AlwaysStoppedAnimation<Color>(
-                                POINT_COLOR),
+                                Pallete.point),
                           ),
                         ),
                       ),
@@ -171,7 +171,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
                             fontSize: 10,
                             color: index <= widget.completeSetCount - 1
                                 ? Colors.white
-                                : GRAY_COLOR,
+                                : Pallete.gray,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -195,11 +195,11 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
       width: 100.w,
       height: widget.exercise.circuitGroupNum != null ? 137 : 157,
       decoration: BoxDecoration(
-        color: BACKGROUND_COLOR,
+        color: Pallete.background,
         border: Border.fromBorderSide(
           BorderSide(
             color: widget.isSelected != null && widget.isSelected!
-                ? POINT_COLOR
+                ? Pallete.point
                 : Colors.transparent,
             width: 1.0,
           ),
@@ -257,7 +257,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
               width: 72,
               height: 24,
               decoration: BoxDecoration(
-                color: POINT_COLOR,
+                color: Pallete.point,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
@@ -335,7 +335,7 @@ class _RenderBody extends StatelessWidget {
               : DataUtils.getTimerStringMinuteSeconds(
                   modifiedSetInfo!.seconds!),
           style: s2SubTitle.copyWith(
-            color: LIGHT_GRAY_COLOR,
+            color: Pallete.lightGray,
           ),
         ),
         const SizedBox(

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -296,11 +296,11 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         final result = await AssetPicker.pickAssets(
           context,
           pickerConfig: AssetPickerConfig(
-            themeColor: POINT_COLOR,
+            themeColor: Pallete.point,
             maxAssets: maxAssets,
             loadingIndicatorBuilder: (context, isAssetsEmpty) => const Center(
               child: CircularProgressIndicator(
-                color: POINT_COLOR,
+                color: Pallete.point,
               ),
             ),
           ),

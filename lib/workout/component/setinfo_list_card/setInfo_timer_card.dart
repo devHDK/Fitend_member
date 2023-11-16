@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/hexagon_container.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -81,20 +81,20 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                   Container(
                     height: 40,
                     width: 1,
-                    color: LIGHT_GRAY_COLOR,
+                    color: Pallete.lightGray,
                   ),
                   HexagonContainer(
                     label: (widget.setInfoIndex + 1).toString(),
                     iconFile:
                         isDone ? 'asset/img/icon_check_setInfo.svg' : null,
-                    labelColor: isNowSet ? Colors.black : GRAY_COLOR,
+                    labelColor: isNowSet ? Colors.black : Pallete.gray,
                     color: isNowSet
                         ? Colors.white
                         : isDone
-                            ? POINT_COLOR
-                            : LIGHT_GRAY_COLOR,
+                            ? Pallete.point
+                            : Pallete.lightGray,
                     lineColor:
-                        isNowSet || isDone ? POINT_COLOR : LIGHT_GRAY_COLOR,
+                        isNowSet || isDone ? Pallete.point : Pallete.lightGray,
                     size: 39,
                   ),
                   const SizedBox(
@@ -103,7 +103,7 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                   Container(
                     height: 4,
                     width: 1,
-                    color: LIGHT_GRAY_COLOR,
+                    color: Pallete.lightGray,
                   ),
                 ],
               ),
@@ -126,7 +126,7 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                         color: widget.setInfoIndex ==
                                 widget.model.setInfoCompleteList[
                                     widget.model.exerciseIndex]
-                            ? POINT_COLOR
+                            ? Pallete.point
                             : Colors.white,
                         width: 3,
                       ),
@@ -151,7 +151,7 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                               DataUtils.getTimeStringMinutes(
                                   widget.initialSeconds),
                               style: s2SubTitle.copyWith(
-                                color: GRAY_COLOR,
+                                color: Pallete.gray,
                                 height: 1.1,
                               ),
                             ),
@@ -205,7 +205,7 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                               width: 20,
                               child: SvgPicture.asset(
                                 'asset/img/icon_clock.svg',
-                                color: isNowSet ? POINT_COLOR : GRAY_COLOR,
+                                color: isNowSet ? Pallete.point : Pallete.gray,
                                 width: 16,
                               ),
                             ),
@@ -243,7 +243,7 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                               '${(recordSetInfo.seconds! / 60).floor().toInt().toString().padLeft(2, '0')} : ${(recordSetInfo.seconds! % 60).toInt().toString().padLeft(2, '0')} ',
                               style: h2Headline.copyWith(
                                 height: 1.2,
-                                color: isNowSet ? Colors.black : GRAY_COLOR,
+                                color: isNowSet ? Colors.black : Pallete.gray,
                               ),
                             ),
                           ),

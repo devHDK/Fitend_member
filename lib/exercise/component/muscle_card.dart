@@ -1,5 +1,5 @@
 import 'package:fitend_member/common/component/custom_network_image.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -41,7 +41,7 @@ class _MuscleCardState extends State<MuscleCard> {
                 Text(
                   '${muscleGroup[widget.muscle.muscleType]}',
                   style: s3SubTitle.copyWith(
-                    color: LIGHT_GRAY_COLOR,
+                    color: Pallete.lightGray,
                   ),
                 ),
                 const SizedBox(
@@ -60,7 +60,7 @@ class _MuscleCardState extends State<MuscleCard> {
               widget.muscle.type == 'main' ? 'Primary' : 'Secondary',
               style: s2SubTitle.copyWith(
                 fontSize: 14,
-                color: LIGHT_GRAY_COLOR,
+                color: Pallete.lightGray,
                 fontWeight: FontWeight.w400,
               ),
             ),

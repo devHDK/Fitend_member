@@ -5,7 +5,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
@@ -82,7 +82,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // final formKey = GlobalKey<FormState>();
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -201,8 +201,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               borderRadius: BorderRadius.circular(10),
               color: idTextcontroller.text.isEmpty ||
                       passwordTextcontroller.text.isEmpty
-                  ? POINT_COLOR.withOpacity(0.4)
-                  : POINT_COLOR,
+                  ? Pallete.point.withOpacity(0.4)
+                  : Pallete.point,
             ),
             child: ElevatedButton(
               onPressed: state is UserModelLoading
@@ -291,7 +291,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       width: 15,
                       height: 15,
                       child: CircularProgressIndicator(
-                        color: POINT_COLOR,
+                        color: Pallete.point,
                       ),
                     )
                   : Text(

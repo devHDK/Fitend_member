@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/comment_cell.dart';
@@ -129,10 +129,10 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
 
     if (state is ThreadModelLoading) {
       return const Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
+            color: Pallete.point,
           ),
         ),
       );
@@ -140,7 +140,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
 
     if (state is ThreadModelError) {
       return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: DialogWidgets.errorDialog(
           message: state.message,
           confirmText: '확인',
@@ -152,7 +152,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
     final model = state as ThreadModel;
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -171,8 +171,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
       body: Stack(
         children: [
           RefreshIndicator(
-            backgroundColor: BACKGROUND_COLOR,
-            color: POINT_COLOR,
+            backgroundColor: Pallete.background,
+            color: Pallete.point,
             onRefresh: () async {
               await ref
                   .read(threadDetailProvider(widget.threadId).notifier)
@@ -283,7 +283,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                           Text(
                             '아직 댓글이 없어요 :)',
                             style: s1SubTitle.copyWith(
-                              color: GRAY_COLOR,
+                              color: Pallete.gray,
                               height: 1,
                             ),
                           ),
@@ -330,7 +330,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
             tempList.isNotEmpty ? 220 + maxLine * 10 : 120 + maxLine * 10,
         maxHeight:
             tempList.isNotEmpty ? 220 + maxLine * 10 : 120 + maxLine * 10,
-        color: DARK_GRAY_COLOR,
+        color: Pallete.darkGray,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(10),
           topRight: Radius.circular(10),
@@ -373,7 +373,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                   child: commentState.isLoading
                       ? const Center(
                           child: CircularProgressIndicator(
-                            color: POINT_COLOR,
+                            color: Pallete.point,
                           ),
                         )
                       : ListView.separated(
@@ -463,7 +463,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                       },
                                       icon: const Icon(
                                         Icons.cancel,
-                                        color: LIGHT_GRAY_COLOR,
+                                        color: Pallete.lightGray,
                                       ),
                                     ),
                                   ),
@@ -498,10 +498,10 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                           ),
                           Expanded(
                             child: LinearProgressIndicator(
-                              color: POINT_COLOR,
+                              color: Pallete.point,
                               value: (commentState.doneCount) /
                                   commentState.totalCount,
-                              backgroundColor: GRAY_COLOR,
+                              backgroundColor: Pallete.gray,
                             ),
                           )
                         ],
@@ -621,8 +621,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: commentController.text.isNotEmpty
-                                    ? POINT_COLOR
-                                    : POINT_COLOR.withOpacity(0.5),
+                                    ? Pallete.point
+                                    : Pallete.point.withOpacity(0.5),
                               ),
                               child: Center(
                                 child: commentState.isLoading ||
@@ -654,7 +654,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                   height: 25,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: POINT_COLOR.withOpacity(0.5),
+                                    color: Pallete.point.withOpacity(0.5),
                                   ),
                                   child: const Center(
                                     child: SizedBox(
@@ -692,10 +692,10 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                               BorderRadius.circular(10),
                                           color: Colors.white,
                                           border: Border.all(
-                                              color: POINT_COLOR, width: 1),
+                                              color: Pallete.point, width: 1),
                                         ),
                                         child: const Icon(Icons.close,
-                                            color: POINT_COLOR),
+                                            color: Pallete.point),
                                       ),
                                     ),
                                     const SizedBox(
@@ -743,7 +743,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(10),
-                                          color: POINT_COLOR,
+                                          color: Pallete.point,
                                         ),
                                         child: SvgPicture.asset(
                                           'asset/img/icon_check_save.svg',
@@ -787,7 +787,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
       maxLines: maxLine > 1 ? maxLine : null,
       style: const TextStyle(color: Colors.white),
       controller: commentController,
-      cursorColor: POINT_COLOR,
+      cursorColor: Pallete.point,
       focusNode: commentFocusNode,
       onTapOutside: (event) {
         commentFocusNode.unfocus();
@@ -795,7 +795,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
       keyboardType: TextInputType.multiline,
       textInputAction: TextInputAction.newline,
       decoration: InputDecoration(
-        focusColor: POINT_COLOR,
+        focusColor: Pallete.point,
         border: baseBorder,
         disabledBorder: baseBorder,
         enabledBorder: baseBorder,
@@ -806,14 +806,14 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
         ),
         filled: true,
         labelStyle: s1SubTitle.copyWith(
-          color: commentFocusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
+          color: commentFocusNode.hasFocus ? Pallete.point : Pallete.gray,
         ),
         label: Text(
           commentFocusNode.hasFocus || commentController.text.isNotEmpty
               ? ''
               : '댓글을 입력해주세요',
           style: s1SubTitle.copyWith(
-            color: GRAY_COLOR,
+            color: Pallete.gray,
           ),
         ),
       ),

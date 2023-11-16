@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -199,7 +199,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       child: Center(
                         child: Container(
                           width: 0.5,
-                          color: GRAY_COLOR,
+                          color: Pallete.gray,
                         ),
                       ),
                     ),
@@ -229,7 +229,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                           Text(
                             widget.nickname,
                             style: s1SubTitle.copyWith(
-                              color: LIGHT_GRAY_COLOR,
+                              color: Pallete.lightGray,
                               height: 1,
                             ),
                           ),
@@ -241,7 +241,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                                 .format(widget.dateTime)
                                 .toString(),
                             style: s2SubTitle.copyWith(
-                                color: GRAY_COLOR, height: 1),
+                                color: Pallete.gray, height: 1),
                           ),
                         ],
                       ),
@@ -403,7 +403,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                             ? ' 아직 댓글이 없어요 :)'
                             : ' ${widget.userCommentCount + widget.trainerCommentCount}개의 댓글이 있어요 :)',
                         style: s2SubTitle.copyWith(
-                          color: GRAY_COLOR,
+                          color: Pallete.gray,
                           height: 1,
                         ),
                       )
@@ -680,7 +680,7 @@ class RecordTypeThread extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(
             width: 1,
-            color: GRAY_COLOR,
+            color: Pallete.gray,
           ),
           borderRadius: BorderRadius.circular(8),
         ),
@@ -771,7 +771,7 @@ class RecordTypeThread extends StatelessWidget {
                   SvgPicture.asset(
                     'asset/img/icon_timer.svg',
                     width: isbigSize! ? 18.5 : 16,
-                    color: GRAY_COLOR,
+                    color: Pallete.gray,
                   ),
                   const SizedBox(
                     width: 5,
@@ -780,7 +780,7 @@ class RecordTypeThread extends StatelessWidget {
                     DataUtils.getTimeStringMinutes(info.workoutDuration!),
                     style: c1Caption.copyWith(
                       fontSize: isbigSize! ? 14 : 12,
-                      color: LIGHT_GRAY_COLOR,
+                      color: Pallete.lightGray,
                       height: 1,
                     ),
                   ),
@@ -798,7 +798,7 @@ class RecordTypeThread extends StatelessWidget {
                     '${info.totalSet} set',
                     style: c1Caption.copyWith(
                       fontSize: isbigSize! ? 14 : 12,
-                      color: LIGHT_GRAY_COLOR,
+                      color: Pallete.lightGray,
                       height: 1,
                     ),
                   ),

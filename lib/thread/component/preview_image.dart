@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:flutter/material.dart';
 
 class PreviewImage extends StatefulWidget {
@@ -38,7 +38,7 @@ class _PreviewImageState extends State<PreviewImage> {
       decoration: widget.isBorder!
           ? BoxDecoration(
               border: Border.all(
-                color: POINT_COLOR,
+                color: Pallete.point,
                 width: 2,
               ),
             )

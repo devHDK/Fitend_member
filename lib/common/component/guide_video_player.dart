@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:fitend_member/common/component/custom_network_image.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
@@ -144,11 +144,11 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
     if (firstVideoController == null ||
         firstVideoController!.value.isBuffering) {
       return Container(
-        color: BACKGROUND_COLOR,
+        color: Pallete.background,
         child: const Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
-            backgroundColor: BACKGROUND_COLOR,
+            color: Pallete.point,
+            backgroundColor: Pallete.background,
           ),
         ),
       );
@@ -170,16 +170,16 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
               child: !firstVideoController!.value.isInitialized ||
                       firstVideoController!.value.isBuffering
                   ? Container(
-                      color: BACKGROUND_COLOR,
+                      color: Pallete.background,
                       child: const Center(
                         child: CircularProgressIndicator(
-                          color: POINT_COLOR,
-                          backgroundColor: BACKGROUND_COLOR,
+                          color: Pallete.point,
+                          backgroundColor: Pallete.background,
                         ),
                       ),
                     )
                   : Container(
-                      color: BACKGROUND_COLOR,
+                      color: Pallete.background,
                       child: VideoPlayer(firstVideoController!),
                     ),
             ),
@@ -191,15 +191,15 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                 child: widget.videos.length > 1 &&
                         secondVideoController!.value.isInitialized
                     ? Container(
-                        color: BACKGROUND_COLOR,
+                        color: Pallete.background,
                         child: VideoPlayer(secondVideoController!),
                       )
                     : Container(
-                        color: BACKGROUND_COLOR,
+                        color: Pallete.background,
                         child: const Center(
                           child: CircularProgressIndicator(
-                            color: POINT_COLOR,
-                            backgroundColor: BACKGROUND_COLOR,
+                            color: Pallete.point,
+                            backgroundColor: Pallete.background,
                           ),
                         ),
                       ),
@@ -233,7 +233,7 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                               width: 50,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
-                                color: isPlaying[1] ? POINT_COLOR : null,
+                                color: isPlaying[1] ? Pallete.point : null,
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(2),
@@ -267,7 +267,7 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                               width: 50,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
-                                color: isPlaying[0] ? POINT_COLOR : null,
+                                color: isPlaying[0] ? Pallete.point : null,
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(2),
@@ -310,7 +310,7 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
         borderRadius: BorderRadius.circular(7),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: DARK_GRAY_COLOR,
+            backgroundColor: Pallete.darkGray,
           ),
           onPressed: () {
             setState(

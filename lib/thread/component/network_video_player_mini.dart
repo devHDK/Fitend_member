@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:fitend_member/common/component/custom_network_image.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -155,7 +155,7 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
                         Icon(
                           Icons.videocam,
                           size: 15,
-                          color: LIGHT_GRAY_COLOR,
+                          color: Pallete.lightGray,
                         ),
                       ],
                     ),

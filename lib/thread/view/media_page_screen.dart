@@ -1,5 +1,5 @@
 import 'package:fitend_member/common/component/custom_network_image.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/thread/component/network_video_player.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
@@ -52,7 +52,7 @@ class _MediaPageScreenState extends State<MediaPageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

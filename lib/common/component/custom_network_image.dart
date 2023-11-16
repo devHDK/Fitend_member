@@ -24,7 +24,7 @@ class CustomNetworkImage extends StatelessWidget {
       //   child: Center(
       //     child: CircularProgressIndicator(
       //       value: downloadProgress.progress,
-      //       color: POINT_COLOR,
+      //       color: Pallete.point,
       //     ),
       //   ),
       // ),

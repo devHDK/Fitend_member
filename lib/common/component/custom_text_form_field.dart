@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
 
@@ -65,7 +65,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   Widget build(BuildContext context) {
     final baseBorder = OutlineInputBorder(
       borderSide: const BorderSide(
-        color: DARK_GRAY_COLOR,
+        color: Pallete.darkGray,
         width: 1,
       ),
       borderRadius: BorderRadius.circular(10),
@@ -77,7 +77,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       style: const TextStyle(
         color: Colors.white,
       ),
-      cursorColor: POINT_COLOR,
+      cursorColor: Pallete.point,
       //비밀번호 입력할때
       obscureText: widget.obscureText,
       autofocus: widget.autoFocus,
@@ -94,22 +94,22 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         hintText: widget.hintText,
         // errorText: errorText,
         hintStyle: s2SubTitle.copyWith(
-          color: GRAY_COLOR,
+          color: Pallete.gray,
         ),
         filled: true,
-        fillColor: BACKGROUND_COLOR,
+        fillColor: Pallete.background,
         border: baseBorder,
         enabledBorder: baseBorder,
         focusedBorder: baseBorder.copyWith(
           borderSide: baseBorder.borderSide.copyWith(
-            color: POINT_COLOR,
+            color: Pallete.point,
           ),
         ),
         labelText: focusNode.hasFocus || widget.controller.text.isEmpty
             ? widget.fullLabelText
             : widget.labelText,
         labelStyle: s2SubTitle.copyWith(
-          color: focusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
+          color: focusNode.hasFocus ? Pallete.point : Pallete.gray,
         ),
       ),
     );

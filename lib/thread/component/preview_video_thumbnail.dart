@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +58,7 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
           decoration: widget.isBorder!
               ? BoxDecoration(
                   border: Border.all(
-                    color: POINT_COLOR,
+                    color: Pallete.point,
                     width: 2,
                   ),
                 )
@@ -76,7 +76,7 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
                   )
                 : const Center(
                     child: CircularProgressIndicator(
-                      color: POINT_COLOR,
+                      color: Pallete.point,
                     ),
                   ),
           ),

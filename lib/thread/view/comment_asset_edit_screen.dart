@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/thread/component/edit_video_player.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
 import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
@@ -63,9 +63,9 @@ class _AssetEditScreenState extends ConsumerState<CommentAssetEditScreen> {
     final type = MediaUtils.getMediaType(file.path);
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         elevation: 0,
         leading: IconButton(
           onPressed: () => context.pop(),
@@ -184,7 +184,7 @@ class _AssetEditScreenState extends ConsumerState<CommentAssetEditScreen> {
                     uiSettings: [
                       AndroidUiSettings(
                         toolbarTitle: '',
-                        toolbarColor: BACKGROUND_COLOR,
+                        toolbarColor: Pallete.background,
                         toolbarWidgetColor: Colors.white,
                         initAspectRatio: CropAspectRatioPreset.original,
                         lockAspectRatio: false,

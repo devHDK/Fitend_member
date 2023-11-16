@@ -1,6 +1,6 @@
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -37,9 +37,9 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         elevation: 0,
         title: Text(
           '비밀번호 변경',
@@ -136,8 +136,8 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
             width: 100.w,
             decoration: BoxDecoration(
               color: _passwordController.text.length < 8
-                  ? POINT_COLOR.withOpacity(0.5)
-                  : POINT_COLOR,
+                  ? Pallete.point.withOpacity(0.5)
+                  : Pallete.point,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(

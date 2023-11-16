@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
@@ -103,7 +103,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
     });
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -231,8 +231,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: selectedIndex == widget.exerciseIndex
-                ? POINT_COLOR.withOpacity(0.4)
-                : POINT_COLOR,
+                ? Pallete.point.withOpacity(0.4)
+                : Pallete.point,
           ),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(

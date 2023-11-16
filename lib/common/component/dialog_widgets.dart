@@ -1,6 +1,6 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:fitend_member/common/component/calendar.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/schedule/model/put_workout_schedule_date_model.dart';
@@ -64,7 +64,7 @@ class DialogWidgets {
                       height: 44,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: POINT_COLOR,
+                        color: Pallete.point,
                       ),
                       child: Center(
                         child: Text(
@@ -85,13 +85,13 @@ class DialogWidgets {
                       height: 44,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: POINT_COLOR),
+                        border: Border.all(color: Pallete.point),
                       ),
                       child: Center(
                         child: Text(
                           cancelText,
                           style: h6Headline.copyWith(
-                            color: POINT_COLOR,
+                            color: Pallete.point,
                           ),
                         ),
                       ),
@@ -150,7 +150,7 @@ class DialogWidgets {
                       height: 44,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: POINT_COLOR,
+                        color: Pallete.point,
                       ),
                       child: Center(
                         child: Text(
@@ -201,7 +201,7 @@ class DialogWidgets {
                 vertical: 20,
               ),
               child: CircularProgressIndicator(
-                color: POINT_COLOR,
+                color: Pallete.point,
                 value: doneCount / totalCount,
               ),
             ),
@@ -232,11 +232,11 @@ class DialogWidgets {
               horizontalSpacing: 0,
               gridPadding: EdgeInsets.zero,
               initCategory: Category.RECENT,
-              bgColor: BACKGROUND_COLOR,
-              indicatorColor: POINT_COLOR,
+              bgColor: Pallete.background,
+              indicatorColor: Pallete.point,
               iconColor: Colors.grey,
-              iconColorSelected: POINT_COLOR,
-              backspaceColor: POINT_COLOR,
+              iconColorSelected: Pallete.point,
+              backspaceColor: Pallete.point,
               skinToneDialogBgColor: Colors.white,
               skinToneIndicatorColor: Colors.grey,
               enableSkinTones: true,
@@ -272,7 +272,7 @@ class DialogWidgets {
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: DARK_GRAY_COLOR,
+            color: Pallete.darkGray,
           ),
           width: 100.w,
           height: 175,
@@ -289,7 +289,7 @@ class DialogWidgets {
                       width: 44,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: LIGHT_GRAY_COLOR,
+                        color: Pallete.lightGray,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -311,7 +311,7 @@ class DialogWidgets {
                           width: 34,
                           height: 34,
                           decoration: BoxDecoration(
-                            color: GRAY_COLOR,
+                            color: Pallete.gray,
                             borderRadius: BorderRadius.circular(17),
                           ),
                           child: Center(
@@ -347,7 +347,7 @@ class DialogWidgets {
                           width: 34,
                           height: 34,
                           decoration: BoxDecoration(
-                            color: GRAY_COLOR,
+                            color: Pallete.gray,
                             borderRadius: BorderRadius.circular(17),
                           ),
                           child: Center(

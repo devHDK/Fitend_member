@@ -1,5 +1,5 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
@@ -124,14 +124,14 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
     if (state is NotificationModelLoading) {
       return const Center(
         child: CircularProgressIndicator(
-          color: POINT_COLOR,
+          color: Pallete.point,
         ),
       );
     }
 
     if (state is NotificationModelError) {
       return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: DialogWidgets.errorDialog(
             message: state.message,
@@ -145,11 +145,11 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
     notification = state as NotificationModel;
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: const Padding(
@@ -169,13 +169,13 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
               child: Text(
                 '새로운 알림이 없어요 😅',
                 style: s1SubTitle.copyWith(
-                  color: LIGHT_GRAY_COLOR,
+                  color: Pallete.lightGray,
                 ),
               ),
             )
           : RefreshIndicator(
-              backgroundColor: BACKGROUND_COLOR,
-              color: POINT_COLOR,
+              backgroundColor: Pallete.background,
+              color: Pallete.point,
               semanticsLabel: '새로고침',
               onRefresh: () async {
                 await ref.read(notificationProvider.notifier).paginate();
@@ -189,7 +189,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
                     return const SizedBox(
                       height: 100,
                       child: Center(
-                        child: CircularProgressIndicator(color: POINT_COLOR),
+                        child: CircularProgressIndicator(color: Pallete.point),
                       ),
                     );
                   }

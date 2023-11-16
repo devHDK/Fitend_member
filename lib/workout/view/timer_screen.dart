@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -231,7 +231,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
       return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
+            color: Pallete.point,
           ),
         ),
       );
@@ -271,7 +271,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                   .setInfo[widget.setInfoIndex]
                   .seconds!),
               style: s1SubTitle.copyWith(
-                color: GRAY_COLOR,
+                color: Pallete.gray,
               ),
             ),
             SizedBox(
@@ -296,10 +296,13 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                 SimpleCircularProgressBar(
                   animationDuration: 0,
                   size: 220,
-                  backColor: POINT_COLOR.withOpacity(0.1),
+                  backColor: Pallete.point.withOpacity(0.1),
                   backStrokeWidth: 20,
                   progressStrokeWidth: 20,
-                  progressColors: [POINT_COLOR, POINT_COLOR.withOpacity(0.3)],
+                  progressColors: [
+                    Pallete.point,
+                    Pallete.point.withOpacity(0.3)
+                  ],
                   valueNotifier: valueNotifier,
                   maxValue: 1,
                 ),
@@ -329,7 +332,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: POINT_COLOR.withOpacity(0.1),
+                          color: Pallete.point.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Center(
@@ -370,7 +373,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: POINT_COLOR.withOpacity(0.1),
+                          color: Pallete.point.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Center(
@@ -465,13 +468,13 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                         width: 15,
                         height: 15,
                         child: CircularProgressIndicator(
-                          color: POINT_COLOR,
+                          color: Pallete.point,
                         ),
                       )
                     : Text(
                         '다음 운동',
                         style: h5Headline.copyWith(
-                          color: POINT_COLOR,
+                          color: Pallete.point,
                         ),
                       ),
               )

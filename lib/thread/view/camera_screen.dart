@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/avail_camera_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -335,10 +335,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   Widget build(BuildContext context) {
     if (controller == null || !controller!.value.isInitialized) {
       return const Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
+            color: Pallete.point,
           ),
         ),
       );
@@ -505,8 +505,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                         : 0,
                                                 totalSwitches: 2,
                                                 activeBgColor: [
-                                                  POINT_COLOR.withOpacity(0.7),
-                                                  POINT_COLOR.withOpacity(0.7),
+                                                  Pallete.point
+                                                      .withOpacity(0.7),
+                                                  Pallete.point
+                                                      .withOpacity(0.7),
                                                 ],
                                                 customTextStyles: [
                                                   h6Headline.copyWith(
@@ -771,8 +773,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                   const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: POINT_COLOR,
-                      foregroundColor: POINT_COLOR,
+                      backgroundColor: Pallete.point,
+                      foregroundColor: Pallete.point,
                     ),
                     onPressed: () {
                       context.pop();
@@ -908,7 +910,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       value: _currentZoomLevel,
       min: _minAvailableZoom,
       max: _maxAvailableZoom,
-      activeColor: POINT_COLOR.withOpacity(0.5),
+      activeColor: Pallete.point.withOpacity(0.5),
       inactiveColor: Colors.white30,
       onChanged: (value) async {
         setState(() {

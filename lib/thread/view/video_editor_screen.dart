@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
@@ -145,7 +145,7 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: _controller.initialized
             ? SizedBox(
                 height: 100.h,

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
@@ -139,10 +139,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
 
     if (state is WorkoutModelLoading) {
       return const Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
+            color: Pallete.point,
           ),
         ),
       );
@@ -150,7 +150,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
 
     if (state is WorkoutModelError) {
       return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: DialogWidgets.errorDialog(
           message: state.message,
           confirmText: '확인',
@@ -186,7 +186,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
         DateTime.now().isAfter(DateTime.parse(model.startDate));
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -284,8 +284,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
         // ],
       ),
       body: RefreshIndicator(
-        backgroundColor: BACKGROUND_COLOR,
-        color: POINT_COLOR,
+        backgroundColor: Pallete.background,
+        color: Pallete.point,
         semanticsLabel: '새로고침',
         onRefresh: () async {
           await ref
@@ -498,8 +498,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                   width: 100.w,
                   decoration: BoxDecoration(
                     color: model.isWorkoutComplete || isTodayWorkout
-                        ? POINT_COLOR
-                        : POINT_COLOR.withOpacity(0.3),
+                        ? Pallete.point
+                        : Pallete.point.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(

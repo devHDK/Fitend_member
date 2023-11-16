@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -119,7 +119,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
 
     final baseBorder = OutlineInputBorder(
       borderSide: const BorderSide(
-        color: DARK_GRAY_COLOR,
+        color: Pallete.darkGray,
         width: 1,
       ),
       borderRadius: BorderRadius.circular(10),
@@ -128,9 +128,9 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         appBar: AppBar(
-          backgroundColor: BACKGROUND_COLOR,
+          backgroundColor: Pallete.background,
           title: Text(
             '운동 평가',
             style: h4Headline,
@@ -290,7 +290,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                           height: 44,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: POINT_COLOR,
+                            color: Pallete.point,
                           ),
                           child: Center(
                             child: buttonEnable
@@ -337,14 +337,14 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
           maxLines: 9,
           style: const TextStyle(color: Colors.white),
           controller: contentsController,
-          cursorColor: POINT_COLOR,
+          cursorColor: Pallete.point,
           focusNode: focusNode,
           onTapOutside: (event) {
             focusNode.unfocus();
           },
           keyboardType: TextInputType.multiline,
           decoration: InputDecoration(
-            focusColor: POINT_COLOR,
+            focusColor: Pallete.point,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 20,
               vertical: 11,
@@ -354,14 +354,14 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
             enabledBorder: baseBorder,
             focusedBorder: baseBorder.copyWith(
               borderSide: baseBorder.borderSide.copyWith(
-                color: POINT_COLOR,
+                color: Pallete.point,
               ),
             ),
             labelText: focusNode.hasFocus || contentsController.text.isNotEmpty
                 ? ''
                 : '운동관련 궁금증, 요청사항 등을 형식에 관계없이\n\n자유롭게 입력해주세요 😁\n\n\n\n\n\n\n\n\n',
             labelStyle: s2SubTitle.copyWith(
-              color: focusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
+              color: focusNode.hasFocus ? Pallete.point : Pallete.gray,
             ),
           ),
         ),
@@ -515,7 +515,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
       height: 101,
       decoration: BoxDecoration(
         border: Border.all(
-          color: isSelected ? POINT_COLOR : DARK_GRAY_COLOR,
+          color: isSelected ? Pallete.point : Pallete.darkGray,
         ),
         borderRadius: BorderRadius.circular(10),
         color: isSelected ? Colors.white : null,
@@ -540,7 +540,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                 child: Text(
                   text,
                   style: h6Headline.copyWith(
-                    color: isSelected ? POINT_COLOR : GRAY_COLOR,
+                    color: isSelected ? Pallete.point : Pallete.gray,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
                   ),
                 ),
@@ -562,7 +562,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
       width: size.width,
       decoration: BoxDecoration(
         border: Border.all(
-          color: isSelected ? POINT_COLOR : DARK_GRAY_COLOR,
+          color: isSelected ? Pallete.point : Pallete.darkGray,
         ),
         borderRadius: BorderRadius.circular(10),
         color: isSelected ? Colors.white : null,
@@ -572,7 +572,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         child: Text(
           text,
           style: h6Headline.copyWith(
-            color: isSelected ? POINT_COLOR : GRAY_COLOR,
+            color: isSelected ? Pallete.point : Pallete.gray,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
           ),
         ),

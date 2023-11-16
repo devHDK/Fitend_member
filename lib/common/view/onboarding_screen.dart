@@ -1,6 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/layout/default_layout.dart';
 import 'package:fitend_member/flavors.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -48,7 +48,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
     }
 
     return DefaultLayout(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       child: _flavorBanner(
         child: Center(
             child: AnimatedTextKit(animatedTexts: [
@@ -57,10 +57,10 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
             textStyle: GoogleFonts.audiowide(
               fontSize: 45,
               fontWeight: FontWeight.w500,
-              color: POINT_COLOR,
+              color: Pallete.point,
             ),
             colors: [
-              POINT_COLOR,
+              Pallete.point,
               Colors.pink.shade300,
               Colors.white,
             ],
@@ -71,7 +71,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
             //   style: GoogleFonts.audiowide(
             //     fontSize: 45,
             //     fontWeight: FontWeight.w500,
-            //     color: POINT_COLOR,
+            //     color: Pallete.point,
             //   ),
             //   child: const Text('F I T E N D'),
             // ),

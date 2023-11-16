@@ -2,7 +2,7 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/component/reservation_schedule_card.dart';
 import 'package:fitend_member/common/component/workout_schedule_card.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
@@ -199,14 +199,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         notificationState is NotificationMainModelLoading) {
       return const Center(
         child: CircularProgressIndicator(
-          color: POINT_COLOR,
+          color: Pallete.point,
         ),
       );
     }
 
     if (state is ScheduleModelError) {
       return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: DialogWidgets.errorDialog(
             message: '데이터를 불러오지 못했습니다.',
@@ -230,7 +230,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         appBar: LogoAppbar(
           title: 'P L A N',
           tapLogo: () async {
@@ -289,7 +289,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
               return const SizedBox(
                 height: 100,
                 child: Center(
-                  child: CircularProgressIndicator(color: POINT_COLOR),
+                  child: CircularProgressIndicator(color: Pallete.point),
                 ),
               );
             }
@@ -302,7 +302,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                   if (schedules.data[index - 1].startDate.day == 1)
                     Container(
                       height: 34,
-                      color: DARK_GRAY_COLOR,
+                      color: Pallete.darkGray,
                       child: Center(
                         child: Text(
                           DateFormat('yyyy년 M월')
@@ -329,7 +329,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                   if (schedules.data[index - 1].startDate.day == 1)
                     Container(
                       height: 34,
-                      color: DARK_GRAY_COLOR,
+                      color: Pallete.darkGray,
                       child: Center(
                         child: Text(
                           DateFormat('yyyy년 M월')

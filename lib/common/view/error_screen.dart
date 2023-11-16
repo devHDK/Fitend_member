@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +14,7 @@ class ErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       body: NAlertDialog(
         title: Padding(
           padding: const EdgeInsets.only(
@@ -49,7 +49,7 @@ class ErrorScreen extends StatelessWidget {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: POINT_COLOR,
+                  backgroundColor: Pallete.point,
                 ),
                 child: Text(
                   '확인',

@@ -1,6 +1,6 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
@@ -170,14 +170,14 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     if (state is ThreadListModelLoading) {
       return const Center(
         child: CircularProgressIndicator(
-          color: POINT_COLOR,
+          color: Pallete.point,
         ),
       );
     }
 
     if (state is ThreadListModelError) {
       return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: DialogWidgets.errorDialog(
             message: '데이터를 불러오지 못했습니다.',
@@ -198,7 +198,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         appBar: LogoAppbar(
           title: 'T H R E A D S',
           tapLogo: () async {
@@ -260,7 +260,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                         Text(
                           'UPLOADING',
                           style: h6Headline.copyWith(
-                            color: LIGHT_GRAY_COLOR,
+                            color: Pallete.lightGray,
                             height: 1,
                           ),
                         ),
@@ -268,7 +268,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                           width: 10,
                         ),
                         LoadingAnimationWidget.dotsTriangle(
-                          color: LIGHT_GRAY_COLOR,
+                          color: Pallete.lightGray,
                           size: 15,
                         ),
                         const SizedBox(
@@ -276,10 +276,10 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                         ),
                         Expanded(
                           child: LinearProgressIndicator(
-                            color: POINT_COLOR,
+                            color: Pallete.point,
                             value: (threadCreateState.doneCount) /
                                 threadCreateState.totalCount,
-                            backgroundColor: GRAY_COLOR,
+                            backgroundColor: Pallete.gray,
                           ),
                         )
                       ],
@@ -309,8 +309,8 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                     SvgPicture.asset('asset/img/icon_thread_create_button.svg'),
               ),
         body: RefreshIndicator(
-          backgroundColor: BACKGROUND_COLOR,
-          color: POINT_COLOR,
+          backgroundColor: Pallete.background,
+          color: Pallete.point,
           semanticsLabel: '새로고침',
           onRefresh: () async {
             await ref
@@ -326,7 +326,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
           },
           child: state.data.isEmpty
               ? Scaffold(
-                  backgroundColor: BACKGROUND_COLOR,
+                  backgroundColor: Pallete.background,
                   body: Center(
                     child: Text(
                       '아직 코치님과 함께한 쓰레드가 없어요 🙂',
@@ -353,7 +353,8 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                       return const SizedBox(
                         height: 100,
                         child: Center(
-                          child: CircularProgressIndicator(color: POINT_COLOR),
+                          child:
+                              CircularProgressIndicator(color: Pallete.point),
                         ),
                       );
                     }

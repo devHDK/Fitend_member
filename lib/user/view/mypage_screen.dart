@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/notifications/model/notification_setting_model.dart';
@@ -52,17 +52,17 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
 
     if (state is UserModelLoading) {
       return const Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
             child: CircularProgressIndicator(
-          color: POINT_COLOR,
+          color: Pallete.point,
         )),
       );
     }
 
     if (state is UserModelError) {
       return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: DialogWidgets.errorDialog(
             message: '데이터를 불러올수없습니다😂',
@@ -81,9 +81,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
         : '';
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         elevation: 0,
         title: Text(
           '마이페이지',
@@ -106,7 +106,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
           children: [
             _renderUserInfo(model, formattedPhoneNumber),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             InkWell(
@@ -125,7 +125,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               ),
             ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             _renderLabel(
@@ -136,8 +136,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                   child: Transform.scale(
                     scale: 0.7,
                     child: CupertinoSwitch(
-                      activeColor: POINT_COLOR,
-                      trackColor: GRAY_COLOR,
+                      activeColor: Pallete.point,
+                      trackColor: Pallete.gray,
                       value: state.user.isNotification!,
                       onChanged: (value) async {
                         try {
@@ -160,7 +160,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                   ),
                 )),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             InkWell(
@@ -175,7 +175,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               ),
             ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             InkWell(
@@ -190,7 +190,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               ),
             ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             _renderLabel(
@@ -198,11 +198,11 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 child: Text(
                   packageInfo != null ? 'v${packageInfo!.version}' : '',
                   style: s3SubTitle.copyWith(
-                    color: POINT_COLOR,
+                    color: Pallete.point,
                   ),
                 )),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             InkWell(
@@ -231,7 +231,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               ),
             ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             InkWell(
@@ -250,7 +250,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               ),
             ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
           ],
@@ -298,7 +298,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               Text(
                 model.user.email,
                 style: s2SubTitle.copyWith(
-                  color: LIGHT_GRAY_COLOR,
+                  color: Pallete.lightGray,
                   height: 1.6,
                 ),
               ),
@@ -318,7 +318,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               Text(
                 formattedPhoneNumber,
                 style: s2SubTitle.copyWith(
-                  color: LIGHT_GRAY_COLOR,
+                  color: Pallete.lightGray,
                 ),
               ),
             ],

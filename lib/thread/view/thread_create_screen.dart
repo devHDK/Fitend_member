@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/link_preview.dart';
@@ -151,10 +151,10 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
 
     if (isLoading) {
       return const Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
+            color: Pallete.point,
           ),
         ),
       );
@@ -181,9 +181,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
@@ -220,9 +220,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                       ),
                       Expanded(
                         child: LinearProgressIndicator(
-                          color: POINT_COLOR,
+                          color: Pallete.point,
                           value: (state.doneCount) / state.totalCount,
-                          backgroundColor: GRAY_COLOR,
+                          backgroundColor: Pallete.gray,
                         ),
                       )
                     ],
@@ -309,8 +309,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                   borderRadius: BorderRadius.circular(10),
                   color: contentsController != null &&
                           contentsController!.text.isNotEmpty
-                      ? POINT_COLOR
-                      : POINT_COLOR.withOpacity(0.5),
+                      ? Pallete.point
+                      : Pallete.point.withOpacity(0.5),
                 ),
                 child: Center(
                   child: state.isLoading || state.isUploading
@@ -444,7 +444,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
               child: state.isLoading
                   ? const Center(
                       child: CircularProgressIndicator(
-                        color: POINT_COLOR,
+                        color: Pallete.point,
                       ),
                     )
                   : ListView.separated(
@@ -533,7 +533,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                                   },
                                   icon: const Icon(
                                     Icons.cancel,
-                                    color: LIGHT_GRAY_COLOR,
+                                    color: Pallete.lightGray,
                                   ),
                                 ),
                               ),
@@ -559,14 +559,14 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
       maxLines: 20,
       style: const TextStyle(color: Colors.white),
       controller: contentsController,
-      cursorColor: POINT_COLOR,
+      cursorColor: Pallete.point,
       focusNode: contentFocusNode,
       onTapOutside: (event) {
         contentFocusNode.unfocus();
       },
       keyboardType: TextInputType.multiline,
       decoration: InputDecoration(
-        focusColor: POINT_COLOR,
+        focusColor: Pallete.point,
         border: baseBorder,
         disabledBorder: baseBorder,
         enabledBorder: baseBorder,
@@ -577,7 +577,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
         ),
         filled: true,
         labelStyle: s1SubTitle.copyWith(
-          color: contentFocusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
+          color: contentFocusNode.hasFocus ? Pallete.point : Pallete.gray,
         ),
         label: Text(
           contentFocusNode.hasFocus ||
@@ -586,7 +586,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
               ? ''
               : '여기를 눌러 시작해주세요\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n',
           style: s1SubTitle.copyWith(
-            color: GRAY_COLOR,
+            color: Pallete.gray,
           ),
         ),
       ),
@@ -603,14 +603,14 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
       maxLines: 1,
       style: const TextStyle(color: Colors.white),
       controller: titleController,
-      cursorColor: POINT_COLOR,
+      cursorColor: Pallete.point,
       focusNode: titleFocusNode,
       onTapOutside: (event) {
         titleFocusNode.unfocus();
       },
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-        focusColor: POINT_COLOR,
+        focusColor: Pallete.point,
         border: baseBorder,
         disabledBorder: baseBorder,
         enabledBorder: baseBorder,
@@ -625,7 +625,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
             ? ''
             : '제목을 추가하시겠어요?',
         labelStyle: s1SubTitle.copyWith(
-          color: titleFocusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
+          color: titleFocusNode.hasFocus ? Pallete.point : Pallete.gray,
         ),
       ),
     );

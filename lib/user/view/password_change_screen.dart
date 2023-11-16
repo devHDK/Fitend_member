@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
@@ -46,9 +46,9 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         appBar: AppBar(
-          backgroundColor: BACKGROUND_COLOR,
+          backgroundColor: Pallete.background,
           elevation: 0,
           title: Text(
             '비밀번호 변경',
@@ -160,7 +160,7 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
                             width: 160,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: DARK_GRAY_COLOR,
+                              color: Pallete.darkGray,
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -216,8 +216,8 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
                 color: (_nuPasswordController.text.length < 8 ||
                             _newPasswordController.text.length < 8) ||
                         !buttonOn
-                    ? POINT_COLOR.withOpacity(0.5)
-                    : POINT_COLOR,
+                    ? Pallete.point.withOpacity(0.5)
+                    : Pallete.point,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(

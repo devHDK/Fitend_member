@@ -1,4 +1,5 @@
 import 'package:fitend_member/common/component/hexagon_container.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/workout/component/setinfo_text_field.dart';
@@ -84,8 +85,7 @@ class _SetInfoBoxForRepsState extends ConsumerState<SetInfoBoxForReps> {
                   ),
                   HexagonContainer(
                     label: (widget.setInfoIndex + 1).toString(),
-                    iconFile:
-                        isDone ? 'asset/img/icon_check_setInfo.svg' : null,
+                    iconFile: isDone ? SVGConstants.checkSetInfo : null,
                     labelColor: isNowSet ? Colors.black : Pallete.gray,
                     color: isNowSet
                         ? Colors.white

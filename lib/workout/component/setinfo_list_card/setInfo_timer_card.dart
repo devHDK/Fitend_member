@@ -86,8 +86,7 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                   ),
                   HexagonContainer(
                     label: (widget.setInfoIndex + 1).toString(),
-                    iconFile:
-                        isDone ? 'asset/img/icon_check_setInfo.svg' : null,
+                    iconFile: isDone ? SVGConstants.checkSetInfo : null,
                     labelColor: isNowSet ? Colors.black : Pallete.gray,
                     color: isNowSet
                         ? Colors.white

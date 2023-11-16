@@ -106,8 +106,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           model != null && model.threadBadgeCount != 0,
                       child: SvgPicture.asset(
                         _currentIndex == 1
-                            ? 'asset/img/icon_message_active.svg'
-                            : 'asset/img/icon_message.svg',
+                            ? SVGConstants.messageActive
+                            : SVGConstants.message,
                       ),
                     ),
                   ),

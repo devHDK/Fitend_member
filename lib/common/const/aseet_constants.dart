@@ -1,5 +1,5 @@
 class SVGConstants {
-  static const String _svgPath = 'asset/svg/';
+  static const String _svgPath = 'asset/icons/';
   static const String alarmOff = '${_svgPath}icon_alarm_off.svg';
   static const String alarmOn = '${_svgPath}icon_alarm_on.svg';
   static const String barbell = '${_svgPath}icon_barbell.svg';

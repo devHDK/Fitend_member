@@ -257,8 +257,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(15),
-                                  child: SvgPicture.asset(
-                                      'asset/img/icon_edit.svg'),
+                                  child: SvgPicture.asset(SVGConstants.edit),
                                 ),
                               ),
                             )
@@ -745,7 +744,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                           color: Pallete.point,
                                         ),
                                         child: SvgPicture.asset(
-                                          'asset/img/icon_check_save.svg',
+                                          SVGConstants.checkSave,
                                         ),
                                       ),
                                     ),

@@ -10,10 +10,10 @@ final dioRetryProvider = Provider(
     final dioRetry = Dio(
       BaseOptions(
         baseUrl: F.appFlavor == Flavor.local
-            ? localIp
+            ? URLConstants.localIp
             : F.appFlavor == Flavor.development
-                ? devIp
-                : deployIp,
+                ? URLConstants.devIp
+                : URLConstants.deployIp,
         sendTimeout: const Duration(seconds: 5),
         receiveTimeout: const Duration(seconds: 6),
         connectTimeout: const Duration(seconds: 6),

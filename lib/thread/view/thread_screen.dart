@@ -411,10 +411,10 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                             title: model.title,
                             content: model.content,
                             profileImageUrl: model.writerType == 'trainer'
-                                ? '$s3Url${model.trainer.profileImage}'
+                                ? '${URLConstants.s3Url}${model.trainer.profileImage}'
                                 : model.user.gender == 'male'
-                                    ? maleProfileUrl
-                                    : femaleProfileUrl,
+                                    ? URLConstants.maleProfileUrl
+                                    : URLConstants.femaleProfileUrl,
                             nickname: model.writerType == 'trainer'
                                 ? model.trainer.nickname
                                 : model.user.nickname,

@@ -80,9 +80,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   child: GuideVideoPlayer(
                     videos: widget.exercise.videos
                         .map((e) => ExerciseVideo(
-                            url: '$s3Url${e.url}',
+                            url: '${URLConstants.s3Url}${e.url}',
                             index: e.index,
-                            thumbnail: '$s3Url${e.thumbnail}'))
+                            thumbnail: '${URLConstants.s3Url}${e.thumbnail}'))
                         .toList(),
                   ),
                 ),
@@ -136,7 +136,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                               backgroundColor: Pallete.point,
                               child: CustomNetworkImage(
                                 imageUrl:
-                                    '$s3Url${widget.exercise.trainerProfileImage}',
+                                    '${URLConstants.s3Url}${widget.exercise.trainerProfileImage}',
                               ),
                             ),
                           ),

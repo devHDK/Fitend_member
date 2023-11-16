@@ -96,7 +96,8 @@ class _MediaPageScreenState extends State<MediaPageScreen> {
                       minScale: 0.5,
                       maxScale: 10.0,
                       child: CustomNetworkImage(
-                        imageUrl: '$s3Url${widget.gallery[index].url}',
+                        imageUrl:
+                            '${URLConstants.s3Url}${widget.gallery[index].url}',
                         boxFit: BoxFit.contain,
                       ),
                     ),

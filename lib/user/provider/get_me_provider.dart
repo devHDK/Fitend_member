@@ -74,8 +74,10 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
             state =
                 UserModelError(error: 'store version error', statusCode: 444);
           } else {
-            final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
-            final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
+            final refreshToken =
+                await storage.read(key: StringConstants.refreshToken);
+            final accessToken =
+                await storage.read(key: StringConstants.accessToken);
 
             if (refreshToken == null || accessToken == null) {
               state = null;
@@ -136,8 +138,10 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
         deviceId: deviceId,
       );
 
-      await storage.write(key: REFRESH_TOKEN_KEY, value: resp.refreshToken);
-      await storage.write(key: ACCESS_TOKEN_KEY, value: resp.accessToken);
+      await storage.write(
+          key: StringConstants.refreshToken, value: resp.refreshToken);
+      await storage.write(
+          key: StringConstants.accessToken, value: resp.accessToken);
 
       final userResp = await repository.getMe();
 
@@ -201,8 +205,8 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     }
 
     await Future.wait([
-      storage.delete(key: REFRESH_TOKEN_KEY),
-      storage.delete(key: ACCESS_TOKEN_KEY),
+      storage.delete(key: StringConstants.refreshToken),
+      storage.delete(key: StringConstants.accessToken),
     ]);
     state = null;
   }
@@ -254,7 +258,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     String? androidUuid;
 
     if (Platform.isAndroid) {
-      final savedUuid = await storage.read(key: DEVICEID);
+      final savedUuid = await storage.read(key: StringConstants.deviceId);
 
       androidUuid = savedUuid;
 

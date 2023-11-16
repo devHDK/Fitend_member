@@ -326,7 +326,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: PreviewImageNetwork(
-                          url: '$s3Url${widget.gallery!.first.url}',
+                          url:
+                              '${URLConstants.s3Url}${widget.gallery!.first.url}',
                           width: (100.w - 110).toInt(),
                           height: galleryHeight - 20,
                         ),
@@ -367,8 +368,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                               child: CircleProfileImage(
                                 image: CachedNetworkImage(
                                   imageUrl: widget.user.gender == 'male'
-                                      ? maleProfileUrl
-                                      : femaleProfileUrl,
+                                      ? URLConstants.maleProfileUrl
+                                      : URLConstants.femaleProfileUrl,
                                 ),
                                 borderRadius: 12,
                               ),
@@ -387,7 +388,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                               child: CircleProfileImage(
                                 image: CachedNetworkImage(
                                   imageUrl:
-                                      '$s3Url${widget.trainer.profileImage}',
+                                      '${URLConstants.s3Url}${widget.trainer.profileImage}',
                                 ),
                                 borderRadius: 12,
                               ),
@@ -535,7 +536,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                                 ),
                               )
                             : PreviewImageNetwork(
-                                url: '$s3Url${widget.gallery![index - 1].url}',
+                                url:
+                                    '${URLConstants.s3Url}${widget.gallery![index - 1].url}',
                                 width: (100.w - 110).toInt(),
                                 // ((galleryHeight - 20) * 1.25)
                                 //     .toInt(),
@@ -704,7 +706,7 @@ class RecordTypeThread extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                               child: CustomNetworkImage(
                                 imageUrl:
-                                    '$s3Url$muscleImageUrl${info.targetMuscleIds[index]}.png',
+                                    '${URLConstants.s3Url}${URLConstants.muscleImageUrl}${info.targetMuscleIds[index]}.png',
                                 width: isbigSize! ? 52 : 40,
                                 height: isbigSize! ? 52 : 40,
                                 boxFit: BoxFit.cover,

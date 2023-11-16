@@ -311,15 +311,16 @@ class CommentCreateStateNotifier
 
     if (editModel.gallery != null && editModel.gallery!.isNotEmpty) {
       for (var asset in editModel.gallery!) {
-        final fileInfo =
-            await DefaultCacheManager().getFileFromCache('$s3Url${asset.url}');
+        final fileInfo = await DefaultCacheManager()
+            .getFileFromCache('${URLConstants.s3Url}${asset.url}');
 
         if (fileInfo != null) {
           assetPaths.add(fileInfo.file.path);
         } else {
           debugPrint('media 다운로드중...');
-          final file = await DefaultCacheManager()
-              .getSingleFile('$s3Url${asset.url}', key: '$s3Url${asset.url}');
+          final file = await DefaultCacheManager().getSingleFile(
+              '${URLConstants.s3Url}${asset.url}',
+              key: '${URLConstants.s3Url}${asset.url}');
 
           assetPaths.add(file.path);
         }

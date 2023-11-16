@@ -65,15 +65,15 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
     currentPosition = const Duration();
     File? file;
     final fileInfo = await DefaultCacheManager()
-        .getFileFromCache('$s3Url${widget.video.url}');
+        .getFileFromCache('${URLConstants.s3Url}${widget.video.url}');
 
     if (fileInfo != null) {
       file = fileInfo.file;
     } else {
       debugPrint('video download...');
       file = await DefaultCacheManager().getSingleFile(
-          '$s3Url${widget.video.url}',
-          key: '$s3Url${widget.video.url}');
+          '${URLConstants.s3Url}${widget.video.url}',
+          key: '${URLConstants.s3Url}${widget.video.url}');
     }
 
     _videoController = VideoPlayerController.file(
@@ -118,7 +118,7 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
         _videoController!.value.isBuffering ||
         !_videoController!.value.isInitialized) {
       return VisibilityDetector(
-        key: ValueKey('$s3Url${widget.video.url}_1'),
+        key: ValueKey('${URLConstants.s3Url}${widget.video.url}_1'),
         onVisibilityChanged: (info) {
           var visiblePercentage = info.visibleFraction * 100;
 
@@ -136,7 +136,7 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
             child: Stack(
               children: [
                 CustomNetworkImage(
-                  imageUrl: '$s3Url${widget.video.thumbnail}',
+                  imageUrl: '${URLConstants.s3Url}${widget.video.thumbnail}',
                   boxFit: BoxFit.fitWidth,
                 ),
                 Positioned(
@@ -168,7 +168,7 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
       );
     } else {
       return VisibilityDetector(
-        key: ValueKey('$s3Url${widget.video.url}'),
+        key: ValueKey('${URLConstants.s3Url}${widget.video.url}'),
         onVisibilityChanged: (info) {
           var visiblePercentage = info.visibleFraction * 100;
 
@@ -203,7 +203,7 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
                     children: [
                       VideoPlayer(
                         _videoController!,
-                        // key: ValueKey('$s3Url${widget.video.url}'),
+                        // key: ValueKey('${URLConstants.s3Url}${widget.video.url}'),
                       ),
                       Positioned(
                         bottom: 5,

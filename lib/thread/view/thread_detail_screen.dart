@@ -353,8 +353,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                     child: CircleProfileImage(
                       image: CachedNetworkImage(
                         imageUrl: model.user.gender == 'male'
-                            ? maleProfileUrl
-                            : femaleProfileUrl,
+                            ? URLConstants.maleProfileUrl
+                            : URLConstants.femaleProfileUrl,
                       ),
                       borderRadius: 17,
                     ),

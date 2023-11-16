@@ -379,14 +379,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     String? androidUuid;
 
     if (Platform.isAndroid) {
-      final savedUuid =
-          await ref.read(secureStorageProvider).read(key: DEVICEID);
+      final savedUuid = await ref
+          .read(secureStorageProvider)
+          .read(key: StringConstants.deviceId);
       if (savedUuid == null) {
         var uuid = const Uuid();
         androidUuid = uuid.v1();
         await ref
             .read(secureStorageProvider)
-            .write(key: DEVICEID, value: androidUuid);
+            .write(key: StringConstants.deviceId, value: androidUuid);
       } else {
         androidUuid = savedUuid;
       }

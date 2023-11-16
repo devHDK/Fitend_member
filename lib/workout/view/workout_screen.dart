@@ -477,11 +477,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   videos: [
                     ExerciseVideo(
                       url:
-                          '$s3Url${widget.exercises[model.exerciseIndex].videos.first.url}',
+                          '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].videos.first.url}',
                       index: widget
                           .exercises[model.exerciseIndex].videos.first.index,
                       thumbnail:
-                          '$s3Url${widget.exercises[model.exerciseIndex].videos.first.thumbnail}',
+                          '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].videos.first.thumbnail}',
                     )
                   ],
                 ),
@@ -499,7 +499,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   borderRadius: BorderRadius.circular(18),
                   child: CustomNetworkImage(
                     imageUrl:
-                        '$s3Url${widget.exercises[model.exerciseIndex].trainerProfileImage}',
+                        '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].trainerProfileImage}',
                     width: 36,
                     height: 36,
                     boxFit: BoxFit.cover,

@@ -154,10 +154,10 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                 CircleProfileImage(
                   image: CachedNetworkImage(
                     imageUrl: widget.trainer != null
-                        ? '$s3Url${widget.trainer!.profileImage}'
+                        ? '${URLConstants.s3Url}${widget.trainer!.profileImage}'
                         : widget.user != null && widget.user!.gender == 'male'
-                            ? maleProfileUrl
-                            : femaleProfileUrl,
+                            ? URLConstants.maleProfileUrl
+                            : URLConstants.femaleProfileUrl,
                     width: 34,
                     height: 34,
                   ),
@@ -264,7 +264,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(39, 10, 0, 10),
                   child: PreviewImageNetwork(
-                    url: '$s3Url${widget.gallery!.first.url}',
+                    url: '${URLConstants.s3Url}${widget.gallery!.first.url}',
                     width: (100.w - 110).toInt(),
                     height: 250,
                     boxFit: BoxFit.cover,
@@ -330,7 +330,8 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                                     ],
                                   )
                                 : PreviewImageNetwork(
-                                    url: '$s3Url${widget.gallery![index].url}',
+                                    url:
+                                        '${URLConstants.s3Url}${widget.gallery![index].url}',
                                     width: 140,
                                     height: 150,
                                   ),

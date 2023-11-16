@@ -58,8 +58,8 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
     currentPosition = const Duration();
 
     final file = await DefaultCacheManager().getSingleFile(
-        '$s3Url${widget.video.url}',
-        key: '$s3Url${widget.video.url}');
+        '${URLConstants.s3Url}${widget.video.url}',
+        key: '${URLConstants.s3Url}${widget.video.url}');
 
     _videoController = VideoPlayerController.file(
       file,

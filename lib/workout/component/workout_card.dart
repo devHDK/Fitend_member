@@ -245,7 +245,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: CustomNetworkImage(
-              imageUrl: '$s3Url$thumnail',
+              imageUrl: '${URLConstants.s3Url}$thumnail',
             ),
           ),
         ),
@@ -279,7 +279,7 @@ class _WorkoutCardState extends ConsumerState<WorkoutCard> {
         //     height: 35,
         //     child: ClipRRect(
         //       child: CustomNetworkImage(
-        //           imageUrl: '$s3Url$muscleImageUrl$muscleId.png'),
+        //           imageUrl: '${URLConstants.s3Url}${URLConstants.muscleImageUrl}$muscleId.png'),
         //     ),
         //   ),
         // )

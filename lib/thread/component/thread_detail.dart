@@ -152,10 +152,10 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                         borderRadius: 17,
                         image: CachedNetworkImage(
                           imageUrl: model.writerType == 'trainer'
-                              ? '$s3Url${model.trainer.profileImage}'
+                              ? '${URLConstants.s3Url}${model.trainer.profileImage}'
                               : model.user.gender == 'male'
-                                  ? maleProfileUrl
-                                  : femaleProfileUrl,
+                                  ? URLConstants.maleProfileUrl
+                                  : URLConstants.femaleProfileUrl,
                           height: 34,
                           width: 34,
                         ),
@@ -342,7 +342,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: PreviewImageNetwork(
-                  url: '$s3Url${model.gallery!.first.url}',
+                  url: '${URLConstants.s3Url}${model.gallery!.first.url}',
                   width: (100.w - 56).toInt(),
                   height: 320,
                   boxFit: BoxFit.cover,
@@ -584,7 +584,8 @@ class _MediaListView extends StatelessWidget {
                             ),
                           )
                         : PreviewImageNetwork(
-                            url: '$s3Url${model.gallery![index].url}',
+                            url:
+                                '${URLConstants.s3Url}${model.gallery![index].url}',
                             width: (100.w - 56).toInt(),
                             height: 250,
                           ),

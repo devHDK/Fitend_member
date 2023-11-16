@@ -15,10 +15,10 @@ final dioProvider = Provider(
     final dio = Dio(
       BaseOptions(
         baseUrl: F.appFlavor == Flavor.local
-            ? localIp
+            ? URLConstants.localIp
             : F.appFlavor == Flavor.development
-                ? devIp
-                : deployIp,
+                ? URLConstants.devIp
+                : URLConstants.deployIp,
         sendTimeout: const Duration(seconds: 5),
         receiveTimeout: const Duration(seconds: 6),
         connectTimeout: const Duration(seconds: 6),
@@ -69,7 +69,7 @@ class CustomInterceptor extends Interceptor {
     if (options.headers['accessToken'] == 'true') {
       options.headers.remove('accessToken');
 
-      final token = await storage.read(key: ACCESS_TOKEN_KEY);
+      final token = await storage.read(key: StringConstants.accessToken);
 
       options.headers.addAll({
         'authorization': 'Bearer $token',
@@ -109,8 +109,8 @@ class CustomInterceptor extends Interceptor {
     // debugPrint(
     //     '[ERROR][${err.requestOptions.method}] ${err.requestOptions.uri} : ${err.response?.statusCode}');
 
-    final oldAccessToken = await storage.read(key: ACCESS_TOKEN_KEY);
-    final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
+    final oldAccessToken = await storage.read(key: StringConstants.accessToken);
+    final refreshToken = await storage.read(key: StringConstants.refreshToken);
 
     //refreshToken이 없으면
     if (refreshToken == null) {
@@ -141,7 +141,8 @@ class CustomInterceptor extends Interceptor {
           },
         );
 
-        await storage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
+        await storage.write(
+            key: StringConstants.accessToken, value: accessToken);
 
         //요청 재전송
         final response = await dioRetry.fetch(options);

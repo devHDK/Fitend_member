@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class _EmojiButtonState extends State<EmojiButton> {
               widget.isSelected! ? const Color(0xffCA3850) : Pallete.darkGray,
         ),
         child: widget.emoji == null
-            ? Center(child: SvgPicture.asset('asset/img/icon_emoji_button.svg'))
+            ? Center(child: SvgPicture.asset(SVGConstants.emojiButton))
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

@@ -1,5 +1,6 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -224,8 +225,8 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                     ));
               },
               child: !notificationHomeModel.isConfirmed
-                  ? SvgPicture.asset('asset/img/icon_alarm_on.svg')
-                  : SvgPicture.asset('asset/img/icon_alarm_off.svg'),
+                  ? SvgPicture.asset(SVGConstants.alarmOn)
+                  : SvgPicture.asset(SVGConstants.alarmOff),
             ),
             const SizedBox(
               width: 12,
@@ -242,7 +243,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                   );
                 },
                 child: SvgPicture.asset(
-                  'asset/img/icon_my_page.svg',
+                  SVGConstants.mypage,
                 ),
               ),
             ),
@@ -305,8 +306,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                   );
                 },
                 backgroundColor: Colors.transparent,
-                child:
-                    SvgPicture.asset('asset/img/icon_thread_create_button.svg'),
+                child: SvgPicture.asset(SVGConstants.threadCreateButton),
               ),
         body: RefreshIndicator(
           backgroundColor: Pallete.background,

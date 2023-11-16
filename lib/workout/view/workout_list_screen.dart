@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -362,8 +363,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                                     const SizedBox(
                                       width: 30,
                                     ),
-                                    SvgPicture.asset(
-                                        'asset/img/icon_turn_down.svg'),
+                                    SvgPicture.asset(SVGConstants.turnDown),
                                   ],
                                 ),
                               ],
@@ -373,11 +373,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                               const SizedBox(
                                 width: 30,
                               ),
-                              SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                              SvgPicture.asset(SVGConstants.tunrLine),
                               const SizedBox(
                                 width: 10,
                               ),
-                              SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                              SvgPicture.asset(SVGConstants.tunrLine),
                             ]),
                           WorkoutCard(
                             exercise: exerciseModel,
@@ -397,8 +397,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                                     const SizedBox(
                                       width: 30,
                                     ),
-                                    SvgPicture.asset(
-                                        'asset/img/icon_turn_up.svg'),
+                                    SvgPicture.asset(SVGConstants.turnUp),
                                   ],
                                 ),
                                 const SizedBox(

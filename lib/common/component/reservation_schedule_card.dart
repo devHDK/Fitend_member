@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -186,10 +187,10 @@ class _ScheduleCardState extends ConsumerState<ReservationScheduleCard> {
                   )
                 else if ((widget.isComplete!) || widget.isNoshow!)
                   // Image.asset('asset/img/round_success.png'),
-                  SvgPicture.asset('asset/img/icon_check_complete.svg')
+                  SvgPicture.asset(SVGConstants.checkComplete)
                 else if (!widget.isComplete!) //스케줄이 미완료
                   SvgPicture.asset(
-                      'asset/img/icon_check.svg') // 스케줄이 완료(nowhow 포함) 일때
+                      SVGConstants.checkEmpty) // 스케줄이 완료(nowhow 포함) 일때
               ],
             ),
             if (widget.selected)

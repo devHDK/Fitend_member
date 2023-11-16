@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -337,12 +338,12 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                         ),
                         child: Center(
                           child: SvgPicture.asset(isReady
-                              ? 'asset/img/icon_stop.svg'
+                              ? SVGConstants.stop
                               : isRunning
-                                  ? 'asset/img/icon_pause.svg'
+                                  ? SVGConstants.pause
                                   : totalSeconds == 0
-                                      ? 'asset/img/icon_reset.svg'
-                                      : 'asset/img/icon_play.svg'),
+                                      ? SVGConstants.reset
+                                      : SVGConstants.play),
                         ),
                       ),
                     ),
@@ -377,7 +378,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Center(
-                          child: SvgPicture.asset('asset/img/icon_exit.svg'),
+                          child: SvgPicture.asset(SVGConstants.exit),
                         ),
                       ),
                     ),

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -232,7 +233,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20),
-                      child: SvgPicture.asset('asset/img/icon_edit.svg'),
+                      child: SvgPicture.asset(SVGConstants.edit),
                     ),
                   ),
                 )

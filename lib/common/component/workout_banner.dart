@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -93,7 +94,7 @@ class WorkoutBanner extends StatelessWidget {
                   child: SizedBox(),
                 ),
                 SvgPicture.asset(
-                  'asset/img/icon_timer.svg',
+                  SVGConstants.timer,
                   width: 20,
                 ),
                 const SizedBox(

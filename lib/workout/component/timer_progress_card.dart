@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -229,7 +230,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                     width: 5,
                   ),
                   if (widget.exercise.setType != null)
-                    SvgPicture.asset('asset/img/icon_repeat.svg')
+                    SvgPicture.asset(SVGConstants.repeat)
                 ],
               ),
               const SizedBox(
@@ -268,8 +269,8 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                         child: Center(
                           child: SvgPicture.asset(
                             recordSetInfo.seconds == 0
-                                ? 'asset/img/icon_timer_white.svg'
-                                : 'asset/img/icon_timer_red.svg',
+                                ? SVGConstants.timerWhite
+                                : SVGConstants.timerRed,
                             width: 18,
                             height: 18,
                           ),
@@ -318,7 +319,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                     width: 5,
                   ),
                   if (widget.exercise.setType != null)
-                    SvgPicture.asset('asset/img/icon_repeat.svg')
+                    SvgPicture.asset(SVGConstants.repeat)
                 ],
               ),
             ],
@@ -339,7 +340,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                       width: 32,
                       height: 32,
                       child: SvgPicture.asset(
-                        'asset/img/icon_list.svg',
+                        SVGConstants.list,
                       ),
                     ),
                     const SizedBox(
@@ -390,7 +391,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                       width: 12,
                     ),
                     SvgPicture.asset(
-                      'asset/img/icon_forward.svg',
+                      SVGConstants.forward,
                     ),
                   ],
                 ),

@@ -6,6 +6,7 @@ import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/guide_video_player.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -287,7 +288,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 size: 25,
                               )
                             : SvgPicture.asset(
-                                'asset/img/icon_message.svg',
+                                SVGConstants.message,
                                 width: 25,
                                 height: 25,
                               ),
@@ -858,7 +859,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               ),
                               child: Column(
                                 children: [
-                                  SvgPicture.asset('asset/img/icon_more.svg'),
+                                  SvgPicture.asset(SVGConstants.message),
                                   InkWell(
                                     onTap: () async {
                                       Navigator.of(context)
@@ -913,8 +914,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                           const SizedBox(
                                             width: 10,
                                           ),
-                                          SvgPicture.asset(
-                                              'asset/img/icon_list.svg'),
+                                          SvgPicture.asset(SVGConstants.list),
                                           const SizedBox(
                                             width: 10,
                                           ),
@@ -950,7 +950,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                             width: 20,
                                             height: 20,
                                             child: SvgPicture.asset(
-                                                'asset/img/icon_guide.svg'),
+                                              SVGConstants.guide,
+                                            ),
                                           ),
                                           const SizedBox(
                                             width: 10,

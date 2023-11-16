@@ -1,4 +1,5 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -257,7 +258,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            SvgPicture.asset('asset/img/icon_timer.svg'),
+                            SvgPicture.asset(SVGConstants.timer),
                             const SizedBox(
                               width: 5,
                             ),

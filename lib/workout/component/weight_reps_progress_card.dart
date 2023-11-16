@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -216,7 +217,7 @@ class _WeightWrepsProgressCardState
                     width: 5,
                   ),
                   if (widget.exercise.setType != null)
-                    SvgPicture.asset('asset/img/icon_repeat.svg')
+                    SvgPicture.asset(SVGConstants.repeat)
                 ],
               ),
               const SizedBox(
@@ -263,7 +264,7 @@ class _WeightWrepsProgressCardState
                     width: 5,
                   ),
                   if (widget.exercise.setType != null)
-                    SvgPicture.asset('asset/img/icon_repeat.svg')
+                    SvgPicture.asset(SVGConstants.repeat)
                 ],
               ),
             ],
@@ -284,7 +285,7 @@ class _WeightWrepsProgressCardState
                       width: 32,
                       height: 32,
                       child: SvgPicture.asset(
-                        'asset/img/icon_list.svg',
+                        SVGConstants.list,
                       ),
                     ),
                     const SizedBox(
@@ -313,7 +314,7 @@ class _WeightWrepsProgressCardState
                       width: 12,
                     ),
                     SvgPicture.asset(
-                      'asset/img/icon_forward.svg',
+                      SVGConstants.forward,
                     ),
                   ],
                 ),

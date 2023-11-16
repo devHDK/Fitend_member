@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -519,8 +520,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                           child: Padding(
                             padding: const EdgeInsets.only(
                                 top: 10, bottom: 10, right: 10),
-                            child:
-                                SvgPicture.asset('asset/img/icon_camera.svg'),
+                            child: SvgPicture.asset(SVGConstants.camera),
                           ),
                         ),
                         InkWell(
@@ -579,8 +579,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child:
-                                SvgPicture.asset('asset/img/icon_picture.svg'),
+                            child: SvgPicture.asset(SVGConstants.picture),
                           ),
                         ),
                         const Spacer(),

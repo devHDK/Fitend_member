@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -119,9 +120,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               },
               child: _renderLabel(
                 name: '비밀번호 변경',
-                child: SvgPicture.asset(
-                  'asset/img/icon_next.svg',
-                ),
+                child: SvgPicture.asset(SVGConstants.next),
               ),
             ),
             const Divider(
@@ -169,9 +168,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                       "https://weareraid.notion.site/87468f88c99b427b81ae3e44aeb1f37b?pvs=4"),
               child: _renderLabel(
                 name: '서비스 이용약관',
-                child: SvgPicture.asset(
-                  'asset/img/icon_next.svg',
-                ),
+                child: SvgPicture.asset(SVGConstants.next),
               ),
             ),
             const Divider(
@@ -184,9 +181,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                       "https://weareraid.notion.site/06b383e3c7aa4515a4637c2c11f3d908?pvs=4"),
               child: _renderLabel(
                 name: '개인정보 처리방침',
-                child: SvgPicture.asset(
-                  'asset/img/icon_next.svg',
-                ),
+                child: SvgPicture.asset(SVGConstants.next),
               ),
             ),
             const Divider(
@@ -291,7 +286,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SvgPicture.asset('asset/img/icon_email.svg'),
+              SvgPicture.asset(SVGConstants.email),
               const SizedBox(
                 width: 8,
               ),
@@ -311,7 +306,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SvgPicture.asset('asset/img/icon_phone.svg'),
+              SvgPicture.asset(SVGConstants.phone),
               const SizedBox(
                 width: 8,
               ),

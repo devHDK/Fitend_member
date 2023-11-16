@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/hexagon_container.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
@@ -142,7 +143,7 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                           const SizedBox(
                             width: 20,
                           ),
-                          SvgPicture.asset('asset/img/icon_target.svg'),
+                          SvgPicture.asset(SVGConstants.target),
                           const SizedBox(
                             width: 5,
                           ),
@@ -204,7 +205,7 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                               height: 20,
                               width: 20,
                               child: SvgPicture.asset(
-                                'asset/img/icon_clock.svg',
+                                SVGConstants.clock,
                                 color: isNowSet ? Pallete.point : Pallete.gray,
                                 width: 16,
                               ),

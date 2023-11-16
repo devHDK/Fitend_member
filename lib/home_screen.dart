@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/provider/avail_camera_provider.dart';
 import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
@@ -70,8 +71,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     child: SvgPicture.asset(
                       _currentIndex == 0
-                          ? 'asset/img/icon_schedule_active.svg'
-                          : 'asset/img/icon_schedule.svg',
+                          ? SVGConstants.scheduleActive
+                          : SVGConstants.schedule,
                     ),
                   ),
                 ),
@@ -105,8 +106,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           model != null && model.threadBadgeCount != 0,
                       child: SvgPicture.asset(
                         _currentIndex == 1
-                            ? 'asset/img/icon_message_active.svg'
-                            : 'asset/img/icon_message.svg',
+                            ? SVGConstants.messageActive
+                            : SVGConstants.message,
                       ),
                     ),
                   ),

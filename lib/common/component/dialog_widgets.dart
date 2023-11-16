@@ -1,5 +1,6 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:fitend_member/common/component/calendar.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
@@ -315,8 +316,7 @@ class DialogWidgets {
                             borderRadius: BorderRadius.circular(17),
                           ),
                           child: Center(
-                            child:
-                                SvgPicture.asset('asset/img/icon_pencil.svg'),
+                            child: SvgPicture.asset(SVGConstants.pencil),
                           ),
                         ),
                         const SizedBox(
@@ -351,8 +351,7 @@ class DialogWidgets {
                             borderRadius: BorderRadius.circular(17),
                           ),
                           child: Center(
-                            child: SvgPicture.asset(
-                                'asset/img/icon_trash_bin.svg'),
+                            child: SvgPicture.asset(SVGConstants.trashBin),
                           ),
                         ),
                         const SizedBox(

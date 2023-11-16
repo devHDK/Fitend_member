@@ -1,5 +1,5 @@
 import 'package:fitend_member/common/const/pallete.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:flutter/material.dart';

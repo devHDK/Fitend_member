@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/pallete.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';

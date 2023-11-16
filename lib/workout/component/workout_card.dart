@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/pallete.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';

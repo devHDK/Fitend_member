@@ -116,7 +116,7 @@ class AuthProvider extends ChangeNotifier {
               ),
             ),
             GoRoute(
-              path: 'workoutFeedback/:workoutScheduleId',
+              path: 'StringConstants.workoutFeedback/:workoutScheduleId',
               name: WorkoutFeedbackScreen.routeName,
               pageBuilder: (context, state) => _botToTopTransiton(
                 state,

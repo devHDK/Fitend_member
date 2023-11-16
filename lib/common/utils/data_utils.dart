@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';

@@ -6,7 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';

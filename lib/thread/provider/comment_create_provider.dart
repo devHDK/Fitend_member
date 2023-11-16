@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';

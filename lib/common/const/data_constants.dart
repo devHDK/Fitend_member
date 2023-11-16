@@ -11,24 +11,34 @@ const List<String> weekday = [
   '일',
 ];
 
-String needNotificationUpdate = 'notificationUpdate';
-String hasNewNotification = 'hasNewNotification';
+class StringConstants {
+  static String needNotificationUpdate = 'notificationUpdate';
+  static String hasNewNotification = 'hasNewNotification';
 
-String needScheduleUpdate = 'scheduleUpdate';
-String needWorkoutUpdateList = 'needWorkoutUpdateList';
+  static String needScheduleUpdate = 'scheduleUpdate';
+  static String needWorkoutUpdateList = 'needWorkoutUpdateList';
 
-String threadBadgeCount = 'threadBadgeCount';
+  static String threadBadgeCount = 'threadBadgeCount';
 
-String needThreadUpdate = 'needThreadUpdate';
-String needThreadUpdateList = 'needThreadUpdateList';
-String needThreadDelete = 'needThreadDelete';
+  static String needThreadUpdate = 'needThreadUpdate';
+  static String needThreadUpdateList = 'needThreadUpdateList';
+  static String needThreadDelete = 'needThreadDelete';
 
-String needCommentCreate = 'commentCreate';
-// String needCommentUpdate = 'commentUpdate';
-String needCommentDelete = 'needCommentDelete';
+  static String needCommentCreate = 'commentCreate';
+  static String needCommentDelete = 'needCommentDelete';
 
-String needEmojiCreate = 'emojiCreate';
-String needEmojiDelete = 'emojiDelete';
+  static String needEmojiCreate = 'emojiCreate';
+  static String needEmojiDelete = 'emojiDelete';
+
+  static String workoutRecordSimple = 'WorkoutRecords';
+  static String timerXOneRecord = 'timerXoneRecords';
+  static String timerXMoreRecord = 'timerXMoreRecords';
+  static String timerTotalTimeRecord = 'timerProcessTimeRecord';
+  static String workoutResult = 'workoutResult';
+  static String modifiedExercise = 'modifiedExercise';
+  static String workoutFeedback = 'WorkoutFeedback';
+  static String processingExerciseIndex = 'processExerciseIndex';
+}
 
 enum WorkoutPushType {
   workoutScheduleCreate,
@@ -92,21 +102,6 @@ const maleProfileUrl =
     'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_7.jpg';
 const femaleProfileUrl =
     'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_1.jpg';
-
-String workoutRecordSimple = 'WorkoutRecords';
-String timerXOneRecord = 'timerXoneRecords';
-String timerXMoreRecord = 'timerXMoreRecords';
-String timerTotalTimeRecord = 'timerProcessTimeRecord';
-String workoutResult = 'workoutResult';
-String modifiedExercise = 'modifiedExercise';
-String workoutFeedback = 'WorkoutFeedback';
-String processingExerciseIndex = 'processExerciseIndex';
-
-// final RegExp urlRegExp =
-//     RegExp(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-=%.]+');
-
-// final urlRegExp = RegExp(
-//     r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
 
 final urlRegExp = RegExp(
     r"((https?:\/\/)?(www\.)?)?[-a-zA-Z@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{2,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\/=]*)");

@@ -4,7 +4,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
 import 'package:fitend_member/common/const/pallete.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
@@ -117,8 +117,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
 
   Future<void> _checkIsNeedUpdateWorkoutDetail() async {
     final pref = await ref.read(sharedPrefsProvider);
-    final needUpdateList =
-        SharedPrefUtils.getNeedUpdateList(needWorkoutUpdateList, pref);
+    final needUpdateList = SharedPrefUtils.getNeedUpdateList(
+        StringConstants.needWorkoutUpdateList, pref);
 
     if (needUpdateList.contains(widget.id.toString()) &&
         workoutModel.exercises.isNotEmpty) {
@@ -126,7 +126,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
       needUpdateList.remove(widget.id.toString());
 
       SharedPrefUtils.updateNeedUpdateList(
-          needWorkoutUpdateList, pref, needUpdateList);
+          StringConstants.needWorkoutUpdateList, pref, needUpdateList);
     }
   }
 
@@ -135,7 +135,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     final state = ref.watch(workoutProvider(widget.id));
     final AsyncValue<Box> workoutRecordbox =
         ref.watch(hiveWorkoutRecordSimpleProvider);
-    // final pstate = ref.watch(workoutResultProvider(widget.id));
+    // final pstate = ref.watch(StringConstants.workoutResultProvider(widget.id));
 
     if (state is WorkoutModelLoading) {
       return const Scaffold(
@@ -243,7 +243,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
         //                 },
         //               );
 
-        //               workoutFeedbackBox.whenData(
+        //               StringConstants.workoutFeedbackBox.whenData(
         //                 (value) async {
         //                   final record = value.get(widget.id);
         //                   if (record != null &&

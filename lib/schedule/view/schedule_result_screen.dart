@@ -1,6 +1,6 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
@@ -88,7 +88,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   Widget build(BuildContext context) {
     final pstate = ref.watch(workoutResultProvider(widget.workoutScheduleId));
     final workoutFeedbackBox = ref.watch(hiveWorkoutFeedbackProvider);
-    // final workoutResultBox = ref.watch(hiveWorkoutResultProvider);
+    // final StringConstants.workoutResultBox = ref.watch(hiveWorkoutResultProvider);
     final workoutRecordBox = ref.watch(hiveWorkoutRecordSimpleProvider);
 
     workoutFeedbackBox.whenData(

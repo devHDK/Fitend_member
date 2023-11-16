@@ -1,6 +1,6 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
@@ -68,13 +68,13 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
 
   Future<void> putNotification() async {
     final pref = await ref.read(sharedPrefsProvider);
-    final isNeedUpdateNoti =
-        SharedPrefUtils.getIsNeedUpdate(needNotificationUpdate, pref);
+    final isNeedUpdateNoti = SharedPrefUtils.getIsNeedUpdate(
+        StringConstants.needNotificationUpdate, pref);
 
     if (isNeedUpdateNoti) {
       await ref.read(notificationProvider.notifier).paginate();
       await SharedPrefUtils.updateIsNeedUpdate(
-          needNotificationUpdate, pref, false);
+          StringConstants.needNotificationUpdate, pref, false);
     }
   }
 

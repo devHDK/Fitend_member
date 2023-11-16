@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/update_checker.dart';

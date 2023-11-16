@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/flavors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';

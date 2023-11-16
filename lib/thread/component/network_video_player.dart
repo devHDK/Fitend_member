@@ -1,5 +1,5 @@
 import 'package:fitend_member/common/const/pallete.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';

@@ -7,7 +7,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -48,25 +48,26 @@ void processPushMessage(RemoteMessage message) async {
   debugPrint('message: ${message.toMap()}');
 
   if (type.contains('reservation')) {
-    await SharedPrefUtils.updateIsNeedUpdate(needScheduleUpdate, pref, true);
     await SharedPrefUtils.updateIsNeedUpdate(
-        needNotificationUpdate, pref, true);
+        StringConstants.needScheduleUpdate, pref, true);
+    await SharedPrefUtils.updateIsNeedUpdate(
+        StringConstants.needNotificationUpdate, pref, true);
   } else if (type.contains('workoutSchedule')) {
     switch (DataUtils.getWorkoutPushType(type)) {
       case WorkoutPushType.workoutScheduleCreate:
         await SharedPrefUtils.updateIsNeedUpdate(
-            needScheduleUpdate, pref, true);
+            StringConstants.needScheduleUpdate, pref, true);
         break;
       case WorkoutPushType.workoutScheduleDelete:
         await SharedPrefUtils.updateIsNeedUpdate(
-            needScheduleUpdate, pref, true);
+            StringConstants.needScheduleUpdate, pref, true);
         break;
       case WorkoutPushType.workoutScheduleChange:
         String workoutScheduleId = message.data['workoutScheduleId'].toString();
         await SharedPrefUtils.updateIsNeedUpdate(
-            needScheduleUpdate, pref, true);
+            StringConstants.needScheduleUpdate, pref, true);
         await SharedPrefUtils.addOneNeedUpdateList(
-            needWorkoutUpdateList, pref, workoutScheduleId);
+            StringConstants.needWorkoutUpdateList, pref, workoutScheduleId);
         break;
 
       default:
@@ -76,20 +77,22 @@ void processPushMessage(RemoteMessage message) async {
     switch (DataUtils.getThreadPushType(type)) {
       case ThreadPushType.threadCreate:
         await SharedPrefUtils.updateIsNeedUpdate(
-            needNotificationUpdate, pref, true);
-        await SharedPrefUtils.updateIsNeedUpdate(needThreadUpdate, pref, true);
+            StringConstants.needNotificationUpdate, pref, true);
+        await SharedPrefUtils.updateIsNeedUpdate(
+            StringConstants.needThreadUpdate, pref, true);
 
         break;
       case ThreadPushType.threadDelete:
         String threadId = message.data['threadId'].toString();
         await SharedPrefUtils.addOneNeedUpdateList(
-            needThreadDelete, pref, threadId);
+            StringConstants.needThreadDelete, pref, threadId);
         break;
       case ThreadPushType.threadUpdate:
         String threadId = message.data['threadId'].toString();
-        await SharedPrefUtils.updateIsNeedUpdate(needThreadUpdate, pref, true);
+        await SharedPrefUtils.updateIsNeedUpdate(
+            StringConstants.needThreadUpdate, pref, true);
         await SharedPrefUtils.addOneNeedUpdateList(
-            needThreadUpdateList, pref, threadId);
+            StringConstants.needThreadUpdateList, pref, threadId);
         break;
 
       default:
@@ -99,22 +102,22 @@ void processPushMessage(RemoteMessage message) async {
     switch (DataUtils.getCommentPushType(type)) {
       case CommentPushType.commentCreate:
         await SharedPrefUtils.updateIsNeedUpdate(
-            needNotificationUpdate, pref, true);
+            StringConstants.needNotificationUpdate, pref, true);
 
         String threadId = message.data['threadId'].toString();
         await SharedPrefUtils.addOneNeedUpdateList(
-            needCommentCreate, pref, threadId);
+            StringConstants.needCommentCreate, pref, threadId);
 
         break;
       case CommentPushType.commentDelete:
         String threadId = message.data['threadId'].toString();
         await SharedPrefUtils.addOneNeedUpdateList(
-            needCommentDelete, pref, threadId);
+            StringConstants.needCommentDelete, pref, threadId);
         break;
       case CommentPushType.commentUpdate:
         String threadId = message.data['threadId'].toString();
         await SharedPrefUtils.addOneNeedUpdateList(
-            needThreadUpdateList, pref, threadId);
+            StringConstants.needThreadUpdateList, pref, threadId);
 
         break;
 
@@ -127,10 +130,12 @@ void processPushMessage(RemoteMessage message) async {
         final pushData = EmojiModelFromPushData.fromJson(message.data);
 
         await SharedPrefUtils.addOneNeedUpdateList(
-            needEmojiCreate, pref, json.encode(pushData.toJson()));
+            StringConstants.needEmojiCreate,
+            pref,
+            json.encode(pushData.toJson()));
 
-        var deleteList =
-            SharedPrefUtils.getNeedUpdateList(needEmojiDelete, pref);
+        var deleteList = SharedPrefUtils.getNeedUpdateList(
+            StringConstants.needEmojiDelete, pref);
 
         final tempList = deleteList;
 
@@ -144,16 +149,19 @@ void processPushMessage(RemoteMessage message) async {
           }
         }
 
-        SharedPrefUtils.updateNeedUpdateList(needEmojiDelete, pref, deleteList);
+        SharedPrefUtils.updateNeedUpdateList(
+            StringConstants.needEmojiDelete, pref, deleteList);
 
         break;
       case EmojiPushType.emojiDelete:
         final pushData = EmojiModelFromPushData.fromJson(message.data);
         await SharedPrefUtils.addOneNeedUpdateList(
-            needEmojiDelete, pref, json.encode(pushData.toJson()));
+            StringConstants.needEmojiDelete,
+            pref,
+            json.encode(pushData.toJson()));
 
-        var createList =
-            SharedPrefUtils.getNeedUpdateList(needEmojiCreate, pref);
+        var createList = SharedPrefUtils.getNeedUpdateList(
+            StringConstants.needEmojiCreate, pref);
 
         final tempList = createList;
 
@@ -167,7 +175,8 @@ void processPushMessage(RemoteMessage message) async {
           }
         }
 
-        SharedPrefUtils.updateNeedUpdateList(needEmojiCreate, pref, createList);
+        SharedPrefUtils.updateNeedUpdateList(
+            StringConstants.needEmojiCreate, pref, createList);
 
         break;
 

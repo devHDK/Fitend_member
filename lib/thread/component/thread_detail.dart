@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';

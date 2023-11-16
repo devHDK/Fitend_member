@@ -93,7 +93,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        await _checkIsNeedUpdateWorkoutDetail();
+        if (mounted) {
+          await _checkIsNeedUpdateWorkoutDetail();
+        }
         break;
       case AppLifecycleState.inactive:
         break;
@@ -108,7 +110,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
 
   @override
   void didPush() async {
-    await _checkIsNeedUpdateWorkoutDetail();
+    if (mounted) {
+      await _checkIsNeedUpdateWorkoutDetail();
+    }
   }
 
   Future<void> _checkIsNeedUpdateWorkoutDetail() async {

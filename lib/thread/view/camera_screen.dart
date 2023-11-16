@@ -19,6 +19,7 @@ import 'package:native_camera_sound/native_camera_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
   const CameraScreen({
@@ -282,13 +283,15 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
     getPermissionStatus();
 
+    WakelockPlus.enable();
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     final CameraController? cameraController = controller;
 
     // App state changed before we got the chance to initialize.
@@ -297,7 +300,20 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     }
 
     if (state == AppLifecycleState.inactive) {
-      cameraController.dispose();
+      if (_isRecordingInProgress) {
+        XFile? rawVideo = await stopVideoRecording();
+        File videoFile = File(rawVideo!.path);
+
+        await ImageGallerySaver.saveFile(
+          videoFile.path,
+        );
+
+        setState(() {
+          takedAssetsCount++;
+        });
+      }
+
+      await cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
       onNewCameraSelected(cameraController.description);
     }
@@ -305,6 +321,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   @override
   void dispose() {
+    WakelockPlus.disable();
     controller?.dispose();
 
     if (timer.isActive) {
@@ -316,6 +333,17 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (controller == null || !controller!.value.isInitialized) {
+      return const Scaffold(
+        backgroundColor: BACKGROUND_COLOR,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: POINT_COLOR,
+          ),
+        ),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,

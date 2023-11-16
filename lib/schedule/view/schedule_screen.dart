@@ -126,6 +126,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     switch (state) {
       case AppLifecycleState.resumed:
         await _checkIsNeedUpdate();
+
         break;
       case AppLifecycleState.inactive:
         break;
@@ -141,28 +142,35 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   @override
   void didPush() async {
     await _checkIsNeedUpdate();
+
     super.didPush();
   }
 
-  @override
-  void didPop() async {
-    await _checkIsNeedUpdate();
-    super.didPop();
-  }
+  // @override
+  // void didPop() async {
+  //   if (mounted) {
+  //     await _checkIsNeedUpdate();
+  //   }
+  //   super.didPop();
+  // }
 
   Future<void> _checkIsNeedUpdate() async {
-    final pref = await ref.read(sharedPrefsProvider);
-    final isNeedUpdate =
-        SharedPrefUtils.getIsNeedUpdate(needScheduleUpdate, pref);
-    if (isNeedUpdate) {
-      await _resetScheduleList();
-      await SharedPrefUtils.updateIsNeedUpdate(needScheduleUpdate, pref, false);
+    if (mounted) {
+      final pref = await ref.read(sharedPrefsProvider);
+      final isNeedUpdate =
+          SharedPrefUtils.getIsNeedUpdate(needScheduleUpdate, pref);
+      if (isNeedUpdate) {
+        await _resetScheduleList();
+        await SharedPrefUtils.updateIsNeedUpdate(
+            needScheduleUpdate, pref, false);
+      }
     }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     ref
         .read(routeObserverProvider)
         .subscribe(this, ModalRoute.of(context) as PageRoute);
@@ -171,6 +179,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   @override
   void dispose() {
     ref.read(routeObserverProvider).unsubscribe(this);
+
     WidgetsBinding.instance.removeObserver(this);
     itemPositionsListener.itemPositions
         .removeListener(_handleItemPositionChange);
@@ -365,7 +374,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                               ),
                       );
                     },
-                  ).toList()
+                  )
                 ],
               );
             }

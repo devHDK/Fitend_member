@@ -60,8 +60,10 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     //threadScreen 진입시 badgeCount => 0
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ref.read(notificationHomeProvider.notifier).updateBageCount(0);
-      threadBadgeCountReset();
+      if (mounted) {
+        ref.read(notificationHomeProvider.notifier).updateBageCount(0);
+        threadBadgeCountReset();
+      }
     });
   }
 
@@ -113,7 +115,9 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+        if (mounted) {
+          await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+        }
         break;
       case AppLifecycleState.inactive:
         break;
@@ -128,13 +132,17 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
 
   @override
   void didPush() async {
-    await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+    if (mounted) {
+      await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+    }
     super.didPush();
   }
 
   @override
   void didPop() async {
-    await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+    if (mounted) {
+      await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+    }
     super.didPop();
   }
 

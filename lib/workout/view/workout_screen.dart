@@ -168,29 +168,33 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       tooltipSeq++;
     }
 
-    if (isTooltipVisible) {
-      setState(() {
-        isTooltipVisible = !isTooltipVisible;
-        tooltipCount = 0;
-      });
-    } else {
-      setState(() {
-        isTooltipVisible = !isTooltipVisible;
-        tooltipCount = 8;
-      });
+    if (mounted) {
+      if (isTooltipVisible) {
+        setState(() {
+          isTooltipVisible = !isTooltipVisible;
+          tooltipCount = 0;
+        });
+      } else {
+        setState(() {
+          isTooltipVisible = !isTooltipVisible;
+          tooltipCount = 8;
+        });
+      }
     }
   }
 
   void onTick(Timer timer) {
-    if (tooltipCount == 0) {
-      timer.cancel();
-      setState(() {
-        isTooltipVisible = false;
-      });
-    } else {
-      setState(() {
-        tooltipCount -= 1;
-      });
+    if (mounted) {
+      if (tooltipCount == 0) {
+        timer.cancel();
+        setState(() {
+          isTooltipVisible = false;
+        });
+      } else {
+        setState(() {
+          tooltipCount -= 1;
+        });
+      }
     }
   }
 
@@ -202,11 +206,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 
   void onTickTotalTimer(timer) {
-    ref
-        .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
-        .putProcessTotalTime();
+    if (mounted) {
+      ref
+          .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+          .putProcessTotalTime();
 
-    setState(() {});
+      // setState(() {});
+    }
   }
 
   @override

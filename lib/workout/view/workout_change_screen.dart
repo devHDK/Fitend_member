@@ -45,7 +45,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
 
     selectedIndex = widget.exerciseIndex;
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
+      if (mounted) setState(() {});
     });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

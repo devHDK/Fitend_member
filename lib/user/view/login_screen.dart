@@ -53,7 +53,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } else {
       buttonEnable = true;
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void passwordTextListener() {
@@ -63,7 +65,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } else {
       buttonEnable = true;
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override

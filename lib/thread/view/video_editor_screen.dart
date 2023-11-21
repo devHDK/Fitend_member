@@ -46,7 +46,11 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
   @override
   void initState() {
     super.initState();
-    _controller.initialize().then((_) => setState(() {})).catchError((error) {
+    _controller.initialize().then((_) {
+      if (mounted) {
+        setState(() {});
+      }
+    }).catchError((error) {
       // handle minumum duration bigger than video duration error
       Navigator.pop(context);
     }, test: (e) => e is VideoMinDurationError);

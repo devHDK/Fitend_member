@@ -43,9 +43,11 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   }
 
   void _scrollListener() {
-    setState(() {
-      _scrollOffset = _scrollController.offset;
-    });
+    if (mounted) {
+      setState(() {
+        _scrollOffset = _scrollController.offset;
+      });
+    }
   }
 
   @override

@@ -25,7 +25,9 @@ class _PreviewImageNetworkState extends State<PreviewImageNetwork> {
   void didUpdateWidget(covariant PreviewImageNetwork oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.url != widget.url) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 

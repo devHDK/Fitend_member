@@ -50,9 +50,11 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
         }
       }
     } else {
-      setState(() {
-        focusNode.unfocus();
-      });
+      if (mounted) {
+        setState(() {
+          focusNode.unfocus();
+        });
+      }
     }
   }
 

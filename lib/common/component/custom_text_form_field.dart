@@ -47,9 +47,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         // focusNode.requestFocus();
       });
     } else {
-      setState(() {
-        focusNode.unfocus();
-      });
+      if (mounted) {
+        setState(() {
+          focusNode.unfocus();
+        });
+      }
     }
   }
 

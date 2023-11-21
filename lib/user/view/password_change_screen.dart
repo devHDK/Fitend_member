@@ -85,7 +85,9 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
               ),
               CustomTextFormField(
                 onChanged: (value) {
-                  setState(() {});
+                  if (mounted) {
+                    setState(() {});
+                  }
                 },
                 controller: _nuPasswordController,
                 fullLabelText: '새로운 비밀번호',
@@ -100,7 +102,9 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
               ),
               CustomTextFormField(
                 onChanged: (value) {
-                  setState(() {});
+                  if (mounted) {
+                    setState(() {});
+                  }
                 },
                 controller: _newPasswordController,
                 fullLabelText: '한번 더 입력해주세요',
@@ -117,15 +121,19 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
                   !buttonOn
               ? null
               : () async {
-                  setState(() {
-                    buttonOn = false;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      buttonOn = false;
+                    });
+                  }
 
                   if (_nuPasswordController.text !=
                       _newPasswordController.text) {
-                    setState(() {
-                      buttonOn = true;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        buttonOn = true;
+                      });
+                    }
 
                     showDialog(
                       context: context,
@@ -188,14 +196,17 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
                       //   ),
                       // );
                     });
-
-                    setState(() {
-                      buttonOn = true;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        buttonOn = true;
+                      });
+                    }
                   } catch (e) {
-                    setState(() {
-                      buttonOn = true;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        buttonOn = true;
+                      });
+                    }
 
                     showDialog(
                       context: context,

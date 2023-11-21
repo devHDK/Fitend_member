@@ -61,9 +61,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 InkWell(
-                  onTap: () => setState(() {
-                    _currentIndex = 0;
-                  }),
+                  onTap: () {
+                    if (mounted) {
+                      setState(() {
+                        _currentIndex = 0;
+                      });
+                    }
+                  },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,
@@ -126,8 +130,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    if (mounted) {
+      setState(() {
+        _currentIndex = index;
+      });
+    }
   }
 }

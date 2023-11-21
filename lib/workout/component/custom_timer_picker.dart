@@ -48,9 +48,11 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
                 maxValue: 100,
                 value: min,
                 onChanged: (value) {
-                  setState(() {
-                    min = value;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      min = value;
+                    });
+                  }
                 },
               ),
               Text(
@@ -69,9 +71,11 @@ class _CustomTimerPickerState extends State<CustomTimerPicker> {
                 maxValue: 59,
                 value: sec,
                 onChanged: (value) {
-                  setState(() {
-                    sec = value;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      sec = value;
+                    });
+                  }
                 },
               ),
               Text(

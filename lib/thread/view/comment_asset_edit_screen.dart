@@ -96,13 +96,14 @@ class _AssetEditScreenState extends ConsumerState<CommentAssetEditScreen> {
               itemCount: state.assetsPaths.length,
               onPageChanged: (value) {
                 debugPrint('value : $value');
-
-                setState(
-                  () {
-                    itemScrollController.jumpTo(index: value);
-                    fileIndex = value;
-                  },
-                );
+                if (mounted) {
+                  setState(
+                    () {
+                      itemScrollController.jumpTo(index: value);
+                      fileIndex = value;
+                    },
+                  );
+                }
               },
             ),
           ),

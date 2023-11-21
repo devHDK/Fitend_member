@@ -75,7 +75,9 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
             ),
             CustomTextFormField(
               onChanged: (value) {
-                setState(() {});
+                if (mounted) {
+                  setState(() {});
+                }
               },
               controller: _passwordController,
               fullLabelText: '현재 비밀번호',
@@ -91,9 +93,11 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
             ? null
             : () async {
                 try {
-                  setState(() {
-                    buttonOn = false;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      buttonOn = false;
+                    });
+                  }
 
                   await ref
                       .read(getMeProvider.notifier)
@@ -110,14 +114,17 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
                       ),
                     );
                   });
-
-                  setState(() {
-                    buttonOn = true;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      buttonOn = true;
+                    });
+                  }
                 } catch (e) {
-                  setState(() {
-                    buttonOn = true;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      buttonOn = true;
+                    });
+                  }
 
                   showDialog(
                     context: context,

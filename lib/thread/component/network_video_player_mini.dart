@@ -108,7 +108,9 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
 
     videoDisposed = false;
 
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -124,9 +126,11 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
 
           if (visiblePercentage > 80) {
             videoInit().then((value) {
-              setState(() {
-                videoDisposed = false;
-              });
+              if (mounted) {
+                setState(() {
+                  videoDisposed = false;
+                });
+              }
             });
           }
         },
@@ -172,13 +176,15 @@ class _EditVideoPlayerState extends ConsumerState<NetworkVideoPlayerMini> {
         onVisibilityChanged: (info) {
           var visiblePercentage = info.visibleFraction * 100;
 
-          if (visiblePercentage < 80) {
-            _videoController?.pause();
-            _videoController?.dispose();
+          if (visiblePercentage < 80 && _videoController != null) {
+            // _videoController!.pause();
+            _videoController!.dispose();
             _videoController = null;
-            setState(() {
-              videoDisposed = true;
-            });
+            if (mounted) {
+              setState(() {
+                videoDisposed = true;
+              });
+            }
           }
 
           if (visiblePercentage > 80) {

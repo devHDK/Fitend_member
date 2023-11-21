@@ -75,9 +75,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   }
 
   void onTick(Timer timer) {
-    setState(() {
-      recordingDuration++;
-    });
+    if (mounted) {
+      setState(() {
+        recordingDuration++;
+      });
+    }
   }
 
   getPermissionStatus() async {
@@ -93,9 +95,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       log('Camera Permission: GRANTED');
       getAvailableCameras();
 
-      setState(() {
-        _isCameraPermissionGranted = true;
-      });
+      if (mounted) {
+        setState(() {
+          _isCameraPermissionGranted = true;
+        });
+      }
     } else {
       log('Camera Permission: DENIED');
     }
@@ -150,11 +154,13 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
     try {
       await cameraController!.startVideoRecording();
-      setState(() {
-        NativeCameraSound.playStartRecord();
-        _isRecordingInProgress = true;
-        recordingTimerStart();
-      });
+      if (mounted) {
+        setState(() {
+          NativeCameraSound.playStartRecord();
+          _isRecordingInProgress = true;
+          recordingTimerStart();
+        });
+      }
     } on CameraException catch (e) {
       debugPrint('Error starting to record video: $e');
     }
@@ -168,12 +174,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
     try {
       XFile file = await controller!.stopVideoRecording();
-      setState(() {
-        NativeCameraSound.playStopRecord();
-        _isRecordingInProgress = false;
-        recordingTimerStop();
-        recordingDuration = 0;
-      });
+      if (mounted) {
+        setState(() {
+          NativeCameraSound.playStopRecord();
+          _isRecordingInProgress = false;
+          recordingTimerStop();
+          recordingDuration = 0;
+        });
+      }
       return file;
     } on CameraException catch (e) {
       debugPrint('Error stopping video recording: $e');
@@ -307,10 +315,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
         await ImageGallerySaver.saveFile(
           videoFile.path,
         );
-
-        setState(() {
-          takedAssetsCount++;
-        });
+        if (mounted) {
+          setState(() {
+            takedAssetsCount++;
+          });
+        }
       }
 
       await cameraController.dispose();
@@ -533,8 +542,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                     _isVideoCameraSelected =
                                                         true;
                                                   }
-
-                                                  setState(() {});
+                                                  if (mounted) {
+                                                    setState(() {});
+                                                  }
                                                 },
                                               ),
                                             ),
@@ -556,18 +566,22 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                     }
                                                   }
                                                 : () {
-                                                    setState(() {
-                                                      _isCameraInitialized =
-                                                          false;
-                                                    });
+                                                    if (mounted) {
+                                                      setState(() {
+                                                        _isCameraInitialized =
+                                                            false;
+                                                      });
+                                                    }
                                                     onNewCameraSelected(cameras[
                                                         _isRearCameraSelected
                                                             ? 1
                                                             : 0]);
-                                                    setState(() {
-                                                      _isRearCameraSelected =
-                                                          !_isRearCameraSelected;
-                                                    });
+                                                    if (mounted) {
+                                                      setState(() {
+                                                        _isRearCameraSelected =
+                                                            !_isRearCameraSelected;
+                                                      });
+                                                    }
                                                   },
                                             child: Stack(
                                               alignment: Alignment.center,
@@ -612,10 +626,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                           .saveFile(
                                                         videoFile.path,
                                                       );
-
-                                                      setState(() {
-                                                        takedAssetsCount++;
-                                                      });
+                                                      if (mounted) {
+                                                        setState(() {
+                                                          takedAssetsCount++;
+                                                        });
+                                                      }
                                                     } else {
                                                       await startVideoRecording();
                                                     }
@@ -633,10 +648,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                         imageFile.path,
                                                         isReturnPathOfIOS: true,
                                                       );
-
-                                                      setState(() {
-                                                        takedAssetsCount++;
-                                                      });
+                                                      if (mounted) {
+                                                        setState(() {
+                                                          takedAssetsCount++;
+                                                        });
+                                                      }
                                                     } else {
                                                       debugPrint('save fail');
                                                     }
@@ -913,9 +929,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       activeColor: Pallete.point.withOpacity(0.5),
       inactiveColor: Colors.white30,
       onChanged: (value) async {
-        setState(() {
-          _currentZoomLevel = value;
-        });
+        if (mounted) {
+          setState(() {
+            _currentZoomLevel = value;
+          });
+        }
         await controller!.setZoomLevel(value);
       },
     );

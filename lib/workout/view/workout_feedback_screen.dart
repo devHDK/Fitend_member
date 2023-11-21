@@ -62,20 +62,24 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
 
   void _focusnodeListner() {
     if (focusNode.hasFocus) {
-      setState(() {
-        focusNode.requestFocus();
-        addKeyboardHeightListener();
-        scrollController.animateTo(
-          _scrollOffset + 325,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.ease,
-        );
-      });
+      if (mounted) {
+        setState(() {
+          focusNode.requestFocus();
+          addKeyboardHeightListener();
+          scrollController.animateTo(
+            _scrollOffset + 325,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.ease,
+          );
+        });
+      }
     } else {
-      setState(() {
-        focusNode.unfocus();
-        removeKeyboardHeightListener();
-      });
+      if (mounted) {
+        setState(() {
+          focusNode.unfocus();
+          removeKeyboardHeightListener();
+        });
+      }
     }
   }
 
@@ -94,20 +98,26 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
     final viewInsets = MediaQuery.paddingOf(context);
     final newKeyboardHeight = viewInsets.bottom;
     if (newKeyboardHeight > 0) {
-      setState(() => keyboardHeight = newKeyboardHeight);
+      if (mounted) {
+        setState(() => keyboardHeight = newKeyboardHeight);
+      }
     } else {
       removeKeyboardHeightListener();
     }
   }
 
   void removeKeyboardHeightListener() {
-    setState(() => keyboardHeight = 0);
+    if (mounted) {
+      setState(() => keyboardHeight = 0);
+    }
   }
 
   void _scrollListener() {
-    setState(() {
-      _scrollOffset = scrollController.offset;
-    });
+    if (mounted) {
+      setState(() {
+        _scrollOffset = scrollController.offset;
+      });
+    }
   }
 
   @override
@@ -186,9 +196,11 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                             : buttonEnable
                                 ? () async {
                                     try {
-                                      setState(() {
-                                        buttonEnable = false;
-                                      });
+                                      if (mounted) {
+                                        setState(() {
+                                          buttonEnable = false;
+                                        });
+                                      }
 
                                       await repository
                                           .postWorkoutRecordsFeedback(
@@ -267,9 +279,11 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                         },
                                       );
                                     } on DioException catch (e) {
-                                      setState(() {
-                                        buttonEnable = true;
-                                      });
+                                      if (mounted) {
+                                        setState(() {
+                                          buttonEnable = true;
+                                        });
+                                      }
 
                                       showDialog(
                                         barrierDismissible: false,
@@ -382,13 +396,15 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         ),
         GestureDetector(
           onTap: () {
-            setState(() {
-              if (issueIndexes.contains(1)) {
-                issueIndexes.remove(1);
-              } else {
-                issueIndexes.add(1);
-              }
-            });
+            if (mounted) {
+              setState(() {
+                if (issueIndexes.contains(1)) {
+                  issueIndexes.remove(1);
+                } else {
+                  issueIndexes.add(1);
+                }
+              });
+            }
           },
           child: _issueContainer(
             size,
@@ -401,13 +417,15 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         ),
         GestureDetector(
           onTap: () {
-            setState(() {
-              if (issueIndexes.contains(2)) {
-                issueIndexes.remove(2);
-              } else {
-                issueIndexes.add(2);
-              }
-            });
+            if (mounted) {
+              setState(() {
+                if (issueIndexes.contains(2)) {
+                  issueIndexes.remove(2);
+                } else {
+                  issueIndexes.add(2);
+                }
+              });
+            }
           },
           child: _issueContainer(
             size,
@@ -420,13 +438,15 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         ),
         GestureDetector(
           onTap: () {
-            setState(() {
-              if (issueIndexes.contains(3)) {
-                issueIndexes.remove(3);
-              } else {
-                issueIndexes.add(3);
-              }
-            });
+            if (mounted) {
+              setState(() {
+                if (issueIndexes.contains(3)) {
+                  issueIndexes.remove(3);
+                } else {
+                  issueIndexes.add(3);
+                }
+              });
+            }
           },
           child: _issueContainer(
             size,
@@ -454,9 +474,11 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
           children: [
             GestureDetector(
               onTap: () {
-                setState(() {
-                  strengthIndex = 1;
-                });
+                if (mounted) {
+                  setState(() {
+                    strengthIndex = 1;
+                  });
+                }
               },
               child: _strengthContainer(
                 icon: '😁',
@@ -466,36 +488,44 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
             ),
             GestureDetector(
               onTap: () {
-                setState(() {
-                  strengthIndex = 2;
-                });
+                if (mounted) {
+                  setState(() {
+                    strengthIndex = 2;
+                  });
+                }
               },
               child: _strengthContainer(
                   icon: '😀', text: '쉬움', isSelected: strengthIndex == 2),
             ),
             GestureDetector(
               onTap: () {
-                setState(() {
-                  strengthIndex = 3;
-                });
+                if (mounted) {
+                  setState(() {
+                    strengthIndex = 3;
+                  });
+                }
               },
               child: _strengthContainer(
                   icon: '😊', text: '보통', isSelected: strengthIndex == 3),
             ),
             GestureDetector(
               onTap: () {
-                setState(() {
-                  strengthIndex = 4;
-                });
+                if (mounted) {
+                  setState(() {
+                    strengthIndex = 4;
+                  });
+                }
               },
               child: _strengthContainer(
                   icon: '😓', text: '힘듦', isSelected: strengthIndex == 4),
             ),
             GestureDetector(
               onTap: () {
-                setState(() {
-                  strengthIndex = 5;
-                });
+                if (mounted) {
+                  setState(() {
+                    strengthIndex = 5;
+                  });
+                }
               },
               child: _strengthContainer(
                   icon: '🥵', text: '매우\n힘듦', isSelected: strengthIndex == 5),

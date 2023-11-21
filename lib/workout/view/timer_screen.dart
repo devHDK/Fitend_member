@@ -85,66 +85,80 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
       const Duration(seconds: 1),
       onTick,
     );
-    setState(() {
-      isReady = true;
-      isRunning = true;
-    });
+    if (mounted) {
+      setState(() {
+        isReady = true;
+        isRunning = true;
+      });
+    }
   }
 
   void onPausePressed() {
     timer.cancel();
-    setState(() {
-      isRunning = false;
-      // count = 4;
-    });
+    if (mounted) {
+      setState(() {
+        isRunning = false;
+        // count = 4;
+      });
+    }
   }
 
   void onResetPressed() {
     ref
         .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
         .resetTimer(widget.setInfoIndex);
-
-    setState(() {
-      count = 4;
-      totalSeconds = widget.secondsGoal;
-      valueNotifier.value = 0.0;
-    });
+    if (mounted) {
+      setState(() {
+        count = 4;
+        totalSeconds = widget.secondsGoal;
+        valueNotifier.value = 0.0;
+      });
+    }
   }
 
   void onStopPressed() {
-    setState(() {
-      count = 4;
-      timer.cancel();
-      isRunning = false;
-      isReady = false;
-      valueNotifier.value =
-          (widget.secondsGoal - totalSeconds) / widget.secondsGoal;
-    });
+    if (mounted) {
+      setState(() {
+        count = 4;
+        timer.cancel();
+        isRunning = false;
+        isReady = false;
+        valueNotifier.value =
+            (widget.secondsGoal - totalSeconds) / widget.secondsGoal;
+      });
+    }
   }
 
   void onTick(Timer timer) {
     if (count > 0) {
-      setState(() {
-        count--;
-        // isReady = true;
-        valueNotifier.value = (4 - count).toDouble() / 4.toDouble();
-      });
+      if (mounted) {
+        setState(() {
+          count--;
+          // isReady = true;
+          valueNotifier.value = (4 - count).toDouble() / 4.toDouble();
+        });
+      }
     } else {
       if (totalSeconds == 0) {
         //0초가 됬을때 저장
         timer.cancel();
         valueNotifier.value = (widget.secondsGoal - totalSeconds).toDouble() /
             widget.secondsGoal.toDouble();
-        setState(() {
-          isRunning = false;
-        });
+        if (mounted) {
+          setState(() {
+            isRunning = false;
+          });
+        }
       } else {
-        setState(() {
-          isReady = false;
-          valueNotifier.value = (widget.secondsGoal - totalSeconds).toDouble() /
-              widget.secondsGoal.toDouble();
-          totalSeconds -= 1;
-        });
+        if (mounted) {
+          setState(() {
+            isReady = false;
+            valueNotifier.value =
+                (widget.secondsGoal - totalSeconds).toDouble() /
+                    widget.secondsGoal.toDouble();
+            totalSeconds -= 1;
+          });
+        }
 
         ref
             .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
@@ -162,31 +176,37 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
           resumedTime = DateTime.now();
 
           if (totalSeconds <= resumedTime.difference(pausedTime).inSeconds) {
-            setState(() {
-              totalSeconds = 0;
-              timer.cancel();
-              isRunning = false;
-              isBackground = false;
-              valueNotifier.value = 1;
-            });
+            if (mounted) {
+              setState(() {
+                totalSeconds = 0;
+                timer.cancel();
+                isRunning = false;
+                isBackground = false;
+                valueNotifier.value = 1;
+              });
+            }
 
             ref
                 .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
                 .modifiedSecondsRecord(widget.secondsGoal, widget.setInfoIndex);
           } else {
-            setState(() {
-              totalSeconds -= resumedTime.difference(pausedTime).inSeconds;
-              isBackground = false;
-              isRunning = true;
+            if (mounted) {
+              setState(() {
+                totalSeconds -= resumedTime.difference(pausedTime).inSeconds;
+                isBackground = false;
+                isRunning = true;
 
-              timer = Timer.periodic(
-                const Duration(seconds: 1),
-                onTick,
-              );
-            });
+                timer = Timer.periodic(
+                  const Duration(seconds: 1),
+                  onTick,
+                );
+              });
+            }
           }
 
-          setState(() {});
+          if (mounted) {
+            setState(() {});
+          }
         }
 
         break;
@@ -418,7 +438,9 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                                         .notifier)
                                     .workoutIsQuttingChange(true);
 
-                                setState(() {});
+                                if (mounted) {
+                                  setState(() {});
+                                }
 
                                 await ref
                                     .read(workoutProcessProvider(

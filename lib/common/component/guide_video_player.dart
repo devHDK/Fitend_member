@@ -93,7 +93,9 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
 
     firstVideoController!.addListener(firstVideoListener);
 
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void firstVideoListener() {
@@ -158,9 +160,11 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
       aspectRatio: firstVideoController!.value.aspectRatio,
       child: GestureDetector(
         onTap: () {
-          setState(() {
-            isShowControlls = !isShowControlls;
-          });
+          if (mounted) {
+            setState(() {
+              isShowControlls = !isShowControlls;
+            });
+          }
         },
         child: Stack(
           children: [
@@ -219,14 +223,16 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                             secondVideoController != null)
                           GestureDetector(
                             onTap: () {
-                              setState(() {
-                                for (int i = 0; i < isPlaying.length; i++) {
-                                  isPlaying[i] = false;
-                                }
-                                isPlaying[1] = true;
-                                firstVideoController!.pause();
-                                secondVideoController!.play();
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  for (int i = 0; i < isPlaying.length; i++) {
+                                    isPlaying[i] = false;
+                                  }
+                                  isPlaying[1] = true;
+                                  firstVideoController!.pause();
+                                  secondVideoController!.play();
+                                });
+                              }
                             },
                             child: Container(
                               height: 87,
@@ -250,17 +256,19 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                         if (widget.videos.length > 1)
                           GestureDetector(
                             onTap: () {
-                              setState(() {
-                                for (int i = 0; i < isPlaying.length; i++) {
-                                  isPlaying[i] = false;
-                                }
-                                isPlaying[0] = true;
+                              if (mounted) {
+                                setState(() {
+                                  for (int i = 0; i < isPlaying.length; i++) {
+                                    isPlaying[i] = false;
+                                  }
+                                  isPlaying[0] = true;
 
-                                if (widget.videos.length > 1) {
-                                  secondVideoController!.pause();
-                                }
-                                firstVideoController!.play();
-                              });
+                                  if (widget.videos.length > 1) {
+                                    secondVideoController!.pause();
+                                  }
+                                  firstVideoController!.play();
+                                });
+                              }
                             },
                             child: Container(
                               height: 87,
@@ -313,21 +321,23 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
             backgroundColor: Pallete.darkGray,
           ),
           onPressed: () {
-            setState(
-              () {
-                if (doubleSpeed == 1.0) {
-                  doubleSpeed = 0.5;
-                } else {
-                  doubleSpeed = 1.0;
-                }
+            if (mounted) {
+              setState(
+                () {
+                  if (doubleSpeed == 1.0) {
+                    doubleSpeed = 0.5;
+                  } else {
+                    doubleSpeed = 1.0;
+                  }
 
-                firstVideoController!.setPlaybackSpeed(doubleSpeed);
+                  firstVideoController!.setPlaybackSpeed(doubleSpeed);
 
-                if (widget.videos.length > 1) {
-                  secondVideoController!.setPlaybackSpeed(doubleSpeed);
-                }
-              },
-            );
+                  if (widget.videos.length > 1) {
+                    secondVideoController!.setPlaybackSpeed(doubleSpeed);
+                  }
+                },
+              );
+            }
           },
           child: Text(
             'X $doubleSpeed',
@@ -341,13 +351,15 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
   void onPlayPressed() {
     //실행중이면 정지
     //실행중이 아니면 실행
-    setState(() {
-      if (firstVideoController!.value.isPlaying) {
-        firstVideoController!.pause();
-      } else {
-        firstVideoController!.play();
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (firstVideoController!.value.isPlaying) {
+          firstVideoController!.pause();
+        } else {
+          firstVideoController!.play();
+        }
+      });
+    }
   }
 
   void onForwarPressed() {

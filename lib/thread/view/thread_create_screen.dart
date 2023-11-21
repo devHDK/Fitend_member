@@ -77,18 +77,21 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
             TextEditingController(text: widget.threadEditModel!.title);
         contentsController =
             TextEditingController(text: widget.threadEditModel!.content);
-
-        setState(() {
-          isLoading = true;
-        });
+        if (mounted) {
+          setState(() {
+            isLoading = true;
+          });
+        }
 
         ref
             .read(threadCreateProvider.notifier)
             .updateFromEditModel(widget.threadEditModel!)
             .then((value) {
-          setState(() {
-            isLoading = false;
-          });
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+            });
+          }
         }); //edit 내용으로 업데이트
       } else if (widget.title != null) {
         ref.read(threadCreateProvider.notifier).init();
@@ -98,8 +101,9 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
         );
         ref.read(threadCreateProvider.notifier).updateTitle(widget.title);
         contentsController = TextEditingController();
-
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       } else {
         model = ref.read(threadCreateProvider);
 
@@ -123,26 +127,30 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
   }
 
   void _titleFocusnodeListner() {
-    if (titleFocusNode.hasFocus) {
-      setState(() {
-        titleFocusNode.requestFocus();
-      });
-    } else {
-      setState(() {
-        titleFocusNode.unfocus();
-      });
+    if (mounted) {
+      if (titleFocusNode.hasFocus) {
+        setState(() {
+          titleFocusNode.requestFocus();
+        });
+      } else {
+        setState(() {
+          titleFocusNode.unfocus();
+        });
+      }
     }
   }
 
   void _contentFocusnodeListner() {
-    if (contentFocusNode.hasFocus) {
-      setState(() {
-        contentFocusNode.requestFocus();
-      });
-    } else {
-      setState(() {
-        contentFocusNode.unfocus();
-      });
+    if (mounted) {
+      if (contentFocusNode.hasFocus) {
+        setState(() {
+          contentFocusNode.requestFocus();
+        });
+      } else {
+        setState(() {
+          contentFocusNode.unfocus();
+        });
+      }
     }
   }
 
@@ -552,8 +560,10 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     return TextFormField(
       autocorrect: false,
       onChanged: (value) {
-        ref.read(threadCreateProvider.notifier).updateContent(value);
-        setState(() {});
+        if (mounted) {
+          ref.read(threadCreateProvider.notifier).updateContent(value);
+          setState(() {});
+        }
       },
       maxLines: 20,
       style: const TextStyle(color: Colors.white),
@@ -596,8 +606,10 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     return TextFormField(
       autocorrect: false,
       onChanged: (value) {
-        ref.read(threadCreateProvider.notifier).updateTitle(value);
-        setState(() {});
+        if (mounted) {
+          ref.read(threadCreateProvider.notifier).updateTitle(value);
+          setState(() {});
+        }
       },
       maxLines: 1,
       style: const TextStyle(color: Colors.white),

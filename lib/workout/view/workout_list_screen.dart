@@ -479,14 +479,16 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                             ),
                           )
                               .then((value) {
-                            setState(() {
-                              isPoped = true;
-                              // ref
-                              //     .read(workoutProcessProvider(widget.id)
-                              //         .notifier)
-                              //     .init(ref.read(
-                              //         workoutProvider(widget.id).notifier));
-                            });
+                            if (mounted) {
+                              setState(() {
+                                isPoped = true;
+                                // ref
+                                //     .read(workoutProcessProvider(widget.id)
+                                //         .notifier)
+                                //     .init(ref.read(
+                                //         workoutProvider(widget.id).notifier));
+                              });
+                            }
                           });
                         }
                       : null,
@@ -559,13 +561,15 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
               ),
             )
                 .then((value) {
-              setState(() {
-                isPoped = true;
+              if (mounted) {
+                setState(() {
+                  isPoped = true;
 
-                // ref
-                //     .read(workoutProvider(widget.id).notifier)
-                //     .getWorkout(id: widget.id);
-              });
+                  // ref
+                  //     .read(workoutProvider(widget.id).notifier)
+                  //     .getWorkout(id: widget.id);
+                });
+              }
             });
           },
           cancelOnTap: () async {
@@ -604,13 +608,15 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
               ),
             )
                 .then((value) {
-              setState(() {
-                isPoped = true;
+              if (mounted) {
+                setState(() {
+                  isPoped = true;
 
-                // ref
-                //     .read(workoutProvider(widget.id).notifier)
-                //     .getWorkout(id: widget.id);
-              });
+                  // ref
+                  //     .read(workoutProvider(widget.id).notifier)
+                  //     .getWorkout(id: widget.id);
+                });
+              }
             });
           },
         );

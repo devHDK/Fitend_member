@@ -75,14 +75,16 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
   }
 
   void _commentFocusnodeListner() {
-    if (commentFocusNode.hasFocus) {
-      setState(() {
-        commentFocusNode.requestFocus();
-      });
-    } else {
-      setState(() {
-        commentFocusNode.unfocus();
-      });
+    if (mounted) {
+      if (commentFocusNode.hasFocus) {
+        setState(() {
+          commentFocusNode.requestFocus();
+        });
+      } else {
+        setState(() {
+          commentFocusNode.unfocus();
+        });
+      }
     }
   }
 
@@ -246,13 +248,14 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                                 threadId: commentModel.threadId,
                                                 content: commentModel.content,
                                                 gallery: commentModel.gallery));
+                                    if (mounted) {
+                                      setState(() {
+                                        commentController.text =
+                                            commentModel.content;
 
-                                    setState(() {
-                                      commentController.text =
-                                          commentModel.content;
-
-                                      edittingCommentId = commentModel.id;
-                                    });
+                                        edittingCommentId = commentModel.id;
+                                      });
+                                    }
                                   },
                                 ),
                                 child: Padding(
@@ -596,9 +599,11 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                           .createComment(
                                               widget.threadId, model.user)
                                           .then((value) {
-                                        setState(() {
-                                          commentController.text = '';
-                                        });
+                                        if (mounted) {
+                                          setState(() {
+                                            commentController.text = '';
+                                          });
+                                        }
                                       });
                                     } catch (e) {
                                       if (e is UploadException) {
@@ -677,10 +682,11 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                             .init();
 
                                         commentController.text = '';
-
-                                        setState(() {
-                                          edittingCommentId = -1;
-                                        });
+                                        if (mounted) {
+                                          setState(() {
+                                            edittingCommentId = -1;
+                                          });
+                                        }
                                       },
                                       child: Container(
                                         width: 45,
@@ -716,11 +722,12 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                                         commentState.threadId)
                                                     .notifier)
                                                 .init();
-
-                                            setState(() {
-                                              edittingCommentId = -1;
-                                              commentController.text = '';
-                                            });
+                                            if (mounted) {
+                                              setState(() {
+                                                edittingCommentId = -1;
+                                                commentController.text = '';
+                                              });
+                                            }
                                           });
                                         } catch (e) {
                                           if (e is UploadException) {
@@ -773,14 +780,15 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
         ref
             .read(commentCreateProvider(widget.threadId).notifier)
             .updateContent(value);
+        if (mounted) {
+          setState(() {
+            maxLine = '\n'.allMatches(value).length + 1;
 
-        setState(() {
-          maxLine = '\n'.allMatches(value).length + 1;
-
-          if (maxLine > 3) {
-            maxLine = 3;
-          }
-        });
+            if (maxLine > 3) {
+              maxLine = 3;
+            }
+          });
+        }
       },
       maxLines: maxLine > 1 ? maxLine : null,
       style: const TextStyle(color: Colors.white),

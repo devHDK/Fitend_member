@@ -27,6 +27,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
@@ -66,29 +67,30 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   void _handleItemPositionChange() {
-    int maxIndex = itemPositionsListener.itemPositions.value
-        .where((position) => position.itemLeadingEdge > 0)
-        .reduce((maxPosition, currPosition) =>
-            currPosition.itemLeadingEdge > maxPosition.itemLeadingEdge
-                ? currPosition
-                : maxPosition)
-        .index;
-    int minIndex = itemPositionsListener.itemPositions.value
-        .where((position) => position.itemTrailingEdge < 1)
-        .reduce((minPosition, currPosition) =>
-            currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
-                ? currPosition
-                : minPosition)
-        .index;
+    if (mounted) {
+      int maxIndex = itemPositionsListener.itemPositions.value
+          .where((position) => position.itemLeadingEdge > 0)
+          .reduce((maxPosition, currPosition) =>
+              currPosition.itemLeadingEdge > maxPosition.itemLeadingEdge
+                  ? currPosition
+                  : maxPosition)
+          .index;
+      int minIndex = itemPositionsListener.itemPositions.value
+          .where((position) => position.itemTrailingEdge < 1)
+          .reduce((minPosition, currPosition) =>
+              currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
+                  ? currPosition
+                  : minPosition)
+          .index;
 
-    int itemCount = scheduleListGlobal.length;
+      int itemCount = scheduleListGlobal.length;
 
-    ref.read(scheduleProvider.notifier).updateScrollIndex(minIndex);
+      ref.read(scheduleProvider.notifier).updateScrollIndex(minIndex);
 
-    if (maxIndex > itemCount - 1 && !isLoading) {
-      //스크롤을 아래로 내렸을때
-      isLoading = true;
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (maxIndex > itemCount - 1 && !isLoading) {
+        //스크롤을 아래로 내렸을때
+        isLoading = true;
+
         ref
             .read(scheduleProvider.notifier)
             .paginate(
@@ -96,18 +98,19 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
             .then((value) {
           isLoading = false;
         });
-      });
-    } else if (minIndex == 1 && !isLoading) {
-      isLoading = true;
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      } else if (minIndex == 1 && !isLoading) {
+        isLoading = true;
+
         ref
             .read(scheduleProvider.notifier)
             .paginate(startDate: minDate, fetchMore: true, isUpScrolling: true)
             .then((value) {
-          itemScrollController.jumpTo(index: 32);
-          isLoading = false;
+          if (mounted) {
+            itemScrollController.jumpTo(index: 32);
+            isLoading = false;
+          }
         });
-      });
+      }
     }
   }
 
@@ -157,7 +160,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
   Future<void> _checkIsNeedUpdate() async {
     if (mounted) {
-      final pref = await ref.read(sharedPrefsProvider);
+      final pref = await SharedPreferences.getInstance();
       final isNeedUpdate = SharedPrefUtils.getIsNeedUpdate(
           StringConstants.needScheduleUpdate, pref);
       if (isNeedUpdate) {
@@ -179,7 +182,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
   @override
   void dispose() {
-    ref.read(routeObserverProvider).unsubscribe(this);
+    // ref.read(routeObserverProvider).unsubscribe(this);
 
     WidgetsBinding.instance.removeObserver(this);
     itemPositionsListener.itemPositions
@@ -188,7 +191,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   void _onChildEvent() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -241,7 +246,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                   startDate: DataUtils.getDate(fifteenDaysAgo),
                 )
                 .then((value) {
-              itemScrollController.jumpTo(index: 15);
+              if (mounted) {
+                itemScrollController.jumpTo(index: 15);
+              }
             });
           },
           actions: [
@@ -347,17 +354,18 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                           if (model[seq].selected!) {
                             return;
                           }
-
-                          setState(
-                            () {
-                              for (var e in schedules.data) {
-                                for (var element in e.schedule!) {
-                                  element.selected = false;
+                          if (mounted) {
+                            setState(
+                              () {
+                                for (var e in schedules.data) {
+                                  for (var element in e.schedule!) {
+                                    element.selected = false;
+                                  }
                                 }
-                              }
-                              model[seq].selected = true;
-                            },
-                          );
+                                model[seq].selected = true;
+                              },
+                            );
+                          }
                         },
                         child: e is Workout
                             ? WorkoutScheduleCard.fromWorkoutModel(
@@ -415,7 +423,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
           startDate: DataUtils.getDate(fifteenDaysAgo),
         )
         .then((value) {
-      itemScrollController.jumpTo(index: 15);
+      if (mounted) {
+        itemScrollController.jumpTo(index: 15);
+      }
     });
   }
 }

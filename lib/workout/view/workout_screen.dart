@@ -170,15 +170,19 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
     if (mounted) {
       if (isTooltipVisible) {
-        setState(() {
-          isTooltipVisible = !isTooltipVisible;
-          tooltipCount = 0;
-        });
+        if (mounted) {
+          setState(() {
+            isTooltipVisible = !isTooltipVisible;
+            tooltipCount = 0;
+          });
+        }
       } else {
-        setState(() {
-          isTooltipVisible = !isTooltipVisible;
-          tooltipCount = 8;
-        });
+        if (mounted) {
+          setState(() {
+            isTooltipVisible = !isTooltipVisible;
+            tooltipCount = 8;
+          });
+        }
       }
     }
   }
@@ -187,13 +191,17 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     if (mounted) {
       if (tooltipCount == 0) {
         timer.cancel();
-        setState(() {
-          isTooltipVisible = false;
-        });
+        if (mounted) {
+          setState(() {
+            isTooltipVisible = false;
+          });
+        }
       } else {
-        setState(() {
-          tooltipCount -= 1;
-        });
+        if (mounted) {
+          setState(() {
+            tooltipCount -= 1;
+          });
+        }
       }
     }
   }
@@ -317,7 +325,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             tooltipCount = 0;
                             onTooltipPressed();
                             tooltipSeq = 0;
-                            setState(() {});
+                            if (mounted) {
+                              setState(() {});
+                            }
 
                             if (isSwipeUp) {
                               final index = model.setInfoCompleteList[
@@ -529,19 +539,28 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 topLeft: Radius.circular(30),
                 topRight: Radius.circular(30),
               ),
-              onPanelClosed: () => setState(() {
-                isSwipeUp = false;
-              }),
-              onPanelOpened: () => setState(() {
-                isSwipeUp = true;
+              onPanelClosed: () {
+                if (mounted) {
+                  setState(() {
+                    isSwipeUp = false;
+                  });
+                }
+              },
+              onPanelOpened: () {
+                if (mounted) {
+                  setState(() {
+                    isSwipeUp = true;
 
-                final index = model.setInfoCompleteList[model.exerciseIndex] ==
-                        model.maxSetInfoList[model.exerciseIndex]
-                    ? model.setInfoCompleteList[model.exerciseIndex] - 1
-                    : model.setInfoCompleteList[model.exerciseIndex];
+                    final index =
+                        model.setInfoCompleteList[model.exerciseIndex] ==
+                                model.maxSetInfoList[model.exerciseIndex]
+                            ? model.setInfoCompleteList[model.exerciseIndex] - 1
+                            : model.setInfoCompleteList[model.exerciseIndex];
 
-                _movetoRecentSetInfo(index);
-              }),
+                    _movetoRecentSetInfo(index);
+                  });
+                }
+              },
               panel: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -599,7 +618,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     tooltipCount = 0;
                                     onTooltipPressed();
                                     tooltipSeq = 0;
-                                    setState(() {});
+
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
 
                                     if (isSwipeUp) {
                                       final index = model.setInfoCompleteList[
@@ -630,8 +652,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     tooltipCount = 0;
                                     onTooltipPressed();
                                     tooltipSeq = 0;
-
-                                    setState(() {});
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
                                     if (isSwipeUp) {
                                       final index = model.setInfoCompleteList[
                                                   model.exerciseIndex] ==
@@ -691,7 +714,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     tooltipCount = 0;
                                     onTooltipPressed();
                                     tooltipSeq = 0;
-                                    setState(() {});
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
 
                                     if (isSwipeUp) {
                                       final index = model.setInfoCompleteList[
@@ -721,8 +746,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     tooltipCount = 0;
                                     onTooltipPressed();
                                     tooltipSeq = 0;
-
-                                    setState(() {});
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
                                     if (isSwipeUp) {
                                       final index = model.setInfoCompleteList[
                                                   model.exerciseIndex] ==
@@ -743,7 +769,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   },
                             resetSet: () {},
                             refresh: () {
-                              setState(() {});
+                              if (mounted) {
+                                setState(() {});
+                              }
                             },
                           ),
                         const SizedBox(
@@ -819,7 +847,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               model: model,
                               setInfoIndex: index,
                               refresh: () {
-                                setState(() {});
+                                if (mounted) {
+                                  setState(() {});
+                                }
                               },
                             );
                           } else if (model
@@ -834,7 +864,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               model: model,
                               setInfoIndex: index,
                               refresh: () {
-                                setState(() {});
+                                if (mounted) {
+                                  setState(() {});
+                                }
                               },
                             );
                           } else if (model
@@ -852,7 +884,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               model: model,
                               setInfoIndex: index,
                               refresh: () {
-                                setState(() {});
+                                if (mounted) {
+                                  setState(() {});
+                                }
                               },
                             );
                           }
@@ -889,7 +923,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                             tooltipCount = 0;
                                             onTooltipPressed();
                                             tooltipSeq = 0;
-                                            setState(() {});
+                                            if (mounted) {
+                                              setState(() {});
+                                            }
 
                                             if (isSwipeUp) {
                                               final index = model
@@ -1040,8 +1076,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         }
       }
     });
-
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<dynamic> _showUncompleteExerciseDialog(
@@ -1125,8 +1162,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               .resetWorkoutProcess();
 
           Navigator.of(context).popUntil((_) => count++ >= 2);
+          setState(() {});
         }
-        setState(() {});
       },
     ).show(context);
   }

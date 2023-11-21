@@ -32,7 +32,6 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
   final ScrollController controller = ScrollController();
   late NotificationModel notification;
   late SharedPreferences prefs;
-  bool isDisposed = false;
 
   @override
   void initState() {
@@ -67,7 +66,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
   }
 
   Future<void> putNotification() async {
-    final pref = await ref.read(sharedPrefsProvider);
+    final pref = await SharedPreferences.getInstance();
     final isNeedUpdateNoti = SharedPrefUtils.getIsNeedUpdate(
         StringConstants.needNotificationUpdate, pref);
 
@@ -97,24 +96,23 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
 
   @override
   void dispose() async {
-    isDisposed = true;
-    ref.read(routeObserverProvider).unsubscribe(this);
+    // ref.read(routeObserverProvider).unsubscribe(this);
     WidgetsBinding.instance.removeObserver(this);
     controller.removeListener(listener);
     super.dispose();
   }
 
   void listener() {
-    final provider = ref.read(notificationProvider.notifier);
+    if (mounted) {
+      final provider = ref.read(notificationProvider.notifier);
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (notification.data != null &&
           controller.offset > controller.position.maxScrollExtent - 100 &&
           notification.data!.length < notification.total) {
         //스크롤을 아래로 내렸을때
         provider.paginate(start: notification.data!.length, fetchMore: true);
       }
-    });
+    }
   }
 
   @override

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:fitend_member/common/const/data_constants.dart';
-import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
@@ -11,10 +10,11 @@ import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ThreadUpdateUtils {
   static Future<void> checkThreadNeedUpdate(WidgetRef ref) async {
-    final pref = await ref.read(sharedPrefsProvider);
+    final pref = await SharedPreferences.getInstance();
     final isNeedListUpdate =
         SharedPrefUtils.getIsNeedUpdate(StringConstants.needThreadUpdate, pref);
     var threadUpdateList = SharedPrefUtils.getNeedUpdateList(

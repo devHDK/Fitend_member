@@ -542,9 +542,11 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
                     firstDay: firstDay ?? firstDay!,
                     lastDay: lastDay ?? lastDay!,
                     onDaySelected: (selectedDay, focusedDay) {
-                      setState(() {
-                        this.selectedDay = selectedDay;
-                      });
+                      if (mounted) {
+                        setState(() {
+                          this.selectedDay = selectedDay;
+                        });
+                      }
                     },
                   ),
                   Row(

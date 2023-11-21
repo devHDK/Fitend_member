@@ -81,15 +81,18 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
     _videoController!.addListener(
       () {
         final currentPosition = _videoController!.value.position;
-        setState(() {
-          this.currentPosition = currentPosition;
-        });
+        if (mounted) {
+          setState(() {
+            this.currentPosition = currentPosition;
+          });
+        }
       },
     );
 
     _videoController!.addListener(videoListener);
-
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void videoListener() {}
@@ -118,9 +121,11 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
                 aspectRatio: _videoController!.value.aspectRatio,
                 child: GestureDetector(
                   onTap: () {
-                    setState(() {
-                      isShowControlls = !isShowControlls;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        isShowControlls = !isShowControlls;
+                      });
+                    }
                   },
                   child: Stack(
                     children: [
@@ -143,9 +148,11 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
                           top: 10,
                           child: IconButton(
                             onPressed: () {
-                              setState(() {
-                                mute = !mute;
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  mute = !mute;
+                                });
+                              }
 
                               if (mute) {
                                 _videoController!.setVolume(0);
@@ -180,13 +187,15 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
   void onPlayPressed() {
     //실행중이면 정지
     //실행중이 아니면 실행
-    setState(() {
-      if (_videoController!.value.isPlaying) {
-        _videoController!.pause();
-      } else {
-        _videoController!.play();
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (_videoController!.value.isPlaying) {
+          _videoController!.pause();
+        } else {
+          _videoController!.play();
+        }
+      });
+    }
   }
 
   void onForwarPressed() {

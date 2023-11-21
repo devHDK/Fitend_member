@@ -129,8 +129,10 @@ class _PreviewVideoThumbNailState extends State<PreviewVideoThumbNail> {
   void getSize(File file) async {
     final fileBytes = await file.length();
 
-    setState(() {
-      fileSize = double.parse((fileBytes / (1000 * 1000)).toStringAsFixed(1));
-    });
+    if (mounted) {
+      setState(() {
+        fileSize = double.parse((fileBytes / (1000 * 1000)).toStringAsFixed(1));
+      });
+    }
   }
 }

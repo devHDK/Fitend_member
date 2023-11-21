@@ -114,12 +114,14 @@ class _AssetEditScreenState extends ConsumerState<ThreadAssetEditScreen> {
                 final type = MediaUtils.getMediaType(file.path);
                 return GestureDetector(
                   onTap: () {
-                    setState(() {
-                      fileIndex = index;
-                      _pageController!.jumpToPage(
-                        index,
-                      );
-                    });
+                    if (mounted) {
+                      setState(() {
+                        fileIndex = index;
+                        _pageController!.jumpToPage(
+                          index,
+                        );
+                      });
+                    }
                   },
                   child: Container(
                     decoration: const BoxDecoration(),

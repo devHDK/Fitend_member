@@ -26,7 +26,9 @@ class _PreviewImageState extends State<PreviewImage> {
   void didUpdateWidget(covariant PreviewImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.file.path != widget.file.path) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 

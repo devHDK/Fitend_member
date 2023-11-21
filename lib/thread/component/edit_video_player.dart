@@ -75,17 +75,20 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
     _videoController!.addListener(
       () {
         final currentPosition = _videoController!.value.position;
-        setState(() {
-          this.currentPosition = currentPosition;
-        });
+        if (mounted) {
+          setState(() {
+            this.currentPosition = currentPosition;
+          });
+        }
       },
     );
 
     _videoController!.addListener(videoListener);
     _videoController!.play();
     _videoController!.pause();
-
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void videoListener() {}
@@ -114,9 +117,11 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
                 aspectRatio: _videoController!.value.aspectRatio,
                 child: GestureDetector(
                   onTap: () {
-                    setState(() {
-                      isShowControlls = !isShowControlls;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        isShowControlls = !isShowControlls;
+                      });
+                    }
                   },
                   child: Stack(
                     children: [
@@ -209,13 +214,15 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
   void onPlayPressed() {
     //실행중이면 정지
     //실행중이 아니면 실행
-    setState(() {
-      if (_videoController!.value.isPlaying) {
-        _videoController!.pause();
-      } else {
-        _videoController!.play();
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (_videoController!.value.isPlaying) {
+          _videoController!.pause();
+        } else {
+          _videoController!.play();
+        }
+      });
+    }
   }
 
   void onForwarPressed() {

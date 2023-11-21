@@ -30,6 +30,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ThreadScreen extends ConsumerStatefulWidget {
   static String get routeName => 'thread';
@@ -59,56 +60,61 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     itemPositionsListener.itemPositions.addListener(_handleItemPositionChange);
 
     //threadScreen 진입시 badgeCount => 0
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (mounted) {
-        ref.read(notificationHomeProvider.notifier).updateBageCount(0);
-        threadBadgeCountReset();
-      }
+      updateBadge();
     });
   }
 
+  void updateBadge() {
+    if (mounted) {
+      threadBadgeCountReset();
+      ref.read(notificationHomeProvider.notifier).updateBageCount(0);
+    }
+  }
+
   void _handleItemPositionChange() {
-    int maxIndex = itemPositionsListener.itemPositions.value
-        .where((position) => position.itemLeadingEdge > 0)
-        .reduce((maxPosition, currPosition) =>
-            currPosition.itemLeadingEdge > maxPosition.itemLeadingEdge
-                ? currPosition
-                : maxPosition)
-        .index;
+    if (mounted) {
+      int maxIndex = itemPositionsListener.itemPositions.value
+          .where((position) => position.itemLeadingEdge > 0)
+          .reduce((maxPosition, currPosition) =>
+              currPosition.itemLeadingEdge > maxPosition.itemLeadingEdge
+                  ? currPosition
+                  : maxPosition)
+          .index;
 
-    int minIndex = itemPositionsListener.itemPositions.value
-        .where((position) => position.itemTrailingEdge < 1)
-        .reduce((minPosition, currPosition) =>
-            currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
-                ? currPosition
-                : minPosition)
-        .index;
+      int minIndex = itemPositionsListener.itemPositions.value
+          .where((position) => position.itemTrailingEdge < 1)
+          .reduce((minPosition, currPosition) =>
+              currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
+                  ? currPosition
+                  : minPosition)
+          .index;
 
-    if (minIndex < 0) minIndex = 0;
-    ref.read(threadProvider.notifier).updateScrollIndex(minIndex);
+      if (minIndex < 0) minIndex = 0;
+      ref.read(threadProvider.notifier).updateScrollIndex(minIndex);
 
-    if (pstate.data.isNotEmpty &&
-        maxIndex > pstate.data.length - 2 &&
-        pstate.total > pstate.data.length &&
-        !isLoading) {
-      //스크롤을 아래로 내렸을때
-      isLoading = true;
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (pstate.data.isNotEmpty &&
+          maxIndex > pstate.data.length - 2 &&
+          pstate.total > pstate.data.length &&
+          !isLoading) {
+        //스크롤을 아래로 내렸을때
+        isLoading = true;
+
         ref
             .read(threadProvider.notifier)
             .paginate(startIndex: startIndex, fetchMore: true)
             .then((value) {
           isLoading = false;
-
-          setState(() {});
+          if (mounted) {
+            setState(() {});
+          }
         });
-      });
+      }
     }
   }
 
   void threadBadgeCountReset() async {
-    final pref = await ref.read(sharedPrefsProvider);
+    final pref = await SharedPreferences.getInstance();
     SharedPrefUtils.updateThreadBadgeCount(pref, 'reset');
   }
 
@@ -150,6 +156,8 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    itemPositionsListener.itemPositions
+        .removeListener(_handleItemPositionChange);
     super.dispose();
   }
 

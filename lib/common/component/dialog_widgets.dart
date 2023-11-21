@@ -483,9 +483,9 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
           .schedule!
           .removeAt(beforWorkoutIndex);
     } catch (e) {
-      // debugPrint(e);
+      debugPrint('$e');
 
-      // ignore: use_build_context_synchronously
+      if (!context.mounted) return;
       showDialog(
         context: context,
         builder: (context) => DialogWidgets.errorDialog(

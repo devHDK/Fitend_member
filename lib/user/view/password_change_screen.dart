@@ -208,6 +208,8 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
                       });
                     }
 
+                    if (!context.mounted) return;
+
                     showDialog(
                       context: context,
                       builder: (context) => DialogWidgets.errorDialog(

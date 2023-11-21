@@ -640,7 +640,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                 debugPrint('$e');
               }
             }
-
+            if (!context.mounted) return;
             context.pop();
           },
         );
@@ -774,7 +774,8 @@ class RecordTypeThread extends StatelessWidget {
                   SvgPicture.asset(
                     SVGConstants.timer,
                     width: isbigSize! ? 18.5 : 16,
-                    color: Pallete.gray,
+                    colorFilter:
+                        const ColorFilter.mode(Pallete.gray, BlendMode.srcIn),
                   ),
                   const SizedBox(
                     width: 5,

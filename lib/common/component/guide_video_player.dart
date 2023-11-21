@@ -6,7 +6,6 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:video_player/video_player.dart';
 
 class GuideVideoPlayer extends StatefulWidget {
@@ -389,99 +388,99 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
   }
 }
 
-class _Controls extends StatelessWidget {
-  final VoidCallback onPlayPressed;
-  final VoidCallback onReversePressed;
-  final VoidCallback onForwarPressed;
-  final bool isPlaying;
+// class _Controls extends StatelessWidget {
+//   final VoidCallback onPlayPressed;
+//   final VoidCallback onReversePressed;
+//   final VoidCallback onForwarPressed;
+//   final bool isPlaying;
 
-  const _Controls({
-    required this.onPlayPressed,
-    required this.onReversePressed,
-    required this.onForwarPressed,
-    required this.isPlaying,
-  });
+//   const _Controls({
+//     required this.onPlayPressed,
+//     required this.onReversePressed,
+//     required this.onForwarPressed,
+//     required this.isPlaying,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black.withOpacity(0.5),
-      height: 100.h,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          renderIconButton(
-            onPressed: onReversePressed,
-            iconData: Icons.keyboard_double_arrow_left_rounded,
-          ),
-          renderIconButton(
-            onPressed: onPlayPressed,
-            iconData: isPlaying ? Icons.pause : Icons.play_arrow,
-          ),
-          renderIconButton(
-            onPressed: onForwarPressed,
-            iconData: Icons.keyboard_double_arrow_right_rounded,
-          ),
-        ],
-      ),
-    );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       color: Colors.black.withOpacity(0.5),
+//       height: 100.h,
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//         children: [
+//           renderIconButton(
+//             onPressed: onReversePressed,
+//             iconData: Icons.keyboard_double_arrow_left_rounded,
+//           ),
+//           renderIconButton(
+//             onPressed: onPlayPressed,
+//             iconData: isPlaying ? Icons.pause : Icons.play_arrow,
+//           ),
+//           renderIconButton(
+//             onPressed: onForwarPressed,
+//             iconData: Icons.keyboard_double_arrow_right_rounded,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 
-  IconButton renderIconButton({
-    required VoidCallback onPressed,
-    required IconData iconData,
-  }) {
-    return IconButton(
-      onPressed: onPressed,
-      icon: Icon(iconData, color: Colors.white, size: 40.0),
-    );
-  }
-}
+//   IconButton renderIconButton({
+//     required VoidCallback onPressed,
+//     required IconData iconData,
+//   }) {
+//     return IconButton(
+//       onPressed: onPressed,
+//       icon: Icon(iconData, color: Colors.white, size: 40.0),
+//     );
+//   }
+// }
 
-class _Slider extends StatelessWidget {
-  final Duration currentPosition;
-  final Duration maxPpsition;
-  final ValueChanged<double> onSlideChanged;
+// class _Slider extends StatelessWidget {
+//   final Duration currentPosition;
+//   final Duration maxPpsition;
+//   final ValueChanged<double> onSlideChanged;
 
-  const _Slider({
-    required this.currentPosition,
-    required this.maxPpsition,
-    required this.onSlideChanged,
-  });
+//   const _Slider({
+//     required this.currentPosition,
+//     required this.maxPpsition,
+//     required this.onSlideChanged,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 0,
-      right: 0,
-      left: 0,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: Row(
-          children: [
-            Text(
-              '${currentPosition.inMinutes}:${(currentPosition.inSeconds % 60).toString().padLeft(2, '0')}',
-              style: const TextStyle(
-                color: Colors.white,
-              ),
-            ),
-            Expanded(
-              child: Slider(
-                min: 0,
-                max: maxPpsition.inSeconds.toDouble(),
-                value: currentPosition.inSeconds.toDouble(),
-                onChanged: onSlideChanged,
-              ),
-            ),
-            Text(
-              '${maxPpsition.inMinutes}:${(maxPpsition.inSeconds % 60).toString().padLeft(2, '0')}',
-              style: const TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Positioned(
+//       bottom: 0,
+//       right: 0,
+//       left: 0,
+//       child: Padding(
+//         padding: const EdgeInsets.symmetric(horizontal: 10.0),
+//         child: Row(
+//           children: [
+//             Text(
+//               '${currentPosition.inMinutes}:${(currentPosition.inSeconds % 60).toString().padLeft(2, '0')}',
+//               style: const TextStyle(
+//                 color: Colors.white,
+//               ),
+//             ),
+//             Expanded(
+//               child: Slider(
+//                 min: 0,
+//                 max: maxPpsition.inSeconds.toDouble(),
+//                 value: currentPosition.inSeconds.toDouble(),
+//                 onChanged: onSlideChanged,
+//               ),
+//             ),
+//             Text(
+//               '${maxPpsition.inMinutes}:${(maxPpsition.inSeconds % 60).toString().padLeft(2, '0')}',
+//               style: const TextStyle(
+//                 color: Colors.white,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

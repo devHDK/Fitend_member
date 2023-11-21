@@ -126,6 +126,8 @@ class _PasswordConfirmScreen extends ConsumerState<PasswordConfirmScreen> {
                     });
                   }
 
+                  if (!context.mounted) return;
+
                   showDialog(
                     context: context,
                     builder: (context) => DialogWidgets.errorDialog(

@@ -513,7 +513,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                 debugPrint('$e');
               }
             }
-
+            if (!context.mounted) return;
             context.pop();
           },
         );

@@ -205,7 +205,10 @@ class _SetInfoBoxForTimerState extends ConsumerState<SetInfoBoxForTimer> {
                               width: 20,
                               child: SvgPicture.asset(
                                 SVGConstants.clock,
-                                color: isNowSet ? Pallete.point : Pallete.gray,
+                                colorFilter: ColorFilter.mode(
+                                  isNowSet ? Pallete.point : Pallete.gray,
+                                  BlendMode.srcIn,
+                                ),
                                 width: 16,
                               ),
                             ),

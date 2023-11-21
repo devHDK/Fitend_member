@@ -285,6 +285,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                         });
                                       }
 
+                                      if (!context.mounted) return;
                                       showDialog(
                                         barrierDismissible: false,
                                         context: context,

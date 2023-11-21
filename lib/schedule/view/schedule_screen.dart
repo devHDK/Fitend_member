@@ -7,7 +7,6 @@ import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
-import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';

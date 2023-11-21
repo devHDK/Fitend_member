@@ -410,7 +410,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                   .updateCommentEmoji(
                       widget.commentId, userModel.user.id, emoji.emoji);
             }
-
+            if (!context.mounted) return;
             context.pop();
           },
         );

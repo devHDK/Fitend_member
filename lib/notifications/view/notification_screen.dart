@@ -2,7 +2,6 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/notifications/component/notification_cell.dart';
 import 'package:fitend_member/notifications/model/notification_model.dart';

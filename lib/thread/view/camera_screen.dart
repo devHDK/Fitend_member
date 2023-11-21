@@ -846,6 +846,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                           .read(commentCreateProvider(threadId).notifier)
                           .updateIsLoading(false);
 
+                      if (!context.mounted) return;
                       context.pop();
                     } else {
                       debugPrint('assets: $assets');
@@ -884,7 +885,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                     ref
                         .read(threadCreateProvider.notifier)
                         .updateIsLoading(false);
-
+                    if (!context.mounted) return;
                     context.pop();
                   } else {
                     debugPrint('assets: $assets');

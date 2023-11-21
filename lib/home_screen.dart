@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/provider/avail_camera_provider.dart';
@@ -40,8 +39,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final notificationState = ref.watch(notificationHomeProvider);
     if (notificationState is NotificationMainModel) model = notificationState;
 
-    AsyncValue<List<CameraDescription>> camerasAsyncValue =
-        ref.watch(availableCamerasProvider);
+    // AsyncValue<List<CameraDescription>> camerasAsyncValue =
+    ref.watch(availableCamerasProvider);
 
     return Scaffold(
       backgroundColor: Pallete.background,

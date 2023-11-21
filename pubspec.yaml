@@ -112,6 +112,7 @@ dependencies:
   any_link_preview: ^3.0.1
   fluttertoast: ^8.2.2
   shimmer: ^3.0.0
+  collection: ^1.17.2
 
 dev_dependencies:
   flutter_test:

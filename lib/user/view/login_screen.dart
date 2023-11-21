@@ -360,22 +360,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Future<void> _saveEmailAndPassword() async {
-    final storage = ref.read(secureStorageProvider);
-    await storage.write(key: 'email', value: _idTextController.text);
-    await storage.write(key: 'password', value: _passwordTextController.text);
-  }
+  // Future<void> _saveEmailAndPassword() async {
+  //   final storage = ref.read(secureStorageProvider);
+  //   await storage.write(key: 'email', value: _idTextController.text);
+  //   await storage.write(key: 'password', value: _passwordTextController.text);
+  // }
 
-  Future<void> _loadEmailAndPassword() async {
-    final storage = ref.read(secureStorageProvider);
-    String? savedEmail = await storage.read(key: 'email');
-    String? savedPassword = await storage.read(key: 'password');
+  // Future<void> _loadEmailAndPassword() async {
+  //   final storage = ref.read(secureStorageProvider);
+  //   String? savedEmail = await storage.read(key: 'email');
+  //   String? savedPassword = await storage.read(key: 'password');
 
-    if (savedEmail != null && savedPassword != null) {
-      _idTextController.text = savedEmail;
-      _passwordTextController.text = savedPassword;
-    }
-  }
+  //   if (savedEmail != null && savedPassword != null) {
+  //     _idTextController.text = savedEmail;
+  //     _passwordTextController.text = savedPassword;
+  //   }
+  // }
 
   Future<String> _getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();

@@ -83,7 +83,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   }
 
   getPermissionStatus() async {
-    PermissionStatus status = await Permission.camera.request();
+    PermissionStatus cameraStatus = await Permission.camera.request();
+    PermissionStatus micStatus = await Permission.microphone.request();
 
     // if (status.isDenied) {
     //   await Permission.camera.request();
@@ -91,8 +92,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     //   status = await Permission.camera.status;
     // }
 
-    if (status.isGranted) {
-      log('Camera Permission: GRANTED');
+    if (cameraStatus.isGranted || micStatus.isGranted) {
+      log('Camera,Mic Permission: GRANTED');
       getAvailableCameras();
 
       if (mounted) {

@@ -219,7 +219,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
           .putProcessTotalTime();
 
-      // setState(() {});
+      setState(() {});
     }
   }
 

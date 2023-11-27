@@ -471,8 +471,12 @@ class WorkoutProcessStateNotifier
     try {
       var pstate = state as WorkoutProcessModel;
 
-      pstate.isQuitting = true;
+      if (pstate.isQuitting) {
+        debugPrint('pstate.isQuitting ===> ${pstate.isQuitting} ===> return');
+        return;
+      }
 
+      pstate.isQuitting = true;
       state = pstate;
 
       List<WorkoutRecordSimple> tempRecordList = [];

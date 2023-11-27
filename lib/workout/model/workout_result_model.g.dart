@@ -71,6 +71,9 @@ WorkoutResultModel _$WorkoutResultModelFromJson(Map<String, dynamic> json) =>
           ? null
           : ScheduleRecordsModel.fromJson(
               json['scheduleRecords'] as Map<String, dynamic>),
+      lastSchedules: (json['data'] as List<dynamic>?)
+          ?.map((e) => WorkoutData.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$WorkoutResultModelToJson(WorkoutResultModel instance) =>
@@ -81,6 +84,7 @@ Map<String, dynamic> _$WorkoutResultModelToJson(WorkoutResultModel instance) =>
       'contents': instance.contents,
       'workoutRecords': instance.workoutRecords,
       'scheduleRecords': instance.scheduleRecords,
+      'data': instance.lastSchedules,
     };
 
 WorkoutRecord _$WorkoutRecordFromJson(Map<String, dynamic> json) =>

@@ -52,6 +52,8 @@ class User {
   final String gender;
   @JsonKey(name: "isNotification")
   final bool? isNotification;
+  @JsonKey(name: "createdAt")
+  final String? createdAt;
   @JsonKey(name: "deletedAt")
   final String? deletedAt;
   @JsonKey(name: "activeTrainers")
@@ -64,6 +66,7 @@ class User {
     required this.phone,
     required this.gender,
     required this.isNotification,
+    required this.createdAt,
     required this.deletedAt,
     required this.activeTrainers,
   });
@@ -75,6 +78,7 @@ class User {
     String? phone,
     String? gender,
     bool? isNotification,
+    String? createdAt,
     String? deletedAt,
     List<ThreadTrainer>? activeTrainers,
   }) =>
@@ -86,6 +90,7 @@ class User {
         gender: gender ?? this.gender,
         isNotification: isNotification ?? this.isNotification,
         deletedAt: deletedAt ?? this.deletedAt,
+        createdAt: createdAt ?? this.createdAt,
         activeTrainers: activeTrainers ?? this.activeTrainers,
       );
 

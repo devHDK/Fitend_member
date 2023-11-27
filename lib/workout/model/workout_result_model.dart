@@ -1,4 +1,5 @@
 import 'package:fitend_member/exercise/model/set_info_model.dart';
+import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/workout/model/schedule_record_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -23,6 +24,8 @@ class WorkoutResultModel extends WorkoutResultModelBase {
   final String? contents;
   final List<WorkoutRecord> workoutRecords;
   final ScheduleRecordsModel? scheduleRecords;
+  @JsonKey(name: 'data')
+  final List<WorkoutData>? lastSchedules;
 
   WorkoutResultModel({
     required this.startDate,
@@ -31,6 +34,7 @@ class WorkoutResultModel extends WorkoutResultModelBase {
     this.contents,
     required this.workoutRecords,
     this.scheduleRecords,
+    this.lastSchedules,
   });
 
   WorkoutResultModel copyWith({
@@ -40,6 +44,7 @@ class WorkoutResultModel extends WorkoutResultModelBase {
     String? contents,
     List<WorkoutRecord>? workoutRecords,
     ScheduleRecordsModel? scheduleRecords,
+    List<WorkoutData>? lastSchedules,
   }) =>
       WorkoutResultModel(
         startDate: startDate ?? this.startDate,
@@ -48,6 +53,7 @@ class WorkoutResultModel extends WorkoutResultModelBase {
         contents: contents ?? this.contents,
         workoutRecords: workoutRecords ?? this.workoutRecords,
         scheduleRecords: scheduleRecords ?? this.scheduleRecords,
+        lastSchedules: lastSchedules ?? this.lastSchedules,
       );
 
   factory WorkoutResultModel.fromJson(Map<String, dynamic> json) =>

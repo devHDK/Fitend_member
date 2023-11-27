@@ -21,6 +21,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       phone: json['phone'] as String?,
       gender: json['gender'] as String,
       isNotification: json['isNotification'] as bool?,
+      createdAt: json['createdAt'] as String?,
       deletedAt: json['deletedAt'] as String?,
       activeTrainers: (json['activeTrainers'] as List<dynamic>)
           .map((e) => ThreadTrainer.fromJson(e as Map<String, dynamic>))
@@ -34,6 +35,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'phone': instance.phone,
       'gender': instance.gender,
       'isNotification': instance.isNotification,
+      'createdAt': instance.createdAt,
       'deletedAt': instance.deletedAt,
       'activeTrainers': instance.activeTrainers,
     };

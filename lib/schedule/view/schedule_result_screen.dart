@@ -89,7 +89,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   Widget build(BuildContext context) {
     final pstate = ref.watch(workoutResultProvider(widget.workoutScheduleId));
     final workoutFeedbackBox = ref.watch(hiveWorkoutFeedbackProvider);
-    // final StringConstants.workoutResultBox = ref.watch(hiveWorkoutResultProvider);
     final workoutRecordBox = ref.watch(hiveWorkoutRecordSimpleProvider);
 
     workoutFeedbackBox.whenData(

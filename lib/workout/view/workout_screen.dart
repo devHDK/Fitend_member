@@ -244,6 +244,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     }
 
     final model = state;
+
     final userModel = userState as UserModel;
     final workoutModel = workoutState as WorkoutModel;
 
@@ -404,7 +405,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                         return DialogWidgets.confirmDialog(
                           message: '오늘의 운동을 종료할까요?\n종료 후에는 다시 진행할 수 없어요 🙉',
                           confirmText: '아니요, 계속 할게요',
-                          cancelText: '네, 종료할게요',
+                          cancelText: model.isQuitting ? '종료중...' : '네, 종료할게요',
                           confirmOnTap: () {
                             context.pop();
                           },
@@ -412,6 +413,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               ? () {}
                               : () async {
                                   try {
+                                    ref
+                                        .read(workoutProcessProvider(
+                                                widget.workoutScheduleId)
+                                            .notifier)
+                                        .workoutIsQuttingChange(true);
+
+                                    context.pop();
+
                                     await ref
                                         .read(workoutProcessProvider(
                                                 widget.workoutScheduleId)
@@ -426,10 +435,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       final id = widget.workoutScheduleId;
                                       final date = widget.workout.startDate;
 
-                                      context.pop();
-                                      context.pop();
+                                      // context.pop();
+                                      // context.pop();
 
-                                      GoRouter.of(context).pushNamed(
+                                      GoRouter.of(context).replaceNamed(
                                         WorkoutFeedbackScreen.routeName,
                                         pathParameters: {
                                           'workoutScheduleId': id.toString(),
@@ -444,8 +453,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   } on DioException catch (e) {
                                     debugPrint('$e');
                                   }
-
-                                  //완료!!!!!!!!!
                                 },
                         );
                       },
@@ -1041,6 +1048,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
   Future<void> _onTapNext(
       BuildContext context, WorkoutProcessModel model) async {
+    print('dialog - isQuitting ===> ${model.isQuitting}');
+
     await ref
         .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
         .nextWorkout()
@@ -1094,7 +1103,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           dismissable: false,
           message: '완료하지 않은 운동이 있어요🤓\n 마저 진행할까요?',
           confirmText: '네, 마저할게요',
-          cancelText: '아니요, 그만할래요',
+          cancelText: isQuitting ? '종료중...' : '아니요, 그만할래요',
           confirmOnTap: () {
             ref
                 .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
@@ -1107,6 +1116,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               : () async {
                   //완료!!!
                   try {
+                    ref
+                        .read(workoutProcessProvider(widget.workoutScheduleId)
+                            .notifier)
+                        .workoutIsQuttingChange(true);
+
+                    context.pop();
+
                     await ref
                         .read(workoutProcessProvider(widget.workoutScheduleId)
                             .notifier)
@@ -1119,10 +1135,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       final id = widget.workoutScheduleId;
                       final date = widget.workout.startDate;
 
-                      context.pop();
-                      context.pop();
+                      // context.pop();
+                      // context.pop();
 
-                      GoRouter.of(context).goNamed(
+                      GoRouter.of(context).replaceNamed(
                         WorkoutFeedbackScreen.routeName,
                         pathParameters: {
                           'workoutScheduleId': id.toString(),

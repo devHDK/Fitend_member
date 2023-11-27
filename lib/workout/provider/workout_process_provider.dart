@@ -471,9 +471,7 @@ class WorkoutProcessStateNotifier
     try {
       var pstate = state as WorkoutProcessModel;
 
-      pstate.isQuitting = true;
-
-      state = pstate;
+      workoutIsQuttingChange(true);
 
       List<WorkoutRecordSimple> tempRecordList = [];
 
@@ -520,7 +518,7 @@ class WorkoutProcessStateNotifier
           isProcessing: false,
         );
       }
-      state = pstate;
+      state = pstate.copyWith();
 
       try {
         List<int> targetMuscles = [];

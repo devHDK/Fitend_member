@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -62,20 +62,24 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
 
   void _focusnodeListner() {
     if (focusNode.hasFocus) {
-      setState(() {
-        focusNode.requestFocus();
-        addKeyboardHeightListener();
-        scrollController.animateTo(
-          _scrollOffset + 325,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.ease,
-        );
-      });
+      if (mounted) {
+        setState(() {
+          focusNode.requestFocus();
+          addKeyboardHeightListener();
+          scrollController.animateTo(
+            _scrollOffset + 325,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.ease,
+          );
+        });
+      }
     } else {
-      setState(() {
-        focusNode.unfocus();
-        removeKeyboardHeightListener();
-      });
+      if (mounted) {
+        setState(() {
+          focusNode.unfocus();
+          removeKeyboardHeightListener();
+        });
+      }
     }
   }
 
@@ -94,20 +98,26 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
     final viewInsets = MediaQuery.paddingOf(context);
     final newKeyboardHeight = viewInsets.bottom;
     if (newKeyboardHeight > 0) {
-      setState(() => keyboardHeight = newKeyboardHeight);
+      if (mounted) {
+        setState(() => keyboardHeight = newKeyboardHeight);
+      }
     } else {
       removeKeyboardHeightListener();
     }
   }
 
   void removeKeyboardHeightListener() {
-    setState(() => keyboardHeight = 0);
+    if (mounted) {
+      setState(() => keyboardHeight = 0);
+    }
   }
 
   void _scrollListener() {
-    setState(() {
-      _scrollOffset = scrollController.offset;
-    });
+    if (mounted) {
+      setState(() {
+        _scrollOffset = scrollController.offset;
+      });
+    }
   }
 
   @override
@@ -119,7 +129,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
 
     final baseBorder = OutlineInputBorder(
       borderSide: const BorderSide(
-        color: DARK_GRAY_COLOR,
+        color: Pallete.darkGray,
         width: 1,
       ),
       borderRadius: BorderRadius.circular(10),
@@ -128,9 +138,9 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         appBar: AppBar(
-          backgroundColor: BACKGROUND_COLOR,
+          backgroundColor: Pallete.background,
           title: Text(
             '운동 평가',
             style: h4Headline,
@@ -186,9 +196,11 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                             : buttonEnable
                                 ? () async {
                                     try {
-                                      setState(() {
-                                        buttonEnable = false;
-                                      });
+                                      if (mounted) {
+                                        setState(() {
+                                          buttonEnable = false;
+                                        });
+                                      }
 
                                       await repository
                                           .postWorkoutRecordsFeedback(
@@ -267,10 +279,13 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                         },
                                       );
                                     } on DioException catch (e) {
-                                      setState(() {
-                                        buttonEnable = true;
-                                      });
+                                      if (mounted) {
+                                        setState(() {
+                                          buttonEnable = true;
+                                        });
+                                      }
 
+                                      if (!context.mounted) return;
                                       showDialog(
                                         barrierDismissible: false,
                                         context: context,
@@ -290,7 +305,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                           height: 44,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: POINT_COLOR,
+                            color: Pallete.point,
                           ),
                           child: Center(
                             child: buttonEnable
@@ -337,14 +352,14 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
           maxLines: 9,
           style: const TextStyle(color: Colors.white),
           controller: contentsController,
-          cursorColor: POINT_COLOR,
+          cursorColor: Pallete.point,
           focusNode: focusNode,
           onTapOutside: (event) {
             focusNode.unfocus();
           },
           keyboardType: TextInputType.multiline,
           decoration: InputDecoration(
-            focusColor: POINT_COLOR,
+            focusColor: Pallete.point,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 20,
               vertical: 11,
@@ -354,14 +369,14 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
             enabledBorder: baseBorder,
             focusedBorder: baseBorder.copyWith(
               borderSide: baseBorder.borderSide.copyWith(
-                color: POINT_COLOR,
+                color: Pallete.point,
               ),
             ),
             labelText: focusNode.hasFocus || contentsController.text.isNotEmpty
                 ? ''
                 : '운동관련 궁금증, 요청사항 등을 형식에 관계없이\n\n자유롭게 입력해주세요 😁\n\n\n\n\n\n\n\n\n',
             labelStyle: s2SubTitle.copyWith(
-              color: focusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
+              color: focusNode.hasFocus ? Pallete.point : Pallete.gray,
             ),
           ),
         ),
@@ -382,13 +397,15 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         ),
         GestureDetector(
           onTap: () {
-            setState(() {
-              if (issueIndexes.contains(1)) {
-                issueIndexes.remove(1);
-              } else {
-                issueIndexes.add(1);
-              }
-            });
+            if (mounted) {
+              setState(() {
+                if (issueIndexes.contains(1)) {
+                  issueIndexes.remove(1);
+                } else {
+                  issueIndexes.add(1);
+                }
+              });
+            }
           },
           child: _issueContainer(
             size,
@@ -401,13 +418,15 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         ),
         GestureDetector(
           onTap: () {
-            setState(() {
-              if (issueIndexes.contains(2)) {
-                issueIndexes.remove(2);
-              } else {
-                issueIndexes.add(2);
-              }
-            });
+            if (mounted) {
+              setState(() {
+                if (issueIndexes.contains(2)) {
+                  issueIndexes.remove(2);
+                } else {
+                  issueIndexes.add(2);
+                }
+              });
+            }
           },
           child: _issueContainer(
             size,
@@ -420,13 +439,15 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         ),
         GestureDetector(
           onTap: () {
-            setState(() {
-              if (issueIndexes.contains(3)) {
-                issueIndexes.remove(3);
-              } else {
-                issueIndexes.add(3);
-              }
-            });
+            if (mounted) {
+              setState(() {
+                if (issueIndexes.contains(3)) {
+                  issueIndexes.remove(3);
+                } else {
+                  issueIndexes.add(3);
+                }
+              });
+            }
           },
           child: _issueContainer(
             size,
@@ -454,9 +475,11 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
           children: [
             GestureDetector(
               onTap: () {
-                setState(() {
-                  strengthIndex = 1;
-                });
+                if (mounted) {
+                  setState(() {
+                    strengthIndex = 1;
+                  });
+                }
               },
               child: _strengthContainer(
                 icon: '😁',
@@ -466,36 +489,44 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
             ),
             GestureDetector(
               onTap: () {
-                setState(() {
-                  strengthIndex = 2;
-                });
+                if (mounted) {
+                  setState(() {
+                    strengthIndex = 2;
+                  });
+                }
               },
               child: _strengthContainer(
                   icon: '😀', text: '쉬움', isSelected: strengthIndex == 2),
             ),
             GestureDetector(
               onTap: () {
-                setState(() {
-                  strengthIndex = 3;
-                });
+                if (mounted) {
+                  setState(() {
+                    strengthIndex = 3;
+                  });
+                }
               },
               child: _strengthContainer(
                   icon: '😊', text: '보통', isSelected: strengthIndex == 3),
             ),
             GestureDetector(
               onTap: () {
-                setState(() {
-                  strengthIndex = 4;
-                });
+                if (mounted) {
+                  setState(() {
+                    strengthIndex = 4;
+                  });
+                }
               },
               child: _strengthContainer(
                   icon: '😓', text: '힘듦', isSelected: strengthIndex == 4),
             ),
             GestureDetector(
               onTap: () {
-                setState(() {
-                  strengthIndex = 5;
-                });
+                if (mounted) {
+                  setState(() {
+                    strengthIndex = 5;
+                  });
+                }
               },
               child: _strengthContainer(
                   icon: '🥵', text: '매우\n힘듦', isSelected: strengthIndex == 5),
@@ -515,7 +546,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
       height: 101,
       decoration: BoxDecoration(
         border: Border.all(
-          color: isSelected ? POINT_COLOR : DARK_GRAY_COLOR,
+          color: isSelected ? Pallete.point : Pallete.darkGray,
         ),
         borderRadius: BorderRadius.circular(10),
         color: isSelected ? Colors.white : null,
@@ -540,7 +571,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                 child: Text(
                   text,
                   style: h6Headline.copyWith(
-                    color: isSelected ? POINT_COLOR : GRAY_COLOR,
+                    color: isSelected ? Pallete.point : Pallete.gray,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
                   ),
                 ),
@@ -562,7 +593,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
       width: size.width,
       decoration: BoxDecoration(
         border: Border.all(
-          color: isSelected ? POINT_COLOR : DARK_GRAY_COLOR,
+          color: isSelected ? Pallete.point : Pallete.darkGray,
         ),
         borderRadius: BorderRadius.circular(10),
         color: isSelected ? Colors.white : null,
@@ -572,7 +603,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
         child: Text(
           text,
           style: h6Headline.copyWith(
-            color: isSelected ? POINT_COLOR : GRAY_COLOR,
+            color: isSelected ? Pallete.point : Pallete.gray,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
           ),
         ),

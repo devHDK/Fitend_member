@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
@@ -44,7 +45,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
 
     selectedIndex = widget.exerciseIndex;
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
+      if (mounted) setState(() {});
     });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -103,7 +104,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
     });
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -117,7 +118,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset('asset/img/icon_red_dot.svg'),
+            SvgPicture.asset(SVGConstants.redDot),
             const SizedBox(
               width: 5,
             ),
@@ -171,7 +172,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
                           const SizedBox(
                             width: 58,
                           ),
-                          SvgPicture.asset('asset/img/icon_turn_down.svg'),
+                          SvgPicture.asset(SVGConstants.turnDown),
                         ],
                       ),
                     ],
@@ -181,11 +182,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
                     const SizedBox(
                       width: 58,
                     ),
-                    SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                    SvgPicture.asset(SVGConstants.tunrLine),
                     const SizedBox(
                       width: 10,
                     ),
-                    SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                    SvgPicture.asset(SVGConstants.tunrLine),
                   ]),
                 WorkoutCard(
                   exercise: exerciseModel,
@@ -205,7 +206,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
                           const SizedBox(
                             width: 58,
                           ),
-                          SvgPicture.asset('asset/img/icon_turn_up.svg'),
+                          SvgPicture.asset(SVGConstants.turnUp),
                         ],
                       ),
                       const SizedBox(
@@ -231,8 +232,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: selectedIndex == widget.exerciseIndex
-                ? POINT_COLOR.withOpacity(0.4)
-                : POINT_COLOR,
+                ? Pallete.point.withOpacity(0.4)
+                : Pallete.point,
           ),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(

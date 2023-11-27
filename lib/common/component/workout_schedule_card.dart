@@ -1,5 +1,6 @@
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
@@ -85,7 +86,7 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
         color: Colors.transparent,
         image: widget.selected
             ? const DecorationImage(
-                image: AssetImage("asset/img/schedule_image_pt.png"),
+                image: AssetImage(IMGConstants.scheduleOnline),
                 fit: BoxFit.fill,
                 opacity: 0.3)
             : null,
@@ -177,7 +178,7 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                       Text(
                         widget.subTitle != null ? widget.subTitle! : '',
                         style: s2SubTitle.copyWith(
-                          color: LIGHT_GRAY_COLOR,
+                          color: Pallete.lightGray,
                           overflow: TextOverflow.ellipsis,
                         ),
                         maxLines: 1,
@@ -190,11 +191,9 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                     width: 24,
                   )
                 else if (!widget.isComplete!) //오늘, 오늘 이후 스케줄이 미완료
-                  SvgPicture.asset('asset/img/icon_check.svg')
+                  SvgPicture.asset(SVGConstants.checkEmpty)
                 else if (widget.isComplete!)
-                  // Image.asset('asset/img/round_success.png'),
-                  SvgPicture.asset(
-                      'asset/img/icon_check_complete.svg') // 스케줄이 완료 일때
+                  SvgPicture.asset(SVGConstants.checkComplete) // 스케줄이 완료 일때
               ],
             ),
             if (widget.selected)
@@ -211,10 +210,10 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                           borderRadius: BorderRadius.circular(10),
                           color: (widget.isRecord! && !widget.isComplete!)
                               ? Colors.white
-                              : POINT_COLOR,
+                              : Pallete.point,
                           border: widget.isRecord! && !widget.isComplete!
                               ? Border.all(
-                                  color: POINT_COLOR,
+                                  color: Pallete.point,
                                   width: 1.0,
                                 )
                               : null),
@@ -271,7 +270,7 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                               : '운동 확인하기 🔍',
                           style: h6Headline.copyWith(
                             color: (widget.isRecord! && !widget.isComplete!)
-                                ? POINT_COLOR
+                                ? Pallete.point
                                 : Colors.white,
                           ),
                         ),
@@ -285,7 +284,7 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                 height: 35,
               ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
           ],

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/flavors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
@@ -10,10 +10,10 @@ final dioRetryProvider = Provider(
     final dioRetry = Dio(
       BaseOptions(
         baseUrl: F.appFlavor == Flavor.local
-            ? localIp
+            ? URLConstants.localIp
             : F.appFlavor == Flavor.development
-                ? devIp
-                : deployIp,
+                ? URLConstants.devIp
+                : URLConstants.deployIp,
         sendTimeout: const Duration(seconds: 5),
         receiveTimeout: const Duration(seconds: 6),
         connectTimeout: const Duration(seconds: 6),

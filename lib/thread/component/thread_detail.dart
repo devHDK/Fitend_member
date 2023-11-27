@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
@@ -152,10 +153,10 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                         borderRadius: 17,
                         image: CachedNetworkImage(
                           imageUrl: model.writerType == 'trainer'
-                              ? '$s3Url${model.trainer.profileImage}'
+                              ? '${URLConstants.s3Url}${model.trainer.profileImage}'
                               : model.user.gender == 'male'
-                                  ? maleProfileUrl
-                                  : femaleProfileUrl,
+                                  ? URLConstants.maleProfileUrl
+                                  : URLConstants.femaleProfileUrl,
                           height: 34,
                           width: 34,
                         ),
@@ -168,7 +169,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                             ? model.trainer.nickname
                             : model.user.nickname,
                         style: s1SubTitle.copyWith(
-                          color: LIGHT_GRAY_COLOR,
+                          color: Pallete.lightGray,
                           height: 1,
                         ),
                       ),
@@ -180,7 +181,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                             .format(widget.dateTime)
                             .toString(),
                         style:
-                            s2SubTitle.copyWith(color: GRAY_COLOR, height: 1),
+                            s2SubTitle.copyWith(color: Pallete.gray, height: 1),
                       ),
                     ],
                   ),
@@ -232,7 +233,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20),
-                      child: SvgPicture.asset('asset/img/icon_edit.svg'),
+                      child: SvgPicture.asset(SVGConstants.edit),
                     ),
                   ),
                 )
@@ -342,7 +343,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: PreviewImageNetwork(
-                  url: '$s3Url${model.gallery!.first.url}',
+                  url: '${URLConstants.s3Url}${model.gallery!.first.url}',
                   width: (100.w - 56).toInt(),
                   height: 320,
                   boxFit: BoxFit.cover,
@@ -389,7 +390,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
             Text(
               model.comments != null ? '${model.comments!.length}개의 댓글' : '',
               style: s2SubTitle.copyWith(
-                color: GRAY_COLOR,
+                color: Pallete.gray,
                 height: 1,
               ),
             ),
@@ -399,7 +400,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
             const Expanded(
               child: Divider(
                 thickness: 1,
-                color: GRAY_COLOR,
+                color: Pallete.gray,
               ),
             ),
             const SizedBox(
@@ -512,7 +513,7 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                 debugPrint('$e');
               }
             }
-
+            if (!context.mounted) return;
             context.pop();
           },
         );
@@ -584,7 +585,8 @@ class _MediaListView extends StatelessWidget {
                             ),
                           )
                         : PreviewImageNetwork(
-                            url: '$s3Url${model.gallery![index].url}',
+                            url:
+                                '${URLConstants.s3Url}${model.gallery![index].url}',
                             width: (100.w - 56).toInt(),
                             height: 250,
                           ),

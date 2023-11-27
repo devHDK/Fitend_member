@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
@@ -88,7 +89,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   Widget build(BuildContext context) {
     final pstate = ref.watch(workoutResultProvider(widget.workoutScheduleId));
     final workoutFeedbackBox = ref.watch(hiveWorkoutFeedbackProvider);
-    // final workoutResultBox = ref.watch(hiveWorkoutResultProvider);
+    // final StringConstants.workoutResultBox = ref.watch(hiveWorkoutResultProvider);
     final workoutRecordBox = ref.watch(hiveWorkoutRecordSimpleProvider);
 
     workoutFeedbackBox.whenData(
@@ -100,10 +101,10 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     if (feedback == null || widget.exercises != null) {
       if (pstate is WorkoutResultModelLoading) {
         return const Scaffold(
-          backgroundColor: BACKGROUND_COLOR,
+          backgroundColor: Pallete.background,
           body: Center(
             child: CircularProgressIndicator(
-              color: POINT_COLOR,
+              color: Pallete.point,
             ),
           ),
         );
@@ -111,7 +112,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
 
       if (pstate is WorkoutResultModelError) {
         return Scaffold(
-          backgroundColor: BACKGROUND_COLOR,
+          backgroundColor: Pallete.background,
           body: Center(
             child: DialogWidgets.errorDialog(
               message: pstate.message,
@@ -154,10 +155,10 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
 
     if (pstate is WorkoutResultModelLoading) {
       return const Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
+            color: Pallete.point,
           ),
         ),
       );
@@ -168,16 +169,16 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       DialogWidgets.showToast('운동 평가를 완료해주세요');
       context.pop();
       return const Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
       );
     }
 
     var state = pstate as WorkoutResultModel;
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         title: Text(
           '${DateFormat('M월 d일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday - 1]}요일',
           style: h4Headline,
@@ -205,7 +206,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         slivers: [
           SliverToBoxAdapter(
             child: Container(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 28,
@@ -257,7 +258,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            SvgPicture.asset('asset/img/icon_timer.svg'),
+                            SvgPicture.asset(SVGConstants.timer),
                             const SizedBox(
                               width: 5,
                             ),
@@ -277,7 +278,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                     height: 12,
                   ),
                   const Divider(
-                    color: GRAY_COLOR,
+                    color: Pallete.gray,
                     height: 1,
                   )
                 ],
@@ -295,7 +296,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
               },
               separatorBuilder: (context, index) {
                 return const Divider(
-                  color: GRAY_COLOR,
+                  color: Pallete.gray,
                   height: 1,
                 );
               },
@@ -318,7 +319,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           height: 12,
         ),
         const Divider(
-          color: GRAY_COLOR,
+          color: Pallete.gray,
           height: 1,
         ),
         const SizedBox(
@@ -344,7 +345,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         Text(
           '  ∙  ${strengthResults[state.strengthIndex - 1]}',
           style: s2SubTitle.copyWith(
-            color: LIGHT_GRAY_COLOR,
+            color: Pallete.lightGray,
           ),
         ),
       ],
@@ -369,7 +370,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                 Text(
                   '  ∙  ${issuedResults[e - 1]}',
                   style: s2SubTitle.copyWith(
-                    color: LIGHT_GRAY_COLOR,
+                    color: Pallete.lightGray,
                   ),
                 ),
                 const SizedBox(
@@ -378,7 +379,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
               ],
             );
           },
-        ).toList(),
+        ),
         const SizedBox(
           height: 24,
         )
@@ -402,7 +403,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         Text(
           state.contents!,
           style: s2SubTitle.copyWith(
-            color: LIGHT_GRAY_COLOR,
+            color: Pallete.lightGray,
           ),
         ),
       ],
@@ -484,7 +485,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
               ],
             ),
           );
-        }).toList(),
+        }),
         const SizedBox(
           height: 16,
         ),
@@ -492,7 +493,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           const Column(
             children: [
               Divider(
-                color: GRAY_COLOR,
+                color: Pallete.gray,
                 height: 1,
               ),
               SizedBox(

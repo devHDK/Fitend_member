@@ -1,9 +1,9 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
@@ -29,6 +29,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ThreadScreen extends ConsumerStatefulWidget {
   static String get routeName => 'thread';
@@ -58,54 +59,61 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     itemPositionsListener.itemPositions.addListener(_handleItemPositionChange);
 
     //threadScreen 진입시 badgeCount => 0
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ref.read(notificationHomeProvider.notifier).updateBageCount(0);
-      threadBadgeCountReset();
+      updateBadge();
     });
   }
 
+  void updateBadge() {
+    if (mounted) {
+      threadBadgeCountReset();
+      ref.read(notificationHomeProvider.notifier).updateBageCount(0);
+    }
+  }
+
   void _handleItemPositionChange() {
-    int maxIndex = itemPositionsListener.itemPositions.value
-        .where((position) => position.itemLeadingEdge > 0)
-        .reduce((maxPosition, currPosition) =>
-            currPosition.itemLeadingEdge > maxPosition.itemLeadingEdge
-                ? currPosition
-                : maxPosition)
-        .index;
+    if (mounted) {
+      int maxIndex = itemPositionsListener.itemPositions.value
+          .where((position) => position.itemLeadingEdge > 0)
+          .reduce((maxPosition, currPosition) =>
+              currPosition.itemLeadingEdge > maxPosition.itemLeadingEdge
+                  ? currPosition
+                  : maxPosition)
+          .index;
 
-    int minIndex = itemPositionsListener.itemPositions.value
-        .where((position) => position.itemTrailingEdge < 1)
-        .reduce((minPosition, currPosition) =>
-            currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
-                ? currPosition
-                : minPosition)
-        .index;
+      int minIndex = itemPositionsListener.itemPositions.value
+          .where((position) => position.itemTrailingEdge < 1)
+          .reduce((minPosition, currPosition) =>
+              currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
+                  ? currPosition
+                  : minPosition)
+          .index;
 
-    if (minIndex < 0) minIndex = 0;
-    ref.read(threadProvider.notifier).updateScrollIndex(minIndex);
+      if (minIndex < 0) minIndex = 0;
+      ref.read(threadProvider.notifier).updateScrollIndex(minIndex);
 
-    if (pstate.data.isNotEmpty &&
-        maxIndex > pstate.data.length - 2 &&
-        pstate.total > pstate.data.length &&
-        !isLoading) {
-      //스크롤을 아래로 내렸을때
-      isLoading = true;
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (pstate.data.isNotEmpty &&
+          maxIndex > pstate.data.length - 2 &&
+          pstate.total > pstate.data.length &&
+          !isLoading) {
+        //스크롤을 아래로 내렸을때
+        isLoading = true;
+
         ref
             .read(threadProvider.notifier)
             .paginate(startIndex: startIndex, fetchMore: true)
             .then((value) {
           isLoading = false;
-
-          setState(() {});
+          if (mounted) {
+            setState(() {});
+          }
         });
-      });
+      }
     }
   }
 
   void threadBadgeCountReset() async {
-    final pref = await ref.read(sharedPrefsProvider);
+    final pref = await SharedPreferences.getInstance();
     SharedPrefUtils.updateThreadBadgeCount(pref, 'reset');
   }
 
@@ -113,7 +121,9 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+        if (mounted) {
+          await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+        }
         break;
       case AppLifecycleState.inactive:
         break;
@@ -128,19 +138,25 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
 
   @override
   void didPush() async {
-    await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+    if (mounted) {
+      await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+    }
     super.didPush();
   }
 
   @override
   void didPop() async {
-    await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+    if (mounted) {
+      await ThreadUpdateUtils.checkThreadNeedUpdate(ref);
+    }
     super.didPop();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    itemPositionsListener.itemPositions
+        .removeListener(_handleItemPositionChange);
     super.dispose();
   }
 
@@ -162,14 +178,14 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     if (state is ThreadListModelLoading) {
       return const Center(
         child: CircularProgressIndicator(
-          color: POINT_COLOR,
+          color: Pallete.point,
         ),
       );
     }
 
     if (state is ThreadListModelError) {
       return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: DialogWidgets.errorDialog(
             message: '데이터를 불러오지 못했습니다.',
@@ -190,7 +206,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         appBar: LogoAppbar(
           title: 'T H R E A D S',
           tapLogo: () async {
@@ -216,8 +232,8 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                     ));
               },
               child: !notificationHomeModel.isConfirmed
-                  ? SvgPicture.asset('asset/img/icon_alarm_on.svg')
-                  : SvgPicture.asset('asset/img/icon_alarm_off.svg'),
+                  ? SvgPicture.asset(SVGConstants.alarmOn)
+                  : SvgPicture.asset(SVGConstants.alarmOff),
             ),
             const SizedBox(
               width: 12,
@@ -234,7 +250,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                   );
                 },
                 child: SvgPicture.asset(
-                  'asset/img/icon_my_page.svg',
+                  SVGConstants.mypage,
                 ),
               ),
             ),
@@ -252,7 +268,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                         Text(
                           'UPLOADING',
                           style: h6Headline.copyWith(
-                            color: LIGHT_GRAY_COLOR,
+                            color: Pallete.lightGray,
                             height: 1,
                           ),
                         ),
@@ -260,7 +276,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                           width: 10,
                         ),
                         LoadingAnimationWidget.dotsTriangle(
-                          color: LIGHT_GRAY_COLOR,
+                          color: Pallete.lightGray,
                           size: 15,
                         ),
                         const SizedBox(
@@ -268,10 +284,10 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                         ),
                         Expanded(
                           child: LinearProgressIndicator(
-                            color: POINT_COLOR,
+                            color: Pallete.point,
                             value: (threadCreateState.doneCount) /
                                 threadCreateState.totalCount,
-                            backgroundColor: GRAY_COLOR,
+                            backgroundColor: Pallete.gray,
                           ),
                         )
                       ],
@@ -297,12 +313,11 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                   );
                 },
                 backgroundColor: Colors.transparent,
-                child:
-                    SvgPicture.asset('asset/img/icon_thread_create_button.svg'),
+                child: SvgPicture.asset(SVGConstants.threadCreateButton),
               ),
         body: RefreshIndicator(
-          backgroundColor: BACKGROUND_COLOR,
-          color: POINT_COLOR,
+          backgroundColor: Pallete.background,
+          color: Pallete.point,
           semanticsLabel: '새로고침',
           onRefresh: () async {
             await ref
@@ -318,7 +333,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
           },
           child: state.data.isEmpty
               ? Scaffold(
-                  backgroundColor: BACKGROUND_COLOR,
+                  backgroundColor: Pallete.background,
                   body: Center(
                     child: Text(
                       '아직 코치님과 함께한 쓰레드가 없어요 🙂',
@@ -345,7 +360,8 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                       return const SizedBox(
                         height: 100,
                         child: Center(
-                          child: CircularProgressIndicator(color: POINT_COLOR),
+                          child:
+                              CircularProgressIndicator(color: Pallete.point),
                         ),
                       );
                     }
@@ -402,10 +418,10 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                             title: model.title,
                             content: model.content,
                             profileImageUrl: model.writerType == 'trainer'
-                                ? '$s3Url${model.trainer.profileImage}'
+                                ? '${URLConstants.s3Url}${model.trainer.profileImage}'
                                 : model.user.gender == 'male'
-                                    ? maleProfileUrl
-                                    : femaleProfileUrl,
+                                    ? URLConstants.maleProfileUrl
+                                    : URLConstants.femaleProfileUrl,
                             nickname: model.writerType == 'trainer'
                                 ? model.trainer.nickname
                                 : model.user.nickname,

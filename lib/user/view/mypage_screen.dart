@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/notifications/model/notification_setting_model.dart';
@@ -41,9 +42,11 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
 
   void getPackage() async {
     packageInfo = await PackageInfo.fromPlatform();
-    setState(() {
-      version = packageInfo!.version;
-    });
+    if (mounted) {
+      setState(() {
+        version = packageInfo!.version;
+      });
+    }
   }
 
   @override
@@ -52,17 +55,17 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
 
     if (state is UserModelLoading) {
       return const Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
             child: CircularProgressIndicator(
-          color: POINT_COLOR,
+          color: Pallete.point,
         )),
       );
     }
 
     if (state is UserModelError) {
       return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: DialogWidgets.errorDialog(
             message: '데이터를 불러올수없습니다😂',
@@ -81,9 +84,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
         : '';
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         elevation: 0,
         title: Text(
           '마이페이지',
@@ -106,7 +109,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
           children: [
             _renderUserInfo(model, formattedPhoneNumber),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             InkWell(
@@ -119,13 +122,11 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               },
               child: _renderLabel(
                 name: '비밀번호 변경',
-                child: SvgPicture.asset(
-                  'asset/img/icon_next.svg',
-                ),
+                child: SvgPicture.asset(SVGConstants.next),
               ),
             ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             _renderLabel(
@@ -136,8 +137,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                   child: Transform.scale(
                     scale: 0.7,
                     child: CupertinoSwitch(
-                      activeColor: POINT_COLOR,
-                      trackColor: GRAY_COLOR,
+                      activeColor: Pallete.point,
+                      trackColor: Pallete.gray,
                       value: state.user.isNotification!,
                       onChanged: (value) async {
                         try {
@@ -160,7 +161,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                   ),
                 )),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             InkWell(
@@ -169,13 +170,11 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                       "https://weareraid.notion.site/87468f88c99b427b81ae3e44aeb1f37b?pvs=4"),
               child: _renderLabel(
                 name: '서비스 이용약관',
-                child: SvgPicture.asset(
-                  'asset/img/icon_next.svg',
-                ),
+                child: SvgPicture.asset(SVGConstants.next),
               ),
             ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             InkWell(
@@ -184,13 +183,11 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                       "https://weareraid.notion.site/06b383e3c7aa4515a4637c2c11f3d908?pvs=4"),
               child: _renderLabel(
                 name: '개인정보 처리방침',
-                child: SvgPicture.asset(
-                  'asset/img/icon_next.svg',
-                ),
+                child: SvgPicture.asset(SVGConstants.next),
               ),
             ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             _renderLabel(
@@ -198,11 +195,11 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 child: Text(
                   packageInfo != null ? 'v${packageInfo!.version}' : '',
                   style: s3SubTitle.copyWith(
-                    color: POINT_COLOR,
+                    color: Pallete.point,
                   ),
                 )),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             InkWell(
@@ -231,7 +228,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               ),
             ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
             InkWell(
@@ -250,7 +247,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               ),
             ),
             const Divider(
-              color: DARK_GRAY_COLOR,
+              color: Pallete.darkGray,
               height: 1,
             ),
           ],
@@ -291,14 +288,14 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SvgPicture.asset('asset/img/icon_email.svg'),
+              SvgPicture.asset(SVGConstants.email),
               const SizedBox(
                 width: 8,
               ),
               Text(
                 model.user.email,
                 style: s2SubTitle.copyWith(
-                  color: LIGHT_GRAY_COLOR,
+                  color: Pallete.lightGray,
                   height: 1.6,
                 ),
               ),
@@ -311,14 +308,14 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SvgPicture.asset('asset/img/icon_phone.svg'),
+              SvgPicture.asset(SVGConstants.phone),
               const SizedBox(
                 width: 8,
               ),
               Text(
                 formattedPhoneNumber,
                 style: s2SubTitle.copyWith(
-                  color: LIGHT_GRAY_COLOR,
+                  color: Pallete.lightGray,
                 ),
               ),
             ],

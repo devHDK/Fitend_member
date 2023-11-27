@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,9 +50,11 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
         }
       }
     } else {
-      setState(() {
-        focusNode.unfocus();
-      });
+      if (mounted) {
+        setState(() {
+          focusNode.unfocus();
+        });
+      }
     }
   }
 
@@ -62,7 +64,7 @@ class _SetInfoTextFieldState extends State<SetInfoTextField> {
       initialValue: widget.initValue,
       controller: widget.controller,
       focusNode: focusNode,
-      cursorColor: POINT_COLOR,
+      cursorColor: Pallete.point,
       textAlign: TextAlign.center,
       style: h3Headline.copyWith(color: widget.textColor),
       selectionControls: EmptyTextSelectionControls(),

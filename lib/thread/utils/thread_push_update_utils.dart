@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-import 'package:fitend_member/common/const/data.dart';
-import 'package:fitend_member/common/provider/shared_preference_provider.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
@@ -11,24 +10,25 @@ import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ThreadUpdateUtils {
   static Future<void> checkThreadNeedUpdate(WidgetRef ref) async {
-    final pref = await ref.read(sharedPrefsProvider);
+    final pref = await SharedPreferences.getInstance();
     final isNeedListUpdate =
-        SharedPrefUtils.getIsNeedUpdate(needThreadUpdate, pref);
-    var threadUpdateList =
-        SharedPrefUtils.getNeedUpdateList(needThreadUpdateList, pref);
-    var threadDeleteList =
-        SharedPrefUtils.getNeedUpdateList(needThreadDelete, pref);
-    var commentCreateList =
-        SharedPrefUtils.getNeedUpdateList(needCommentCreate, pref);
-    var commentDeleteList =
-        SharedPrefUtils.getNeedUpdateList(needCommentDelete, pref);
-    var emojiCreateList =
-        SharedPrefUtils.getNeedUpdateList(needEmojiCreate, pref);
-    var emojiDeleteList =
-        SharedPrefUtils.getNeedUpdateList(needEmojiDelete, pref);
+        SharedPrefUtils.getIsNeedUpdate(StringConstants.needThreadUpdate, pref);
+    var threadUpdateList = SharedPrefUtils.getNeedUpdateList(
+        StringConstants.needThreadUpdateList, pref);
+    var threadDeleteList = SharedPrefUtils.getNeedUpdateList(
+        StringConstants.needThreadDelete, pref);
+    var commentCreateList = SharedPrefUtils.getNeedUpdateList(
+        StringConstants.needCommentCreate, pref);
+    var commentDeleteList = SharedPrefUtils.getNeedUpdateList(
+        StringConstants.needCommentDelete, pref);
+    var emojiCreateList = SharedPrefUtils.getNeedUpdateList(
+        StringConstants.needEmojiCreate, pref);
+    var emojiDeleteList = SharedPrefUtils.getNeedUpdateList(
+        StringConstants.needEmojiDelete, pref);
 
     bool isListRefreshed = false;
     List<String> detailRefreshedList = [];
@@ -41,8 +41,10 @@ class ThreadUpdateUtils {
       ref.read(notificationHomeProvider.notifier).addBageCount(1);
       ref.read(notificationHomeProvider.notifier).updateIsConfirm(false);
 
-      await SharedPrefUtils.updateIsNeedUpdate(needThreadUpdate, pref, false);
-      await SharedPrefUtils.updateNeedUpdateList(needThreadDelete, pref, []);
+      await SharedPrefUtils.updateIsNeedUpdate(
+          StringConstants.needThreadUpdate, pref, false);
+      await SharedPrefUtils.updateNeedUpdateList(
+          StringConstants.needThreadDelete, pref, []);
       threadDeleteList = [];
       isListRefreshed = true;
 
@@ -71,7 +73,7 @@ class ThreadUpdateUtils {
         }
       }
       await SharedPrefUtils.updateNeedUpdateList(
-          needThreadUpdateList, pref, []);
+          StringConstants.needThreadUpdateList, pref, []);
     }
 
     if (threadDeleteList.isNotEmpty && !isListRefreshed) {
@@ -121,7 +123,8 @@ class ThreadUpdateUtils {
               .updateTrainerCommentCount(int.parse(e), 1);
         }
       }
-      await SharedPrefUtils.updateNeedUpdateList(needCommentCreate, pref, []);
+      await SharedPrefUtils.updateNeedUpdateList(
+          StringConstants.needCommentCreate, pref, []);
       commentCreateList = [];
     }
 
@@ -157,7 +160,8 @@ class ThreadUpdateUtils {
 
       if (ref.read(threadProvider) is! ThreadListModel) {
         tempList = [];
-        await SharedPrefUtils.updateNeedUpdateList(needEmojiCreate, pref, []);
+        await SharedPrefUtils.updateNeedUpdateList(
+            StringConstants.needEmojiCreate, pref, []);
       }
 
       for (var emoji in tempList) {
@@ -220,7 +224,8 @@ class ThreadUpdateUtils {
         // emojiCreateList.remove(emoji);
       }
 
-      await SharedPrefUtils.updateNeedUpdateList(needEmojiCreate, pref, []);
+      await SharedPrefUtils.updateNeedUpdateList(
+          StringConstants.needEmojiCreate, pref, []);
     }
 
     if (emojiDeleteList.isNotEmpty) {
@@ -228,7 +233,8 @@ class ThreadUpdateUtils {
 
       if (ref.read(threadProvider) is! ThreadListModel) {
         tempList = [];
-        await SharedPrefUtils.updateNeedUpdateList(needEmojiDelete, pref, []);
+        await SharedPrefUtils.updateNeedUpdateList(
+            StringConstants.needEmojiDelete, pref, []);
       }
 
       for (var emoji in tempList) {
@@ -292,7 +298,8 @@ class ThreadUpdateUtils {
         // emojiDeleteList.remove(emoji);
       }
 
-      await SharedPrefUtils.updateNeedUpdateList(needEmojiDelete, pref, []);
+      await SharedPrefUtils.updateNeedUpdateList(
+          StringConstants.needEmojiDelete, pref, []);
     }
   }
 }

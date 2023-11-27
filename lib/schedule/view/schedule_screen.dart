@@ -2,11 +2,11 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/component/reservation_schedule_card.dart';
 import 'package:fitend_member/common/component/workout_schedule_card.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
-import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
@@ -26,6 +26,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   static String get routeName => 'schedule_main';
@@ -65,29 +66,30 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   void _handleItemPositionChange() {
-    int maxIndex = itemPositionsListener.itemPositions.value
-        .where((position) => position.itemLeadingEdge > 0)
-        .reduce((maxPosition, currPosition) =>
-            currPosition.itemLeadingEdge > maxPosition.itemLeadingEdge
-                ? currPosition
-                : maxPosition)
-        .index;
-    int minIndex = itemPositionsListener.itemPositions.value
-        .where((position) => position.itemTrailingEdge < 1)
-        .reduce((minPosition, currPosition) =>
-            currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
-                ? currPosition
-                : minPosition)
-        .index;
+    if (mounted) {
+      int maxIndex = itemPositionsListener.itemPositions.value
+          .where((position) => position.itemLeadingEdge > 0)
+          .reduce((maxPosition, currPosition) =>
+              currPosition.itemLeadingEdge > maxPosition.itemLeadingEdge
+                  ? currPosition
+                  : maxPosition)
+          .index;
+      int minIndex = itemPositionsListener.itemPositions.value
+          .where((position) => position.itemTrailingEdge < 1)
+          .reduce((minPosition, currPosition) =>
+              currPosition.itemLeadingEdge < minPosition.itemLeadingEdge
+                  ? currPosition
+                  : minPosition)
+          .index;
 
-    int itemCount = scheduleListGlobal.length;
+      int itemCount = scheduleListGlobal.length;
 
-    ref.read(scheduleProvider.notifier).updateScrollIndex(minIndex);
+      ref.read(scheduleProvider.notifier).updateScrollIndex(minIndex);
 
-    if (maxIndex > itemCount - 1 && !isLoading) {
-      //스크롤을 아래로 내렸을때
-      isLoading = true;
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (maxIndex > itemCount - 1 && !isLoading) {
+        //스크롤을 아래로 내렸을때
+        isLoading = true;
+
         ref
             .read(scheduleProvider.notifier)
             .paginate(
@@ -95,18 +97,19 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
             .then((value) {
           isLoading = false;
         });
-      });
-    } else if (minIndex == 1 && !isLoading) {
-      isLoading = true;
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      } else if (minIndex == 1 && !isLoading) {
+        isLoading = true;
+
         ref
             .read(scheduleProvider.notifier)
             .paginate(startDate: minDate, fetchMore: true, isUpScrolling: true)
             .then((value) {
-          itemScrollController.jumpTo(index: 32);
-          isLoading = false;
+          if (mounted) {
+            itemScrollController.jumpTo(index: 32);
+            isLoading = false;
+          }
         });
-      });
+      }
     }
   }
 
@@ -126,6 +129,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     switch (state) {
       case AppLifecycleState.resumed:
         await _checkIsNeedUpdate();
+
         break;
       case AppLifecycleState.inactive:
         break;
@@ -141,28 +145,35 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   @override
   void didPush() async {
     await _checkIsNeedUpdate();
+
     super.didPush();
   }
 
-  @override
-  void didPop() async {
-    await _checkIsNeedUpdate();
-    super.didPop();
-  }
+  // @override
+  // void didPop() async {
+  //   if (mounted) {
+  //     await _checkIsNeedUpdate();
+  //   }
+  //   super.didPop();
+  // }
 
   Future<void> _checkIsNeedUpdate() async {
-    final pref = await ref.read(sharedPrefsProvider);
-    final isNeedUpdate =
-        SharedPrefUtils.getIsNeedUpdate(needScheduleUpdate, pref);
-    if (isNeedUpdate) {
-      await _resetScheduleList();
-      await SharedPrefUtils.updateIsNeedUpdate(needScheduleUpdate, pref, false);
+    if (mounted) {
+      final pref = await SharedPreferences.getInstance();
+      final isNeedUpdate = SharedPrefUtils.getIsNeedUpdate(
+          StringConstants.needScheduleUpdate, pref);
+      if (isNeedUpdate) {
+        await _resetScheduleList();
+        await SharedPrefUtils.updateIsNeedUpdate(
+            StringConstants.needScheduleUpdate, pref, false);
+      }
     }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     ref
         .read(routeObserverProvider)
         .subscribe(this, ModalRoute.of(context) as PageRoute);
@@ -170,7 +181,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
   @override
   void dispose() {
-    ref.read(routeObserverProvider).unsubscribe(this);
+    // ref.read(routeObserverProvider).unsubscribe(this);
+
     WidgetsBinding.instance.removeObserver(this);
     itemPositionsListener.itemPositions
         .removeListener(_handleItemPositionChange);
@@ -178,7 +190,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   }
 
   void _onChildEvent() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -190,14 +204,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         notificationState is NotificationMainModelLoading) {
       return const Center(
         child: CircularProgressIndicator(
-          color: POINT_COLOR,
+          color: Pallete.point,
         ),
       );
     }
 
     if (state is ScheduleModelError) {
       return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: DialogWidgets.errorDialog(
             message: '데이터를 불러오지 못했습니다.',
@@ -221,7 +235,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         appBar: LogoAppbar(
           title: 'P L A N',
           tapLogo: () async {
@@ -231,7 +245,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                   startDate: DataUtils.getDate(fifteenDaysAgo),
                 )
                 .then((value) {
-              itemScrollController.jumpTo(index: 15);
+              if (mounted) {
+                itemScrollController.jumpTo(index: 15);
+              }
             });
           },
           actions: [
@@ -245,8 +261,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                     ));
               },
               child: !notificationHomeModel.isConfirmed
-                  ? SvgPicture.asset('asset/img/icon_alarm_on.svg')
-                  : SvgPicture.asset('asset/img/icon_alarm_off.svg'),
+                  ? SvgPicture.asset(SVGConstants.alarmOn)
+                  : SvgPicture.asset(SVGConstants.alarmOff),
             ),
             const SizedBox(
               width: 12,
@@ -262,9 +278,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                     ),
                   );
                 },
-                child: SvgPicture.asset(
-                  'asset/img/icon_my_page.svg',
-                ),
+                child: SvgPicture.asset(SVGConstants.mypage),
               ),
             ),
           ],
@@ -280,7 +294,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
               return const SizedBox(
                 height: 100,
                 child: Center(
-                  child: CircularProgressIndicator(color: POINT_COLOR),
+                  child: CircularProgressIndicator(color: Pallete.point),
                 ),
               );
             }
@@ -293,7 +307,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                   if (schedules.data[index - 1].startDate.day == 1)
                     Container(
                       height: 34,
-                      color: DARK_GRAY_COLOR,
+                      color: Pallete.darkGray,
                       child: Center(
                         child: Text(
                           DateFormat('yyyy년 M월')
@@ -320,7 +334,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                   if (schedules.data[index - 1].startDate.day == 1)
                     Container(
                       height: 34,
-                      color: DARK_GRAY_COLOR,
+                      color: Pallete.darkGray,
                       child: Center(
                         child: Text(
                           DateFormat('yyyy년 M월')
@@ -339,17 +353,18 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                           if (model[seq].selected!) {
                             return;
                           }
-
-                          setState(
-                            () {
-                              for (var e in schedules.data) {
-                                for (var element in e.schedule!) {
-                                  element.selected = false;
+                          if (mounted) {
+                            setState(
+                              () {
+                                for (var e in schedules.data) {
+                                  for (var element in e.schedule!) {
+                                    element.selected = false;
+                                  }
                                 }
-                              }
-                              model[seq].selected = true;
-                            },
-                          );
+                                model[seq].selected = true;
+                              },
+                            );
+                          }
                         },
                         child: e is Workout
                             ? WorkoutScheduleCard.fromWorkoutModel(
@@ -365,7 +380,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                               ),
                       );
                     },
-                  ).toList()
+                  )
                 ],
               );
             }
@@ -407,7 +422,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
           startDate: DataUtils.getDate(fifteenDaysAgo),
         )
         .then((value) {
-      itemScrollController.jumpTo(index: 15);
+      if (mounted) {
+        itemScrollController.jumpTo(index: 15);
+      }
     });
   }
 }

@@ -5,8 +5,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -53,7 +53,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } else {
       buttonEnable = true;
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void passwordTextListener() {
@@ -63,7 +65,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } else {
       buttonEnable = true;
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -82,7 +86,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // final formKey = GlobalKey<FormState>();
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -201,8 +205,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               borderRadius: BorderRadius.circular(10),
               color: idTextcontroller.text.isEmpty ||
                       passwordTextcontroller.text.isEmpty
-                  ? POINT_COLOR.withOpacity(0.4)
-                  : POINT_COLOR,
+                  ? Pallete.point.withOpacity(0.4)
+                  : Pallete.point,
             ),
             child: ElevatedButton(
               onPressed: state is UserModelLoading
@@ -291,7 +295,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       width: 15,
                       height: 15,
                       child: CircularProgressIndicator(
-                        color: POINT_COLOR,
+                        color: Pallete.point,
                       ),
                     )
                   : Text(
@@ -356,22 +360,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  Future<void> _saveEmailAndPassword() async {
-    final storage = ref.read(secureStorageProvider);
-    await storage.write(key: 'email', value: _idTextController.text);
-    await storage.write(key: 'password', value: _passwordTextController.text);
-  }
+  // Future<void> _saveEmailAndPassword() async {
+  //   final storage = ref.read(secureStorageProvider);
+  //   await storage.write(key: 'email', value: _idTextController.text);
+  //   await storage.write(key: 'password', value: _passwordTextController.text);
+  // }
 
-  Future<void> _loadEmailAndPassword() async {
-    final storage = ref.read(secureStorageProvider);
-    String? savedEmail = await storage.read(key: 'email');
-    String? savedPassword = await storage.read(key: 'password');
+  // Future<void> _loadEmailAndPassword() async {
+  //   final storage = ref.read(secureStorageProvider);
+  //   String? savedEmail = await storage.read(key: 'email');
+  //   String? savedPassword = await storage.read(key: 'password');
 
-    if (savedEmail != null && savedPassword != null) {
-      _idTextController.text = savedEmail;
-      _passwordTextController.text = savedPassword;
-    }
-  }
+  //   if (savedEmail != null && savedPassword != null) {
+  //     _idTextController.text = savedEmail;
+  //     _passwordTextController.text = savedPassword;
+  //   }
+  // }
 
   Future<String> _getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -379,14 +383,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     String? androidUuid;
 
     if (Platform.isAndroid) {
-      final savedUuid =
-          await ref.read(secureStorageProvider).read(key: DEVICEID);
+      final savedUuid = await ref
+          .read(secureStorageProvider)
+          .read(key: StringConstants.deviceId);
       if (savedUuid == null) {
         var uuid = const Uuid();
         androidUuid = uuid.v1();
         await ref
             .read(secureStorageProvider)
-            .write(key: DEVICEID, value: androidUuid);
+            .write(key: StringConstants.deviceId, value: androidUuid);
       } else {
         androidUuid = savedUuid;
       }

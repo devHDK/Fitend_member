@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/workout_banner.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
@@ -93,7 +94,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        await _checkIsNeedUpdateWorkoutDetail();
+        if (mounted) {
+          await _checkIsNeedUpdateWorkoutDetail();
+        }
         break;
       case AppLifecycleState.inactive:
         break;
@@ -108,13 +111,15 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
 
   @override
   void didPush() async {
-    await _checkIsNeedUpdateWorkoutDetail();
+    if (mounted) {
+      await _checkIsNeedUpdateWorkoutDetail();
+    }
   }
 
   Future<void> _checkIsNeedUpdateWorkoutDetail() async {
     final pref = await ref.read(sharedPrefsProvider);
-    final needUpdateList =
-        SharedPrefUtils.getNeedUpdateList(needWorkoutUpdateList, pref);
+    final needUpdateList = SharedPrefUtils.getNeedUpdateList(
+        StringConstants.needWorkoutUpdateList, pref);
 
     if (needUpdateList.contains(widget.id.toString()) &&
         workoutModel.exercises.isNotEmpty) {
@@ -122,7 +127,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
       needUpdateList.remove(widget.id.toString());
 
       SharedPrefUtils.updateNeedUpdateList(
-          needWorkoutUpdateList, pref, needUpdateList);
+          StringConstants.needWorkoutUpdateList, pref, needUpdateList);
     }
   }
 
@@ -131,14 +136,14 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     final state = ref.watch(workoutProvider(widget.id));
     final AsyncValue<Box> workoutRecordbox =
         ref.watch(hiveWorkoutRecordSimpleProvider);
-    // final pstate = ref.watch(workoutResultProvider(widget.id));
+    // final pstate = ref.watch(StringConstants.workoutResultProvider(widget.id));
 
     if (state is WorkoutModelLoading) {
       return const Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
+            color: Pallete.point,
           ),
         ),
       );
@@ -146,7 +151,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
 
     if (state is WorkoutModelError) {
       return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: DialogWidgets.errorDialog(
           message: state.message,
           confirmText: '확인',
@@ -182,7 +187,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
         DateTime.now().isAfter(DateTime.parse(model.startDate));
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -239,7 +244,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
         //                 },
         //               );
 
-        //               workoutFeedbackBox.whenData(
+        //               StringConstants.workoutFeedbackBox.whenData(
         //                 (value) async {
         //                   final record = value.get(widget.id);
         //                   if (record != null &&
@@ -280,8 +285,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
         // ],
       ),
       body: RefreshIndicator(
-        backgroundColor: BACKGROUND_COLOR,
-        color: POINT_COLOR,
+        backgroundColor: Pallete.background,
+        color: Pallete.point,
         semanticsLabel: '새로고침',
         onRefresh: () async {
           await ref
@@ -358,8 +363,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                                     const SizedBox(
                                       width: 30,
                                     ),
-                                    SvgPicture.asset(
-                                        'asset/img/icon_turn_down.svg'),
+                                    SvgPicture.asset(SVGConstants.turnDown),
                                   ],
                                 ),
                               ],
@@ -369,11 +373,11 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                               const SizedBox(
                                 width: 30,
                               ),
-                              SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                              SvgPicture.asset(SVGConstants.tunrLine),
                               const SizedBox(
                                 width: 10,
                               ),
-                              SvgPicture.asset('asset/img/icon_turn_line.svg'),
+                              SvgPicture.asset(SVGConstants.tunrLine),
                             ]),
                           WorkoutCard(
                             exercise: exerciseModel,
@@ -393,8 +397,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                                     const SizedBox(
                                       width: 30,
                                     ),
-                                    SvgPicture.asset(
-                                        'asset/img/icon_turn_up.svg'),
+                                    SvgPicture.asset(SVGConstants.turnUp),
                                   ],
                                 ),
                                 const SizedBox(
@@ -476,14 +479,16 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                             ),
                           )
                               .then((value) {
-                            setState(() {
-                              isPoped = true;
-                              // ref
-                              //     .read(workoutProcessProvider(widget.id)
-                              //         .notifier)
-                              //     .init(ref.read(
-                              //         workoutProvider(widget.id).notifier));
-                            });
+                            if (mounted) {
+                              setState(() {
+                                isPoped = true;
+                                // ref
+                                //     .read(workoutProcessProvider(widget.id)
+                                //         .notifier)
+                                //     .init(ref.read(
+                                //         workoutProvider(widget.id).notifier));
+                              });
+                            }
                           });
                         }
                       : null,
@@ -494,8 +499,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                   width: 100.w,
                   decoration: BoxDecoration(
                     color: model.isWorkoutComplete || isTodayWorkout
-                        ? POINT_COLOR
-                        : POINT_COLOR.withOpacity(0.3),
+                        ? Pallete.point
+                        : Pallete.point.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
@@ -556,13 +561,15 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
               ),
             )
                 .then((value) {
-              setState(() {
-                isPoped = true;
+              if (mounted) {
+                setState(() {
+                  isPoped = true;
 
-                // ref
-                //     .read(workoutProvider(widget.id).notifier)
-                //     .getWorkout(id: widget.id);
-              });
+                  // ref
+                  //     .read(workoutProvider(widget.id).notifier)
+                  //     .getWorkout(id: widget.id);
+                });
+              }
             });
           },
           cancelOnTap: () async {
@@ -601,13 +608,15 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
               ),
             )
                 .then((value) {
-              setState(() {
-                isPoped = true;
+              if (mounted) {
+                setState(() {
+                  isPoped = true;
 
-                // ref
-                //     .read(workoutProvider(widget.id).notifier)
-                //     .getWorkout(id: widget.id);
-              });
+                  // ref
+                  //     .read(workoutProvider(widget.id).notifier)
+                  //     .getWorkout(id: widget.id);
+                });
+              }
             });
           },
         );

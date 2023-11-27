@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -53,7 +53,7 @@ class Calendar extends StatelessWidget {
         todayDecoration: BoxDecoration(
           color: Colors.transparent,
           border: Border.all(
-            color: POINT_COLOR,
+            color: Pallete.point,
           ),
           shape: BoxShape.circle,
         ),
@@ -65,7 +65,7 @@ class Calendar extends StatelessWidget {
         ),
         selectedDecoration: const BoxDecoration(
           shape: BoxShape.circle,
-          color: POINT_COLOR,
+          color: Pallete.point,
         ),
         selectedTextStyle: const TextStyle(
           color: Colors.white,

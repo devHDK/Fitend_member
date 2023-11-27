@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class DataUtils {
   static String pathToUrl(String value) {
-    return 'http://$localIp$value';
+    return 'http://$URLConstants.localIp$value';
   }
 
   static List<String> listPathsToUrls(List paths) {

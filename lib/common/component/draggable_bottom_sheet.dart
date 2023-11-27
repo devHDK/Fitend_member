@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -41,7 +41,7 @@ class _CustomDraggableBottomSheetState
                 width: 44,
                 height: 4,
                 decoration: BoxDecoration(
-                    color: LIGHT_GRAY_COLOR,
+                    color: Pallete.lightGray,
                     borderRadius: BorderRadius.circular(2)),
               ),
             ),

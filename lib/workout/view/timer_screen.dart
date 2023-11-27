@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -84,66 +85,80 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
       const Duration(seconds: 1),
       onTick,
     );
-    setState(() {
-      isReady = true;
-      isRunning = true;
-    });
+    if (mounted) {
+      setState(() {
+        isReady = true;
+        isRunning = true;
+      });
+    }
   }
 
   void onPausePressed() {
     timer.cancel();
-    setState(() {
-      isRunning = false;
-      // count = 4;
-    });
+    if (mounted) {
+      setState(() {
+        isRunning = false;
+        // count = 4;
+      });
+    }
   }
 
   void onResetPressed() {
     ref
         .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
         .resetTimer(widget.setInfoIndex);
-
-    setState(() {
-      count = 4;
-      totalSeconds = widget.secondsGoal;
-      valueNotifier.value = 0.0;
-    });
+    if (mounted) {
+      setState(() {
+        count = 4;
+        totalSeconds = widget.secondsGoal;
+        valueNotifier.value = 0.0;
+      });
+    }
   }
 
   void onStopPressed() {
-    setState(() {
-      count = 4;
-      timer.cancel();
-      isRunning = false;
-      isReady = false;
-      valueNotifier.value =
-          (widget.secondsGoal - totalSeconds) / widget.secondsGoal;
-    });
+    if (mounted) {
+      setState(() {
+        count = 4;
+        timer.cancel();
+        isRunning = false;
+        isReady = false;
+        valueNotifier.value =
+            (widget.secondsGoal - totalSeconds) / widget.secondsGoal;
+      });
+    }
   }
 
   void onTick(Timer timer) {
     if (count > 0) {
-      setState(() {
-        count--;
-        // isReady = true;
-        valueNotifier.value = (4 - count).toDouble() / 4.toDouble();
-      });
+      if (mounted) {
+        setState(() {
+          count--;
+          // isReady = true;
+          valueNotifier.value = (4 - count).toDouble() / 4.toDouble();
+        });
+      }
     } else {
       if (totalSeconds == 0) {
         //0초가 됬을때 저장
         timer.cancel();
         valueNotifier.value = (widget.secondsGoal - totalSeconds).toDouble() /
             widget.secondsGoal.toDouble();
-        setState(() {
-          isRunning = false;
-        });
+        if (mounted) {
+          setState(() {
+            isRunning = false;
+          });
+        }
       } else {
-        setState(() {
-          isReady = false;
-          valueNotifier.value = (widget.secondsGoal - totalSeconds).toDouble() /
-              widget.secondsGoal.toDouble();
-          totalSeconds -= 1;
-        });
+        if (mounted) {
+          setState(() {
+            isReady = false;
+            valueNotifier.value =
+                (widget.secondsGoal - totalSeconds).toDouble() /
+                    widget.secondsGoal.toDouble();
+            totalSeconds -= 1;
+          });
+        }
 
         ref
             .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
@@ -161,31 +176,37 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
           resumedTime = DateTime.now();
 
           if (totalSeconds <= resumedTime.difference(pausedTime).inSeconds) {
-            setState(() {
-              totalSeconds = 0;
-              timer.cancel();
-              isRunning = false;
-              isBackground = false;
-              valueNotifier.value = 1;
-            });
+            if (mounted) {
+              setState(() {
+                totalSeconds = 0;
+                timer.cancel();
+                isRunning = false;
+                isBackground = false;
+                valueNotifier.value = 1;
+              });
+            }
 
             ref
                 .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
                 .modifiedSecondsRecord(widget.secondsGoal, widget.setInfoIndex);
           } else {
-            setState(() {
-              totalSeconds -= resumedTime.difference(pausedTime).inSeconds;
-              isBackground = false;
-              isRunning = true;
+            if (mounted) {
+              setState(() {
+                totalSeconds -= resumedTime.difference(pausedTime).inSeconds;
+                isBackground = false;
+                isRunning = true;
 
-              timer = Timer.periodic(
-                const Duration(seconds: 1),
-                onTick,
-              );
-            });
+                timer = Timer.periodic(
+                  const Duration(seconds: 1),
+                  onTick,
+                );
+              });
+            }
           }
 
-          setState(() {});
+          if (mounted) {
+            setState(() {});
+          }
         }
 
         break;
@@ -231,7 +252,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
       return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
+            color: Pallete.point,
           ),
         ),
       );
@@ -271,7 +292,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                   .setInfo[widget.setInfoIndex]
                   .seconds!),
               style: s1SubTitle.copyWith(
-                color: GRAY_COLOR,
+                color: Pallete.gray,
               ),
             ),
             SizedBox(
@@ -296,10 +317,13 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                 SimpleCircularProgressBar(
                   animationDuration: 0,
                   size: 220,
-                  backColor: POINT_COLOR.withOpacity(0.1),
+                  backColor: Pallete.point.withOpacity(0.1),
                   backStrokeWidth: 20,
                   progressStrokeWidth: 20,
-                  progressColors: [POINT_COLOR, POINT_COLOR.withOpacity(0.3)],
+                  progressColors: [
+                    Pallete.point,
+                    Pallete.point.withOpacity(0.3)
+                  ],
                   valueNotifier: valueNotifier,
                   maxValue: 1,
                 ),
@@ -329,17 +353,17 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: POINT_COLOR.withOpacity(0.1),
+                          color: Pallete.point.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Center(
                           child: SvgPicture.asset(isReady
-                              ? 'asset/img/icon_stop.svg'
+                              ? SVGConstants.stop
                               : isRunning
-                                  ? 'asset/img/icon_pause.svg'
+                                  ? SVGConstants.pause
                                   : totalSeconds == 0
-                                      ? 'asset/img/icon_reset.svg'
-                                      : 'asset/img/icon_play.svg'),
+                                      ? SVGConstants.reset
+                                      : SVGConstants.play),
                         ),
                       ),
                     ),
@@ -370,11 +394,11 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: POINT_COLOR.withOpacity(0.1),
+                          color: Pallete.point.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Center(
-                          child: SvgPicture.asset('asset/img/icon_exit.svg'),
+                          child: SvgPicture.asset(SVGConstants.exit),
                         ),
                       ),
                     ),
@@ -414,7 +438,9 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                                         .notifier)
                                     .workoutIsQuttingChange(true);
 
-                                setState(() {});
+                                if (mounted) {
+                                  setState(() {});
+                                }
 
                                 await ref
                                     .read(workoutProcessProvider(
@@ -451,6 +477,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                                   context,
                                   value,
                                   workoutModel,
+                                  workoutProcessModel.isQuitting,
                                 );
                               }
                             } else {
@@ -464,13 +491,13 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                         width: 15,
                         height: 15,
                         child: CircularProgressIndicator(
-                          color: POINT_COLOR,
+                          color: Pallete.point,
                         ),
                       )
                     : Text(
                         '다음 운동',
                         style: h5Headline.copyWith(
-                          color: POINT_COLOR,
+                          color: Pallete.point,
                         ),
                       ),
               )
@@ -484,6 +511,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
     BuildContext context,
     int index,
     WorkoutModel model,
+    bool isQuitting,
   ) {
     return showDialog(
       barrierDismissible: false,
@@ -501,40 +529,42 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
 
             context.pop();
           },
-          cancelOnTap: () async {
-            //완료!!!
-            try {
-              await ref
-                  .read(
-                      workoutProcessProvider(widget.workoutScheduleId).notifier)
-                  .quitWorkout(
-                    title: model.workoutTitle,
-                    subTitle: model.workoutSubTitle,
-                    trainerId: model.trainerId,
-                  )
-                  .then((value) {
-                final id = widget.workoutScheduleId;
-                final date = model.startDate;
+          cancelOnTap: isQuitting
+              ? () {}
+              : () async {
+                  //완료!!!
+                  try {
+                    await ref
+                        .read(workoutProcessProvider(widget.workoutScheduleId)
+                            .notifier)
+                        .quitWorkout(
+                          title: model.workoutTitle,
+                          subTitle: model.workoutSubTitle,
+                          trainerId: model.trainerId,
+                        )
+                        .then((value) {
+                      final id = widget.workoutScheduleId;
+                      final date = model.startDate;
 
-                context.pop();
-                context.pop();
+                      context.pop();
+                      context.pop();
 
-                GoRouter.of(context).goNamed(
-                  WorkoutFeedbackScreen.routeName,
-                  pathParameters: {
-                    'workoutScheduleId': id.toString(),
-                  },
-                  extra: model.exercises,
-                  queryParameters: {
-                    'startDate':
-                        DateFormat('yyyy-MM-dd').format(DateTime.parse(date)),
-                  },
-                );
-              });
-            } on DioException catch (e) {
-              debugPrint('$e');
-            }
-          },
+                      GoRouter.of(context).goNamed(
+                        WorkoutFeedbackScreen.routeName,
+                        pathParameters: {
+                          'workoutScheduleId': id.toString(),
+                        },
+                        extra: model.exercises,
+                        queryParameters: {
+                          'startDate': DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(date)),
+                        },
+                      );
+                    });
+                  } on DioException catch (e) {
+                    debugPrint('$e');
+                  }
+                },
         );
       },
     );

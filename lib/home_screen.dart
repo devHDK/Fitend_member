@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:camera/camera.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/provider/avail_camera_provider.dart';
 import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
 import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
@@ -39,19 +39,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final notificationState = ref.watch(notificationHomeProvider);
     if (notificationState is NotificationMainModel) model = notificationState;
 
-    AsyncValue<List<CameraDescription>> camerasAsyncValue =
-        ref.watch(availableCamerasProvider);
+    // AsyncValue<List<CameraDescription>> camerasAsyncValue =
+    ref.watch(availableCamerasProvider);
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       bottomNavigationBar: BottomAppBar(
-        color: BACKGROUND_COLOR,
+        color: Pallete.background,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Divider(
               height: 1,
-              color: GRAY_COLOR,
+              color: Pallete.gray,
             ),
             const SizedBox(
               height: 10,
@@ -60,9 +60,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 InkWell(
-                  onTap: () => setState(() {
-                    _currentIndex = 0;
-                  }),
+                  onTap: () {
+                    if (mounted) {
+                      setState(() {
+                        _currentIndex = 0;
+                      });
+                    }
+                  },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,
@@ -70,13 +74,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     child: SvgPicture.asset(
                       _currentIndex == 0
-                          ? 'asset/img/icon_schedule_active.svg'
-                          : 'asset/img/icon_schedule.svg',
+                          ? SVGConstants.scheduleActive
+                          : SVGConstants.schedule,
                     ),
                   ),
                 ),
                 const VerticalDivider(
-                  color: GRAY_COLOR,
+                  color: Pallete.gray,
                   width: 1, // specify the width of the divider
                 ),
                 InkWell(
@@ -105,8 +109,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           model != null && model.threadBadgeCount != 0,
                       child: SvgPicture.asset(
                         _currentIndex == 1
-                            ? 'asset/img/icon_message_active.svg'
-                            : 'asset/img/icon_message.svg',
+                            ? SVGConstants.messageActive
+                            : SVGConstants.message,
                       ),
                     ),
                   ),
@@ -125,8 +129,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    if (mounted) {
+      setState(() {
+        _currentIndex = index;
+      });
+    }
   }
 }

@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
@@ -199,7 +200,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       child: Center(
                         child: Container(
                           width: 0.5,
-                          color: GRAY_COLOR,
+                          color: Pallete.gray,
                         ),
                       ),
                     ),
@@ -229,7 +230,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                           Text(
                             widget.nickname,
                             style: s1SubTitle.copyWith(
-                              color: LIGHT_GRAY_COLOR,
+                              color: Pallete.lightGray,
                               height: 1,
                             ),
                           ),
@@ -241,7 +242,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                                 .format(widget.dateTime)
                                 .toString(),
                             style: s2SubTitle.copyWith(
-                                color: GRAY_COLOR, height: 1),
+                                color: Pallete.gray, height: 1),
                           ),
                         ],
                       ),
@@ -326,7 +327,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: PreviewImageNetwork(
-                          url: '$s3Url${widget.gallery!.first.url}',
+                          url:
+                              '${URLConstants.s3Url}${widget.gallery!.first.url}',
                           width: (100.w - 110).toInt(),
                           height: galleryHeight - 20,
                         ),
@@ -367,8 +369,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                               child: CircleProfileImage(
                                 image: CachedNetworkImage(
                                   imageUrl: widget.user.gender == 'male'
-                                      ? maleProfileUrl
-                                      : femaleProfileUrl,
+                                      ? URLConstants.maleProfileUrl
+                                      : URLConstants.femaleProfileUrl,
                                 ),
                                 borderRadius: 12,
                               ),
@@ -387,7 +389,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                               child: CircleProfileImage(
                                 image: CachedNetworkImage(
                                   imageUrl:
-                                      '$s3Url${widget.trainer.profileImage}',
+                                      '${URLConstants.s3Url}${widget.trainer.profileImage}',
                                 ),
                                 borderRadius: 12,
                               ),
@@ -403,7 +405,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                             ? ' 아직 댓글이 없어요 :)'
                             : ' ${widget.userCommentCount + widget.trainerCommentCount}개의 댓글이 있어요 :)',
                         style: s2SubTitle.copyWith(
-                          color: GRAY_COLOR,
+                          color: Pallete.gray,
                           height: 1,
                         ),
                       )
@@ -462,7 +464,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20),
-                child: SvgPicture.asset('asset/img/icon_edit.svg'),
+                child: SvgPicture.asset(SVGConstants.edit),
               ),
             ),
           ),
@@ -535,7 +537,8 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                                 ),
                               )
                             : PreviewImageNetwork(
-                                url: '$s3Url${widget.gallery![index - 1].url}',
+                                url:
+                                    '${URLConstants.s3Url}${widget.gallery![index - 1].url}',
                                 width: (100.w - 110).toInt(),
                                 // ((galleryHeight - 20) * 1.25)
                                 //     .toInt(),
@@ -637,7 +640,7 @@ class _ThreadCellState extends ConsumerState<ThreadCell> {
                 debugPrint('$e');
               }
             }
-
+            if (!context.mounted) return;
             context.pop();
           },
         );
@@ -680,7 +683,7 @@ class RecordTypeThread extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(
             width: 1,
-            color: GRAY_COLOR,
+            color: Pallete.gray,
           ),
           borderRadius: BorderRadius.circular(8),
         ),
@@ -704,7 +707,7 @@ class RecordTypeThread extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                               child: CustomNetworkImage(
                                 imageUrl:
-                                    '$s3Url$muscleImageUrl${info.targetMuscleIds[index]}.png',
+                                    '${URLConstants.s3Url}${URLConstants.muscleImageUrl}${info.targetMuscleIds[index]}.png',
                                 width: isbigSize! ? 52 : 40,
                                 height: isbigSize! ? 52 : 40,
                                 boxFit: BoxFit.cover,
@@ -769,9 +772,10 @@ class RecordTypeThread extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SvgPicture.asset(
-                    'asset/img/icon_timer.svg',
+                    SVGConstants.timer,
                     width: isbigSize! ? 18.5 : 16,
-                    color: GRAY_COLOR,
+                    colorFilter:
+                        const ColorFilter.mode(Pallete.gray, BlendMode.srcIn),
                   ),
                   const SizedBox(
                     width: 5,
@@ -780,7 +784,7 @@ class RecordTypeThread extends StatelessWidget {
                     DataUtils.getTimeStringMinutes(info.workoutDuration!),
                     style: c1Caption.copyWith(
                       fontSize: isbigSize! ? 14 : 12,
-                      color: LIGHT_GRAY_COLOR,
+                      color: Pallete.lightGray,
                       height: 1,
                     ),
                   ),
@@ -788,7 +792,7 @@ class RecordTypeThread extends StatelessWidget {
                     width: 11,
                   ),
                   SvgPicture.asset(
-                    'asset/img/icon_barbell.svg',
+                    SVGConstants.barbell,
                     width: isbigSize! ? 18.5 : 16,
                   ),
                   const SizedBox(
@@ -798,7 +802,7 @@ class RecordTypeThread extends StatelessWidget {
                     '${info.totalSet} set',
                     style: c1Caption.copyWith(
                       fontSize: isbigSize! ? 14 : 12,
-                      color: LIGHT_GRAY_COLOR,
+                      color: Pallete.lightGray,
                       height: 1,
                     ),
                   ),

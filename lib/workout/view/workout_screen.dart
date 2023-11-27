@@ -6,8 +6,9 @@ import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/guide_video_player.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -19,9 +20,9 @@ import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/view/thread_create_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
-import 'package:fitend_member/workout/component/setinfo_list_card/setinfo_reps_card.dart';
-import 'package:fitend_member/workout/component/setinfo_list_card/setinfo_timer_card.dart';
-import 'package:fitend_member/workout/component/setinfo_list_card/setinfo_weight_reps_card.dart';
+import 'package:fitend_member/workout/component/setinfo_list_card/set_info_reps_card.dart';
+import 'package:fitend_member/workout/component/setinfo_list_card/set_info_timer_card.dart';
+import 'package:fitend_member/workout/component/setinfo_list_card/set_info_weight_reps_card.dart';
 import 'package:fitend_member/workout/component/timer_progress_card.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -167,29 +168,41 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       tooltipSeq++;
     }
 
-    if (isTooltipVisible) {
-      setState(() {
-        isTooltipVisible = !isTooltipVisible;
-        tooltipCount = 0;
-      });
-    } else {
-      setState(() {
-        isTooltipVisible = !isTooltipVisible;
-        tooltipCount = 8;
-      });
+    if (mounted) {
+      if (isTooltipVisible) {
+        if (mounted) {
+          setState(() {
+            isTooltipVisible = !isTooltipVisible;
+            tooltipCount = 0;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            isTooltipVisible = !isTooltipVisible;
+            tooltipCount = 8;
+          });
+        }
+      }
     }
   }
 
   void onTick(Timer timer) {
-    if (tooltipCount == 0) {
-      timer.cancel();
-      setState(() {
-        isTooltipVisible = false;
-      });
-    } else {
-      setState(() {
-        tooltipCount -= 1;
-      });
+    if (mounted) {
+      if (tooltipCount == 0) {
+        timer.cancel();
+        if (mounted) {
+          setState(() {
+            isTooltipVisible = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            tooltipCount -= 1;
+          });
+        }
+      }
     }
   }
 
@@ -201,11 +214,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   }
 
   void onTickTotalTimer(timer) {
-    ref
-        .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
-        .putProcessTotalTime();
+    if (mounted) {
+      ref
+          .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+          .putProcessTotalTime();
 
-    setState(() {});
+      // setState(() {});
+    }
   }
 
   @override
@@ -219,7 +234,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     if (state is WorkoutProcessModelLoading) {
       return const Center(
         child: CircularProgressIndicator(
-          color: POINT_COLOR,
+          color: Pallete.point,
         ),
       );
     }
@@ -240,7 +255,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: GRAY_COLOR,
+        backgroundColor: Pallete.gray,
         floatingActionButton: isSwipeUp
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -278,7 +293,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       height: 44,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: DARK_GRAY_COLOR,
+                        color: Pallete.darkGray,
                       ),
                       child: Center(
                         child: threadCreateState.isUploading
@@ -287,7 +302,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 size: 25,
                               )
                             : SvgPicture.asset(
-                                'asset/img/icon_message.svg',
+                                SVGConstants.message,
                                 width: 25,
                                 height: 25,
                               ),
@@ -310,7 +325,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             tooltipCount = 0;
                             onTooltipPressed();
                             tooltipSeq = 0;
-                            setState(() {});
+                            if (mounted) {
+                              setState(() {});
+                            }
 
                             if (isSwipeUp) {
                               final index = model.setInfoCompleteList[
@@ -333,7 +350,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       height: 44,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: POINT_COLOR,
+                        color: Pallete.point,
                       ),
                       child: Center(
                         child: model.isQuitting
@@ -391,42 +408,45 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                           confirmOnTap: () {
                             context.pop();
                           },
-                          cancelOnTap: () async {
-                            try {
-                              await ref
-                                  .read(workoutProcessProvider(
-                                          widget.workoutScheduleId)
-                                      .notifier)
-                                  .quitWorkout(
-                                    title: widget.workout.workoutTitle,
-                                    subTitle: widget.workout.workoutSubTitle,
-                                    trainerId: widget.workout.trainerId,
-                                  )
-                                  .then((value) {
-                                final id = widget.workoutScheduleId;
-                                final date = widget.workout.startDate;
+                          cancelOnTap: model.isQuitting
+                              ? () {}
+                              : () async {
+                                  try {
+                                    await ref
+                                        .read(workoutProcessProvider(
+                                                widget.workoutScheduleId)
+                                            .notifier)
+                                        .quitWorkout(
+                                          title: widget.workout.workoutTitle,
+                                          subTitle:
+                                              widget.workout.workoutSubTitle,
+                                          trainerId: widget.workout.trainerId,
+                                        )
+                                        .then((value) {
+                                      final id = widget.workoutScheduleId;
+                                      final date = widget.workout.startDate;
 
-                                context.pop();
-                                context.pop();
+                                      context.pop();
+                                      context.pop();
 
-                                GoRouter.of(context).pushNamed(
-                                  WorkoutFeedbackScreen.routeName,
-                                  pathParameters: {
-                                    'workoutScheduleId': id.toString(),
-                                  },
-                                  extra: widget.exercises,
-                                  queryParameters: {
-                                    'startDate': DateFormat('yyyy-MM-dd')
-                                        .format(DateTime.parse(date)),
-                                  },
-                                );
-                              });
-                            } on DioException catch (e) {
-                              debugPrint('$e');
-                            }
+                                      GoRouter.of(context).pushNamed(
+                                        WorkoutFeedbackScreen.routeName,
+                                        pathParameters: {
+                                          'workoutScheduleId': id.toString(),
+                                        },
+                                        extra: widget.exercises,
+                                        queryParameters: {
+                                          'startDate': DateFormat('yyyy-MM-dd')
+                                              .format(DateTime.parse(date)),
+                                        },
+                                      );
+                                    });
+                                  } on DioException catch (e) {
+                                    debugPrint('$e');
+                                  }
 
-                            //완료!!!!!!!!!
-                          },
+                                  //완료!!!!!!!!!
+                                },
                         );
                       },
                     );
@@ -448,7 +468,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               child: Text(
                 DataUtils.getTimeStringMinutes(model.totalTime),
                 style: s1SubTitle.copyWith(
-                  color: DARK_GRAY_COLOR,
+                  color: Pallete.darkGray,
                   fontSize: 18,
                   height: 1.1,
                 ),
@@ -474,11 +494,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   videos: [
                     ExerciseVideo(
                       url:
-                          '$s3Url${widget.exercises[model.exerciseIndex].videos.first.url}',
+                          '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].videos.first.url}',
                       index: widget
                           .exercises[model.exerciseIndex].videos.first.index,
                       thumbnail:
-                          '$s3Url${widget.exercises[model.exerciseIndex].videos.first.thumbnail}',
+                          '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].videos.first.thumbnail}',
                     )
                   ],
                 ),
@@ -496,7 +516,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   borderRadius: BorderRadius.circular(18),
                   child: CustomNetworkImage(
                     imageUrl:
-                        '$s3Url${widget.exercises[model.exerciseIndex].trainerProfileImage}',
+                        '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].trainerProfileImage}',
                     width: 36,
                     height: 36,
                     boxFit: BoxFit.cover,
@@ -519,19 +539,28 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 topLeft: Radius.circular(30),
                 topRight: Radius.circular(30),
               ),
-              onPanelClosed: () => setState(() {
-                isSwipeUp = false;
-              }),
-              onPanelOpened: () => setState(() {
-                isSwipeUp = true;
+              onPanelClosed: () {
+                if (mounted) {
+                  setState(() {
+                    isSwipeUp = false;
+                  });
+                }
+              },
+              onPanelOpened: () {
+                if (mounted) {
+                  setState(() {
+                    isSwipeUp = true;
 
-                final index = model.setInfoCompleteList[model.exerciseIndex] ==
-                        model.maxSetInfoList[model.exerciseIndex]
-                    ? model.setInfoCompleteList[model.exerciseIndex] - 1
-                    : model.setInfoCompleteList[model.exerciseIndex];
+                    final index =
+                        model.setInfoCompleteList[model.exerciseIndex] ==
+                                model.maxSetInfoList[model.exerciseIndex]
+                            ? model.setInfoCompleteList[model.exerciseIndex] - 1
+                            : model.setInfoCompleteList[model.exerciseIndex];
 
-                _movetoRecentSetInfo(index);
-              }),
+                    _movetoRecentSetInfo(index);
+                  });
+                }
+              },
               panel: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -548,7 +577,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               width: 44,
                               height: 4,
                               decoration: BoxDecoration(
-                                  color: LIGHT_GRAY_COLOR,
+                                  color: Pallete.lightGray,
                                   borderRadius: BorderRadius.circular(2)),
                             ),
                           ),
@@ -589,7 +618,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     tooltipCount = 0;
                                     onTooltipPressed();
                                     tooltipSeq = 0;
-                                    setState(() {});
+
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
 
                                     if (isSwipeUp) {
                                       final index = model.setInfoCompleteList[
@@ -620,8 +652,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     tooltipCount = 0;
                                     onTooltipPressed();
                                     tooltipSeq = 0;
-
-                                    setState(() {});
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
                                     if (isSwipeUp) {
                                       final index = model.setInfoCompleteList[
                                                   model.exerciseIndex] ==
@@ -681,7 +714,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     tooltipCount = 0;
                                     onTooltipPressed();
                                     tooltipSeq = 0;
-                                    setState(() {});
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
 
                                     if (isSwipeUp) {
                                       final index = model.setInfoCompleteList[
@@ -711,8 +746,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                     tooltipCount = 0;
                                     onTooltipPressed();
                                     tooltipSeq = 0;
-
-                                    setState(() {});
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
                                     if (isSwipeUp) {
                                       final index = model.setInfoCompleteList[
                                                   model.exerciseIndex] ==
@@ -733,7 +769,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   },
                             resetSet: () {},
                             refresh: () {
-                              setState(() {});
+                              if (mounted) {
+                                setState(() {});
+                              }
                             },
                           ),
                         const SizedBox(
@@ -746,7 +784,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             Expanded(
                               child: Container(
                                 height: 1,
-                                color: LIGHT_GRAY_COLOR,
+                                color: Pallete.lightGray,
                               ),
                             ),
                             const SizedBox(
@@ -755,7 +793,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             Text(
                               '${model.modifiedExercises[model.exerciseIndex].setInfo.length} SET',
                               style:
-                                  s1SubTitle.copyWith(color: LIGHT_GRAY_COLOR),
+                                  s1SubTitle.copyWith(color: Pallete.lightGray),
                             ),
                             const SizedBox(
                               width: 3,
@@ -763,7 +801,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                             Expanded(
                               child: Container(
                                 height: 1,
-                                color: LIGHT_GRAY_COLOR,
+                                color: Pallete.lightGray,
                               ),
                             ),
                           ],
@@ -809,7 +847,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               model: model,
                               setInfoIndex: index,
                               refresh: () {
-                                setState(() {});
+                                if (mounted) {
+                                  setState(() {});
+                                }
                               },
                             );
                           } else if (model
@@ -824,7 +864,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               model: model,
                               setInfoIndex: index,
                               refresh: () {
-                                setState(() {});
+                                if (mounted) {
+                                  setState(() {});
+                                }
                               },
                             );
                           } else if (model
@@ -842,20 +884,22 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               model: model,
                               setInfoIndex: index,
                               refresh: () {
-                                setState(() {});
+                                if (mounted) {
+                                  setState(() {});
+                                }
                               },
                             );
                           }
                         } else {
                           return Container(
-                            color: LIGHT_GRAY_COLOR.withOpacity(0.15),
+                            color: Pallete.lightGray.withOpacity(0.15),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 28,
                               ),
                               child: Column(
                                 children: [
-                                  SvgPicture.asset('asset/img/icon_more.svg'),
+                                  SvgPicture.asset(SVGConstants.message),
                                   InkWell(
                                     onTap: () async {
                                       Navigator.of(context)
@@ -879,7 +923,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                             tooltipCount = 0;
                                             onTooltipPressed();
                                             tooltipSeq = 0;
-                                            setState(() {});
+                                            if (mounted) {
+                                              setState(() {});
+                                            }
 
                                             if (isSwipeUp) {
                                               final index = model
@@ -910,8 +956,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                           const SizedBox(
                                             width: 10,
                                           ),
-                                          SvgPicture.asset(
-                                              'asset/img/icon_list.svg'),
+                                          SvgPicture.asset(SVGConstants.list),
                                           const SizedBox(
                                             width: 10,
                                           ),
@@ -947,7 +992,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                             width: 20,
                                             height: 20,
                                             child: SvgPicture.asset(
-                                                'asset/img/icon_guide.svg'),
+                                              SVGConstants.guide,
+                                            ),
                                           ),
                                           const SizedBox(
                                             width: 10,
@@ -1026,20 +1072,19 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             );
           });
         } else {
-          _showUncompleteExerciseDialog(
-            context,
-            value,
-          );
+          _showUncompleteExerciseDialog(context, value, model.isQuitting);
         }
       }
     });
-
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<dynamic> _showUncompleteExerciseDialog(
     BuildContext context,
     int index,
+    bool isQuitting,
   ) {
     return showDialog(
       barrierDismissible: false,
@@ -1057,40 +1102,42 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
             context.pop();
           },
-          cancelOnTap: () async {
-            //완료!!!
-            try {
-              await ref
-                  .read(
-                      workoutProcessProvider(widget.workoutScheduleId).notifier)
-                  .quitWorkout(
-                    title: widget.workout.workoutTitle,
-                    subTitle: widget.workout.workoutSubTitle,
-                    trainerId: widget.workout.trainerId,
-                  )
-                  .then((value) {
-                final id = widget.workoutScheduleId;
-                final date = widget.workout.startDate;
+          cancelOnTap: isQuitting
+              ? () {}
+              : () async {
+                  //완료!!!
+                  try {
+                    await ref
+                        .read(workoutProcessProvider(widget.workoutScheduleId)
+                            .notifier)
+                        .quitWorkout(
+                          title: widget.workout.workoutTitle,
+                          subTitle: widget.workout.workoutSubTitle,
+                          trainerId: widget.workout.trainerId,
+                        )
+                        .then((value) {
+                      final id = widget.workoutScheduleId;
+                      final date = widget.workout.startDate;
 
-                context.pop();
-                context.pop();
+                      context.pop();
+                      context.pop();
 
-                GoRouter.of(context).goNamed(
-                  WorkoutFeedbackScreen.routeName,
-                  pathParameters: {
-                    'workoutScheduleId': id.toString(),
-                  },
-                  extra: widget.exercises,
-                  queryParameters: {
-                    'startDate':
-                        DateFormat('yyyy-MM-dd').format(DateTime.parse(date)),
-                  },
-                );
-              });
-            } on DioException catch (e) {
-              debugPrint('$e');
-            }
-          },
+                      GoRouter.of(context).goNamed(
+                        WorkoutFeedbackScreen.routeName,
+                        pathParameters: {
+                          'workoutScheduleId': id.toString(),
+                        },
+                        extra: widget.exercises,
+                        queryParameters: {
+                          'startDate': DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(date)),
+                        },
+                      );
+                    });
+                  } on DioException catch (e) {
+                    debugPrint('$e');
+                  }
+                },
         );
       },
     );
@@ -1115,8 +1162,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               .resetWorkoutProcess();
 
           Navigator.of(context).popUntil((_) => count++ >= 2);
+          setState(() {});
         }
-        setState(() {});
       },
     ).show(context);
   }

@@ -24,7 +24,9 @@ class NotificationHomeStateNotifier
   NotificationHomeStateNotifier({
     required this.repository,
     required this.sharedPref,
-  }) : super(NotificationMainModelLoading());
+  }) : super(NotificationMainModelLoading()) {
+    init();
+  }
 
   Future<void> init() async {
     try {
@@ -46,7 +48,7 @@ class NotificationHomeStateNotifier
 
       pstate.threadBadgeCount = count;
 
-      state = pstate.copyWith();
+      state = pstate;
     }
   }
 

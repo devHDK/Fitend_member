@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/thread/view/video_editor_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -75,17 +75,20 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
     _videoController!.addListener(
       () {
         final currentPosition = _videoController!.value.position;
-        setState(() {
-          this.currentPosition = currentPosition;
-        });
+        if (mounted) {
+          setState(() {
+            this.currentPosition = currentPosition;
+          });
+        }
       },
     );
 
     _videoController!.addListener(videoListener);
     _videoController!.play();
     _videoController!.pause();
-
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void videoListener() {}
@@ -94,11 +97,11 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
   Widget build(BuildContext context) {
     if (_videoController == null || _videoController!.value.isBuffering) {
       return Container(
-        color: BACKGROUND_COLOR,
+        color: Pallete.background,
         child: const Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
-            backgroundColor: BACKGROUND_COLOR,
+            color: Pallete.point,
+            backgroundColor: Pallete.background,
           ),
         ),
       );
@@ -114,19 +117,21 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
                 aspectRatio: _videoController!.value.aspectRatio,
                 child: GestureDetector(
                   onTap: () {
-                    setState(() {
-                      isShowControlls = !isShowControlls;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        isShowControlls = !isShowControlls;
+                      });
+                    }
                   },
                   child: Stack(
                     children: [
                       // !_videoController!.value.isInitialized ||
                       //         _videoController!.value.isBuffering
                       // ? Container(
-                      //     color: BACKGROUND_COLOR,
+                      //     color: Pallete.background,
                       //     child: const Center(
                       //       child: CircularProgressIndicator(
-                      //         color: POINT_COLOR,
+                      //         color: Pallete.point,
                       //         backgroundColor: Colors.black,
                       //       ),
                       //     ),
@@ -135,7 +140,7 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
                       Hero(
                         tag: widget.file.path,
                         child: Container(
-                          color: BACKGROUND_COLOR,
+                          color: Pallete.background,
                           child: Center(
                             child: AspectRatio(
                               aspectRatio: _videoController!.value.aspectRatio,
@@ -209,13 +214,15 @@ class _EditVideoPlayerState extends ConsumerState<EditVideoPlayer> {
   void onPlayPressed() {
     //실행중이면 정지
     //실행중이 아니면 실행
-    setState(() {
-      if (_videoController!.value.isPlaying) {
-        _videoController!.pause();
-      } else {
-        _videoController!.play();
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (_videoController!.value.isPlaying) {
+          _videoController!.pause();
+        } else {
+          _videoController!.play();
+        }
+      });
+    }
   }
 
   void onForwarPressed() {
@@ -326,8 +333,8 @@ class _Slider extends StatelessWidget {
                 min: 0,
                 max: maxPpsition.inSeconds.toDouble(),
                 value: currentPosition.inSeconds.toDouble(),
-                thumbColor: POINT_COLOR,
-                activeColor: POINT_COLOR.withOpacity(0.7),
+                thumbColor: Pallete.point,
+                activeColor: Pallete.point.withOpacity(0.7),
                 inactiveColor: Colors.white.withOpacity(0.7),
                 onChanged: onSlideChanged,
               ),

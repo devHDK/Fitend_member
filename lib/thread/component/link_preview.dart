@@ -1,5 +1,5 @@
 import 'package:any_link_preview/any_link_preview.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +40,7 @@ class _LinkPreviewState extends State<LinkPreview> {
             : 'https://${widget.url}',
         titleStyle: h5Headline,
         bodyStyle: s3SubTitle.copyWith(
-          color: GRAY_COLOR,
+          color: Pallete.gray,
         ),
         bodyMaxLines: 2,
         errorWidget: GestureDetector(

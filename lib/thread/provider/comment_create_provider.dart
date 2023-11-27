@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/model/comments/thread_comment_create_model.dart';
@@ -260,20 +260,20 @@ class CommentCreateStateNotifier
       BuildContext context, int maxAssets) async {
     try {
       final permission = await AssetPicker.permissionCheck();
-
       if (!permission.hasAccess) {
         openAppSettings();
         return null;
       } else {
-        // ignore: use_build_context_synchronously
+        if (!context.mounted) return null;
+
         final result = await AssetPicker.pickAssets(
           context,
           pickerConfig: AssetPickerConfig(
-            themeColor: POINT_COLOR,
+            themeColor: Pallete.point,
             maxAssets: maxAssets,
             loadingIndicatorBuilder: (context, isAssetsEmpty) => const Center(
               child: CircularProgressIndicator(
-                color: POINT_COLOR,
+                color: Pallete.point,
               ),
             ),
           ),
@@ -311,15 +311,16 @@ class CommentCreateStateNotifier
 
     if (editModel.gallery != null && editModel.gallery!.isNotEmpty) {
       for (var asset in editModel.gallery!) {
-        final fileInfo =
-            await DefaultCacheManager().getFileFromCache('$s3Url${asset.url}');
+        final fileInfo = await DefaultCacheManager()
+            .getFileFromCache('${URLConstants.s3Url}${asset.url}');
 
         if (fileInfo != null) {
           assetPaths.add(fileInfo.file.path);
         } else {
           debugPrint('media 다운로드중...');
-          final file = await DefaultCacheManager()
-              .getSingleFile('$s3Url${asset.url}', key: '$s3Url${asset.url}');
+          final file = await DefaultCacheManager().getSingleFile(
+              '${URLConstants.s3Url}${asset.url}',
+              key: '${URLConstants.s3Url}${asset.url}');
 
           assetPaths.add(file.path);
         }

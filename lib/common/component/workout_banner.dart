@@ -1,4 +1,5 @@
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -37,7 +38,7 @@ class WorkoutBanner extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('asset/img/schedule_image_pt.png'),
+          image: AssetImage(IMGConstants.scheduleOnline),
           fit: BoxFit.fill,
           opacity: 0.4,
         ),
@@ -62,7 +63,7 @@ class WorkoutBanner extends StatelessWidget {
             Text(
               subTitle,
               style: s2SubTitle.copyWith(
-                color: LIGHT_GRAY_COLOR,
+                color: Pallete.lightGray,
                 overflow: TextOverflow.ellipsis,
               ),
               maxLines: 1,
@@ -72,7 +73,7 @@ class WorkoutBanner extends StatelessWidget {
             ),
             const Divider(
               thickness: 1,
-              color: LIGHT_GRAY_COLOR,
+              color: Pallete.lightGray,
             ),
             const SizedBox(
               height: 19,
@@ -93,7 +94,7 @@ class WorkoutBanner extends StatelessWidget {
                   child: SizedBox(),
                 ),
                 SvgPicture.asset(
-                  'asset/img/icon_timer.svg',
+                  SVGConstants.timer,
                   width: 20,
                 ),
                 const SizedBox(
@@ -104,7 +105,7 @@ class WorkoutBanner extends StatelessWidget {
                       ? ' ${timeString[1]}분'
                       : ' ${timeString[0]}시간 ${timeString[1]}분',
                   style: s2SubTitle.copyWith(
-                    color: LIGHT_GRAY_COLOR,
+                    color: Pallete.lightGray,
                     height: 1.2,
                   ),
                 ),

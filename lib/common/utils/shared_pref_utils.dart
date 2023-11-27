@@ -1,4 +1,4 @@
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefUtils {
@@ -41,14 +41,14 @@ class SharedPrefUtils {
       SharedPreferences pref, String type) async {
     switch (type) {
       case 'add':
-        int? count = pref.getInt(threadBadgeCount);
+        int? count = pref.getInt(StringConstants.threadBadgeCount);
 
         count ??= 0;
-        await pref.setInt(threadBadgeCount, count + 1);
+        await pref.setInt(StringConstants.threadBadgeCount, count + 1);
         break;
 
       case 'reset':
-        await pref.setInt(threadBadgeCount, 0);
+        await pref.setInt(StringConstants.threadBadgeCount, 0);
         break;
 
       default:
@@ -58,14 +58,15 @@ class SharedPrefUtils {
   static int getThreadBadgeCount(
     SharedPreferences pref,
   ) {
-    int? count = pref.getInt(threadBadgeCount);
+    int? count = pref.getInt(StringConstants.threadBadgeCount);
     count ??= 0;
 
     return count;
   }
 
   static bool getHasNewNotification(SharedPreferences pref) {
-    final bool? newNotification = pref.getBool(hasNewNotification);
+    final bool? newNotification =
+        pref.getBool(StringConstants.hasNewNotification);
 
     if (newNotification == null) return false;
 
@@ -74,6 +75,6 @@ class SharedPrefUtils {
 
   static Future<void> updateHasNewNotification(
       SharedPreferences pref, bool newNotification) async {
-    await pref.setBool(hasNewNotification, newNotification);
+    await pref.setBool(StringConstants.hasNewNotification, newNotification);
   }
 }

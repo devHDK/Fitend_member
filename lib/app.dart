@@ -1,5 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
@@ -68,16 +68,16 @@ class _AppState extends ConsumerState<App> {
     final pref = await ref.read(sharedPrefsProvider);
 
     Future.wait([
-      pref.setBool(needScheduleUpdate, false),
-      pref.setBool(needNotificationUpdate, false),
-      pref.setStringList(needWorkoutUpdateList, []),
-      pref.setBool(needThreadUpdate, false),
-      pref.setStringList(needThreadUpdateList, []),
-      pref.setStringList(needThreadDelete, []),
-      pref.setStringList(needCommentCreate, []),
-      pref.setStringList(needCommentDelete, []),
-      pref.setStringList(needEmojiCreate, []),
-      pref.setStringList(needEmojiDelete, []),
+      pref.setBool(StringConstants.needScheduleUpdate, false),
+      pref.setBool(StringConstants.needNotificationUpdate, false),
+      pref.setStringList(StringConstants.needWorkoutUpdateList, []),
+      pref.setBool(StringConstants.needThreadUpdate, false),
+      pref.setStringList(StringConstants.needThreadUpdateList, []),
+      pref.setStringList(StringConstants.needThreadDelete, []),
+      pref.setStringList(StringConstants.needCommentCreate, []),
+      pref.setStringList(StringConstants.needCommentDelete, []),
+      pref.setStringList(StringConstants.needEmojiCreate, []),
+      pref.setStringList(StringConstants.needEmojiDelete, []),
     ]);
   }
 

@@ -1,5 +1,6 @@
 import 'package:fitend_member/common/component/hexagon_container.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/workout/component/setinfo_text_field.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
@@ -80,20 +81,19 @@ class _SetInfoBoxForRepsState extends ConsumerState<SetInfoBoxForReps> {
                   Container(
                     height: 40,
                     width: 1,
-                    color: LIGHT_GRAY_COLOR,
+                    color: Pallete.lightGray,
                   ),
                   HexagonContainer(
                     label: (widget.setInfoIndex + 1).toString(),
-                    iconFile:
-                        isDone ? 'asset/img/icon_check_setInfo.svg' : null,
-                    labelColor: isNowSet ? Colors.black : GRAY_COLOR,
+                    iconFile: isDone ? SVGConstants.checkSetInfo : null,
+                    labelColor: isNowSet ? Colors.black : Pallete.gray,
                     color: isNowSet
                         ? Colors.white
                         : isDone
-                            ? POINT_COLOR
-                            : LIGHT_GRAY_COLOR,
+                            ? Pallete.point
+                            : Pallete.lightGray,
                     lineColor:
-                        isNowSet || isDone ? POINT_COLOR : LIGHT_GRAY_COLOR,
+                        isNowSet || isDone ? Pallete.point : Pallete.lightGray,
                     size: 39,
                   ),
                   const SizedBox(
@@ -102,7 +102,7 @@ class _SetInfoBoxForRepsState extends ConsumerState<SetInfoBoxForReps> {
                   Container(
                     height: 4,
                     width: 1,
-                    color: LIGHT_GRAY_COLOR,
+                    color: Pallete.lightGray,
                   ),
                 ],
               ),
@@ -125,7 +125,7 @@ class _SetInfoBoxForRepsState extends ConsumerState<SetInfoBoxForReps> {
                         color: widget.setInfoIndex ==
                                 widget.model.setInfoCompleteList[
                                     widget.model.exerciseIndex]
-                            ? POINT_COLOR
+                            ? Pallete.point
                             : Colors.white,
                         width: 3,
                       ),
@@ -147,7 +147,7 @@ class _SetInfoBoxForRepsState extends ConsumerState<SetInfoBoxForReps> {
                           Expanded(
                             child: SetInfoTextField(
                               // initValue: widget.initialReps.toString(),
-                              textColor: isNowSet ? Colors.black : GRAY_COLOR,
+                              textColor: isNowSet ? Colors.black : Pallete.gray,
                               controller: repsController,
                               onChanged: (value) {
                                 if (int.parse(value) < 1) {

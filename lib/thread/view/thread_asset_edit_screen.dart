@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/thread/component/edit_video_player.dart';
 import 'package:fitend_member/thread/component/preview_image.dart';
 import 'package:fitend_member/thread/component/preview_video_thumbnail.dart';
@@ -60,9 +60,9 @@ class _AssetEditScreenState extends ConsumerState<ThreadAssetEditScreen> {
     final type = MediaUtils.getMediaType(file.path);
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         elevation: 0,
         leading: IconButton(
           onPressed: () => context.pop(),
@@ -114,12 +114,14 @@ class _AssetEditScreenState extends ConsumerState<ThreadAssetEditScreen> {
                 final type = MediaUtils.getMediaType(file.path);
                 return GestureDetector(
                   onTap: () {
-                    setState(() {
-                      fileIndex = index;
-                      _pageController!.jumpToPage(
-                        index,
-                      );
-                    });
+                    if (mounted) {
+                      setState(() {
+                        fileIndex = index;
+                        _pageController!.jumpToPage(
+                          index,
+                        );
+                      });
+                    }
                   },
                   child: Container(
                     decoration: const BoxDecoration(),
@@ -182,7 +184,7 @@ class _AssetEditScreenState extends ConsumerState<ThreadAssetEditScreen> {
                     uiSettings: [
                       AndroidUiSettings(
                         toolbarTitle: '',
-                        toolbarColor: BACKGROUND_COLOR,
+                        toolbarColor: Pallete.background,
                         toolbarWidgetColor: Colors.white,
                         initAspectRatio: CropAspectRatioPreset.original,
                         lockAspectRatio: false,

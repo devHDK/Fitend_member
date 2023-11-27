@@ -1,12 +1,11 @@
 import 'dart:io';
 
 import 'package:fitend_member/common/component/custom_network_image.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:video_player/video_player.dart';
 
 class GuideVideoPlayer extends StatefulWidget {
@@ -93,7 +92,9 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
 
     firstVideoController!.addListener(firstVideoListener);
 
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void firstVideoListener() {
@@ -144,11 +145,11 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
     if (firstVideoController == null ||
         firstVideoController!.value.isBuffering) {
       return Container(
-        color: BACKGROUND_COLOR,
+        color: Pallete.background,
         child: const Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
-            backgroundColor: BACKGROUND_COLOR,
+            color: Pallete.point,
+            backgroundColor: Pallete.background,
           ),
         ),
       );
@@ -158,9 +159,11 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
       aspectRatio: firstVideoController!.value.aspectRatio,
       child: GestureDetector(
         onTap: () {
-          setState(() {
-            isShowControlls = !isShowControlls;
-          });
+          if (mounted) {
+            setState(() {
+              isShowControlls = !isShowControlls;
+            });
+          }
         },
         child: Stack(
           children: [
@@ -170,16 +173,16 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
               child: !firstVideoController!.value.isInitialized ||
                       firstVideoController!.value.isBuffering
                   ? Container(
-                      color: BACKGROUND_COLOR,
+                      color: Pallete.background,
                       child: const Center(
                         child: CircularProgressIndicator(
-                          color: POINT_COLOR,
-                          backgroundColor: BACKGROUND_COLOR,
+                          color: Pallete.point,
+                          backgroundColor: Pallete.background,
                         ),
                       ),
                     )
                   : Container(
-                      color: BACKGROUND_COLOR,
+                      color: Pallete.background,
                       child: VideoPlayer(firstVideoController!),
                     ),
             ),
@@ -191,15 +194,15 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                 child: widget.videos.length > 1 &&
                         secondVideoController!.value.isInitialized
                     ? Container(
-                        color: BACKGROUND_COLOR,
+                        color: Pallete.background,
                         child: VideoPlayer(secondVideoController!),
                       )
                     : Container(
-                        color: BACKGROUND_COLOR,
+                        color: Pallete.background,
                         child: const Center(
                           child: CircularProgressIndicator(
-                            color: POINT_COLOR,
-                            backgroundColor: BACKGROUND_COLOR,
+                            color: Pallete.point,
+                            backgroundColor: Pallete.background,
                           ),
                         ),
                       ),
@@ -219,21 +222,23 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                             secondVideoController != null)
                           GestureDetector(
                             onTap: () {
-                              setState(() {
-                                for (int i = 0; i < isPlaying.length; i++) {
-                                  isPlaying[i] = false;
-                                }
-                                isPlaying[1] = true;
-                                firstVideoController!.pause();
-                                secondVideoController!.play();
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  for (int i = 0; i < isPlaying.length; i++) {
+                                    isPlaying[i] = false;
+                                  }
+                                  isPlaying[1] = true;
+                                  firstVideoController!.pause();
+                                  secondVideoController!.play();
+                                });
+                              }
                             },
                             child: Container(
                               height: 87,
                               width: 50,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
-                                color: isPlaying[1] ? POINT_COLOR : null,
+                                color: isPlaying[1] ? Pallete.point : null,
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(2),
@@ -250,24 +255,26 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
                         if (widget.videos.length > 1)
                           GestureDetector(
                             onTap: () {
-                              setState(() {
-                                for (int i = 0; i < isPlaying.length; i++) {
-                                  isPlaying[i] = false;
-                                }
-                                isPlaying[0] = true;
+                              if (mounted) {
+                                setState(() {
+                                  for (int i = 0; i < isPlaying.length; i++) {
+                                    isPlaying[i] = false;
+                                  }
+                                  isPlaying[0] = true;
 
-                                if (widget.videos.length > 1) {
-                                  secondVideoController!.pause();
-                                }
-                                firstVideoController!.play();
-                              });
+                                  if (widget.videos.length > 1) {
+                                    secondVideoController!.pause();
+                                  }
+                                  firstVideoController!.play();
+                                });
+                              }
                             },
                             child: Container(
                               height: 87,
                               width: 50,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
-                                color: isPlaying[0] ? POINT_COLOR : null,
+                                color: isPlaying[0] ? Pallete.point : null,
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(2),
@@ -310,24 +317,26 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
         borderRadius: BorderRadius.circular(7),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: DARK_GRAY_COLOR,
+            backgroundColor: Pallete.darkGray,
           ),
           onPressed: () {
-            setState(
-              () {
-                if (doubleSpeed == 1.0) {
-                  doubleSpeed = 0.5;
-                } else {
-                  doubleSpeed = 1.0;
-                }
+            if (mounted) {
+              setState(
+                () {
+                  if (doubleSpeed == 1.0) {
+                    doubleSpeed = 0.5;
+                  } else {
+                    doubleSpeed = 1.0;
+                  }
 
-                firstVideoController!.setPlaybackSpeed(doubleSpeed);
+                  firstVideoController!.setPlaybackSpeed(doubleSpeed);
 
-                if (widget.videos.length > 1) {
-                  secondVideoController!.setPlaybackSpeed(doubleSpeed);
-                }
-              },
-            );
+                  if (widget.videos.length > 1) {
+                    secondVideoController!.setPlaybackSpeed(doubleSpeed);
+                  }
+                },
+              );
+            }
           },
           child: Text(
             'X $doubleSpeed',
@@ -341,13 +350,15 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
   void onPlayPressed() {
     //실행중이면 정지
     //실행중이 아니면 실행
-    setState(() {
-      if (firstVideoController!.value.isPlaying) {
-        firstVideoController!.pause();
-      } else {
-        firstVideoController!.play();
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (firstVideoController!.value.isPlaying) {
+          firstVideoController!.pause();
+        } else {
+          firstVideoController!.play();
+        }
+      });
+    }
   }
 
   void onForwarPressed() {
@@ -377,99 +388,99 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
   }
 }
 
-class _Controls extends StatelessWidget {
-  final VoidCallback onPlayPressed;
-  final VoidCallback onReversePressed;
-  final VoidCallback onForwarPressed;
-  final bool isPlaying;
+// class _Controls extends StatelessWidget {
+//   final VoidCallback onPlayPressed;
+//   final VoidCallback onReversePressed;
+//   final VoidCallback onForwarPressed;
+//   final bool isPlaying;
 
-  const _Controls({
-    required this.onPlayPressed,
-    required this.onReversePressed,
-    required this.onForwarPressed,
-    required this.isPlaying,
-  });
+//   const _Controls({
+//     required this.onPlayPressed,
+//     required this.onReversePressed,
+//     required this.onForwarPressed,
+//     required this.isPlaying,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black.withOpacity(0.5),
-      height: 100.h,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          renderIconButton(
-            onPressed: onReversePressed,
-            iconData: Icons.keyboard_double_arrow_left_rounded,
-          ),
-          renderIconButton(
-            onPressed: onPlayPressed,
-            iconData: isPlaying ? Icons.pause : Icons.play_arrow,
-          ),
-          renderIconButton(
-            onPressed: onForwarPressed,
-            iconData: Icons.keyboard_double_arrow_right_rounded,
-          ),
-        ],
-      ),
-    );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       color: Colors.black.withOpacity(0.5),
+//       height: 100.h,
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//         children: [
+//           renderIconButton(
+//             onPressed: onReversePressed,
+//             iconData: Icons.keyboard_double_arrow_left_rounded,
+//           ),
+//           renderIconButton(
+//             onPressed: onPlayPressed,
+//             iconData: isPlaying ? Icons.pause : Icons.play_arrow,
+//           ),
+//           renderIconButton(
+//             onPressed: onForwarPressed,
+//             iconData: Icons.keyboard_double_arrow_right_rounded,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 
-  IconButton renderIconButton({
-    required VoidCallback onPressed,
-    required IconData iconData,
-  }) {
-    return IconButton(
-      onPressed: onPressed,
-      icon: Icon(iconData, color: Colors.white, size: 40.0),
-    );
-  }
-}
+//   IconButton renderIconButton({
+//     required VoidCallback onPressed,
+//     required IconData iconData,
+//   }) {
+//     return IconButton(
+//       onPressed: onPressed,
+//       icon: Icon(iconData, color: Colors.white, size: 40.0),
+//     );
+//   }
+// }
 
-class _Slider extends StatelessWidget {
-  final Duration currentPosition;
-  final Duration maxPpsition;
-  final ValueChanged<double> onSlideChanged;
+// class _Slider extends StatelessWidget {
+//   final Duration currentPosition;
+//   final Duration maxPpsition;
+//   final ValueChanged<double> onSlideChanged;
 
-  const _Slider({
-    required this.currentPosition,
-    required this.maxPpsition,
-    required this.onSlideChanged,
-  });
+//   const _Slider({
+//     required this.currentPosition,
+//     required this.maxPpsition,
+//     required this.onSlideChanged,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 0,
-      right: 0,
-      left: 0,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: Row(
-          children: [
-            Text(
-              '${currentPosition.inMinutes}:${(currentPosition.inSeconds % 60).toString().padLeft(2, '0')}',
-              style: const TextStyle(
-                color: Colors.white,
-              ),
-            ),
-            Expanded(
-              child: Slider(
-                min: 0,
-                max: maxPpsition.inSeconds.toDouble(),
-                value: currentPosition.inSeconds.toDouble(),
-                onChanged: onSlideChanged,
-              ),
-            ),
-            Text(
-              '${maxPpsition.inMinutes}:${(maxPpsition.inSeconds % 60).toString().padLeft(2, '0')}',
-              style: const TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Positioned(
+//       bottom: 0,
+//       right: 0,
+//       left: 0,
+//       child: Padding(
+//         padding: const EdgeInsets.symmetric(horizontal: 10.0),
+//         child: Row(
+//           children: [
+//             Text(
+//               '${currentPosition.inMinutes}:${(currentPosition.inSeconds % 60).toString().padLeft(2, '0')}',
+//               style: const TextStyle(
+//                 color: Colors.white,
+//               ),
+//             ),
+//             Expanded(
+//               child: Slider(
+//                 min: 0,
+//                 max: maxPpsition.inSeconds.toDouble(),
+//                 value: currentPosition.inSeconds.toDouble(),
+//                 onChanged: onSlideChanged,
+//               ),
+//             ),
+//             Text(
+//               '${maxPpsition.inMinutes}:${(maxPpsition.inSeconds % 60).toString().padLeft(2, '0')}',
+//               style: const TextStyle(
+//                 color: Colors.white,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

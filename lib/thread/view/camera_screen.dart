@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/avail_camera_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -19,6 +19,7 @@ import 'package:native_camera_sound/native_camera_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
   const CameraScreen({
@@ -74,9 +75,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
   }
 
   void onTick(Timer timer) {
-    setState(() {
-      recordingDuration++;
-    });
+    if (mounted) {
+      setState(() {
+        recordingDuration++;
+      });
+    }
   }
 
   getPermissionStatus() async {
@@ -92,9 +95,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       log('Camera Permission: GRANTED');
       getAvailableCameras();
 
-      setState(() {
-        _isCameraPermissionGranted = true;
-      });
+      if (mounted) {
+        setState(() {
+          _isCameraPermissionGranted = true;
+        });
+      }
     } else {
       log('Camera Permission: DENIED');
     }
@@ -149,11 +154,13 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
     try {
       await cameraController!.startVideoRecording();
-      setState(() {
-        NativeCameraSound.playStartRecord();
-        _isRecordingInProgress = true;
-        recordingTimerStart();
-      });
+      if (mounted) {
+        setState(() {
+          NativeCameraSound.playStartRecord();
+          _isRecordingInProgress = true;
+          recordingTimerStart();
+        });
+      }
     } on CameraException catch (e) {
       debugPrint('Error starting to record video: $e');
     }
@@ -167,12 +174,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
     try {
       XFile file = await controller!.stopVideoRecording();
-      setState(() {
-        NativeCameraSound.playStopRecord();
-        _isRecordingInProgress = false;
-        recordingTimerStop();
-        recordingDuration = 0;
-      });
+      if (mounted) {
+        setState(() {
+          NativeCameraSound.playStopRecord();
+          _isRecordingInProgress = false;
+          recordingTimerStop();
+          recordingDuration = 0;
+        });
+      }
       return file;
     } on CameraException catch (e) {
       debugPrint('Error stopping video recording: $e');
@@ -282,13 +291,15 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
     getPermissionStatus();
 
+    WakelockPlus.enable();
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     final CameraController? cameraController = controller;
 
     // App state changed before we got the chance to initialize.
@@ -297,7 +308,21 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     }
 
     if (state == AppLifecycleState.inactive) {
-      cameraController.dispose();
+      if (_isRecordingInProgress) {
+        XFile? rawVideo = await stopVideoRecording();
+        File videoFile = File(rawVideo!.path);
+
+        await ImageGallerySaver.saveFile(
+          videoFile.path,
+        );
+        if (mounted) {
+          setState(() {
+            takedAssetsCount++;
+          });
+        }
+      }
+
+      await cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
       onNewCameraSelected(cameraController.description);
     }
@@ -305,6 +330,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   @override
   void dispose() {
+    WakelockPlus.disable();
     controller?.dispose();
 
     if (timer.isActive) {
@@ -316,6 +342,17 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (controller == null || !controller!.value.isInitialized) {
+      return const Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Pallete.point,
+          ),
+        ),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -477,8 +514,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                         : 0,
                                                 totalSwitches: 2,
                                                 activeBgColor: [
-                                                  POINT_COLOR.withOpacity(0.7),
-                                                  POINT_COLOR.withOpacity(0.7),
+                                                  Pallete.point
+                                                      .withOpacity(0.7),
+                                                  Pallete.point
+                                                      .withOpacity(0.7),
                                                 ],
                                                 customTextStyles: [
                                                   h6Headline.copyWith(
@@ -503,8 +542,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                     _isVideoCameraSelected =
                                                         true;
                                                   }
-
-                                                  setState(() {});
+                                                  if (mounted) {
+                                                    setState(() {});
+                                                  }
                                                 },
                                               ),
                                             ),
@@ -526,18 +566,22 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                     }
                                                   }
                                                 : () {
-                                                    setState(() {
-                                                      _isCameraInitialized =
-                                                          false;
-                                                    });
+                                                    if (mounted) {
+                                                      setState(() {
+                                                        _isCameraInitialized =
+                                                            false;
+                                                      });
+                                                    }
                                                     onNewCameraSelected(cameras[
                                                         _isRearCameraSelected
                                                             ? 1
                                                             : 0]);
-                                                    setState(() {
-                                                      _isRearCameraSelected =
-                                                          !_isRearCameraSelected;
-                                                    });
+                                                    if (mounted) {
+                                                      setState(() {
+                                                        _isRearCameraSelected =
+                                                            !_isRearCameraSelected;
+                                                      });
+                                                    }
                                                   },
                                             child: Stack(
                                               alignment: Alignment.center,
@@ -582,10 +626,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                           .saveFile(
                                                         videoFile.path,
                                                       );
-
-                                                      setState(() {
-                                                        takedAssetsCount++;
-                                                      });
+                                                      if (mounted) {
+                                                        setState(() {
+                                                          takedAssetsCount++;
+                                                        });
+                                                      }
                                                     } else {
                                                       await startVideoRecording();
                                                     }
@@ -603,10 +648,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                                                         imageFile.path,
                                                         isReturnPathOfIOS: true,
                                                       );
-
-                                                      setState(() {
-                                                        takedAssetsCount++;
-                                                      });
+                                                      if (mounted) {
+                                                        setState(() {
+                                                          takedAssetsCount++;
+                                                        });
+                                                      }
                                                     } else {
                                                       debugPrint('save fail');
                                                     }
@@ -743,8 +789,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                   const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: POINT_COLOR,
-                      foregroundColor: POINT_COLOR,
+                      backgroundColor: Pallete.point,
+                      foregroundColor: Pallete.point,
                     ),
                     onPressed: () {
                       context.pop();
@@ -800,6 +846,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                           .read(commentCreateProvider(threadId).notifier)
                           .updateIsLoading(false);
 
+                      if (!context.mounted) return;
                       context.pop();
                     } else {
                       debugPrint('assets: $assets');
@@ -838,7 +885,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                     ref
                         .read(threadCreateProvider.notifier)
                         .updateIsLoading(false);
-
+                    if (!context.mounted) return;
                     context.pop();
                   } else {
                     debugPrint('assets: $assets');
@@ -880,12 +927,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       value: _currentZoomLevel,
       min: _minAvailableZoom,
       max: _maxAvailableZoom,
-      activeColor: POINT_COLOR.withOpacity(0.5),
+      activeColor: Pallete.point.withOpacity(0.5),
       inactiveColor: Colors.white30,
       onChanged: (value) async {
-        setState(() {
-          _currentZoomLevel = value;
-        });
+        if (mounted) {
+          setState(() {
+            _currentZoomLevel = value;
+          });
+        }
         await controller!.setZoomLevel(value);
       },
     );

@@ -4,8 +4,9 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/thread/component/comment_cell.dart';
 import 'package:fitend_member/thread/component/link_preview.dart';
@@ -25,7 +26,6 @@ import 'package:fitend_member/thread/view/comment_asset_edit_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -74,14 +74,16 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
   }
 
   void _commentFocusnodeListner() {
-    if (commentFocusNode.hasFocus) {
-      setState(() {
-        commentFocusNode.requestFocus();
-      });
-    } else {
-      setState(() {
-        commentFocusNode.unfocus();
-      });
+    if (mounted) {
+      if (commentFocusNode.hasFocus) {
+        setState(() {
+          commentFocusNode.requestFocus();
+        });
+      } else {
+        setState(() {
+          commentFocusNode.unfocus();
+        });
+      }
     }
   }
 
@@ -129,10 +131,10 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
 
     if (state is ThreadModelLoading) {
       return const Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
+            color: Pallete.point,
           ),
         ),
       );
@@ -140,7 +142,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
 
     if (state is ThreadModelError) {
       return Scaffold(
-        backgroundColor: BACKGROUND_COLOR,
+        backgroundColor: Pallete.background,
         body: DialogWidgets.errorDialog(
           message: state.message,
           confirmText: '확인',
@@ -152,7 +154,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
     final model = state as ThreadModel;
 
     return Scaffold(
-      backgroundColor: BACKGROUND_COLOR,
+      backgroundColor: Pallete.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -171,8 +173,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
       body: Stack(
         children: [
           RefreshIndicator(
-            backgroundColor: BACKGROUND_COLOR,
-            color: POINT_COLOR,
+            backgroundColor: Pallete.background,
+            color: Pallete.point,
             onRefresh: () async {
               await ref
                   .read(threadDetailProvider(widget.threadId).notifier)
@@ -245,19 +247,19 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                                 threadId: commentModel.threadId,
                                                 content: commentModel.content,
                                                 gallery: commentModel.gallery));
+                                    if (mounted) {
+                                      setState(() {
+                                        commentController.text =
+                                            commentModel.content;
 
-                                    setState(() {
-                                      commentController.text =
-                                          commentModel.content;
-
-                                      edittingCommentId = commentModel.id;
-                                    });
+                                        edittingCommentId = commentModel.id;
+                                      });
+                                    }
                                   },
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(15),
-                                  child: SvgPicture.asset(
-                                      'asset/img/icon_edit.svg'),
+                                  child: SvgPicture.asset(SVGConstants.edit),
                                 ),
                               ),
                             )
@@ -283,7 +285,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                           Text(
                             '아직 댓글이 없어요 :)',
                             style: s1SubTitle.copyWith(
-                              color: GRAY_COLOR,
+                              color: Pallete.gray,
                               height: 1,
                             ),
                           ),
@@ -330,7 +332,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
             tempList.isNotEmpty ? 220 + maxLine * 10 : 120 + maxLine * 10,
         maxHeight:
             tempList.isNotEmpty ? 220 + maxLine * 10 : 120 + maxLine * 10,
-        color: DARK_GRAY_COLOR,
+        color: Pallete.darkGray,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(10),
           topRight: Radius.circular(10),
@@ -353,8 +355,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                     child: CircleProfileImage(
                       image: CachedNetworkImage(
                         imageUrl: model.user.gender == 'male'
-                            ? maleProfileUrl
-                            : femaleProfileUrl,
+                            ? URLConstants.maleProfileUrl
+                            : URLConstants.femaleProfileUrl,
                       ),
                       borderRadius: 17,
                     ),
@@ -373,7 +375,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                   child: commentState.isLoading
                       ? const Center(
                           child: CircularProgressIndicator(
-                            color: POINT_COLOR,
+                            color: Pallete.point,
                           ),
                         )
                       : ListView.separated(
@@ -463,7 +465,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                       },
                                       icon: const Icon(
                                         Icons.cancel,
-                                        color: LIGHT_GRAY_COLOR,
+                                        color: Pallete.lightGray,
                                       ),
                                     ),
                                   ),
@@ -498,10 +500,10 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                           ),
                           Expanded(
                             child: LinearProgressIndicator(
-                              color: POINT_COLOR,
+                              color: Pallete.point,
                               value: (commentState.doneCount) /
                                   commentState.totalCount,
-                              backgroundColor: GRAY_COLOR,
+                              backgroundColor: Pallete.gray,
                             ),
                           )
                         ],
@@ -519,8 +521,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                           child: Padding(
                             padding: const EdgeInsets.only(
                                 top: 10, bottom: 10, right: 10),
-                            child:
-                                SvgPicture.asset('asset/img/icon_camera.svg'),
+                            child: SvgPicture.asset(SVGConstants.camera),
                           ),
                         ),
                         InkWell(
@@ -579,8 +580,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child:
-                                SvgPicture.asset('asset/img/icon_picture.svg'),
+                            child: SvgPicture.asset(SVGConstants.picture),
                           ),
                         ),
                         const Spacer(),
@@ -598,9 +598,11 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                           .createComment(
                                               widget.threadId, model.user)
                                           .then((value) {
-                                        setState(() {
-                                          commentController.text = '';
-                                        });
+                                        if (mounted) {
+                                          setState(() {
+                                            commentController.text = '';
+                                          });
+                                        }
                                       });
                                     } catch (e) {
                                       if (e is UploadException) {
@@ -621,8 +623,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: commentController.text.isNotEmpty
-                                    ? POINT_COLOR
-                                    : POINT_COLOR.withOpacity(0.5),
+                                    ? Pallete.point
+                                    : Pallete.point.withOpacity(0.5),
                               ),
                               child: Center(
                                 child: commentState.isLoading ||
@@ -654,7 +656,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                   height: 25,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: POINT_COLOR.withOpacity(0.5),
+                                    color: Pallete.point.withOpacity(0.5),
                                   ),
                                   child: const Center(
                                     child: SizedBox(
@@ -679,10 +681,11 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                             .init();
 
                                         commentController.text = '';
-
-                                        setState(() {
-                                          edittingCommentId = -1;
-                                        });
+                                        if (mounted) {
+                                          setState(() {
+                                            edittingCommentId = -1;
+                                          });
+                                        }
                                       },
                                       child: Container(
                                         width: 45,
@@ -692,10 +695,10 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                               BorderRadius.circular(10),
                                           color: Colors.white,
                                           border: Border.all(
-                                              color: POINT_COLOR, width: 1),
+                                              color: Pallete.point, width: 1),
                                         ),
                                         child: const Icon(Icons.close,
-                                            color: POINT_COLOR),
+                                            color: Pallete.point),
                                       ),
                                     ),
                                     const SizedBox(
@@ -718,11 +721,12 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                                         commentState.threadId)
                                                     .notifier)
                                                 .init();
-
-                                            setState(() {
-                                              edittingCommentId = -1;
-                                              commentController.text = '';
-                                            });
+                                            if (mounted) {
+                                              setState(() {
+                                                edittingCommentId = -1;
+                                                commentController.text = '';
+                                              });
+                                            }
                                           });
                                         } catch (e) {
                                           if (e is UploadException) {
@@ -743,10 +747,10 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(10),
-                                          color: POINT_COLOR,
+                                          color: Pallete.point,
                                         ),
                                         child: SvgPicture.asset(
-                                          'asset/img/icon_check_save.svg',
+                                          SVGConstants.checkSave,
                                         ),
                                       ),
                                     ),
@@ -775,19 +779,20 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
         ref
             .read(commentCreateProvider(widget.threadId).notifier)
             .updateContent(value);
+        if (mounted) {
+          setState(() {
+            maxLine = '\n'.allMatches(value).length + 1;
 
-        setState(() {
-          maxLine = '\n'.allMatches(value).length + 1;
-
-          if (maxLine > 3) {
-            maxLine = 3;
-          }
-        });
+            if (maxLine > 3) {
+              maxLine = 3;
+            }
+          });
+        }
       },
       maxLines: maxLine > 1 ? maxLine : null,
       style: const TextStyle(color: Colors.white),
       controller: commentController,
-      cursorColor: POINT_COLOR,
+      cursorColor: Pallete.point,
       focusNode: commentFocusNode,
       onTapOutside: (event) {
         commentFocusNode.unfocus();
@@ -795,7 +800,7 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
       keyboardType: TextInputType.multiline,
       textInputAction: TextInputAction.newline,
       decoration: InputDecoration(
-        focusColor: POINT_COLOR,
+        focusColor: Pallete.point,
         border: baseBorder,
         disabledBorder: baseBorder,
         enabledBorder: baseBorder,
@@ -806,14 +811,14 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
         ),
         filled: true,
         labelStyle: s1SubTitle.copyWith(
-          color: commentFocusNode.hasFocus ? POINT_COLOR : GRAY_COLOR,
+          color: commentFocusNode.hasFocus ? Pallete.point : Pallete.gray,
         ),
         label: Text(
           commentFocusNode.hasFocus || commentController.text.isNotEmpty
               ? ''
               : '댓글을 입력해주세요',
           style: s1SubTitle.copyWith(
-            color: GRAY_COLOR,
+            color: Pallete.gray,
           ),
         ),
       ),

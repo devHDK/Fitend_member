@@ -30,6 +30,8 @@ class WorkoutScheduleModel extends WorkoutScheduleModelBase {
 
   factory WorkoutScheduleModel.fromJson(Map<String, dynamic> json) =>
       _$WorkoutScheduleModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WorkoutScheduleModelToJson(this);
 }
 
 class WorkoutScheduleFetchingMore extends WorkoutScheduleModel {
@@ -66,6 +68,8 @@ class WorkoutData {
 
   factory WorkoutData.fromJson(Map<String, dynamic> json) =>
       _$WorkoutDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WorkoutDataToJson(this);
 }
 
 @JsonSerializable()
@@ -109,4 +113,6 @@ class Workout {
 
   factory Workout.fromJson(Map<String, dynamic> json) =>
       _$WorkoutFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WorkoutToJson(this);
 }

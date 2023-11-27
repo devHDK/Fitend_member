@@ -1,4 +1,5 @@
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
@@ -111,7 +112,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                               topRight: Radius.circular(2),
                             )
                           : null,
-                  color: POINT_COLOR,
+                  color: Pallete.point,
                 ),
                 width: widget.isSwipeUp
                     ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
@@ -138,7 +139,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                               topRight: Radius.circular(2),
                             )
                           : null,
-                  color: LIGHT_GRAY_COLOR,
+                  color: Pallete.lightGray,
                 ),
                 width: widget.isSwipeUp
                     ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
@@ -169,7 +170,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                               topRight: Radius.circular(2),
                             )
                           : null,
-                  color: POINT_COLOR,
+                  color: Pallete.point,
                 ),
               ),
               const SizedBox(
@@ -206,7 +207,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                 DataUtils.getTimerStringMinuteSeconds(
                     widget.exercise.setInfo[widget.setInfoIndex].seconds!),
                 style: s1SubTitle.copyWith(
-                  color: GRAY_COLOR,
+                  color: Pallete.gray,
                 ),
               ),
               const SizedBox(
@@ -229,7 +230,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                     width: 5,
                   ),
                   if (widget.exercise.setType != null)
-                    SvgPicture.asset('asset/img/icon_repeat.svg')
+                    SvgPicture.asset(SVGConstants.repeat)
                 ],
               ),
               const SizedBox(
@@ -253,10 +254,11 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                   width: 100,
                   height: 24,
                   decoration: BoxDecoration(
-                    border: Border.all(color: POINT_COLOR),
+                    border: Border.all(color: Pallete.point),
                     borderRadius: BorderRadius.circular(12),
-                    color:
-                        recordSetInfo.seconds == 0 ? POINT_COLOR : Colors.white,
+                    color: recordSetInfo.seconds == 0
+                        ? Pallete.point
+                        : Colors.white,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -267,8 +269,8 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                         child: Center(
                           child: SvgPicture.asset(
                             recordSetInfo.seconds == 0
-                                ? 'asset/img/icon_timer_white.svg'
-                                : 'asset/img/icon_timer_red.svg',
+                                ? SVGConstants.timerWhite
+                                : SVGConstants.timerRed,
                             width: 18,
                             height: 18,
                           ),
@@ -285,7 +287,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                         style: s1SubTitle.copyWith(
                           color: recordSetInfo.seconds == 0
                               ? Colors.white
-                              : POINT_COLOR,
+                              : Pallete.point,
                           height: 1.2,
                         ),
                       ),
@@ -301,7 +303,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
             children: [
               Text(
                 muscleString.substring(0, muscleString.length - 1),
-                style: s2SubTitle.copyWith(color: GRAY_COLOR),
+                style: s2SubTitle.copyWith(color: Pallete.gray),
               ),
               const SizedBox(
                 height: 5,
@@ -317,7 +319,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                     width: 5,
                   ),
                   if (widget.exercise.setType != null)
-                    SvgPicture.asset('asset/img/icon_repeat.svg')
+                    SvgPicture.asset(SVGConstants.repeat)
                 ],
               ),
             ],
@@ -338,7 +340,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                       width: 32,
                       height: 32,
                       child: SvgPicture.asset(
-                        'asset/img/icon_list.svg',
+                        SVGConstants.list,
                       ),
                     ),
                     const SizedBox(
@@ -370,8 +372,9 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                         child: LinearProgressIndicator(
                           value:
                               recordSetInfo.seconds! / modifiedSetInfo.seconds!,
-                          backgroundColor: LIGHT_GRAY_COLOR,
-                          valueColor: const AlwaysStoppedAnimation(POINT_COLOR),
+                          backgroundColor: Pallete.lightGray,
+                          valueColor:
+                              const AlwaysStoppedAnimation(Pallete.point),
                         ),
                       ),
                     ),
@@ -388,7 +391,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
                       width: 12,
                     ),
                     SvgPicture.asset(
-                      'asset/img/icon_forward.svg',
+                      SVGConstants.forward,
                     ),
                   ],
                 ),

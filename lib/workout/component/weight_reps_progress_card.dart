@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:fitend_member/common/const/colors.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -67,7 +68,7 @@ class _WeightWrepsProgressCardState
                               topRight: Radius.circular(2),
                             )
                           : null,
-                  color: POINT_COLOR,
+                  color: Pallete.point,
                 ),
                 width: widget.isSwipeUp
                     ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
@@ -87,7 +88,7 @@ class _WeightWrepsProgressCardState
               AnimatedContainer(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(2),
-                  color: POINT_COLOR,
+                  color: Pallete.point,
                 ),
                 width: widget.isSwipeUp
                     ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
@@ -116,7 +117,7 @@ class _WeightWrepsProgressCardState
                               topRight: Radius.circular(2),
                             )
                           : null,
-                  color: LIGHT_GRAY_COLOR,
+                  color: Pallete.lightGray,
                 ),
                 width: widget.isSwipeUp
                     ? ((size.width - 56) / widget.exercise.setInfo.length) - 1
@@ -137,7 +138,7 @@ class _WeightWrepsProgressCardState
                     : ((size.width - 152) / widget.exercise.setInfo.length) - 1,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: POINT_COLOR,
+                  color: Pallete.point,
                   borderRadius: index == 0
                       ? const BorderRadius.only(
                           bottomLeft: Radius.circular(2),
@@ -193,7 +194,7 @@ class _WeightWrepsProgressCardState
                         ? '${widget.exercise.setInfo[length].reps}회'
                         : '${(widget.exercise.setInfo[length].seconds! / 60).floor()}분 ${widget.exercise.setInfo[length].seconds! % 60}초',
                 style: s1SubTitle.copyWith(
-                  color: GRAY_COLOR,
+                  color: Pallete.gray,
                 ),
               ),
               const SizedBox(
@@ -216,7 +217,7 @@ class _WeightWrepsProgressCardState
                     width: 5,
                   ),
                   if (widget.exercise.setType != null)
-                    SvgPicture.asset('asset/img/icon_repeat.svg')
+                    SvgPicture.asset(SVGConstants.repeat)
                 ],
               ),
               const SizedBox(
@@ -224,7 +225,7 @@ class _WeightWrepsProgressCardState
               ),
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: POINT_COLOR),
+                  border: Border.all(color: Pallete.point),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
@@ -233,7 +234,7 @@ class _WeightWrepsProgressCardState
                   child: Text(
                     '${length + 1}세트 진행중',
                     style: h6Headline.copyWith(
-                      color: POINT_COLOR,
+                      color: Pallete.point,
                       height: 1.2,
                     ),
                   ),
@@ -247,7 +248,7 @@ class _WeightWrepsProgressCardState
             children: [
               Text(
                 muscleString.substring(0, muscleString.length - 1),
-                style: s2SubTitle.copyWith(color: GRAY_COLOR),
+                style: s2SubTitle.copyWith(color: Pallete.gray),
               ),
               const SizedBox(
                 height: 5,
@@ -263,7 +264,7 @@ class _WeightWrepsProgressCardState
                     width: 5,
                   ),
                   if (widget.exercise.setType != null)
-                    SvgPicture.asset('asset/img/icon_repeat.svg')
+                    SvgPicture.asset(SVGConstants.repeat)
                 ],
               ),
             ],
@@ -284,7 +285,7 @@ class _WeightWrepsProgressCardState
                       width: 32,
                       height: 32,
                       child: SvgPicture.asset(
-                        'asset/img/icon_list.svg',
+                        SVGConstants.list,
                       ),
                     ),
                     const SizedBox(
@@ -313,7 +314,7 @@ class _WeightWrepsProgressCardState
                       width: 12,
                     ),
                     SvgPicture.asset(
-                      'asset/img/icon_forward.svg',
+                      SVGConstants.forward,
                     ),
                   ],
                 ),

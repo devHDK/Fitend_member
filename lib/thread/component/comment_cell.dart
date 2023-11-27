@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/component/emoji_button.dart';
@@ -139,7 +139,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
       width: 100.w,
       decoration: BoxDecoration(
         border: Border.all(
-          color: widget.isEditting! ? POINT_COLOR : Colors.transparent,
+          color: widget.isEditting! ? Pallete.point : Colors.transparent,
         ),
         color: widget.isEditting! ? Colors.black54 : null,
       ),
@@ -154,10 +154,10 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                 CircleProfileImage(
                   image: CachedNetworkImage(
                     imageUrl: widget.trainer != null
-                        ? '$s3Url${widget.trainer!.profileImage}'
+                        ? '${URLConstants.s3Url}${widget.trainer!.profileImage}'
                         : widget.user != null && widget.user!.gender == 'male'
-                            ? maleProfileUrl
-                            : femaleProfileUrl,
+                            ? URLConstants.maleProfileUrl
+                            : URLConstants.femaleProfileUrl,
                     width: 34,
                     height: 34,
                   ),
@@ -177,7 +177,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                               ? widget.trainer!.nickname
                               : widget.user!.nickname,
                           style: s1SubTitle.copyWith(
-                            color: LIGHT_GRAY_COLOR,
+                            color: Pallete.lightGray,
                             height: 1,
                           ),
                         ),
@@ -187,8 +187,8 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                         Text(
                           DataUtils.getElapsedTimeStringFromNow(
                               widget.dateTime),
-                          style:
-                              s2SubTitle.copyWith(color: GRAY_COLOR, height: 1),
+                          style: s2SubTitle.copyWith(
+                              color: Pallete.gray, height: 1),
                         ),
                       ],
                     ),
@@ -264,7 +264,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(39, 10, 0, 10),
                   child: PreviewImageNetwork(
-                    url: '$s3Url${widget.gallery!.first.url}',
+                    url: '${URLConstants.s3Url}${widget.gallery!.first.url}',
                     width: (100.w - 110).toInt(),
                     height: 250,
                     boxFit: BoxFit.cover,
@@ -330,7 +330,8 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                                     ],
                                   )
                                 : PreviewImageNetwork(
-                                    url: '$s3Url${widget.gallery![index].url}',
+                                    url:
+                                        '${URLConstants.s3Url}${widget.gallery![index].url}',
                                     width: 140,
                                     height: 150,
                                   ),
@@ -409,7 +410,7 @@ class _CommentCellState extends ConsumerState<CommentCell> {
                   .updateCommentEmoji(
                       widget.commentId, userModel.user.id, emoji.emoji);
             }
-
+            if (!context.mounted) return;
             context.pop();
           },
         );

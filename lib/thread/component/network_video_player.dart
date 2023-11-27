@@ -1,5 +1,5 @@
-import 'package:fitend_member/common/const/colors.dart';
-import 'package:fitend_member/common/const/data.dart';
+import 'package:fitend_member/common/const/pallete.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -58,8 +58,8 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
     currentPosition = const Duration();
 
     final file = await DefaultCacheManager().getSingleFile(
-        '$s3Url${widget.video.url}',
-        key: '$s3Url${widget.video.url}');
+        '${URLConstants.s3Url}${widget.video.url}',
+        key: '${URLConstants.s3Url}${widget.video.url}');
 
     _videoController = VideoPlayerController.file(
       file,
@@ -81,15 +81,18 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
     _videoController!.addListener(
       () {
         final currentPosition = _videoController!.value.position;
-        setState(() {
-          this.currentPosition = currentPosition;
-        });
+        if (mounted) {
+          setState(() {
+            this.currentPosition = currentPosition;
+          });
+        }
       },
     );
 
     _videoController!.addListener(videoListener);
-
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void videoListener() {}
@@ -98,11 +101,11 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
   Widget build(BuildContext context) {
     if (_videoController == null) {
       return Container(
-        color: BACKGROUND_COLOR,
+        color: Pallete.background,
         child: const Center(
           child: CircularProgressIndicator(
-            color: POINT_COLOR,
-            backgroundColor: BACKGROUND_COLOR,
+            color: Pallete.point,
+            backgroundColor: Pallete.background,
           ),
         ),
       );
@@ -118,14 +121,16 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
                 aspectRatio: _videoController!.value.aspectRatio,
                 child: GestureDetector(
                   onTap: () {
-                    setState(() {
-                      isShowControlls = !isShowControlls;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        isShowControlls = !isShowControlls;
+                      });
+                    }
                   },
                   child: Stack(
                     children: [
                       Container(
-                        color: BACKGROUND_COLOR,
+                        color: Pallete.background,
                         child: Center(
                           child: VideoPlayer(_videoController!),
                         ),
@@ -143,9 +148,11 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
                           top: 10,
                           child: IconButton(
                             onPressed: () {
-                              setState(() {
-                                mute = !mute;
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  mute = !mute;
+                                });
+                              }
 
                               if (mute) {
                                 _videoController!.setVolume(0);
@@ -180,13 +187,15 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
   void onPlayPressed() {
     //실행중이면 정지
     //실행중이 아니면 실행
-    setState(() {
-      if (_videoController!.value.isPlaying) {
-        _videoController!.pause();
-      } else {
-        _videoController!.play();
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (_videoController!.value.isPlaying) {
+          _videoController!.pause();
+        } else {
+          _videoController!.play();
+        }
+      });
+    }
   }
 
   void onForwarPressed() {
@@ -297,8 +306,8 @@ class _Slider extends StatelessWidget {
                 min: 0,
                 max: maxPpsition.inSeconds.toDouble(),
                 value: currentPosition.inSeconds.toDouble(),
-                thumbColor: POINT_COLOR,
-                activeColor: POINT_COLOR.withOpacity(0.7),
+                thumbColor: Pallete.point,
+                activeColor: Pallete.point.withOpacity(0.7),
                 inactiveColor: Colors.white.withOpacity(0.7),
                 onChanged: onSlideChanged,
               ),

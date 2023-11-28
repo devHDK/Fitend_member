@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 class DataUtils {
   static String pathToUrl(String value) {
-    return 'http://$URLConstants.localIp$value';
+    return 'http://${URLConstants.localIp}$value';
   }
 
   static List<String> listPathsToUrls(List paths) {
@@ -197,5 +197,14 @@ class DataUtils {
     }
 
     return false;
+  }
+
+  static DateTime getLastMondayDate(String date) {
+    DateTime tempDate = DateTime.parse(date);
+
+    DateTime ret =
+        tempDate.subtract(Duration(days: (tempDate.weekday - 1) + 7));
+
+    return ret;
   }
 }

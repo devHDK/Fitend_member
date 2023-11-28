@@ -139,9 +139,6 @@ class AuthProvider extends ChangeNotifier {
                     exercises: state.extra != null
                         ? state.extra as List<Exercise>
                         : null,
-                    startDate: state.uri.queryParameters['startDate'] != null
-                        ? state.uri.queryParameters['startDate'] as String
-                        : null,
                     key: state.pageKey,
                   ),
                 );

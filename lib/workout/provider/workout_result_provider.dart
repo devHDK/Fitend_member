@@ -4,8 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:fitend_member/common/provider/hive_schedule_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
+import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
+import 'package:fitend_member/schedule/model/workout_schedule_pagenate_params.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:fitend_member/workout/model/get_workout_records_params.dart';
 import 'package:fitend_member/workout/model/schedule_record_model.dart';
@@ -15,6 +18,7 @@ import 'package:fitend_member/workout/repository/workout_records_repository.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 
 final workoutResultProvider = StateNotifierProvider.family<
     WorkoutRecordStateNotifier, WorkoutResultModelBase?, int>((ref, id) {
@@ -60,7 +64,6 @@ class WorkoutRecordStateNotifier
   Future<void> getWorkoutResults({
     required int workoutScheduleId,
     List<Exercise>? exercises,
-    String? startDate,
   }) async {
     try {
       final isLoading = state is WorkoutResultModelLoading;
@@ -69,14 +72,20 @@ class WorkoutRecordStateNotifier
 
       state = WorkoutResultModelLoading();
 
-      if (exercises == null || exercises.isEmpty || startDate == null) {
+      String startDate = '';
+      WorkoutResultModel resultModel;
+
+      if (exercises == null || exercises.isEmpty) {
         final response = await resultRepository.getWorkoutResults(
           params: GetWorkoutRecordsParams(
             workoutScheduleId: workoutScheduleId,
           ),
         );
 
-        state = response;
+        startDate = response.startDate;
+        saveDataFromServer(response);
+
+        resultModel = response;
       } else {
         bool hasLocal = true;
 
@@ -109,6 +118,7 @@ class WorkoutRecordStateNotifier
 
         scheduleRecordBox.whenData((value) {
           savedScheduleRecord = value.get(id);
+
           if (savedScheduleRecord == null) {
             hasLocal = false;
           }
@@ -121,7 +131,10 @@ class WorkoutRecordStateNotifier
             ),
           );
 
-          state = response;
+          startDate = response.startDate;
+          saveDataFromServer(response);
+
+          resultModel = response;
         } else {
           List<WorkoutRecord> workoutResults = [];
 
@@ -138,7 +151,9 @@ class WorkoutRecordStateNotifier
             );
           }
 
-          state = WorkoutResultModel(
+          startDate = DateFormat('yyyy-MM-dd').format(savedFeedBack!.startDate);
+
+          resultModel = WorkoutResultModel(
             startDate: startDate,
             strengthIndex: savedFeedBack!.strengthIndex!,
             contents: savedFeedBack!.contents,
@@ -148,6 +163,47 @@ class WorkoutRecordStateNotifier
           );
         }
       }
+
+      final lastMondayDate = DataUtils.getLastMondayDate(startDate);
+
+      final scheduleResp = await scheduleRepository.getWorkoutSchedule(
+          params: SchedulePagenateParams(
+        startDate: lastMondayDate,
+        interval: 13,
+      ));
+
+      List<WorkoutData> tempScheduleList = List.generate(
+        14,
+        (index) => WorkoutData(
+          startDate: lastMondayDate.add(Duration(days: index)),
+          workouts: [],
+        ),
+      );
+
+      int index = 0;
+
+      if (scheduleResp.data != null && scheduleResp.data!.isNotEmpty) {
+        for (var tempSchedule in tempScheduleList) {
+          if (index >= scheduleResp.data!.length) {
+            break;
+          }
+
+          if (tempSchedule.startDate.year ==
+                  scheduleResp.data![index].startDate.year &&
+              tempSchedule.startDate.month ==
+                  scheduleResp.data![index].startDate.month &&
+              tempSchedule.startDate.day ==
+                  scheduleResp.data![index].startDate.day) {
+            tempSchedule.workouts!.addAll(scheduleResp.data![index].workouts!);
+
+            index++;
+          }
+        }
+      }
+
+      state = resultModel.copyWith(
+        lastSchedules: tempScheduleList,
+      );
     } catch (e) {
       if (e is DioException) {
         debugPrint('getWorkoutResultsError : ${e.response!.statusCode}');
@@ -176,6 +232,15 @@ class WorkoutRecordStateNotifier
       }
     });
 
-    workoutFeedbackBox.whenData((value) => null);
+    workoutFeedbackBox.whenData((value) => value.put(
+        id,
+        WorkoutFeedbackRecordModel(
+          startDate: DateTime.parse(model.startDate),
+          strengthIndex: model.strengthIndex,
+          issueIndexes: model.issueIndexes,
+          contents: model.contents,
+        )));
+
+    scheduleRecordBox.whenData((value) => value.put(id, model.scheduleRecords));
   }
 }

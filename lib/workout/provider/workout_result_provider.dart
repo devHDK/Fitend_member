@@ -161,5 +161,21 @@ class WorkoutRecordStateNotifier
     }
   }
 
-  void saveDataFromServer() {}
+  void saveDataFromServer(WorkoutResultModel model) {
+    workoutRecordSimpleBox.whenData((value) {
+      for (var workoutRecord in model.workoutRecords) {
+        final record = value.get(workoutRecord.workoutPlanId);
+        if (record == null) {
+          value.put(
+            workoutRecord.workoutPlanId,
+            WorkoutRecordSimple(
+                workoutPlanId: workoutRecord.workoutPlanId,
+                setInfo: workoutRecord.setInfo),
+          );
+        }
+      }
+    });
+
+    workoutFeedbackBox.whenData((value) => null);
+  }
 }

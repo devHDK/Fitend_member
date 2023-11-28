@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class WorkoutFeedbackScreen extends ConsumerStatefulWidget {
@@ -21,13 +22,13 @@ class WorkoutFeedbackScreen extends ConsumerStatefulWidget {
 
   final int workoutScheduleId;
   final List<Exercise> exercises;
-  final String startdate;
+  final String startDate;
 
   const WorkoutFeedbackScreen({
     super.key,
     required this.workoutScheduleId,
     required this.exercises,
-    required this.startdate,
+    required this.startDate,
   });
 
   @override
@@ -247,7 +248,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                                 workoutScheduleId:
                                                     widget.workoutScheduleId,
                                                 startDate: DateTime.parse(
-                                                    widget.startdate),
+                                                    widget.startDate),
                                               );
                                           // 스케줄 상태 업데이트
 
@@ -258,13 +259,19 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                               .updateWorkoutStateIsComplete();
                                           //워크아웃 상태 업데이트
 
-                                          context.pushReplacementNamed(
+                                          context.goNamed(
                                             ScheduleResultScreen.routeName,
                                             pathParameters: {
                                               'id': widget.workoutScheduleId
                                                   .toString(),
                                             },
                                             extra: widget.exercises,
+                                            queryParameters: {
+                                              'startDate':
+                                                  DateFormat('yyyy-MM-dd')
+                                                      .format(DateTime.parse(
+                                                          widget.startDate))
+                                            },
                                           );
                                           // Navigator.of(context).pushReplacement(
                                           //   CupertinoPageRoute(

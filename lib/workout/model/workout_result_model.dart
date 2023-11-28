@@ -24,7 +24,6 @@ class WorkoutResultModel extends WorkoutResultModelBase {
   final String? contents;
   final List<WorkoutRecord> workoutRecords;
   final ScheduleRecordsModel? scheduleRecords;
-  @JsonKey(name: 'data')
   final List<WorkoutData>? lastSchedules;
 
   WorkoutResultModel({

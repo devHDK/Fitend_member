@@ -37,11 +37,13 @@ class ScheduleResultScreen extends ConsumerStatefulWidget {
 
   final int workoutScheduleId;
   final List<Exercise>? exercises;
+  final String? startDate;
 
   const ScheduleResultScreen({
     super.key,
     required this.workoutScheduleId,
     this.exercises,
+    this.startDate,
   });
 
   @override
@@ -77,7 +79,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
         ref.read(workoutResultProvider(widget.workoutScheduleId).notifier);
 
     await provider.getWorkoutResults(
-        workoutScheduleId: widget.workoutScheduleId);
+      workoutScheduleId: widget.workoutScheduleId,
+    );
   }
 
   @override

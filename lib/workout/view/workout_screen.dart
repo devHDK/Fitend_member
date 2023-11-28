@@ -413,14 +413,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               ? () {}
                               : () async {
                                   try {
-                                    ref
-                                        .read(workoutProcessProvider(
-                                                widget.workoutScheduleId)
-                                            .notifier)
-                                        .workoutIsQuttingChange(true);
-
-                                    context.pop();
-
                                     await ref
                                         .read(workoutProcessProvider(
                                                 widget.workoutScheduleId)
@@ -435,10 +427,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       final id = widget.workoutScheduleId;
                                       final date = widget.workout.startDate;
 
-                                      // context.pop();
-                                      // context.pop();
+                                      context.pop();
+                                      context.pop();
 
-                                      GoRouter.of(context).replaceNamed(
+                                      GoRouter.of(context).pushNamed(
                                         WorkoutFeedbackScreen.routeName,
                                         pathParameters: {
                                           'workoutScheduleId': id.toString(),
@@ -1116,13 +1108,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               : () async {
                   //완료!!!
                   try {
-                    ref
-                        .read(workoutProcessProvider(widget.workoutScheduleId)
-                            .notifier)
-                        .workoutIsQuttingChange(true);
-
-                    context.pop();
-
                     await ref
                         .read(workoutProcessProvider(widget.workoutScheduleId)
                             .notifier)
@@ -1135,8 +1120,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       final id = widget.workoutScheduleId;
                       final date = widget.workout.startDate;
 
-                      // context.pop();
-                      // context.pop();
+                      context.pop();
+                      context.pop();
 
                       GoRouter.of(context).replaceNamed(
                         WorkoutFeedbackScreen.routeName,

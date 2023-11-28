@@ -435,6 +435,10 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                           'id': model.workoutScheduleId.toString(),
                         },
                         extra: model.exercises,
+                        queryParameters: {
+                          'startDate': DateFormat('yyyy-MM-dd')
+                              .format(DateTime.parse(model.startDate))
+                        },
                       );
                     }
                   : isTodayWorkout

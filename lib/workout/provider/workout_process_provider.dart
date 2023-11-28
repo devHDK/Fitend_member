@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
+import 'package:fitend_member/common/provider/hive_schedule_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_record.dart';
@@ -44,6 +45,7 @@ final workoutProcessProvider = StateNotifierProvider.family<
   final AsyncValue<Box> exerciseIndexBox = ref.watch(hiveExerciseIndexProvider);
   final AsyncValue<Box> processTotalTimeBox =
       ref.watch(hiveProcessTotalTimeBox);
+  final AsyncValue<Box> scheduleRecordBox = ref.watch(hiveScheduleRecordBox);
 
   return WorkoutProcessStateNotifier(
     repository: repository,
@@ -58,6 +60,7 @@ final workoutProcessProvider = StateNotifierProvider.family<
     modifiedExerciseBox: modifiedExerciseBox,
     exerciseIndexBox: exerciseIndexBox,
     processTotalTimeBox: processTotalTimeBox,
+    scheduleRecordBox: scheduleRecordBox,
   );
 });
 
@@ -75,6 +78,7 @@ class WorkoutProcessStateNotifier
   final AsyncValue<Box> modifiedExerciseBox;
   final AsyncValue<Box> exerciseIndexBox;
   final AsyncValue<Box> processTotalTimeBox;
+  final AsyncValue<Box> scheduleRecordBox;
 
   WorkoutProcessStateNotifier({
     required this.repository,
@@ -89,6 +93,7 @@ class WorkoutProcessStateNotifier
     required this.modifiedExerciseBox,
     required this.exerciseIndexBox,
     required this.processTotalTimeBox,
+    required this.scheduleRecordBox,
   }) : super(null) {
     // init(workoutProvider);
   }
@@ -543,6 +548,13 @@ class WorkoutProcessStateNotifier
               .toList()
               .length;
         }
+
+        scheduleRecordBox.whenData((value) => value.put(
+            id,
+            ScheduleRecordsModel(
+              workoutScheduleId: id,
+              workoutDuration: pstate.totalTime,
+            )));
 
         //운동 기록 서버로
         await repository

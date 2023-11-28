@@ -524,7 +524,7 @@ class WorkoutProcessStateNotifier
           isProcessing: false,
         );
       }
-      state = pstate;
+      state = pstate.copyWith();
 
       try {
         List<int> targetMuscles = [];

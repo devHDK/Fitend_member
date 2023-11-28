@@ -258,7 +258,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                               .updateWorkoutStateIsComplete();
                                           //워크아웃 상태 업데이트
 
-                                          context.goNamed(
+                                          context.pushReplacementNamed(
                                             ScheduleResultScreen.routeName,
                                             pathParameters: {
                                               'id': widget.workoutScheduleId

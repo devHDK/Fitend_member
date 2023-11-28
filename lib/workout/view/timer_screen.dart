@@ -432,15 +432,15 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                                 final workoutModel = ref.read(workoutProvider(
                                     widget.workoutScheduleId)) as WorkoutModel;
 
-                                ref
-                                    .read(workoutProcessProvider(
-                                            workoutModel.workoutScheduleId)
-                                        .notifier)
-                                    .workoutIsQuttingChange(true);
+                                // ref
+                                //     .read(workoutProcessProvider(
+                                //             workoutModel.workoutScheduleId)
+                                //         .notifier)
+                                //     .workoutIsQuttingChange(true);
 
-                                if (mounted) {
-                                  setState(() {});
-                                }
+                                // if (mounted) {
+                                //   setState(() {});
+                                // }
 
                                 await ref
                                     .read(workoutProcessProvider(
@@ -527,6 +527,7 @@ class _TimerScreenState extends ConsumerState<TimerScreen>
                 .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
                 .exerciseChange(index);
 
+            context.pop();
             context.pop();
           },
           cancelOnTap: isQuitting

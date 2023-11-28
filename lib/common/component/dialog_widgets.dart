@@ -38,69 +38,73 @@ class DialogWidgets {
           vertical: 20,
         ),
         children: [
-          Container(
-            width: 335,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 20,
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    message,
-                    style: s2SubTitle,
-                    textAlign: TextAlign.center,
+          StatefulBuilder(
+            builder: (context, setState) {
+              return Container(
+                width: 335,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 20,
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  GestureDetector(
-                    onTap: confirmOnTap,
-                    child: Container(
-                      height: 44,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Pallete.point,
+                  child: Column(
+                    children: [
+                      Text(
+                        message,
+                        style: s2SubTitle,
+                        textAlign: TextAlign.center,
                       ),
-                      child: Center(
-                        child: Text(
-                          confirmText,
-                          style: h6Headline.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
+                      const SizedBox(
+                        height: 20,
                       ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  GestureDetector(
-                    onTap: cancelOnTap,
-                    child: Container(
-                      height: 44,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Pallete.point),
-                      ),
-                      child: Center(
-                        child: Text(
-                          cancelText,
-                          style: h6Headline.copyWith(
+                      GestureDetector(
+                        onTap: confirmOnTap,
+                        child: Container(
+                          height: 44,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
                             color: Pallete.point,
                           ),
+                          child: Center(
+                            child: Text(
+                              confirmText,
+                              style: h6Headline.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      GestureDetector(
+                        onTap: cancelOnTap,
+                        child: Container(
+                          height: 44,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Pallete.point),
+                          ),
+                          child: Center(
+                            child: Text(
+                              cancelText,
+                              style: h6Headline.copyWith(
+                                color: Pallete.point,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),

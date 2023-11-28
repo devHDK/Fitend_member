@@ -71,7 +71,7 @@ class StringConstants {
       F.appFlavor == Flavor.production ? 'ACCESS_TOKEN' : 'ACCESS_TOKEN_DEV';
   static final refreshToken =
       F.appFlavor == Flavor.production ? 'REFRESH_TOKEN' : 'REFRESH_TOKEN_DEV';
-  static const deviceId = 'StringConstants.deviceId';
+  static const deviceId = 'deviceId';
 }
 
 class URLConstants {

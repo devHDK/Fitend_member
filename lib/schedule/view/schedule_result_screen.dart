@@ -1,24 +1,16 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
-import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
-import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
-import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
-import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_result_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:collection/collection.dart';
 
-const List<String> strengthResults = [
+const List<String> _strengthResults = [
   '매우쉬움 😁',
   '쉬움 😀',
   '보통 😊',
@@ -26,7 +18,7 @@ const List<String> strengthResults = [
   '매우힘듦 🥵'
 ];
 
-const List<String> issuedResults = [
+const List<String> _issuedResults = [
   '운동 부위에 통증이 있어요',
   '운동 자세를 잘 모르겠어요',
   '운동 자극이 잘 안 느껴져요',
@@ -51,34 +43,25 @@ class ScheduleResultScreen extends ConsumerStatefulWidget {
 
 class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   //  WorkoutResultModel state;
-  WorkoutFeedbackRecordModel? feedback;
-  List<WorkoutRecord> workoutResults = [];
-  List<WorkoutRecordSimple> workoutRecords = [];
-  bool initial = true;
-  bool hasLocal = false;
-  DateTime startDate = DateTime(
-    DateTime.now().year,
-  );
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (initial && !hasLocal) {
-        getResults();
 
-        initial = false;
-      }
-    });
+    getResults();
   }
 
   void getResults() async {
-    final provider =
-        ref.read(workoutResultProvider(widget.workoutScheduleId).notifier);
+    final workoutResult =
+        ref.read(workoutResultProvider(widget.workoutScheduleId));
 
-    await provider.getWorkoutResults(
-      workoutScheduleId: widget.workoutScheduleId,
-    );
+    if (workoutResult is! WorkoutResultModel) {
+      await ref
+          .read(workoutResultProvider(widget.workoutScheduleId).notifier)
+          .getWorkoutResults(
+            workoutScheduleId: widget.workoutScheduleId,
+            exercises: widget.exercises,
+          );
+    }
   }
 
   @override
@@ -88,72 +71,9 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final pstate = ref.watch(workoutResultProvider(widget.workoutScheduleId));
-    final workoutFeedbackBox = ref.watch(hiveWorkoutFeedbackProvider);
-    final workoutRecordBox = ref.watch(hiveWorkoutRecordSimpleProvider);
+    final state = ref.watch(workoutResultProvider(widget.workoutScheduleId));
 
-    workoutFeedbackBox.whenData(
-      (value) {
-        feedback = value.get(widget.workoutScheduleId);
-      },
-    );
-
-    if (feedback == null || widget.exercises != null) {
-      if (pstate is WorkoutResultModelLoading) {
-        return const Scaffold(
-          backgroundColor: Pallete.background,
-          body: Center(
-            child: CircularProgressIndicator(
-              color: Pallete.point,
-            ),
-          ),
-        );
-      }
-
-      if (pstate is WorkoutResultModelError) {
-        return Scaffold(
-          backgroundColor: Pallete.background,
-          body: Center(
-            child: DialogWidgets.errorDialog(
-              message: pstate.message,
-              confirmText: '확인',
-              confirmOnTap: () => context.pop(),
-            ),
-          ),
-        );
-      }
-
-      workoutRecordBox.whenData(
-        (value) {
-          workoutRecords = [];
-
-          for (var i = 0; i < widget.exercises!.length; i++) {
-            final record = value.get(widget.exercises![i].workoutPlanId);
-            if (record != null && record is WorkoutRecordSimple) {
-              workoutRecords.add(record);
-            } else {
-              hasLocal = false;
-            }
-          }
-        },
-      );
-
-      for (var i = 0; i < workoutResults.length; i++) {
-        for (var j = 0; j < workoutResults[i].setInfo.length; j++) {
-          workoutResults[i].setInfo[j] = workoutRecords[i].setInfo[j];
-        }
-      }
-
-      if (pstate is WorkoutResultModel) {
-        startDate = DateTime.parse(pstate.startDate);
-        pstate.copyWith(
-          startDate:
-              '${DateFormat('M월 dd일').format(DateTime.parse(pstate.startDate))} ${weekday[DateTime.parse(pstate.startDate).weekday - 1]}요일',
-        );
-      }
-    }
-
-    if (pstate is WorkoutResultModelLoading) {
+    if (state is WorkoutResultModelLoading) {
       return const Scaffold(
         backgroundColor: Pallete.background,
         body: Center(
@@ -164,7 +84,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       );
     }
 
-    if (pstate is WorkoutResultModelError) {
+    if (state is WorkoutResultModelError) {
       // context.pop();
       DialogWidgets.showToast('운동 평가를 완료해주세요');
       context.pop();
@@ -173,14 +93,14 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
       );
     }
 
-    var state = pstate as WorkoutResultModel;
+    var resultModel = state as WorkoutResultModel;
 
     return Scaffold(
       backgroundColor: Pallete.background,
       appBar: AppBar(
         backgroundColor: Pallete.background,
         title: Text(
-          '${DateFormat('M월 d일').format(DateTime.parse(state.startDate))} ${weekday[DateTime.parse(state.startDate).weekday - 1]}요일',
+          '${DateFormat('M월 d일').format(DateTime.parse(resultModel.startDate))} ${weekday[DateTime.parse(resultModel.startDate).weekday - 1]}요일',
           style: h4Headline,
         ),
         automaticallyImplyLeading: false,
@@ -202,116 +122,72 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           )
         ],
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Container(
-              color: Pallete.darkGray,
+      body: RefreshIndicator(
+        backgroundColor: Pallete.background,
+        color: Pallete.point,
+        semanticsLabel: '새로고침',
+        onRefresh: () async {
+          await ref
+              .read(workoutResultProvider(widget.workoutScheduleId).notifier)
+              .getWorkoutResults(
+                workoutScheduleId: widget.workoutScheduleId,
+                exercises: widget.exercises,
+              );
+        },
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28,
-                  vertical: 20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _renderTitle(),
-                    _renderStrengthResult(state),
-                    const SizedBox(
-                      height: 24,
-                    ),
-                    if (state.issueIndexes != null &&
-                        state.issueIndexes!.isNotEmpty)
-                      _renderIssueResult(state),
-                    if (state.contents != null && state.contents!.isNotEmpty)
-                      _renderContentsResult(state),
-                    const SizedBox(
-                      height: 20,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 28,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+                child: Container(
+                  color: Pallete.background,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        '오늘의 운동결과 🎯',
-                        style: h4Headline.copyWith(
-                          color: Colors.white,
+                      const SizedBox(
+                        width: 270,
+                        child: Wrap(
+                          spacing: 10,
+                          runSpacing: 27,
+                          children: [],
                         ),
                       ),
-                      if (state.scheduleRecords != null &&
-                          state.scheduleRecords!.workoutDuration != null)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            SvgPicture.asset(SVGConstants.timer),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              DataUtils.getTimeStringHour(
-                                  state.scheduleRecords!.workoutDuration!),
-                              style: s2SubTitle.copyWith(
-                                color: Colors.white,
-                                height: 1.3,
-                              ),
-                            )
-                          ],
-                        )
+                      const SizedBox(
+                        height: 23,
+                      ),
+                      _renderTitle('오늘의 결과 🎯'),
+                      _renderTitle('오늘의 평가 📝'),
+                      _renderStrengthResult(resultModel),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      if (resultModel.issueIndexes != null &&
+                          resultModel.issueIndexes!.isNotEmpty)
+                        _renderIssueResult(resultModel),
+                      if (resultModel.contents != null &&
+                          resultModel.contents!.isNotEmpty)
+                        _renderContentsResult(resultModel),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      _renderTitle('최근 운동일 🗓️'),
                     ],
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  const Divider(
-                    color: Pallete.gray,
-                    height: 1,
-                  )
-                ],
+                ),
               ),
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 28),
-            sliver: SliverList.separated(
-              itemCount: state.workoutRecords.length,
-              itemBuilder: (context, index) {
-                final model = state.workoutRecords[index];
-
-                return _renderExerciseResult(model, index, state);
-              },
-              separatorBuilder: (context, index) {
-                return const Divider(
-                  color: Pallete.gray,
-                  height: 1,
-                );
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Column _renderTitle() {
+  Column _renderTitle(String title) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('오늘의 운동평가 📝',
+        Text(title,
             style: h4Headline.copyWith(
               color: Colors.white,
             )),
@@ -343,7 +219,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           height: 8,
         ),
         Text(
-          '  ∙  ${strengthResults[state.strengthIndex - 1]}',
+          '  ∙  ${_strengthResults[state.strengthIndex - 1]}',
           style: s2SubTitle.copyWith(
             color: Pallete.lightGray,
           ),
@@ -368,7 +244,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
             return Column(
               children: [
                 Text(
-                  '  ∙  ${issuedResults[e - 1]}',
+                  '  ∙  ${_issuedResults[e - 1]}',
                   style: s2SubTitle.copyWith(
                     color: Pallete.lightGray,
                   ),
@@ -406,101 +282,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
             color: Pallete.lightGray,
           ),
         ),
-      ],
-    );
-  }
-
-  Column _renderExerciseResult(
-      WorkoutRecord model, int index, WorkoutResultModel state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(
-          height: 20,
-        ),
-        Text(
-          model.exerciseName,
-          style: h5Headline.copyWith(
-            color: Colors.white,
-            overflow: TextOverflow.ellipsis,
-          ),
-          maxLines: 1,
-        ),
-        const SizedBox(
-          height: 6,
-        ),
-        Text(
-          model.targetMuscles[0],
-          style: s2SubTitle.copyWith(
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(
-          height: 16,
-        ),
-        ...model.setInfo.mapIndexed((seq, e) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${e.index} SET',
-                  style: s2SubTitle.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-                if (model.trackingFieldId == 1)
-                  Text(
-                    e.weight != null ? '${e.weight}kg' : '-',
-                    style: s2SubTitle.copyWith(
-                      color: Colors.white,
-                    ),
-                  ),
-                if (model.trackingFieldId == 1 || model.trackingFieldId == 2)
-                  Text(
-                    e.reps != null ? '${e.reps}회' : '-',
-                    style: s2SubTitle.copyWith(
-                      color: Colors.white,
-                    ),
-                  ),
-                if (model.trackingFieldId == 3 || model.trackingFieldId == 4)
-                  Text(
-                    e.seconds != null
-                        ? DataUtils.getTimeStringHour(e.seconds!)
-                        : '-',
-                    style: s2SubTitle.copyWith(
-                      color: Colors.white,
-                    ),
-                  ),
-                Text(
-                  e.reps != null || e.seconds != null || e.weight != null
-                      ? '✅'
-                      : '❌',
-                  style: const TextStyle(
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }),
-        const SizedBox(
-          height: 16,
-        ),
-        if (index == state.workoutRecords.length - 1)
-          const Column(
-            children: [
-              Divider(
-                color: Pallete.gray,
-                height: 1,
-              ),
-              SizedBox(
-                height: 40,
-              ),
-            ],
-          )
       ],
     );
   }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/provider/hive_schedule_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
+import 'package:fitend_member/common/provider/hive_workout_record.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
@@ -30,6 +31,7 @@ final workoutResultProvider = StateNotifierProvider.family<
   final AsyncValue<Box> workoutRecordSimpleBox =
       ref.watch(hiveWorkoutRecordSimpleProvider);
   final AsyncValue<Box> scheduleRecordBox = ref.watch(hiveScheduleRecordBox);
+  final AsyncValue<Box> totalTimeBox = ref.watch(hiveProcessTotalTimeBox);
 
   return WorkoutRecordStateNotifier(
     resultRepository: workoutRecordsRepository,
@@ -38,6 +40,7 @@ final workoutResultProvider = StateNotifierProvider.family<
     workoutFeedbackBox: workoutFeedbackBox,
     workoutRecordSimpleBox: workoutRecordSimpleBox,
     scheduleRecordBox: scheduleRecordBox,
+    totalTimeBox: totalTimeBox,
   );
 });
 
@@ -48,6 +51,7 @@ class WorkoutRecordStateNotifier
   final AsyncValue<Box> workoutRecordSimpleBox;
   final AsyncValue<Box> workoutFeedbackBox;
   final AsyncValue<Box> scheduleRecordBox;
+  final AsyncValue<Box> totalTimeBox;
   final int id;
 
   WorkoutRecordStateNotifier({
@@ -57,6 +61,7 @@ class WorkoutRecordStateNotifier
     required this.workoutRecordSimpleBox,
     required this.workoutFeedbackBox,
     required this.scheduleRecordBox,
+    required this.totalTimeBox,
   }) : super(null) {
     // getWorkoutResults(workoutScheduleId: id);
   }
@@ -92,6 +97,7 @@ class WorkoutRecordStateNotifier
         WorkoutFeedbackRecordModel? savedFeedBack;
         ScheduleRecordsModel? savedScheduleRecord;
         List<WorkoutRecordSimple> savedWorkoutRecords = [];
+        int? totalTime;
 
         workoutFeedbackBox.whenData(
           (value) {
@@ -116,11 +122,19 @@ class WorkoutRecordStateNotifier
           },
         );
 
+        totalTimeBox.whenData((value) {
+          totalTime = value.get(id);
+        });
+
         scheduleRecordBox.whenData((value) {
           savedScheduleRecord = value.get(id);
 
-          if (savedScheduleRecord == null) {
+          if (savedScheduleRecord != null || totalTime != null) {
             hasLocal = false;
+          }
+
+          if (savedScheduleRecord == null && totalTime != null) {
+            value.put(id, totalTime);
           }
         });
 
@@ -159,7 +173,11 @@ class WorkoutRecordStateNotifier
             contents: savedFeedBack!.contents,
             issueIndexes: savedFeedBack!.issueIndexes,
             workoutRecords: workoutResults,
-            scheduleRecords: savedScheduleRecord,
+            scheduleRecords: savedScheduleRecord ??
+                ScheduleRecordsModel(
+                  workoutScheduleId: id,
+                  workoutDuration: totalTime,
+                ),
           );
         }
       }

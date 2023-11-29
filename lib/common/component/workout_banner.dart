@@ -32,7 +32,7 @@ class WorkoutBanner extends StatelessWidget {
     }
 
     for (var muscle in targetMuscles) {
-      muscleString += ' ${muscleGroup[muscle]!} ∙';
+      muscleString += ' ${muscleMap[muscle]!} ∙';
     }
 
     return Container(

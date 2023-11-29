@@ -333,8 +333,6 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                         } else {
                           completeSetCount = 0;
                         }
-
-                        debugPrint(completeSetCount.toString());
                       },
                       error: (error, stackTrace) => completeSetCount = 0,
                       loading: () => debugPrint('loading...'),

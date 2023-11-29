@@ -62,9 +62,7 @@ class WorkoutRecordStateNotifier
     required this.workoutFeedbackBox,
     required this.scheduleRecordBox,
     required this.totalTimeBox,
-  }) : super(null) {
-    // getWorkoutResults(workoutScheduleId: id);
-  }
+  }) : super(null);
 
   Future<void> getWorkoutResults({
     required int workoutScheduleId,
@@ -79,6 +77,8 @@ class WorkoutRecordStateNotifier
 
       String startDate = '';
       WorkoutResultModel resultModel;
+
+      print(exercises);
 
       if (exercises == null || exercises.isEmpty) {
         final response = await resultRepository.getWorkoutResults(
@@ -129,7 +129,7 @@ class WorkoutRecordStateNotifier
         scheduleRecordBox.whenData((value) {
           savedScheduleRecord = value.get(id);
 
-          if (savedScheduleRecord != null || totalTime != null) {
+          if (savedScheduleRecord == null && totalTime == null) {
             hasLocal = false;
           }
 
@@ -137,6 +137,11 @@ class WorkoutRecordStateNotifier
             value.put(id, totalTime);
           }
         });
+
+        debugPrint('hasLocal result : $hasLocal');
+        debugPrint('result : $savedFeedBack');
+        debugPrint('result  : $savedWorkoutRecords');
+        debugPrint('result  : $savedScheduleRecord');
 
         if (!hasLocal) {
           final response = await resultRepository.getWorkoutResults(
@@ -178,6 +183,7 @@ class WorkoutRecordStateNotifier
                   workoutScheduleId: id,
                   workoutDuration: totalTime,
                 ),
+            lastSchedules: [],
           );
         }
       }
@@ -228,6 +234,7 @@ class WorkoutRecordStateNotifier
         state = WorkoutResultModelError(
             message: 'dioException : ${e.error} ${e.message}');
       } else {
+        debugPrint(e.toString());
         state = WorkoutResultModelError(
           message: '데이터를 불러올수없습니다',
         );

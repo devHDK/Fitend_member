@@ -40,7 +40,7 @@ class _MuscleCardState extends State<MuscleCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${muscleGroup[widget.muscle.muscleType]}',
+                  '${muscleMap[widget.muscle.muscleType]}',
                   style: s3SubTitle.copyWith(
                     color: Pallete.lightGray,
                   ),

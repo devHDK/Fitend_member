@@ -170,7 +170,7 @@ class _WeightWrepsProgressCardState
     }
 
     for (var muscle in targetMuscles) {
-      muscleString += ' ${muscleGroup[muscle]!} ∙';
+      muscleString += ' ${muscleMap[muscle]!} ∙';
     }
 
     if (widget.setInfoIndex > widget.exercise.setInfo.length - 1) {

@@ -192,7 +192,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
     }
 
     for (var muscle in targetMuscles) {
-      muscleString += ' ${muscleGroup[muscle]!} ∙';
+      muscleString += ' ${muscleMap[muscle]!} ∙';
     }
 
     return Column(

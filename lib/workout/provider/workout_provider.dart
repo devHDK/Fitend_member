@@ -103,6 +103,7 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
           startDate: '',
           strengthIndex: 0,
           workoutRecords: [],
+          lastSchedules: [],
         );
 
         workoutFeedbackBox.whenData((value) {
@@ -118,8 +119,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
             );
           }
         });
-
-        debugPrint('hasLocal $hasLocal');
 
         if (hasLocal) {
           List<WorkoutRecord> tempRecordList = [];

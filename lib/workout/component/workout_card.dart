@@ -39,8 +39,6 @@ class WorkoutCard extends ConsumerStatefulWidget {
 class _WorkoutCardState extends ConsumerState<WorkoutCard> {
   @override
   Widget build(BuildContext context) {
-    debugPrint(widget.completeSetCount.toString());
-
     final AsyncValue<Box> timerRecordBox =
         ref.watch(hiveTimerXMoreRecordProvider);
     final AsyncValue<Box> modifiedBox = ref.watch(hiveModifiedExerciseProvider);

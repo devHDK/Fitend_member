@@ -253,21 +253,32 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   }
 
   Future<String> _getDeviceInfo() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    IosDeviceInfo? iosInfo;
-    String? androidUuid;
+    try {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      IosDeviceInfo? iosInfo;
+      String? androidUuid;
 
-    if (Platform.isAndroid) {
-      final savedUuid = await storage.read(key: StringConstants.deviceId);
+      if (Platform.isAndroid) {
+        final savedUuid = await storage.read(key: StringConstants.deviceId);
 
-      androidUuid = savedUuid;
+        androidUuid = savedUuid;
 
-      debugPrint('deviceId : $androidUuid');
-    } else if (Platform.isIOS) {
-      iosInfo = await deviceInfo.iosInfo;
-      debugPrint('deviceId : ${iosInfo.identifierForVendor!}');
+        debugPrint('deviceId : $androidUuid');
+      } else if (Platform.isIOS) {
+        iosInfo = await deviceInfo.iosInfo;
+        debugPrint('deviceId : ${iosInfo.identifierForVendor!}');
+      }
+
+      return Platform.isAndroid ? androidUuid! : iosInfo!.identifierForVendor!;
+    } catch (e) {
+      debugPrint('_getDeviceInfo error ===> $e');
+      await Future.wait([
+        storage.delete(key: StringConstants.refreshToken),
+        storage.delete(key: StringConstants.accessToken),
+      ]);
+      state = null;
+
+      return '';
     }
-
-    return Platform.isAndroid ? androidUuid! : iosInfo!.identifierForVendor!;
   }
 }

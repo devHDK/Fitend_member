@@ -8,6 +8,7 @@ import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
+import 'package:fitend_member/schedule/componet/last_schedule_box.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_result_provider.dart';
 import 'package:flutter/material.dart';
@@ -273,6 +274,13 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                         height: 40,
                       ),
                       _renderTitle('최근 운동일 🗓️'),
+                      LastScheduleBox(
+                        startDate: resultModel.startDate,
+                        workoutSchedules: resultModel.lastSchedules!,
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      )
                     ],
                   ),
                 ),

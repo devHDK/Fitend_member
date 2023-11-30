@@ -1,3 +1,4 @@
+import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'workout_history_model.g.dart';
@@ -88,41 +89,4 @@ class HistoryData {
       _$HistoryDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$HistoryDataToJson(this);
-}
-
-@JsonSerializable()
-class SetInfo {
-  @JsonKey(name: "reps")
-  final int reps;
-  @JsonKey(name: "index")
-  final int index;
-  @JsonKey(name: "weight")
-  final int weight;
-  @JsonKey(name: "seconds")
-  final int seconds;
-
-  SetInfo({
-    required this.reps,
-    required this.index,
-    required this.weight,
-    required this.seconds,
-  });
-
-  SetInfo copyWith({
-    int? reps,
-    int? index,
-    int? weight,
-    int? seconds,
-  }) =>
-      SetInfo(
-        reps: reps ?? this.reps,
-        index: index ?? this.index,
-        weight: weight ?? this.weight,
-        seconds: seconds ?? this.seconds,
-      );
-
-  factory SetInfo.fromJson(Map<String, dynamic> json) =>
-      _$SetInfoFromJson(json);
-
-  Map<String, dynamic> toJson() => _$SetInfoToJson(this);
 }

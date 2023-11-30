@@ -39,17 +39,3 @@ Map<String, dynamic> _$HistoryDataToJson(HistoryData instance) =>
       'exerciseName': instance.exerciseName,
       'setInfo': instance.setInfo,
     };
-
-SetInfo _$SetInfoFromJson(Map<String, dynamic> json) => SetInfo(
-      reps: json['reps'] as int,
-      index: json['index'] as int,
-      weight: json['weight'] as int,
-      seconds: json['seconds'] as int,
-    );
-
-Map<String, dynamic> _$SetInfoToJson(SetInfo instance) => <String, dynamic>{
-      'reps': instance.reps,
-      'index': instance.index,
-      'weight': instance.weight,
-      'seconds': instance.seconds,
-    };

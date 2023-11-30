@@ -45,8 +45,12 @@ class WorkoutHistoryStateNotifier
       }
 
       final response = await repository.getWorkoutHistory(
-          params: GetWorkoutHistoryParams(
-              workoutPlanId: workoutPlanId, start: start!, perPage: 20));
+        params: GetWorkoutHistoryParams(
+          workoutPlanId: workoutPlanId,
+          start: start!,
+          perPage: 20,
+        ),
+      );
 
       if (state is WorkoutHistoryModelFetchingMore) {
         final pState = state as WorkoutHistoryModel;
@@ -61,6 +65,7 @@ class WorkoutHistoryStateNotifier
         state = WorkoutHistoryModel(data: response.data, total: response.total);
       }
     } catch (e) {
+      print(e);
       state = WorkoutHistoryModelError(message: '데이터를 불러오지 못했습니다.');
     }
   }

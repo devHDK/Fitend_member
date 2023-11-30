@@ -1,13 +1,17 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/guide_video_player.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/component/muscle_card.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
+import 'package:fitend_member/workout/provider/workout_history_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -65,6 +69,26 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               child: Icon(Icons.arrow_back)),
           color: _scrollOffset <= 5.0 ? Colors.black : Colors.white,
         ),
+        actions: [
+          GestureDetector(
+            onTap: () => Navigator.of(context).push(CupertinoPageRoute(
+              builder: (context) => WorkoutHistoryScreen(
+                workoutPlanId: widget.exercise.workoutPlanId,
+              ),
+            )),
+            child: SvgPicture.asset(
+              SVGConstants.history,
+              colorFilter: ColorFilter.mode(
+                _scrollOffset <= 5.0 ? Colors.black : Colors.white,
+                BlendMode.srcIn,
+              ),
+              width: 24,
+            ),
+          ),
+          const SizedBox(
+            width: 28,
+          )
+        ],
       ),
       extendBodyBehindAppBar: true,
       body: CustomScrollView(

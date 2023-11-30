@@ -101,7 +101,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
     super.dispose();
   }
 
-  void listener() {
+  void listener() async {
     if (mounted) {
       final provider = ref.read(notificationProvider.notifier);
 
@@ -109,7 +109,10 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
           controller.offset > controller.position.maxScrollExtent - 100 &&
           notification.data!.length < notification.total) {
         //스크롤을 아래로 내렸을때
-        provider.paginate(start: notification.data!.length, fetchMore: true);
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+          await provider.paginate(
+              start: notification.data!.length, fetchMore: true);
+        });
       }
     }
   }

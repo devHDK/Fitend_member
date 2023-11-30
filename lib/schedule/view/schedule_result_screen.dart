@@ -456,45 +456,52 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     );
   }
 
-  Container _renderIssueResult(WorkoutResultModel state) {
-    return Container(
-      width: 100.w,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Pallete.darkGray,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('특이사항이 있다면 알려주세요 🙏',
-                style: h5Headline.copyWith(
-                  color: Colors.white,
-                )),
-            const SizedBox(
-              height: 8,
+  Column _renderIssueResult(WorkoutResultModel state) {
+    return Column(
+      children: [
+        Container(
+          width: 100.w,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Pallete.darkGray,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('특이사항이 있다면 알려주세요 🙏',
+                    style: h5Headline.copyWith(
+                      color: Colors.white,
+                    )),
+                const SizedBox(
+                  height: 8,
+                ),
+                ...state.issueIndexes!.map(
+                  (e) {
+                    return Column(
+                      children: [
+                        Text(
+                          '  ∙  ${_issuedResults[e - 1]}',
+                          style: s2SubTitle.copyWith(
+                            color: Pallete.lightGray,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        )
+                      ],
+                    );
+                  },
+                ),
+              ],
             ),
-            ...state.issueIndexes!.map(
-              (e) {
-                return Column(
-                  children: [
-                    Text(
-                      '  ∙  ${_issuedResults[e - 1]}',
-                      style: s2SubTitle.copyWith(
-                        color: Pallete.lightGray,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    )
-                  ],
-                );
-              },
-            ),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(
+          height: 20,
+        )
+      ],
     );
   }
 

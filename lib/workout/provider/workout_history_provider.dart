@@ -1,4 +1,3 @@
-import 'package:fitend_member/notifications/model/notification_model.dart';
 import 'package:fitend_member/workout/model/get_workout_history_params.dart';
 import 'package:fitend_member/workout/model/workout_history_model.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';

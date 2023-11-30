@@ -9,8 +9,10 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/componet/last_schedule_box.dart';
+import 'package:fitend_member/schedule/view/schedule_result_set_info_screen.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
 import 'package:fitend_member/workout/provider/workout_result_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -221,7 +223,14 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                     children: [
                       _renderTitle('오늘의 결과 🎯'),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => ScheduleResultSetInfoScreen(
+                                  workoutRecords: resultModel.workoutRecords),
+                            ),
+                          );
+                        },
                         child: _borderContainer(
                           icon: SVGConstants.barbell,
                           title: '운동세트 수',

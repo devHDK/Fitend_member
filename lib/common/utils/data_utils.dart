@@ -81,6 +81,7 @@ class DataUtils {
   }
 
   static String getTimeStringHour(int seconds) {
+    //secconds => 00:00:00
     String ret =
         '${(seconds / 3600).floor().toString().padLeft(2, '0')} : ${((seconds % 3600) / 60).floor().toString().padLeft(2, '0')} : ${(seconds % 60).floor().toString().padLeft(2, '0')}';
 

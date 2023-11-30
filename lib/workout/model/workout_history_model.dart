@@ -2,10 +2,22 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'workout_history_model.g.dart';
 
+abstract class WorkoutHistoryModelBase {}
+
+class WorkoutHistoryModelError extends WorkoutHistoryModelBase {
+  final String message;
+
+  WorkoutHistoryModelError({
+    required this.message,
+  });
+}
+
+class WorkoutHistoryModelLoading extends WorkoutHistoryModelBase {}
+
 @JsonSerializable()
-class WorkoutHistoryModel {
+class WorkoutHistoryModel extends WorkoutHistoryModelBase {
   @JsonKey(name: "data")
-  final List<Datum> data;
+  final List<HistoryData> data;
   @JsonKey(name: "total")
   final int total;
 
@@ -15,7 +27,7 @@ class WorkoutHistoryModel {
   });
 
   WorkoutHistoryModel copyWith({
-    List<Datum>? data,
+    List<HistoryData>? data,
     int? total,
   }) =>
       WorkoutHistoryModel(
@@ -29,8 +41,15 @@ class WorkoutHistoryModel {
   Map<String, dynamic> toJson() => _$WorkoutHistoryModelToJson(this);
 }
 
+class WorkoutHistoryModelFetchingMore extends WorkoutHistoryModel {
+  WorkoutHistoryModelFetchingMore({
+    required super.data,
+    required super.total,
+  });
+}
+
 @JsonSerializable()
-class Datum {
+class HistoryData {
   @JsonKey(name: "startDate")
   final String startDate;
   @JsonKey(name: "workoutRecordId")
@@ -42,7 +61,7 @@ class Datum {
   @JsonKey(name: "setInfo")
   final List<SetInfo> setInfo;
 
-  Datum({
+  HistoryData({
     required this.startDate,
     required this.workoutRecordId,
     required this.workoutPlanId,
@@ -50,14 +69,14 @@ class Datum {
     required this.setInfo,
   });
 
-  Datum copyWith({
+  HistoryData copyWith({
     String? startDate,
     int? workoutRecordId,
     int? workoutPlanId,
     String? exerciseName,
     List<SetInfo>? setInfo,
   }) =>
-      Datum(
+      HistoryData(
         startDate: startDate ?? this.startDate,
         workoutRecordId: workoutRecordId ?? this.workoutRecordId,
         workoutPlanId: workoutPlanId ?? this.workoutPlanId,
@@ -65,9 +84,10 @@ class Datum {
         setInfo: setInfo ?? this.setInfo,
       );
 
-  factory Datum.fromJson(Map<String, dynamic> json) => _$DatumFromJson(json);
+  factory HistoryData.fromJson(Map<String, dynamic> json) =>
+      _$HistoryDataFromJson(json);
 
-  Map<String, dynamic> toJson() => _$DatumToJson(this);
+  Map<String, dynamic> toJson() => _$HistoryDataToJson(this);
 }
 
 @JsonSerializable()

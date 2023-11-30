@@ -9,7 +9,7 @@ part of 'workout_history_model.dart';
 WorkoutHistoryModel _$WorkoutHistoryModelFromJson(Map<String, dynamic> json) =>
     WorkoutHistoryModel(
       data: (json['data'] as List<dynamic>)
-          .map((e) => Datum.fromJson(e as Map<String, dynamic>))
+          .map((e) => HistoryData.fromJson(e as Map<String, dynamic>))
           .toList(),
       total: json['total'] as int,
     );
@@ -21,7 +21,7 @@ Map<String, dynamic> _$WorkoutHistoryModelToJson(
       'total': instance.total,
     };
 
-Datum _$DatumFromJson(Map<String, dynamic> json) => Datum(
+HistoryData _$HistoryDataFromJson(Map<String, dynamic> json) => HistoryData(
       startDate: json['startDate'] as String,
       workoutRecordId: json['workoutRecordId'] as int,
       workoutPlanId: json['workoutPlanId'] as int,
@@ -31,7 +31,8 @@ Datum _$DatumFromJson(Map<String, dynamic> json) => Datum(
           .toList(),
     );
 
-Map<String, dynamic> _$DatumToJson(Datum instance) => <String, dynamic>{
+Map<String, dynamic> _$HistoryDataToJson(HistoryData instance) =>
+    <String, dynamic>{
       'startDate': instance.startDate,
       'workoutRecordId': instance.workoutRecordId,
       'workoutPlanId': instance.workoutPlanId,

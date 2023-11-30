@@ -3,7 +3,6 @@ import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -26,9 +25,6 @@ class _LastScheduleBoxState extends State<LastScheduleBox> {
   Widget build(BuildContext context) {
     final lastWeek = widget.workoutSchedules.sublist(0, 7);
     final thisWeek = widget.workoutSchedules.sublist(7, 14);
-
-    print('lastWeek $lastWeek');
-    print('thisWeek $thisWeek');
 
     return Container(
       width: 100.w,

@@ -6,6 +6,8 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
+import 'package:fitend_member/workout/provider/workout_history_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -81,7 +83,7 @@ class _ScheduleResultSetInfoScreenState
                     thickness: 1,
                   ),
                   const SizedBox(
-                    height: 15,
+                    height: 9,
                   )
                 ],
               ),
@@ -102,12 +104,24 @@ class _ScheduleResultSetInfoScreenState
                             height: 1,
                           ),
                         ),
-                        SvgPicture.asset(SVGConstants.history)
+                        InkWell(
+                          onTap: () => Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => WorkoutHistoryScreen(
+                                workoutPlanId:
+                                    widget.workoutRecords[index].workoutPlanId,
+                              ),
+                            ),
+                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.all(6),
+                              child: SvgPicture.asset(SVGConstants.history)),
+                        )
                       ],
                     ),
-                    const SizedBox(
-                      height: 6,
-                    ),
+                    // const SizedBox(
+                    //   height: 6,
+                    // ),
                     Text(
                       widget.workoutRecords[index].targetMuscles.first,
                       style: s2SubTitle.copyWith(color: Pallete.lightGray),

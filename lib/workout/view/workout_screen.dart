@@ -27,6 +27,7 @@ import 'package:fitend_member/workout/component/timer_progress_card.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
+import 'package:fitend_member/workout/provider/workout_history_screen.dart';
 import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
@@ -955,7 +956,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                           const SizedBox(
                                             width: 10,
                                           ),
-                                          SvgPicture.asset(SVGConstants.list),
+                                          SvgPicture.asset(
+                                            SVGConstants.list,
+                                            width: 24,
+                                          ),
                                           const SizedBox(
                                             width: 10,
                                           ),
@@ -987,18 +991,57 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                           const SizedBox(
                                             width: 10,
                                           ),
-                                          SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child: SvgPicture.asset(
-                                              SVGConstants.guide,
-                                            ),
+                                          SvgPicture.asset(
+                                            SVGConstants.guide,
+                                            width: 24,
                                           ),
                                           const SizedBox(
                                             width: 10,
                                           ),
                                           Text(
                                             '운동 가이드',
+                                            style: h5Headline.copyWith(
+                                              height: 1,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(CupertinoPageRoute(
+                                        builder: (context) =>
+                                            WorkoutHistoryScreen(
+                                          workoutPlanId: widget
+                                              .exercises[model.exerciseIndex]
+                                              .workoutPlanId,
+                                        ),
+                                      ));
+                                    },
+                                    child: SizedBox(
+                                      height: 55,
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          SvgPicture.asset(
+                                            SVGConstants.history,
+                                            colorFilter: const ColorFilter.mode(
+                                              Colors.black,
+                                              BlendMode.srcIn,
+                                            ),
+                                            width: 24,
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            '운동 히스토리',
                                             style: h5Headline.copyWith(
                                               height: 1,
                                             ),

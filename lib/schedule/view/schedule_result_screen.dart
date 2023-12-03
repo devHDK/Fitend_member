@@ -227,7 +227,9 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                           Navigator.of(context).push(
                             CupertinoPageRoute(
                               builder: (context) => ScheduleResultSetInfoScreen(
-                                  workoutRecords: resultModel.workoutRecords),
+                                workoutRecords: resultModel.workoutRecords,
+                                startDate: resultModel.startDate,
+                              ),
                             ),
                           );
                         },

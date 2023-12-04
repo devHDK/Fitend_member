@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
@@ -142,17 +141,15 @@ class _ScheduleResultSetInfoScreenState
                         ),
                         child: Column(
                           children: [
-                            ...widget.workoutRecords[index].setInfo
-                                .mapIndexed((i, set) {
+                            ...widget.workoutRecords[index].setInfo.map((set) {
                               switch (widget
                                   .workoutRecords[index].trackingFieldId) {
                                 case 1:
-                                  return _setInfoCellWeightReps(i, set);
-
+                                  return _setInfoCellWeightReps(set);
                                 case 2:
-                                  return _setInfoCellReps(i, set);
+                                  return _setInfoCellReps(set);
                                 default:
-                                  return _setInfoCellTimer(i, set);
+                                  return _setInfoCellTimer(set);
                               }
                             })
                           ],
@@ -170,12 +167,12 @@ class _ScheduleResultSetInfoScreenState
     );
   }
 
-  Row _setInfoCellWeightReps(int index, SetInfo set) {
+  Row _setInfoCellWeightReps(SetInfo set) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          '${index + 1} Set',
+          '${set.index} Set',
           style: s2SubTitle.copyWith(
             color: Pallete.lightGray,
           ),
@@ -199,12 +196,12 @@ class _ScheduleResultSetInfoScreenState
     );
   }
 
-  Row _setInfoCellReps(int index, SetInfo set) {
+  Row _setInfoCellReps(SetInfo set) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          '${index + 1} Set',
+          '${set.index} Set',
           style: s2SubTitle.copyWith(
             color: Pallete.lightGray,
           ),
@@ -222,12 +219,12 @@ class _ScheduleResultSetInfoScreenState
     );
   }
 
-  Row _setInfoCellTimer(int index, SetInfo set) {
+  Row _setInfoCellTimer(SetInfo set) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          '${index + 1} Set',
+          '${set.index} Set',
           style: s2SubTitle.copyWith(
             color: Pallete.lightGray,
           ),

@@ -8,7 +8,7 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/component/muscle_card.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
-import 'package:fitend_member/workout/provider/workout_history_screen.dart';
+import 'package:fitend_member/workout/view/workout_history_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

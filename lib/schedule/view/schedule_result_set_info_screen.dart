@@ -5,7 +5,7 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
-import 'package:fitend_member/workout/provider/workout_history_screen.dart';
+import 'package:fitend_member/workout/view/workout_history_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

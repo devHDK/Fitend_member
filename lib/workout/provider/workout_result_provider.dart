@@ -78,8 +78,6 @@ class WorkoutRecordStateNotifier
       String startDate = '';
       WorkoutResultModel resultModel;
 
-      print(exercises);
-
       if (exercises == null || exercises.isEmpty) {
         final response = await resultRepository.getWorkoutResults(
           params: GetWorkoutRecordsParams(
@@ -183,7 +181,7 @@ class WorkoutRecordStateNotifier
                   workoutScheduleId: id,
                   workoutDuration: totalTime,
                 ),
-            lastSchedules: [],
+            // lastSchedules: [],
           );
         }
       }

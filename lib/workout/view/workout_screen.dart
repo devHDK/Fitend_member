@@ -1083,8 +1083,6 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
   Future<void> _onTapNext(
       BuildContext context, WorkoutProcessModel model) async {
-    print('dialog - isQuitting ===> ${model.isQuitting}');
-
     await ref
         .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
         .nextWorkout()

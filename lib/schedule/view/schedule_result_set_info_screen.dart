@@ -1,38 +1,69 @@
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
+import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
+import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/view/workout_history_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class ScheduleResultSetInfoScreen extends StatefulWidget {
+class ScheduleResultSetInfoScreen extends ConsumerStatefulWidget {
   final List<WorkoutRecord> workoutRecords;
   final String startDate;
+  final int workoutScheduleId;
 
   const ScheduleResultSetInfoScreen({
     super.key,
     required this.workoutRecords,
     required this.startDate,
+    required this.workoutScheduleId,
   });
 
   @override
-  State<ScheduleResultSetInfoScreen> createState() =>
+  ConsumerState<ScheduleResultSetInfoScreen> createState() =>
       _ScheduleResultSetInfoScreenState();
 }
 
 class _ScheduleResultSetInfoScreenState
-    extends State<ScheduleResultSetInfoScreen> {
+    extends ConsumerState<ScheduleResultSetInfoScreen> {
   @override
   Widget build(BuildContext context) {
     int completeCount = 0;
+    final state = ref.watch(workoutProvider(widget.workoutScheduleId));
+
+    if (state is WorkoutModelLoading) {
+      return const Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Pallete.point,
+          ),
+        ),
+      );
+    }
+
+    if (state is WorkoutModelError) {
+      return Scaffold(
+        backgroundColor: Pallete.background,
+        body: DialogWidgets.errorDialog(
+          message: state.message,
+          confirmText: '확인',
+          confirmOnTap: () => context.pop(),
+        ),
+      );
+    }
+
+    final workoutModel = state as WorkoutModel;
 
     for (var record in widget.workoutRecords) {
       for (var set in record.setInfo) {
@@ -90,6 +121,14 @@ class _ScheduleResultSetInfoScreenState
             SliverList.separated(
               itemCount: widget.workoutRecords.length,
               itemBuilder: (context, index) {
+                Set targetMuscles = {};
+                for (var targetMuscle
+                    in workoutModel.exercises[index].targetMuscles) {
+                  if (targetMuscle.type == 'main') {
+                    targetMuscles.add(targetMuscle.name);
+                  }
+                }
+
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -122,7 +161,7 @@ class _ScheduleResultSetInfoScreenState
                     //   height: 6,
                     // ),
                     Text(
-                      widget.workoutRecords[index].targetMuscles.first,
+                      targetMuscles.join(' ∙ '),
                       style: s2SubTitle.copyWith(color: Pallete.lightGray),
                     ),
                     const SizedBox(

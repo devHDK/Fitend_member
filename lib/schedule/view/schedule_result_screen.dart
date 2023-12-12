@@ -57,20 +57,23 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getResults();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        getResults();
+      });
     });
   }
 
   void getResults() async {
-    if (mounted) {
-      await ref
-          .read(workoutResultProvider(widget.workoutScheduleId).notifier)
-          .getWorkoutResults(
-            workoutScheduleId: widget.workoutScheduleId,
-            exercises: widget.exercises,
-          );
-    }
+    if (!mounted) return;
+
+    var notifier =
+        ref.read(workoutResultProvider(widget.workoutScheduleId).notifier);
+
+    await notifier.getWorkoutResults(
+      workoutScheduleId: widget.workoutScheduleId,
+      exercises: widget.exercises,
+    );
   }
 
   @override
@@ -82,7 +85,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(workoutResultProvider(widget.workoutScheduleId));
 
-    if (state is WorkoutResultModelLoading) {
+    if (state == null || state is WorkoutResultModelLoading) {
       return const Scaffold(
         backgroundColor: Pallete.background,
         body: Center(
@@ -229,6 +232,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                               builder: (context) => ScheduleResultSetInfoScreen(
                                 workoutRecords: resultModel.workoutRecords,
                                 startDate: resultModel.startDate,
+                                workoutScheduleId: widget.workoutScheduleId,
                               ),
                             ),
                           );

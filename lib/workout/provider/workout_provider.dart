@@ -133,8 +133,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
             tempResultModel =
                 tempResultModel.copyWith(workoutRecords: tempRecordList);
           });
-
-          workoutResultProvider.state = tempResultModel;
         } else {
           await workoutResultProvider.getWorkoutResults(workoutScheduleId: id);
 

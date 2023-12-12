@@ -235,8 +235,6 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               onTap: () async {
                 var tempDir = await getTemporaryDirectory();
 
-                // print(tempDir);
-
                 if (tempDir.existsSync()) {
                   tempDir.deleteSync(recursive: true);
                   DialogWidgets.showToast('캐시가 삭제되었습니다!');

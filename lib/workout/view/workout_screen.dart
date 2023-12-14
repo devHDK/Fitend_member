@@ -261,118 +261,146 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         resizeToAvoidBottomInset: false,
         backgroundColor: Pallete.gray,
         floatingActionButton: isSwipeUp
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
+            ? Stack(
                 children: [
-                  GestureDetector(
-                    onTap: threadCreateState.isUploading ||
-                            threadCreateState.isLoading
-                        ? null
-                        : () {
-                            Navigator.of(context).push(CupertinoDialogRoute(
-                                builder: (context) {
-                                  return ThreadCreateScreen(
-                                    trainer: ThreadTrainer(
-                                      id: userModel
-                                          .user.activeTrainers.first.id,
-                                      nickname: userModel
-                                          .user.activeTrainers.first.nickname,
-                                      profileImage: userModel.user
-                                          .activeTrainers.first.profileImage,
-                                    ),
-                                    user: ThreadUser(
-                                      id: userModel.user.id,
-                                      nickname: userModel.user.nickname,
-                                      gender: userModel.user.gender,
-                                    ),
-                                    title:
-                                        '${workoutModel.exercises[model.exerciseIndex].name} ${model.setInfoCompleteList[model.exerciseIndex] + 1}SET',
-                                  );
-                                },
-                                context: context));
-                          },
-                    child: Container(
-                      width: 98,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Pallete.darkGray,
+                  Positioned(
+                    left: 30,
+                    child: TipBubble(
+                      text: '코치님께 스레드를 남길 수 있어요!',
+                      textStyle: s3SubTitle.copyWith(
+                        color: Colors.white,
+                        height: 1,
                       ),
-                      child: Center(
-                        child: threadCreateState.isUploading
-                            ? LoadingAnimationWidget.dotsTriangle(
-                                color: Colors.white,
-                                size: 25,
-                              )
-                            : SvgPicture.asset(
-                                SVGConstants.message,
-                                width: 25,
-                                height: 25,
-                              ),
-                      ),
+                      bubbleColor: Pallete.point,
+                      bubblePosition: BubblePosition.bottomLeft,
                     ),
                   ),
-                  const SizedBox(
-                    width: 9,
-                  ),
-                  GestureDetector(
-                    onTap: model.isQuitting
-                        ? null
-                        : () async {
-                            FirebaseAnalytics.instance
-                                .logEvent(name: 'click_large_next_button');
+                  Padding(
+                    padding: const EdgeInsets.only(top: 38),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: threadCreateState.isUploading ||
+                                  threadCreateState.isLoading
+                              ? null
+                              : () {
+                                  Navigator.of(context)
+                                      .push(CupertinoDialogRoute(
+                                          builder: (context) {
+                                            return ThreadCreateScreen(
+                                              trainer: ThreadTrainer(
+                                                id: userModel.user
+                                                    .activeTrainers.first.id,
+                                                nickname: userModel
+                                                    .user
+                                                    .activeTrainers
+                                                    .first
+                                                    .nickname,
+                                                profileImage: userModel
+                                                    .user
+                                                    .activeTrainers
+                                                    .first
+                                                    .profileImage,
+                                              ),
+                                              user: ThreadUser(
+                                                id: userModel.user.id,
+                                                nickname:
+                                                    userModel.user.nickname,
+                                                gender: userModel.user.gender,
+                                              ),
+                                              title:
+                                                  '${workoutModel.exercises[model.exerciseIndex].name} ${model.setInfoCompleteList[model.exerciseIndex] + 1}SET',
+                                            );
+                                          },
+                                          context: context));
+                                },
+                          child: Container(
+                            width: 98,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Pallete.darkGray,
+                            ),
+                            child: Center(
+                              child: threadCreateState.isUploading
+                                  ? LoadingAnimationWidget.dotsTriangle(
+                                      color: Colors.white,
+                                      size: 25,
+                                    )
+                                  : SvgPicture.asset(
+                                      SVGConstants.message,
+                                      width: 25,
+                                      height: 25,
+                                    ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 9,
+                        ),
+                        GestureDetector(
+                          onTap: model.isQuitting
+                              ? null
+                              : () async {
+                                  FirebaseAnalytics.instance.logEvent(
+                                      name: 'click_large_next_button');
 
-                            await _onTapNext(context, model);
+                                  await _onTapNext(context, model);
 
-                            isTooltipVisible = false;
-                            tooltipCount = 0;
-                            onTooltipPressed();
-                            tooltipSeq = 0;
-                            if (mounted) {
-                              setState(() {});
-                            }
+                                  isTooltipVisible = false;
+                                  tooltipCount = 0;
+                                  onTooltipPressed();
+                                  tooltipSeq = 0;
+                                  if (mounted) {
+                                    setState(() {});
+                                  }
 
-                            if (isSwipeUp) {
-                              final index = model.setInfoCompleteList[
-                                          model.exerciseIndex] ==
-                                      model.maxSetInfoList[model.exerciseIndex]
-                                  ? model.setInfoCompleteList[
-                                          model.exerciseIndex] -
-                                      1
-                                  : model
-                                      .setInfoCompleteList[model.exerciseIndex];
-                              if (model.setInfoCompleteList[
-                                      model.exerciseIndex] >
-                                  5) {
-                                _movetoRecentSetInfo(index);
-                              }
-                            }
-                          },
-                    child: Container(
-                      width: size.width - 56 - 107,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Pallete.point,
-                      ),
-                      child: Center(
-                        child: model.isQuitting
-                            ? const SizedBox(
-                                width: 15,
-                                height: 15,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Text(
-                                '다음 운동',
-                                style: h2Headline.copyWith(
-                                  fontSize: 14,
-                                  color: Colors.white,
-                                ),
-                              ),
-                      ),
+                                  if (isSwipeUp) {
+                                    final index = model.setInfoCompleteList[
+                                                model.exerciseIndex] ==
+                                            model.maxSetInfoList[
+                                                model.exerciseIndex]
+                                        ? model.setInfoCompleteList[
+                                                model.exerciseIndex] -
+                                            1
+                                        : model.setInfoCompleteList[
+                                            model.exerciseIndex];
+                                    if (model.setInfoCompleteList[
+                                            model.exerciseIndex] >
+                                        5) {
+                                      _movetoRecentSetInfo(index);
+                                    }
+                                  }
+                                },
+                          child: Container(
+                            width: size.width - 56 - 107,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Pallete.point,
+                            ),
+                            child: Center(
+                              child: model.isQuitting
+                                  ? const SizedBox(
+                                      width: 15,
+                                      height: 15,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Text(
+                                      '다음 운동',
+                                      style: h2Headline.copyWith(
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -970,7 +998,19 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                             style: h5Headline.copyWith(
                                               height: 1,
                                             ),
-                                          )
+                                          ),
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                          TipBubble(
+                                            text: '운동 순서를 바꿀 수 있어요!',
+                                            textStyle: s3SubTitle.copyWith(
+                                              color: Colors.white,
+                                              height: 1,
+                                            ),
+                                            bubbleColor: Pallete.point,
+                                            bubblePosition: BubblePosition.left,
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -1076,9 +1116,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               right: 50.w - 59.5,
               child: TipBubble(
                 text: '위로 끌어올려 보세요!',
-                textStyle: s3SubTitle.copyWith(
-                  color: Colors.white,
-                ),
+                textStyle: s3SubTitle.copyWith(color: Colors.white, height: 1),
                 bubbleColor: Pallete.point,
                 bubblePosition: BubblePosition.bottomCenter,
               ),

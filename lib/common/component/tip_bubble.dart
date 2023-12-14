@@ -8,8 +8,6 @@ enum BubblePosition {
   right,
 }
 
-GlobalKey containerKey = GlobalKey();
-
 class TipBubble extends StatelessWidget {
   final String text;
   final TextStyle textStyle;
@@ -26,11 +24,13 @@ class TipBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    GlobalKey containerKey = GlobalKey();
+
     return Stack(
       children: [
         Container(
           key: containerKey,
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
             color: bubbleColor,
             borderRadius: BorderRadius.circular(3),
@@ -48,6 +48,7 @@ class TipBubble extends StatelessWidget {
             painter: BubbleTail(
               bubblePosition: bubblePosition,
               color: bubbleColor,
+              globalKey: containerKey,
             ),
           ),
         ),
@@ -59,10 +60,12 @@ class TipBubble extends StatelessWidget {
 class BubbleTail extends CustomPainter {
   final BubblePosition bubblePosition;
   final Color color;
+  final GlobalKey globalKey;
 
   BubbleTail({
     required this.bubblePosition,
     required this.color,
+    required this.globalKey,
   });
 
   @override
@@ -70,10 +73,8 @@ class BubbleTail extends CustomPainter {
     Path path = Path();
 
     RenderBox containerBox =
-        containerKey.currentContext!.findRenderObject() as RenderBox;
+        globalKey.currentContext!.findRenderObject() as RenderBox;
     Size containerSize = containerBox.size;
-
-    print(containerSize);
 
     switch (bubblePosition) {
       case BubblePosition.bottomLeft:

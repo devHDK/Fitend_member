@@ -67,6 +67,14 @@ class _AppState extends ConsumerState<App> {
     //sharedPreferences 세팅
     final pref = await ref.read(sharedPrefsProvider);
 
+    if (pref.getBool(StringConstants.isFirstRunWorkout) == null) {
+      pref.setBool(StringConstants.isFirstRunWorkout, true);
+    }
+
+    if (pref.getBool(StringConstants.isFirstRunThread) == null) {
+      pref.setBool(StringConstants.isFirstRunThread, true);
+    }
+
     Future.wait([
       pref.setBool(StringConstants.needScheduleUpdate, false),
       pref.setBool(StringConstants.needNotificationUpdate, false),

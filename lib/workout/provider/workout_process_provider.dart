@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart';
 import 'package:fitend_member/common/provider/hive_modified_exercise_provider.dart';
 import 'package:fitend_member/common/provider/hive_schedule_record_provider.dart';
@@ -7,6 +8,7 @@ import 'package:fitend_member/common/provider/hive_timer_x_more_record_provider.
 import 'package:fitend_member/common/provider/hive_workout_record.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_result_provider.dart';
+import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/hive_box_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/set_info_model.dart';
@@ -27,6 +29,7 @@ import 'package:fitend_member/workout/repository/workout_records_repository.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final workoutProcessProvider = StateNotifierProvider.family<
     WorkoutProcessStateNotifier, WorkoutProcessModelBase?, int>((ref, id) {
@@ -34,6 +37,7 @@ final workoutProcessProvider = StateNotifierProvider.family<
   final provider = ref.read(workoutProvider(id).notifier);
   final tProvider = ref.read(threadProvider.notifier);
   final meProvider = ref.read(getMeProvider.notifier);
+  final pref = ref.watch(sharedPrefsProvider);
   final AsyncValue<Box> workoutRecordSimpleBox =
       ref.watch(hiveWorkoutRecordSimpleProvider);
   final AsyncValue<Box> workoutRecordForResultBox =
@@ -53,6 +57,7 @@ final workoutProcessProvider = StateNotifierProvider.family<
     workoutProvider: provider,
     threadProvider: tProvider,
     getMeProvider: meProvider,
+    pref: pref,
     workoutRecordSimpleBox: workoutRecordSimpleBox,
     workoutRecordForResultBox: workoutRecordForResultBox,
     timerWorkoutBox: timerWorkoutBox,
@@ -71,6 +76,7 @@ class WorkoutProcessStateNotifier
   final WorkoutStateNotifier workoutProvider;
   final ThreadStateNotifier threadProvider;
   final GetMeStateNotifier getMeProvider;
+  final Future<SharedPreferences> pref;
   final AsyncValue<Box> workoutRecordSimpleBox;
   final AsyncValue<Box> workoutRecordForResultBox;
   final AsyncValue<Box> timerWorkoutBox;
@@ -86,6 +92,7 @@ class WorkoutProcessStateNotifier
     required this.workoutProvider,
     required this.threadProvider,
     required this.getMeProvider,
+    required this.pref,
     required this.workoutRecordSimpleBox,
     required this.workoutRecordForResultBox,
     required this.timerWorkoutBox,
@@ -99,23 +106,27 @@ class WorkoutProcessStateNotifier
   }
 
   //init
-  void init(WorkoutStateNotifier workoutProvider) {
+  void init(WorkoutStateNotifier workoutProvider) async {
     final isLoading = state is WorkoutProcessModelLoading;
     if (isLoading) return;
 
     state = WorkoutProcessModelLoading();
 
     WorkoutProcessModel tempState = WorkoutProcessModel(
-        exerciseIndex: 0,
-        maxExerciseIndex: 0,
-        setInfoCompleteList: [],
-        maxSetInfoList: [],
-        exercises: [],
-        modifiedExercises: [],
-        workoutFinished: false,
-        groupCounts: {},
-        totalTime: 0,
-        isQuitting: false);
+      exerciseIndex: 0,
+      maxExerciseIndex: 0,
+      setInfoCompleteList: [],
+      maxSetInfoList: [],
+      exercises: [],
+      modifiedExercises: [],
+      workoutFinished: false,
+      groupCounts: {},
+      totalTime: 0,
+      isQuitting: false,
+      isSwipeGuide: true,
+      isWorkoutChangeGuide: true,
+      isThreadGuide: true,
+    );
     List<Exercise> tempExercises = [];
     final workoutProviderState = workoutProvider.state as WorkoutModel;
 
@@ -210,6 +221,9 @@ class WorkoutProcessStateNotifier
       }
     });
 
+    final sharedPref = await pref;
+    final isFirstRun = sharedPref.getBool(StringConstants.isFirstRunWorkout);
+
     workoutProvider.state = workoutProviderState.copyWith(isProcessing: true);
 
     state = WorkoutProcessModel(
@@ -223,6 +237,9 @@ class WorkoutProcessStateNotifier
       groupCounts: tempState.groupCounts,
       totalTime: tempState.totalTime,
       isQuitting: tempState.isQuitting,
+      isSwipeGuide: isFirstRun == null || isFirstRun ? true : false,
+      isThreadGuide: isFirstRun == null || isFirstRun ? true : false,
+      isWorkoutChangeGuide: isFirstRun == null || isFirstRun ? true : false,
     );
   }
 
@@ -847,6 +864,28 @@ class WorkoutProcessStateNotifier
     final pstate = state as WorkoutProcessModel;
     pstate.totalTime += seconds;
     processTotalTimeBox.whenData((value) => value.put(id, pstate.totalTime));
+
+    state = pstate;
+  }
+
+  void putIsGuide({
+    bool? isSwipeGuide,
+    bool? isWorkoutChangeGuide,
+    bool? isThreadGuide,
+  }) {
+    final pstate = state as WorkoutProcessModel;
+
+    if (isSwipeGuide != null) {
+      pstate.isSwipeGuide = isSwipeGuide;
+    }
+
+    if (isWorkoutChangeGuide != null) {
+      pstate.isWorkoutChangeGuide = isWorkoutChangeGuide;
+    }
+
+    if (isThreadGuide != null) {
+      pstate.isThreadGuide = isThreadGuide;
+    }
 
     state = pstate;
   }

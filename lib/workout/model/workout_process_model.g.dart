@@ -28,6 +28,9 @@ WorkoutProcessModel _$WorkoutProcessModelFromJson(Map<String, dynamic> json) =>
       ),
       totalTime: json['totalTime'] as int,
       isQuitting: json['isQuitting'] as bool,
+      isSwipeGuide: json['isSwipeGuide'] as bool,
+      isWorkoutChangeGuide: json['isWorkoutChangeGuide'] as bool,
+      isThreadGuide: json['isThreadGuide'] as bool,
     );
 
 Map<String, dynamic> _$WorkoutProcessModelToJson(
@@ -44,4 +47,7 @@ Map<String, dynamic> _$WorkoutProcessModelToJson(
           instance.groupCounts.map((k, e) => MapEntry(k.toString(), e)),
       'totalTime': instance.totalTime,
       'isQuitting': instance.isQuitting,
+      'isSwipeGuide': instance.isSwipeGuide,
+      'isWorkoutChangeGuide': instance.isWorkoutChangeGuide,
+      'isThreadGuide': instance.isThreadGuide,
     };

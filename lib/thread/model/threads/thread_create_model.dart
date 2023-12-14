@@ -62,6 +62,8 @@ class ThreadCreateTempModel {
   final List<bool>? isEditedAssets;
   @JsonKey(name: "gallery")
   List<GalleryModel>? gallery;
+  @JsonKey(name: "isFirstRun")
+  bool isFirstRun;
 
   ThreadCreateTempModel({
     this.trainerId,
@@ -74,6 +76,7 @@ class ThreadCreateTempModel {
     required this.totalCount,
     this.isEditedAssets,
     this.gallery,
+    required this.isFirstRun,
   });
 
   ThreadCreateTempModel copyWith({
@@ -83,6 +86,7 @@ class ThreadCreateTempModel {
     List<String>? assetsPaths,
     bool? isLoading,
     bool? isUploading,
+    bool? isFirstRun,
     int? doneCount,
     int? totalCount,
     List<bool>? isEditedAssets,
@@ -99,6 +103,7 @@ class ThreadCreateTempModel {
         totalCount: totalCount ?? this.totalCount,
         isEditedAssets: isEditedAssets ?? this.isEditedAssets,
         gallery: gallery ?? this.gallery,
+        isFirstRun: isFirstRun ?? this.isFirstRun,
       );
 
   factory ThreadCreateTempModel.fromJson(Map<String, dynamic> json) =>

@@ -43,6 +43,7 @@ ThreadCreateTempModel _$ThreadCreateTempModelFromJson(
       gallery: (json['gallery'] as List<dynamic>?)
           ?.map((e) => GalleryModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      isFirstRun: json['isFirstRun'] as bool,
     );
 
 Map<String, dynamic> _$ThreadCreateTempModelToJson(
@@ -58,4 +59,5 @@ Map<String, dynamic> _$ThreadCreateTempModelToJson(
       'totalCount': instance.totalCount,
       'isEditedAssets': instance.isEditedAssets,
       'gallery': instance.gallery,
+      'isFirstRun': instance.isFirstRun,
     };

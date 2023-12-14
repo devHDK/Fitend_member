@@ -6,6 +6,7 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/dio/dio_upload.dart';
+import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/model/common/gallery_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
@@ -27,6 +28,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -38,6 +40,7 @@ final threadCreateProvider =
   final commentRepository = ref.watch(commentRepositoryProvider);
   final fileRepository = ref.watch(fileRepositoryProvider);
   final dioUpload = ref.watch(dioUploadProvider);
+  final pref = ref.watch(sharedPrefsProvider);
   final threadListState = ref.watch(threadProvider.notifier);
 
   return ThreadCreateStateNotifier(
@@ -45,6 +48,7 @@ final threadCreateProvider =
     commentRepository: commentRepository,
     fileRepository: fileRepository,
     dioUpload: dioUpload,
+    pref: pref,
     threadListState: threadListState,
   );
 });
@@ -54,6 +58,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
   final ThreadCommentRepository commentRepository;
   final FileRepository fileRepository;
   final Dio dioUpload;
+  final Future<SharedPreferences> pref;
   final ThreadStateNotifier threadListState;
 
   ThreadCreateStateNotifier({
@@ -61,6 +66,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     required this.commentRepository,
     required this.fileRepository,
     required this.dioUpload,
+    required this.pref,
     required this.threadListState,
   }) : super(
           ThreadCreateTempModel(
@@ -70,20 +76,24 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
             doneCount: 0,
             totalCount: 0,
             assetsPaths: [],
+            isFirstRun: false,
           ),
         ) {
     init();
   }
 
-  void init() {
+  void init() async {
+    final sharedPref = await pref;
+    final isFirst = sharedPref.getBool(StringConstants.isFirstRunThread);
+
     state = ThreadCreateTempModel(
-      assetsPaths: [],
-      isLoading: false,
-      isUploading: false,
-      content: '',
-      doneCount: 0,
-      totalCount: 0,
-    );
+        assetsPaths: [],
+        isLoading: false,
+        isUploading: false,
+        content: '',
+        doneCount: 0,
+        totalCount: 0,
+        isFirstRun: isFirst == null || isFirst ? true : false);
   }
 
   void updateFromCache(ThreadCreateTempModel model) {
@@ -96,6 +106,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       totalCount: 0,
       assetsPaths: model.assetsPaths,
       trainerId: model.trainerId,
+      isFirstRun: model.isFirstRun,
     );
   }
 
@@ -426,6 +437,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       assetsPaths: assetPaths,
       isEditedAssets: List.generate(assetPaths.length, (index) => false),
       gallery: editModel.gallery,
+      isFirstRun: false,
     );
   }
 
@@ -645,6 +657,16 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         pstate.gallery!.length >= index + 1) {
       pstate.gallery!.removeAt(index);
     }
+
+    state = pstate.copyWith();
+  }
+
+  void putIsGuide({
+    required bool isFirstRun,
+  }) {
+    final pstate = state.copyWith();
+
+    pstate.isFirstRun = isFirstRun;
 
     state = pstate.copyWith();
   }

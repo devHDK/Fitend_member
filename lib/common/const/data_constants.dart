@@ -68,6 +68,9 @@ class StringConstants {
   static String workoutFeedback = 'WorkoutFeedback';
   static String processingExerciseIndex = 'processExerciseIndex';
 
+  static String isFirstRunWorkout = 'isFirstRunWorkout';
+  static String isFirstRunThread = 'isFirstRunThread';
+
   static final accessToken =
       F.appFlavor == Flavor.production ? 'ACCESS_TOKEN' : 'ACCESS_TOKEN_DEV';
   static final refreshToken =

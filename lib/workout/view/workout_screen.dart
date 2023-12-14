@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:fitend_member/common/component/tip_bubble.dart';
 import 'package:fitend_member/common/component/custom_clipper.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
@@ -1069,7 +1070,19 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                   ),
                 ],
               ),
-            )
+            ),
+            Positioned(
+              bottom: 195,
+              right: 50.w - 59.5,
+              child: TipBubble(
+                text: '위로 끌어올려 보세요!',
+                textStyle: s3SubTitle.copyWith(
+                  color: Colors.white,
+                ),
+                bubbleColor: Pallete.point,
+                bubblePosition: BubblePosition.bottomCenter,
+              ),
+            ),
           ],
         ),
       ),

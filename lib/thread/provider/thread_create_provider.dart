@@ -133,6 +133,10 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         gallery: [],
       );
 
+      if (state.isFirstRun) {
+        putIsGuide(isFirstRun: false);
+      }
+
       if (state.assetsPaths != null && state.assetsPaths!.isNotEmpty) {
         final isOverLimtSize =
             await DataUtils.checkFileSize(state.assetsPaths!);
@@ -663,8 +667,13 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
 
   void putIsGuide({
     required bool isFirstRun,
-  }) {
+  }) async {
     final pstate = state.copyWith();
+    final sharedPref = await pref;
+    final threadFirstRun = sharedPref.getBool(StringConstants.isFirstRunThread);
+    if (threadFirstRun != null && threadFirstRun) {
+      sharedPref.setBool(StringConstants.isFirstRunThread, false);
+    }
 
     pstate.isFirstRun = isFirstRun;
 

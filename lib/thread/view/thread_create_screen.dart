@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/component/tip_bubble.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
@@ -447,7 +448,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
             _titleTextFormfield(state),
             _contentTextFormField(state),
             SizedBox(
-              height: 140,
+              height: 180,
               child: state.isLoading
                   ? const Center(
                       child: CircularProgressIndicator(
@@ -477,49 +478,79 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                         final path = Uint8List.fromList(intPath);
                         final file = File.fromRawPath(path);
                         final type = MediaUtils.getMediaType(file.path);
+
                         return Stack(
                           children: [
-                            SizedBox(
-                              child: Center(
-                                child: InkWell(
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onTap: () => state.isUploading
-                                      ? null
-                                      : Navigator.of(context).push(
-                                          CupertinoPageRoute(
-                                            builder: (context) {
-                                              return ThreadAssetEditScreen(
-                                                pageIndex: index,
-                                                isThreadEdit:
-                                                    widget.threadEditModel !=
-                                                            null
-                                                        ? true
-                                                        : false,
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                  child: type == MediaType.image
-                                      ? Hero(
-                                          tag: file.path,
-                                          child: PreviewImage(
-                                            file: file,
-                                          ),
-                                        )
-                                      : Hero(
-                                          tag: state.assetsPaths![index],
-                                          child: PreviewVideoThumbNail(
-                                            file: file,
-                                          ),
-                                        ),
+                            if (index == 0 && state.isFirstRun)
+                              Positioned(
+                                top: -5,
+                                child: TipBubble(
+                                  text: '터치 하면 수정할수있어요!',
+                                  textStyle: s3SubTitle.copyWith(
+                                    color: Colors.white,
+                                    height: 1,
+                                  ),
+                                  bubbleColor: Pallete.point,
+                                  bubblePosition: BubblePosition.bottomLeft,
+                                  distance: 65,
                                 ),
                               ),
+                            Column(
+                              children: [
+                                const SizedBox(
+                                  height: 40,
+                                ),
+                                SizedBox(
+                                  child: InkWell(
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: state.isUploading
+                                        ? null
+                                        : () {
+                                            if (mounted && state.isFirstRun) {
+                                              ref
+                                                  .read(threadCreateProvider
+                                                      .notifier)
+                                                  .putIsGuide(
+                                                      isFirstRun: false);
+                                            }
+
+                                            Navigator.of(context).push(
+                                              CupertinoPageRoute(
+                                                builder: (context) {
+                                                  return ThreadAssetEditScreen(
+                                                    pageIndex: index,
+                                                    isThreadEdit:
+                                                        widget.threadEditModel !=
+                                                                null
+                                                            ? true
+                                                            : false,
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                    child: type == MediaType.image
+                                        ? Hero(
+                                            tag: file.path,
+                                            child: PreviewImage(
+                                              file: file,
+                                            ),
+                                          )
+                                        : Hero(
+                                            tag: state.assetsPaths![index],
+                                            child: PreviewVideoThumbNail(
+                                              file: file,
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              ],
                             ),
                             if (!state.isUploading)
                               Positioned(
                                 right: -13,
-                                top: -13,
+                                top: 15,
                                 child: IconButton(
                                   highlightColor: Colors.transparent,
                                   splashColor: Colors.transparent,

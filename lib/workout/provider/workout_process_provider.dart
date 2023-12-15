@@ -503,6 +503,12 @@ class WorkoutProcessStateNotifier
 
       List<WorkoutRecordSimple> tempRecordList = [];
 
+      final sharedPref = await pref;
+      final isFirstRun = sharedPref.getBool(StringConstants.isFirstRunWorkout);
+      if (isFirstRun != null && isFirstRun) {
+        await sharedPref.setBool(StringConstants.isFirstRunWorkout, false);
+      }
+
       workoutRecordSimpleBox.whenData(
         (value) {
           for (int i = 0; i < pstate.exercises.length; i++) {

@@ -263,18 +263,20 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         floatingActionButton: isSwipeUp
             ? Stack(
                 children: [
-                  Positioned(
-                    left: 30,
-                    child: TipBubble(
-                      text: '코치님께 스레드를 남길 수 있어요!',
-                      textStyle: s3SubTitle.copyWith(
-                        color: Colors.white,
-                        height: 1,
+                  if (model.isThreadGuide)
+                    Positioned(
+                      left: 30,
+                      child: TipBubble(
+                        text: '코치님께 스레드를 남길 수 있어요!',
+                        textStyle: s3SubTitle.copyWith(
+                          color: Colors.white,
+                          height: 1,
+                        ),
+                        bubbleColor: Pallete.point,
+                        bubblePosition: BubblePosition.bottomLeft,
+                        distance: 42,
                       ),
-                      bubbleColor: Pallete.point,
-                      bubblePosition: BubblePosition.bottomLeft,
                     ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 38),
                     child: Row(
@@ -286,6 +288,18 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   threadCreateState.isLoading
                               ? null
                               : () {
+                                  if (mounted) {
+                                    if (model.isThreadGuide) {
+                                      ref
+                                          .read(workoutProcessProvider(
+                                                  widget.workoutScheduleId)
+                                              .notifier)
+                                          .putIsGuide(
+                                            isThreadGuide: false,
+                                          );
+                                    }
+                                  }
+
                                   Navigator.of(context)
                                       .push(CupertinoDialogRoute(
                                           builder: (context) {
@@ -578,6 +592,15 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
               },
               onPanelOpened: () {
                 if (mounted) {
+                  if (model.isSwipeGuide) {
+                    ref
+                        .read(workoutProcessProvider(widget.workoutScheduleId)
+                            .notifier)
+                        .putIsGuide(
+                          isSwipeGuide: false,
+                        );
+                  }
+
                   setState(() {
                     isSwipeUp = true;
 
@@ -932,6 +955,18 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   SvgPicture.asset(SVGConstants.message),
                                   InkWell(
                                     onTap: () async {
+                                      if (mounted) {
+                                        if (model.isWorkoutChangeGuide) {
+                                          ref
+                                              .read(workoutProcessProvider(
+                                                      widget.workoutScheduleId)
+                                                  .notifier)
+                                              .putIsGuide(
+                                                isWorkoutChangeGuide: false,
+                                              );
+                                        }
+                                      }
+
                                       Navigator.of(context)
                                           .push(CupertinoPageRoute(
                                         builder: (context) =>
@@ -1002,15 +1037,17 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                           const SizedBox(
                                             width: 20,
                                           ),
-                                          TipBubble(
-                                            text: '운동 순서를 바꿀 수 있어요!',
-                                            textStyle: s3SubTitle.copyWith(
-                                              color: Colors.white,
-                                              height: 1,
+                                          if (model.isWorkoutChangeGuide)
+                                            TipBubble(
+                                              text: '운동 순서를 바꿀 수 있어요!',
+                                              textStyle: s3SubTitle.copyWith(
+                                                color: Colors.white,
+                                                height: 1,
+                                              ),
+                                              bubbleColor: Pallete.point,
+                                              bubblePosition:
+                                                  BubblePosition.left,
                                             ),
-                                            bubbleColor: Pallete.point,
-                                            bubblePosition: BubblePosition.left,
-                                          ),
                                         ],
                                       ),
                                     ),
@@ -1111,16 +1148,18 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                 ],
               ),
             ),
-            Positioned(
-              bottom: 195,
-              right: 50.w - 59.5,
-              child: TipBubble(
-                text: '위로 끌어올려 보세요!',
-                textStyle: s3SubTitle.copyWith(color: Colors.white, height: 1),
-                bubbleColor: Pallete.point,
-                bubblePosition: BubblePosition.bottomCenter,
+            if (model.isSwipeGuide)
+              Positioned(
+                bottom: 195,
+                right: 50.w - 59.5,
+                child: TipBubble(
+                  text: '위로 끌어올려 보세요!',
+                  textStyle:
+                      s3SubTitle.copyWith(color: Colors.white, height: 1),
+                  bubbleColor: Pallete.point,
+                  bubblePosition: BubblePosition.bottomCenter,
+                ),
               ),
-            ),
           ],
         ),
       ),

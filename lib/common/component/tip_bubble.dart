@@ -13,13 +13,15 @@ class TipBubble extends StatelessWidget {
   final TextStyle textStyle;
   final Color bubbleColor;
   final BubblePosition bubblePosition;
+  double? distance;
 
-  const TipBubble({
+  TipBubble({
     super.key,
     required this.text,
     required this.textStyle,
     required this.bubbleColor,
     required this.bubblePosition,
+    this.distance = 20,
   });
 
   @override
@@ -49,6 +51,7 @@ class TipBubble extends StatelessWidget {
               bubblePosition: bubblePosition,
               color: bubbleColor,
               globalKey: containerKey,
+              distance: distance!,
             ),
           ),
         ),
@@ -61,11 +64,13 @@ class BubbleTail extends CustomPainter {
   final BubblePosition bubblePosition;
   final Color color;
   final GlobalKey globalKey;
+  final double distance;
 
   BubbleTail({
     required this.bubblePosition,
     required this.color,
     required this.globalKey,
+    required this.distance,
   });
 
   @override
@@ -78,9 +83,9 @@ class BubbleTail extends CustomPainter {
 
     switch (bubblePosition) {
       case BubblePosition.bottomLeft:
-        path.moveTo(20, 0);
-        path.lineTo(24, 8);
-        path.lineTo(28, 0);
+        path.moveTo(distance, 0);
+        path.lineTo(distance + 4, 8);
+        path.lineTo(distance + 8, 0);
         break;
       case BubblePosition.bottomCenter:
         path.moveTo((containerSize.width / 2) - 4, 0);
@@ -89,9 +94,9 @@ class BubbleTail extends CustomPainter {
         path.lineTo(0, size.height);
         break;
       case BubblePosition.bottomRight:
-        path.moveTo(containerSize.width - 20, 0);
-        path.lineTo(containerSize.width - 16, 8);
-        path.lineTo(containerSize.width - 12, 0);
+        path.moveTo(containerSize.width - distance, 0);
+        path.lineTo(containerSize.width - (distance - 4), 8);
+        path.lineTo(containerSize.width - (distance - 8), 0);
         break;
       case BubblePosition.left:
         path.moveTo(0, -(containerSize.height / 2 - 4));

@@ -241,6 +241,10 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
 
   //modifiedExecises 등등 저장
   void workoutSaveForStart() async {
+    try {
+      repository.putworkoutScheduleStart(id: id);
+    } catch (e) {}
+
     final pstate = state as WorkoutModel;
 
     exerciseIndexBox.whenData((value) {

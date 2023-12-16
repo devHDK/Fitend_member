@@ -54,4 +54,12 @@ abstract class WorkoutScheduleRepository {
     @Path('id') required int id,
     @Body() required PutWorkoutScheduleModel body,
   });
+
+  @PUT('/workoutSchedules/{id}/start')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<void> putworkoutScheduleStart({
+    @Path('id') required int id,
+  });
 }

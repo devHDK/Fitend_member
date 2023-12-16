@@ -277,40 +277,11 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       workoutProcessProvider(widget.workoutScheduleId).notifier)
                   .putIsVideoRecordFalse();
 
-              showDialog(
-                context: context,
-                builder: (context) => DialogWidgets.confirmDialog(
-                  message: '운동자세 확인 및 피드백을 위해 \n영상을 녹화 후 스레드에 올려주세요 🤳',
-                  confirmText: '네,  바로할게요',
-                  cancelText: '조금 이따 할게요',
-                  confirmOnTap: () {
-                    context.pop();
-
-                    Navigator.of(context).push(
-                      CupertinoDialogRoute(
-                          builder: (context) {
-                            return ThreadCreateScreen(
-                              trainer: ThreadTrainer(
-                                id: userModel.user.activeTrainers.first.id,
-                                nickname: userModel
-                                    .user.activeTrainers.first.nickname,
-                                profileImage: userModel
-                                    .user.activeTrainers.first.profileImage,
-                              ),
-                              user: ThreadUser(
-                                id: userModel.user.id,
-                                nickname: userModel.user.nickname,
-                                gender: userModel.user.gender,
-                              ),
-                              title:
-                                  '${workoutModel.exercises[model.exerciseIndex].name} ${model.setInfoCompleteList[model.exerciseIndex] + 1}SET',
-                            );
-                          },
-                          context: context),
-                    );
-                  },
-                  cancelOnTap: () => context.pop(),
-                ),
+              _showDialogForVideoThread(
+                context,
+                userModel,
+                workoutModel,
+                model,
               );
             }
           });
@@ -1250,6 +1221,47 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
             ),
           );
         },
+      ),
+    );
+  }
+
+  Future<dynamic> _showDialogForVideoThread(
+      BuildContext context,
+      UserModel userModel,
+      WorkoutModel workoutModel,
+      WorkoutProcessModel model) {
+    return showDialog(
+      context: context,
+      builder: (context) => DialogWidgets.confirmDialog(
+        message: '운동자세 확인 및 피드백을 위해 \n영상을 녹화 후 스레드에 올려주세요 🤳',
+        confirmText: '네,  바로할게요',
+        cancelText: '조금 이따 할게요',
+        confirmOnTap: () {
+          context.pop();
+
+          Navigator.of(context).push(
+            CupertinoDialogRoute(
+                builder: (context) {
+                  return ThreadCreateScreen(
+                    trainer: ThreadTrainer(
+                      id: userModel.user.activeTrainers.first.id,
+                      nickname: userModel.user.activeTrainers.first.nickname,
+                      profileImage:
+                          userModel.user.activeTrainers.first.profileImage,
+                    ),
+                    user: ThreadUser(
+                      id: userModel.user.id,
+                      nickname: userModel.user.nickname,
+                      gender: userModel.user.gender,
+                    ),
+                    title:
+                        '${workoutModel.exercises[model.exerciseIndex].name} ${model.setInfoCompleteList[model.exerciseIndex] + 1}SET',
+                  );
+                },
+                context: context),
+          );
+        },
+        cancelOnTap: () => context.pop(),
       ),
     );
   }

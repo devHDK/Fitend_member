@@ -230,6 +230,7 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
                 weight: e.weight,
               );
             }).toList(),
+            isVideoRecord: exercise.isVideoRecord,
           );
         }).toList(),
       );
@@ -270,6 +271,7 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
                 weight: e.weight,
               );
             }).toList(),
+            isVideoRecord: pstate.exercises[i].isVideoRecord,
           );
           //저장된게 없으면 저장
           value.put(pstate.exercises[i].workoutPlanId, tempExercise);

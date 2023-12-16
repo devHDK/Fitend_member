@@ -33,6 +33,8 @@ class Exercise {
   final int? circuitSeq;
   @HiveField(12)
   final String? setType;
+  @HiveField(13)
+  final bool? isVideoRecord;
 
   Exercise({
     required this.workoutPlanId,
@@ -47,6 +49,7 @@ class Exercise {
     this.circuitGroupNum,
     this.circuitSeq,
     this.setType,
+    this.isVideoRecord,
   });
 
   Exercise copyWith({
@@ -62,6 +65,7 @@ class Exercise {
     int? circuitGroupNum,
     int? circuitSeq,
     String? setType,
+    bool? isVideoRecord,
   }) =>
       Exercise(
         workoutPlanId: workoutPlanId ?? this.workoutPlanId,
@@ -76,6 +80,7 @@ class Exercise {
         circuitGroupNum: circuitGroupNum ?? this.circuitGroupNum,
         circuitSeq: circuitSeq ?? this.circuitSeq,
         setType: setType ?? this.setType,
+        isVideoRecord: isVideoRecord ?? this.isVideoRecord,
       );
 
   static Exercise clone({required Exercise exercise}) {
@@ -92,6 +97,7 @@ class Exercise {
       circuitGroupNum: exercise.circuitGroupNum,
       circuitSeq: exercise.circuitSeq,
       setType: exercise.setType,
+      isVideoRecord: exercise.isVideoRecord,
     );
   }
 

@@ -186,6 +186,14 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                 .add(const Duration(days: 1, hours: 4))) &&
         DateTime.now().isAfter(DateTime.parse(model.startDate));
 
+    List<String> videoRecordList = [];
+
+    for (var exercise in model.exercises) {
+      if (exercise.isVideoRecord != null && exercise.isVideoRecord!) {
+        videoRecordList.add(exercise.name);
+      }
+    }
+
     return Scaffold(
       backgroundColor: Pallete.background,
       appBar: AppBar(
@@ -307,6 +315,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                   const SizedBox(
                     height: 20,
                   ),
+                  if (videoRecordList.isNotEmpty)
+                    _videoRecordListRender(videoRecordList)
                 ],
               ),
             ),
@@ -518,6 +528,48 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButtonAnimator: _NoAnimationFabAnimator(),
+    );
+  }
+
+  Padding _videoRecordListRender(List<String> videoRecordList) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28),
+      child: Container(
+        width: 100.w,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.white,
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 13,
+            vertical: 15,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '운동영상을 녹화 후 스레드에 올려주세요 🤳',
+                style: s2SubTitle.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 9),
+              ...videoRecordList.map(
+                (e) => Text(
+                  '∙ $e',
+                  style: s1SubTitle.copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

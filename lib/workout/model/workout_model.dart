@@ -108,6 +108,7 @@ class WorkoutModel extends WorkoutModelBase {
               weight: e.weight,
             );
           }).toList(),
+          isVideoRecord: exercise.isVideoRecord,
         );
       }).toList(),
       modifiedExercises: model.modifiedExercises,

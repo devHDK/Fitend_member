@@ -254,6 +254,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
             CupertinoPageRoute(
               builder: (context) => ScheduleResultScreen(
                 workoutScheduleId: value.workoutScheduleId,
+                exercises: value.exercises,
               ),
               fullscreenDialog: true,
             ),

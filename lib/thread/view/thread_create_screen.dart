@@ -483,16 +483,17 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                           children: [
                             if (index == 0 && state.isFirstRun)
                               Positioned(
+                                left: 10,
                                 top: -5,
                                 child: TipBubble(
-                                  text: '터치 하면 수정할수있어요!',
+                                  text: '눌러서 편집하세요!',
                                   textStyle: s3SubTitle.copyWith(
                                     color: Colors.white,
                                     height: 1,
                                   ),
                                   bubbleColor: Pallete.point,
                                   bubblePosition: BubblePosition.bottomLeft,
-                                  distance: 65,
+                                  distance: 48,
                                 ),
                               ),
                             Column(

@@ -11,7 +11,6 @@ import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/model/exercise_video_model.dart';
@@ -89,6 +88,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
+
+  final ValueNotifier<int> _changeExerciseProp = ValueNotifier<int>(0);
+
+  void _changeExercise(int value) {
+    _changeExerciseProp.value = value;
+  }
 
   @override
   void initState() {
@@ -251,917 +256,1000 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     final userModel = userState as UserModel;
     final workoutModel = workoutState as WorkoutModel;
 
+    _changeExercise(model.exerciseIndex);
+
     return WillPopScope(
       onWillPop: () async {
         _pagePop();
 
         return Future.value(true);
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Pallete.gray,
-        floatingActionButton: isSwipeUp
-            ? Stack(
-                children: [
-                  if (model.isThreadGuide)
-                    Positioned(
-                      left: 30,
-                      child: TipBubble(
-                        text: '코치님께 스레드를 남길 수 있어요!',
-                        textStyle: s3SubTitle.copyWith(
-                          color: Colors.white,
-                          height: 1,
-                        ),
-                        bubbleColor: Pallete.point,
-                        bubblePosition: BubblePosition.bottomLeft,
-                        distance: 42,
-                      ),
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 38),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: threadCreateState.isUploading ||
-                                  threadCreateState.isLoading
-                              ? null
-                              : () {
-                                  if (mounted) {
-                                    if (model.isThreadGuide) {
-                                      ref
-                                          .read(workoutProcessProvider(
-                                                  widget.workoutScheduleId)
-                                              .notifier)
-                                          .putIsGuide(
-                                            isThreadGuide: false,
-                                          );
-                                    }
-                                  }
+      child: ValueListenableBuilder<int>(
+        valueListenable: _changeExerciseProp,
+        builder: (context, value, child) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            if (model.modifiedExercises[model.exerciseIndex].isVideoRecord !=
+                    null &&
+                model.modifiedExercises[model.exerciseIndex].isVideoRecord!) {
+              //isVideoRecord 상태 변경
+              ref
+                  .read(
+                      workoutProcessProvider(widget.workoutScheduleId).notifier)
+                  .putIsVideoRecordFalse();
 
-                                  Navigator.of(context)
-                                      .push(CupertinoDialogRoute(
-                                          builder: (context) {
-                                            return ThreadCreateScreen(
-                                              trainer: ThreadTrainer(
-                                                id: userModel.user
-                                                    .activeTrainers.first.id,
-                                                nickname: userModel
-                                                    .user
-                                                    .activeTrainers
-                                                    .first
-                                                    .nickname,
-                                                profileImage: userModel
-                                                    .user
-                                                    .activeTrainers
-                                                    .first
-                                                    .profileImage,
-                                              ),
-                                              user: ThreadUser(
-                                                id: userModel.user.id,
-                                                nickname:
-                                                    userModel.user.nickname,
-                                                gender: userModel.user.gender,
-                                              ),
-                                              title:
-                                                  '${workoutModel.exercises[model.exerciseIndex].name} ${model.setInfoCompleteList[model.exerciseIndex] + 1}SET',
-                                            );
-                                          },
-                                          context: context));
-                                },
-                          child: Container(
-                            width: 98,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Pallete.darkGray,
-                            ),
-                            child: Center(
-                              child: threadCreateState.isUploading
-                                  ? LoadingAnimationWidget.dotsTriangle(
-                                      color: Colors.white,
-                                      size: 25,
-                                    )
-                                  : SvgPicture.asset(
-                                      SVGConstants.message,
-                                      width: 25,
-                                      height: 25,
-                                    ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 9,
-                        ),
-                        GestureDetector(
-                          onTap: model.isQuitting
-                              ? null
-                              : () async {
-                                  FirebaseAnalytics.instance.logEvent(
-                                      name: 'click_large_next_button');
+              showDialog(
+                context: context,
+                builder: (context) => DialogWidgets.confirmDialog(
+                  message: '운동자세 확인 및 피드백을 위해 \n영상을 녹화 후 스레드에 올려주세요 🤳',
+                  confirmText: '네,  바로할게요',
+                  cancelText: '조금 이따 할게요',
+                  confirmOnTap: () {
+                    context.pop();
 
-                                  await _onTapNext(context, model);
-
-                                  isTooltipVisible = false;
-                                  tooltipCount = 0;
-                                  onTooltipPressed();
-                                  tooltipSeq = 0;
-                                  if (mounted) {
-                                    setState(() {});
-                                  }
-
-                                  if (isSwipeUp) {
-                                    final index = model.setInfoCompleteList[
-                                                model.exerciseIndex] ==
-                                            model.maxSetInfoList[
-                                                model.exerciseIndex]
-                                        ? model.setInfoCompleteList[
-                                                model.exerciseIndex] -
-                                            1
-                                        : model.setInfoCompleteList[
-                                            model.exerciseIndex];
-                                    if (model.setInfoCompleteList[
-                                            model.exerciseIndex] >
-                                        5) {
-                                      _movetoRecentSetInfo(index);
-                                    }
-                                  }
-                                },
-                          child: Container(
-                            width: size.width - 56 - 107,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Pallete.point,
-                            ),
-                            child: Center(
-                              child: model.isQuitting
-                                  ? const SizedBox(
-                                      width: 15,
-                                      height: 15,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : Text(
-                                      '다음 운동',
-                                      style: h2Headline.copyWith(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButtonAnimator: null,
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 18),
-            child: IconButton(
-              onPressed: () {
-                if (mounted) {
-                  _pagePop();
-                }
-              },
-              icon: const Icon(Icons.arrow_back),
-              color: Colors.black,
-            ),
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 18.0),
-              child: IconButton.filled(
-                  onPressed: () {
-                    showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (_) {
-                        return DialogWidgets.confirmDialog(
-                          message: '오늘의 운동을 종료할까요?\n종료 후에는 다시 진행할 수 없어요 🙉',
-                          confirmText: '아니요, 계속 할게요',
-                          cancelText: model.isQuitting ? '종료중...' : '네, 종료할게요',
-                          confirmOnTap: () {
-                            context.pop();
+                    Navigator.of(context).push(
+                      CupertinoDialogRoute(
+                          builder: (context) {
+                            return ThreadCreateScreen(
+                              trainer: ThreadTrainer(
+                                id: userModel.user.activeTrainers.first.id,
+                                nickname: userModel
+                                    .user.activeTrainers.first.nickname,
+                                profileImage: userModel
+                                    .user.activeTrainers.first.profileImage,
+                              ),
+                              user: ThreadUser(
+                                id: userModel.user.id,
+                                nickname: userModel.user.nickname,
+                                gender: userModel.user.gender,
+                              ),
+                              title:
+                                  '${workoutModel.exercises[model.exerciseIndex].name} ${model.setInfoCompleteList[model.exerciseIndex] + 1}SET',
+                            );
                           },
-                          cancelOnTap: model.isQuitting
-                              ? () {}
-                              : () async {
-                                  try {
-                                    await ref
-                                        .read(workoutProcessProvider(
-                                                widget.workoutScheduleId)
-                                            .notifier)
-                                        .quitWorkout(
-                                          title: widget.workout.workoutTitle,
-                                          subTitle:
-                                              widget.workout.workoutSubTitle,
-                                          trainerId: widget.workout.trainerId,
-                                        )
-                                        .then((value) {
-                                      final id = widget.workoutScheduleId;
-                                      final date = widget.workout.startDate;
-
-                                      context.pop();
-                                      context.pop();
-
-                                      GoRouter.of(context).pushNamed(
-                                        WorkoutFeedbackScreen.routeName,
-                                        pathParameters: {
-                                          'workoutScheduleId': id.toString(),
-                                        },
-                                        extra: widget.exercises,
-                                        queryParameters: {
-                                          'startDate': DateFormat('yyyy-MM-dd')
-                                              .format(DateTime.parse(date)),
-                                        },
-                                      );
-                                    });
-                                  } on DioException catch (e) {
-                                    debugPrint('$e');
-                                  }
-                                },
-                        );
-                      },
+                          context: context),
                     );
                   },
-                  icon: const Icon(
-                    Icons.close_sharp,
-                    color: Colors.black,
-                  )),
-            ),
-          ],
-          title: Container(
-            width: 80,
-            height: 27,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white.withOpacity(0.8),
-            ),
-            child: Center(
-              child: Text(
-                DataUtils.getTimeStringMinutes(model.totalTime),
-                style: s1SubTitle.copyWith(
-                  color: Pallete.darkGray,
-                  fontSize: 18,
-                  height: 1.1,
+                  cancelOnTap: () => context.pop(),
                 ),
-              ),
-            ),
-          ),
-        ),
-        extendBodyBehindAppBar: true,
-        body: Stack(
-          children: [
-            Positioned(
-              // left: 0.0,
-              right: 100.w > 600 //테블릿이면
-                  ? (100.w - (100.h) * 9 / 16) / 2
-                  : 0,
-              child: SizedBox(
-                width: 100.w > 600 //테블릿이면
-                    ? (100.h) * 9 / 16
-                    : 100.w,
-                height: 100.w > 600 ? 100.h : 100.w * 16 / 9,
-                child: GuideVideoPlayer(
-                  isGuide: false,
-                  videos: [
-                    ExerciseVideo(
-                      url:
-                          '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].videos.first.url}',
-                      index: widget
-                          .exercises[model.exerciseIndex].videos.first.index,
-                      thumbnail:
-                          '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].videos.first.thumbnail}',
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 200,
-              right: 28,
-              child: IconButton(
-                iconSize: 36,
-                onPressed: () {
-                  onTooltipPressed();
-                },
-                icon: ClipRRect(
-                  borderRadius: BorderRadius.circular(18),
-                  child: CustomNetworkImage(
-                    imageUrl:
-                        '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].trainerProfileImage}',
-                    width: 36,
-                    height: 36,
-                    boxFit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-            if (isTooltipVisible)
-              _ShowTip(
-                size: size,
-                widget: widget,
-                tooltipSeq: tooltipSeq,
-                workoutScheduleId: widget.workoutScheduleId,
-              ),
-            SlidingUpPanel(
-              key: ValueKey(widget.workoutScheduleId),
-              minHeight: 195,
-              maxHeight: size.height - (56 + kToolbarHeight),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-              ),
-              onPanelClosed: () {
-                if (mounted) {
-                  setState(() {
-                    isSwipeUp = false;
-                  });
-                }
-              },
-              onPanelOpened: () {
-                if (mounted) {
-                  if (model.isSwipeGuide) {
-                    ref
-                        .read(workoutProcessProvider(widget.workoutScheduleId)
-                            .notifier)
-                        .putIsGuide(
-                          isSwipeGuide: false,
-                        );
-                  }
+              );
+            }
+          });
 
-                  setState(() {
-                    isSwipeUp = true;
-
-                    final index =
-                        model.setInfoCompleteList[model.exerciseIndex] ==
-                                model.maxSetInfoList[model.exerciseIndex]
-                            ? model.setInfoCompleteList[model.exerciseIndex] - 1
-                            : model.setInfoCompleteList[model.exerciseIndex];
-
-                    _movetoRecentSetInfo(index);
-                  });
-                }
-              },
-              panel: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 28),
-                    child: Column(
-                      children: [
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              top: 12,
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            backgroundColor: Pallete.gray,
+            floatingActionButton: isSwipeUp
+                ? Stack(
+                    children: [
+                      if (model.isThreadGuide)
+                        Positioned(
+                          left: 30,
+                          child: TipBubble(
+                            text: '코치님께 스레드를 남길 수 있어요!',
+                            textStyle: s3SubTitle.copyWith(
+                              color: Colors.white,
+                              height: 1,
                             ),
-                            child: Container(
-                              width: 44,
-                              height: 4,
-                              decoration: BoxDecoration(
-                                  color: Pallete.lightGray,
-                                  borderRadius: BorderRadius.circular(2)),
-                            ),
+                            bubbleColor: Pallete.point,
+                            bubblePosition: BubblePosition.bottomLeft,
+                            distance: 42,
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        if (model.modifiedExercises[model.exerciseIndex]
-                                    .trackingFieldId ==
-                                1 ||
-                            model.modifiedExercises[model.exerciseIndex]
-                                    .trackingFieldId ==
-                                2)
-                          WeightWrepsProgressCard(
-                            workoutScheduleId: widget.workoutScheduleId,
-                            isSwipeUp: isSwipeUp,
-                            exercise:
-                                model.modifiedExercises[model.exerciseIndex],
-                            setInfoIndex:
-                                model.setInfoCompleteList[model.exerciseIndex],
-                            listOnTap: () async {
-                              await Navigator.of(context)
-                                  .push(CupertinoPageRoute(
-                                builder: (context) => WorkoutChangeScreen(
-                                  exerciseIndex: model.exerciseIndex,
-                                  workout: widget.workout,
-                                ),
-                              ))
-                                  .then(
-                                (value) {
-                                  if (value != null) {
-                                    ref
-                                        .read(workoutProcessProvider(
-                                                widget.workoutScheduleId)
-                                            .notifier)
-                                        .exerciseChange(value);
-                                    isTooltipVisible = false;
-                                    tooltipCount = 0;
-                                    onTooltipPressed();
-                                    tooltipSeq = 0;
-
-                                    if (mounted) {
-                                      setState(() {});
-                                    }
-
-                                    if (isSwipeUp) {
-                                      final index = model.setInfoCompleteList[
-                                                  model.exerciseIndex] ==
-                                              model.maxSetInfoList[
-                                                  model.exerciseIndex]
-                                          ? model.setInfoCompleteList[
-                                                  model.exerciseIndex] -
-                                              1
-                                          : model.setInfoCompleteList[
-                                              model.exerciseIndex];
-
-                                      _movetoRecentSetInfo(index);
-                                    }
-                                  }
-                                },
-                              );
-                            },
-                            proccessOnTap: model.isQuitting
-                                ? () {}
-                                : () async {
-                                    FirebaseAnalytics.instance.logEvent(
-                                        name: 'click_small_next_button');
-
-                                    await _onTapNext(context, model);
-
-                                    isTooltipVisible = false;
-                                    tooltipCount = 0;
-                                    onTooltipPressed();
-                                    tooltipSeq = 0;
-                                    if (mounted) {
-                                      setState(() {});
-                                    }
-                                    if (isSwipeUp) {
-                                      final index = model.setInfoCompleteList[
-                                                  model.exerciseIndex] ==
-                                              model.maxSetInfoList[
-                                                  model.exerciseIndex]
-                                          ? model.setInfoCompleteList[
-                                                  model.exerciseIndex] -
-                                              1
-                                          : model.setInfoCompleteList[
-                                              model.exerciseIndex];
-
-                                      if (model.setInfoCompleteList[
-                                              model.exerciseIndex] >
-                                          5) {
-                                        _movetoRecentSetInfo(index);
-                                      }
-                                    }
-                                  },
-                          )
-                        // Timer
-                        else if ((model.modifiedExercises[model.exerciseIndex]
-                                    .trackingFieldId ==
-                                3 ||
-                            model.modifiedExercises[model.exerciseIndex]
-                                    .trackingFieldId ==
-                                4))
-                          TimerProgressCard(
-                            workoutScheduleId: widget.workoutScheduleId,
-                            isSwipeUp: isSwipeUp,
-                            exercise:
-                                model.modifiedExercises[model.exerciseIndex],
-                            setInfoIndex: model.setInfoCompleteList[
-                                        model.exerciseIndex] ==
-                                    model.maxSetInfoList[model.exerciseIndex]
-                                ? model.setInfoCompleteList[
-                                        model.exerciseIndex] -
-                                    1
-                                : model
-                                    .setInfoCompleteList[model.exerciseIndex],
-                            listOnTap: () async {
-                              await Navigator.of(context)
-                                  .push(CupertinoPageRoute(
-                                builder: (context) => WorkoutChangeScreen(
-                                  exerciseIndex: model.exerciseIndex,
-                                  workout: widget.workout,
-                                ),
-                              ))
-                                  .then(
-                                (value) {
-                                  if (value != null) {
-                                    ref
-                                        .read(workoutProcessProvider(
-                                                widget.workoutScheduleId)
-                                            .notifier)
-                                        .exerciseChange(value);
-                                    isTooltipVisible = false;
-                                    tooltipCount = 0;
-                                    onTooltipPressed();
-                                    tooltipSeq = 0;
-                                    if (mounted) {
-                                      setState(() {});
-                                    }
-
-                                    if (isSwipeUp) {
-                                      final index = model.setInfoCompleteList[
-                                                  model.exerciseIndex] ==
-                                              model.maxSetInfoList[
-                                                  model.exerciseIndex]
-                                          ? model.setInfoCompleteList[
-                                                  model.exerciseIndex] -
-                                              1
-                                          : model.setInfoCompleteList[
-                                              model.exerciseIndex];
-
-                                      _movetoRecentSetInfo(index);
-                                    }
-                                  }
-                                },
-                              );
-                            },
-                            proccessOnTap: model.isQuitting
-                                ? () {}
-                                : () async {
-                                    FirebaseAnalytics.instance.logEvent(
-                                        name: 'click_small_next_button');
-                                    await _onTapNext(context, model);
-
-                                    isTooltipVisible = false;
-                                    tooltipCount = 0;
-                                    onTooltipPressed();
-                                    tooltipSeq = 0;
-                                    if (mounted) {
-                                      setState(() {});
-                                    }
-                                    if (isSwipeUp) {
-                                      final index = model.setInfoCompleteList[
-                                                  model.exerciseIndex] ==
-                                              model.maxSetInfoList[
-                                                  model.exerciseIndex]
-                                          ? model.setInfoCompleteList[
-                                                  model.exerciseIndex] -
-                                              1
-                                          : model.setInfoCompleteList[
-                                              model.exerciseIndex];
-
-                                      if (model.setInfoCompleteList[
-                                              model.exerciseIndex] >
-                                          5) {
-                                        _movetoRecentSetInfo(index);
-                                      }
-                                    }
-                                  },
-                            resetSet: () {},
-                            refresh: () {
-                              if (mounted) {
-                                setState(() {});
-                              }
-                            },
-                          ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 38),
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: Pallete.lightGray,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              '${model.modifiedExercises[model.exerciseIndex].setInfo.length} SET',
-                              style:
-                                  s1SubTitle.copyWith(color: Pallete.lightGray),
-                            ),
-                            const SizedBox(
-                              width: 3,
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: Pallete.lightGray,
-                              ),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: size.height -
-                        (56 +
-                            kToolbarHeight +
-                            195 +
-                            5), // (appbar + toolbar + bottomSlide mini)
-                    child: ScrollablePositionedList.builder(
-                      padding: EdgeInsets.zero,
-                      itemScrollController: itemScrollController,
-                      itemPositionsListener: itemPositionsListener,
-                      initialScrollIndex:
-                          model.setInfoCompleteList[model.exerciseIndex] ==
-                                  model.maxSetInfoList[model.exerciseIndex]
-                              ? model.maxSetInfoList[model.exerciseIndex] - 1
-                              : model.setInfoCompleteList[model.exerciseIndex],
-                      itemCount: model.modifiedExercises[model.exerciseIndex]
-                              .setInfo.length +
-                          1,
-                      itemBuilder: (context, index) {
-                        if (index !=
-                            model.modifiedExercises[model.exerciseIndex].setInfo
-                                .length) {
-                          final element = model
-                              .modifiedExercises[model.exerciseIndex]
-                              .setInfo[index];
-
-                          if (model.modifiedExercises[model.exerciseIndex]
-                                  .trackingFieldId ==
-                              1) {
-                            return SetInfoBoxForWeightReps(
-                              key: ValueKey(
-                                  '${model.modifiedExercises[model.exerciseIndex].workoutPlanId}_$index'),
-                              workoutScheduleId: widget.workoutScheduleId,
-                              initialReps: element.reps!,
-                              initialWeight: element.weight!,
-                              model: model,
-                              setInfoIndex: index,
-                              refresh: () {
-                                if (mounted) {
-                                  setState(() {});
-                                }
-                              },
-                            );
-                          } else if (model
-                                  .modifiedExercises[model.exerciseIndex]
-                                  .trackingFieldId ==
-                              2) {
-                            return SetInfoBoxForReps(
-                              key: ValueKey(
-                                  '${model.modifiedExercises[model.exerciseIndex].workoutPlanId}_$index'),
-                              workoutScheduleId: widget.workoutScheduleId,
-                              initialReps: element.reps!,
-                              model: model,
-                              setInfoIndex: index,
-                              refresh: () {
-                                if (mounted) {
-                                  setState(() {});
-                                }
-                              },
-                            );
-                          } else if (model
-                                      .modifiedExercises[model.exerciseIndex]
-                                      .trackingFieldId ==
-                                  3 ||
-                              model.modifiedExercises[model.exerciseIndex]
-                                      .trackingFieldId ==
-                                  4) {
-                            return SetInfoBoxForTimer(
-                              key: ValueKey(
-                                  '${model.modifiedExercises[model.exerciseIndex].workoutPlanId}_$index'),
-                              workoutScheduleId: widget.workoutScheduleId,
-                              initialSeconds: element.seconds!,
-                              model: model,
-                              setInfoIndex: index,
-                              refresh: () {
-                                if (mounted) {
-                                  setState(() {});
-                                }
-                              },
-                            );
-                          }
-                        } else {
-                          return Container(
-                            color: Pallete.lightGray.withOpacity(0.15),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 28,
-                              ),
-                              child: Column(
-                                children: [
-                                  SvgPicture.asset(SVGConstants.message),
-                                  InkWell(
-                                    onTap: () async {
+                            GestureDetector(
+                              onTap: threadCreateState.isUploading ||
+                                      threadCreateState.isLoading
+                                  ? null
+                                  : () {
                                       if (mounted) {
-                                        if (model.isWorkoutChangeGuide) {
+                                        if (model.isThreadGuide) {
                                           ref
                                               .read(workoutProcessProvider(
                                                       widget.workoutScheduleId)
                                                   .notifier)
                                               .putIsGuide(
-                                                isWorkoutChangeGuide: false,
+                                                isThreadGuide: false,
                                               );
                                         }
                                       }
 
                                       Navigator.of(context)
-                                          .push(CupertinoPageRoute(
-                                        builder: (context) =>
-                                            WorkoutChangeScreen(
-                                          exerciseIndex: model.exerciseIndex,
-                                          workout: widget.workout,
+                                          .push(CupertinoDialogRoute(
+                                              builder: (context) {
+                                                return ThreadCreateScreen(
+                                                  trainer: ThreadTrainer(
+                                                    id: userModel
+                                                        .user
+                                                        .activeTrainers
+                                                        .first
+                                                        .id,
+                                                    nickname: userModel
+                                                        .user
+                                                        .activeTrainers
+                                                        .first
+                                                        .nickname,
+                                                    profileImage: userModel
+                                                        .user
+                                                        .activeTrainers
+                                                        .first
+                                                        .profileImage,
+                                                  ),
+                                                  user: ThreadUser(
+                                                    id: userModel.user.id,
+                                                    nickname:
+                                                        userModel.user.nickname,
+                                                    gender:
+                                                        userModel.user.gender,
+                                                  ),
+                                                  title:
+                                                      '${workoutModel.exercises[model.exerciseIndex].name} ${model.setInfoCompleteList[model.exerciseIndex] + 1}SET',
+                                                );
+                                              },
+                                              context: context));
+                                    },
+                              child: Container(
+                                width: 98,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Pallete.darkGray,
+                                ),
+                                child: Center(
+                                  child: threadCreateState.isUploading
+                                      ? LoadingAnimationWidget.dotsTriangle(
+                                          color: Colors.white,
+                                          size: 25,
+                                        )
+                                      : SvgPicture.asset(
+                                          SVGConstants.message,
+                                          width: 25,
+                                          height: 25,
                                         ),
-                                      ))
-                                          .then(
-                                        (value) {
-                                          if (value != null) {
-                                            ref
-                                                .read(workoutProcessProvider(
-                                                        widget
-                                                            .workoutScheduleId)
-                                                    .notifier)
-                                                .exerciseChange(value);
-                                            isTooltipVisible = false;
-                                            tooltipCount = 0;
-                                            onTooltipPressed();
-                                            tooltipSeq = 0;
-                                            if (mounted) {
-                                              setState(() {});
-                                            }
-
-                                            if (isSwipeUp) {
-                                              final index = model
-                                                              .setInfoCompleteList[
-                                                          model
-                                                              .exerciseIndex] ==
-                                                      model.maxSetInfoList[
-                                                          model.exerciseIndex]
-                                                  ? model.setInfoCompleteList[
-                                                          model.exerciseIndex] -
-                                                      1
-                                                  : model.setInfoCompleteList[
-                                                      model.exerciseIndex];
-
-                                              itemScrollController.jumpTo(
-                                                  index: index);
-                                            }
-                                          }
-                                        },
-                                      );
-                                    },
-                                    child: SizedBox(
-                                      height: 55,
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          SvgPicture.asset(
-                                            SVGConstants.list,
-                                            width: 24,
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            '운동 리스트',
-                                            style: h5Headline.copyWith(
-                                              height: 1,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            width: 20,
-                                          ),
-                                          if (model.isWorkoutChangeGuide)
-                                            TipBubble(
-                                              text: '운동 순서를 바꿀 수 있어요!',
-                                              textStyle: s3SubTitle.copyWith(
-                                                color: Colors.white,
-                                                height: 1,
-                                              ),
-                                              bubbleColor: Pallete.point,
-                                              bubblePosition:
-                                                  BubblePosition.left,
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .push(CupertinoPageRoute(
-                                        builder: (context) => ExerciseScreen(
-                                            exercise: widget.exercises[
-                                                model.exerciseIndex]),
-                                      ));
-                                    },
-                                    child: SizedBox(
-                                      height: 55,
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          SvgPicture.asset(
-                                            SVGConstants.guide,
-                                            width: 24,
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            '운동 가이드',
-                                            style: h5Headline.copyWith(
-                                              height: 1,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .push(CupertinoPageRoute(
-                                        builder: (context) =>
-                                            WorkoutHistoryScreen(
-                                          workoutPlanId: widget
-                                              .exercises[model.exerciseIndex]
-                                              .workoutPlanId,
-                                        ),
-                                      ));
-                                    },
-                                    child: SizedBox(
-                                      height: 55,
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          SvgPicture.asset(
-                                            SVGConstants.history,
-                                            colorFilter: const ColorFilter.mode(
-                                              Colors.black,
-                                              BlendMode.srcIn,
-                                            ),
-                                            width: 24,
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            '운동 히스토리',
-                                            style: h5Headline.copyWith(
-                                              height: 1,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: ((11 -
-                                                model.maxSetInfoList[
-                                                    model.exerciseIndex]) *
-                                            30)
-                                        .toDouble(),
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
-                          );
-                        }
-                        return const SizedBox();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (model.isSwipeGuide)
-              Positioned(
-                bottom: 195,
-                right: 50.w - 59.5,
-                child: TipBubble(
-                  text: '위로 끌어올려 보세요!',
-                  textStyle:
-                      s3SubTitle.copyWith(color: Colors.white, height: 1),
-                  bubbleColor: Pallete.point,
-                  bubblePosition: BubblePosition.bottomCenter,
+                            const SizedBox(
+                              width: 9,
+                            ),
+                            GestureDetector(
+                              onTap: model.isQuitting
+                                  ? null
+                                  : () async {
+                                      FirebaseAnalytics.instance.logEvent(
+                                          name: 'click_large_next_button');
+
+                                      await _onTapNext(context, model);
+
+                                      isTooltipVisible = false;
+                                      tooltipCount = 0;
+                                      onTooltipPressed();
+                                      tooltipSeq = 0;
+                                      if (mounted) {
+                                        setState(() {});
+                                      }
+
+                                      if (isSwipeUp) {
+                                        final index = model.setInfoCompleteList[
+                                                    model.exerciseIndex] ==
+                                                model.maxSetInfoList[
+                                                    model.exerciseIndex]
+                                            ? model.setInfoCompleteList[
+                                                    model.exerciseIndex] -
+                                                1
+                                            : model.setInfoCompleteList[
+                                                model.exerciseIndex];
+                                        if (model.setInfoCompleteList[
+                                                model.exerciseIndex] >
+                                            5) {
+                                          _movetoRecentSetInfo(index);
+                                        }
+                                      }
+                                    },
+                              child: Container(
+                                width: size.width - 56 - 107,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Pallete.point,
+                                ),
+                                child: Center(
+                                  child: model.isQuitting
+                                      ? const SizedBox(
+                                          width: 15,
+                                          height: 15,
+                                          child: CircularProgressIndicator(
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : Text(
+                                          '다음 운동',
+                                          style: h2Headline.copyWith(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : null,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            floatingActionButtonAnimator: null,
+            appBar: AppBar(
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 18),
+                child: IconButton(
+                  onPressed: () {
+                    if (mounted) {
+                      _pagePop();
+                    }
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  color: Colors.black,
                 ),
               ),
-          ],
-        ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 18.0),
+                  child: IconButton.filled(
+                      onPressed: () {
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (_) {
+                            return DialogWidgets.confirmDialog(
+                              message: '오늘의 운동을 종료할까요?\n종료 후에는 다시 진행할 수 없어요 🙉',
+                              confirmText: '아니요, 계속 할게요',
+                              cancelText:
+                                  model.isQuitting ? '종료중...' : '네, 종료할게요',
+                              confirmOnTap: () {
+                                context.pop();
+                              },
+                              cancelOnTap: model.isQuitting
+                                  ? () {}
+                                  : () async {
+                                      try {
+                                        await ref
+                                            .read(workoutProcessProvider(
+                                                    widget.workoutScheduleId)
+                                                .notifier)
+                                            .quitWorkout(
+                                              title:
+                                                  widget.workout.workoutTitle,
+                                              subTitle: widget
+                                                  .workout.workoutSubTitle,
+                                              trainerId:
+                                                  widget.workout.trainerId,
+                                            )
+                                            .then((value) {
+                                          final id = widget.workoutScheduleId;
+                                          final date = widget.workout.startDate;
+
+                                          context.pop();
+                                          context.pop();
+
+                                          GoRouter.of(context).pushNamed(
+                                            WorkoutFeedbackScreen.routeName,
+                                            pathParameters: {
+                                              'workoutScheduleId':
+                                                  id.toString(),
+                                            },
+                                            extra: widget.exercises,
+                                            queryParameters: {
+                                              'startDate': DateFormat(
+                                                      'yyyy-MM-dd')
+                                                  .format(DateTime.parse(date)),
+                                            },
+                                          );
+                                        });
+                                      } on DioException catch (e) {
+                                        debugPrint('$e');
+                                      }
+                                    },
+                            );
+                          },
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.close_sharp,
+                        color: Colors.black,
+                      )),
+                ),
+              ],
+              title: Container(
+                width: 80,
+                height: 27,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white.withOpacity(0.8),
+                ),
+                child: Center(
+                  child: Text(
+                    DataUtils.getTimeStringMinutes(model.totalTime),
+                    style: s1SubTitle.copyWith(
+                      color: Pallete.darkGray,
+                      fontSize: 18,
+                      height: 1.1,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            extendBodyBehindAppBar: true,
+            body: Stack(
+              children: [
+                Positioned(
+                  // left: 0.0,
+                  right: 100.w > 600 //테블릿이면
+                      ? (100.w - (100.h) * 9 / 16) / 2
+                      : 0,
+                  child: SizedBox(
+                    width: 100.w > 600 //테블릿이면
+                        ? (100.h) * 9 / 16
+                        : 100.w,
+                    height: 100.w > 600 ? 100.h : 100.w * 16 / 9,
+                    child: GuideVideoPlayer(
+                      isGuide: false,
+                      videos: [
+                        ExerciseVideo(
+                          url:
+                              '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].videos.first.url}',
+                          index: widget.exercises[model.exerciseIndex].videos
+                              .first.index,
+                          thumbnail:
+                              '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].videos.first.thumbnail}',
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 200,
+                  right: 28,
+                  child: IconButton(
+                    iconSize: 36,
+                    onPressed: () {
+                      onTooltipPressed();
+                    },
+                    icon: ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: CustomNetworkImage(
+                        imageUrl:
+                            '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].trainerProfileImage}',
+                        width: 36,
+                        height: 36,
+                        boxFit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+                if (isTooltipVisible)
+                  _ShowTip(
+                    size: size,
+                    widget: widget,
+                    tooltipSeq: tooltipSeq,
+                    workoutScheduleId: widget.workoutScheduleId,
+                  ),
+                SlidingUpPanel(
+                  key: ValueKey(widget.workoutScheduleId),
+                  minHeight: 195,
+                  maxHeight: size.height - (56 + kToolbarHeight),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                  onPanelClosed: () {
+                    if (mounted) {
+                      setState(() {
+                        isSwipeUp = false;
+                      });
+                    }
+                  },
+                  onPanelOpened: () {
+                    if (mounted) {
+                      if (model.isSwipeGuide) {
+                        ref
+                            .read(
+                                workoutProcessProvider(widget.workoutScheduleId)
+                                    .notifier)
+                            .putIsGuide(
+                              isSwipeGuide: false,
+                            );
+                      }
+
+                      setState(() {
+                        isSwipeUp = true;
+
+                        final index = model
+                                    .setInfoCompleteList[model.exerciseIndex] ==
+                                model.maxSetInfoList[model.exerciseIndex]
+                            ? model.setInfoCompleteList[model.exerciseIndex] - 1
+                            : model.setInfoCompleteList[model.exerciseIndex];
+
+                        _movetoRecentSetInfo(index);
+                      });
+                    }
+                  },
+                  panel: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 28),
+                        child: Column(
+                          children: [
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 12,
+                                ),
+                                child: Container(
+                                  width: 44,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                      color: Pallete.lightGray,
+                                      borderRadius: BorderRadius.circular(2)),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            if (model.modifiedExercises[model.exerciseIndex]
+                                        .trackingFieldId ==
+                                    1 ||
+                                model.modifiedExercises[model.exerciseIndex]
+                                        .trackingFieldId ==
+                                    2)
+                              WeightWrepsProgressCard(
+                                workoutScheduleId: widget.workoutScheduleId,
+                                isSwipeUp: isSwipeUp,
+                                exercise: model
+                                    .modifiedExercises[model.exerciseIndex],
+                                setInfoIndex: model
+                                    .setInfoCompleteList[model.exerciseIndex],
+                                listOnTap: () async {
+                                  await Navigator.of(context)
+                                      .push(CupertinoPageRoute(
+                                    builder: (context) => WorkoutChangeScreen(
+                                      exerciseIndex: model.exerciseIndex,
+                                      workout: widget.workout,
+                                    ),
+                                  ))
+                                      .then(
+                                    (value) {
+                                      if (value != null) {
+                                        ref
+                                            .read(workoutProcessProvider(
+                                                    widget.workoutScheduleId)
+                                                .notifier)
+                                            .exerciseChange(value);
+                                        isTooltipVisible = false;
+                                        tooltipCount = 0;
+                                        onTooltipPressed();
+                                        tooltipSeq = 0;
+
+                                        if (mounted) {
+                                          setState(() {});
+                                        }
+
+                                        if (isSwipeUp) {
+                                          final index = model
+                                                          .setInfoCompleteList[
+                                                      model.exerciseIndex] ==
+                                                  model.maxSetInfoList[
+                                                      model.exerciseIndex]
+                                              ? model.setInfoCompleteList[
+                                                      model.exerciseIndex] -
+                                                  1
+                                              : model.setInfoCompleteList[
+                                                  model.exerciseIndex];
+
+                                          _movetoRecentSetInfo(index);
+                                        }
+                                      }
+                                    },
+                                  );
+                                },
+                                proccessOnTap: model.isQuitting
+                                    ? () {}
+                                    : () async {
+                                        FirebaseAnalytics.instance.logEvent(
+                                            name: 'click_small_next_button');
+
+                                        await _onTapNext(context, model);
+
+                                        isTooltipVisible = false;
+                                        tooltipCount = 0;
+                                        onTooltipPressed();
+                                        tooltipSeq = 0;
+                                        if (mounted) {
+                                          setState(() {});
+                                        }
+                                        if (isSwipeUp) {
+                                          final index = model
+                                                          .setInfoCompleteList[
+                                                      model.exerciseIndex] ==
+                                                  model.maxSetInfoList[
+                                                      model.exerciseIndex]
+                                              ? model.setInfoCompleteList[
+                                                      model.exerciseIndex] -
+                                                  1
+                                              : model.setInfoCompleteList[
+                                                  model.exerciseIndex];
+
+                                          if (model.setInfoCompleteList[
+                                                  model.exerciseIndex] >
+                                              5) {
+                                            _movetoRecentSetInfo(index);
+                                          }
+                                        }
+                                      },
+                              )
+                            // Timer
+                            else if ((model
+                                        .modifiedExercises[model.exerciseIndex]
+                                        .trackingFieldId ==
+                                    3 ||
+                                model.modifiedExercises[model.exerciseIndex]
+                                        .trackingFieldId ==
+                                    4))
+                              TimerProgressCard(
+                                workoutScheduleId: widget.workoutScheduleId,
+                                isSwipeUp: isSwipeUp,
+                                exercise: model
+                                    .modifiedExercises[model.exerciseIndex],
+                                setInfoIndex: model.setInfoCompleteList[
+                                            model.exerciseIndex] ==
+                                        model
+                                            .maxSetInfoList[model.exerciseIndex]
+                                    ? model.setInfoCompleteList[
+                                            model.exerciseIndex] -
+                                        1
+                                    : model.setInfoCompleteList[
+                                        model.exerciseIndex],
+                                listOnTap: () async {
+                                  await Navigator.of(context)
+                                      .push(CupertinoPageRoute(
+                                    builder: (context) => WorkoutChangeScreen(
+                                      exerciseIndex: model.exerciseIndex,
+                                      workout: widget.workout,
+                                    ),
+                                  ))
+                                      .then(
+                                    (value) {
+                                      if (value != null) {
+                                        ref
+                                            .read(workoutProcessProvider(
+                                                    widget.workoutScheduleId)
+                                                .notifier)
+                                            .exerciseChange(value);
+                                        isTooltipVisible = false;
+                                        tooltipCount = 0;
+                                        onTooltipPressed();
+                                        tooltipSeq = 0;
+                                        if (mounted) {
+                                          setState(() {});
+                                        }
+
+                                        if (isSwipeUp) {
+                                          final index = model
+                                                          .setInfoCompleteList[
+                                                      model.exerciseIndex] ==
+                                                  model.maxSetInfoList[
+                                                      model.exerciseIndex]
+                                              ? model.setInfoCompleteList[
+                                                      model.exerciseIndex] -
+                                                  1
+                                              : model.setInfoCompleteList[
+                                                  model.exerciseIndex];
+
+                                          _movetoRecentSetInfo(index);
+                                        }
+                                      }
+                                    },
+                                  );
+                                },
+                                proccessOnTap: model.isQuitting
+                                    ? () {}
+                                    : () async {
+                                        FirebaseAnalytics.instance.logEvent(
+                                            name: 'click_small_next_button');
+                                        await _onTapNext(context, model);
+
+                                        isTooltipVisible = false;
+                                        tooltipCount = 0;
+                                        onTooltipPressed();
+                                        tooltipSeq = 0;
+                                        if (mounted) {
+                                          setState(() {});
+                                        }
+                                        if (isSwipeUp) {
+                                          final index = model
+                                                          .setInfoCompleteList[
+                                                      model.exerciseIndex] ==
+                                                  model.maxSetInfoList[
+                                                      model.exerciseIndex]
+                                              ? model.setInfoCompleteList[
+                                                      model.exerciseIndex] -
+                                                  1
+                                              : model.setInfoCompleteList[
+                                                  model.exerciseIndex];
+
+                                          if (model.setInfoCompleteList[
+                                                  model.exerciseIndex] >
+                                              5) {
+                                            _movetoRecentSetInfo(index);
+                                          }
+                                        }
+                                      },
+                                resetSet: () {},
+                                refresh: () {
+                                  if (mounted) {
+                                    setState(() {});
+                                  }
+                                },
+                              ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 1,
+                                    color: Pallete.lightGray,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  '${model.modifiedExercises[model.exerciseIndex].setInfo.length} SET',
+                                  style: s1SubTitle.copyWith(
+                                      color: Pallete.lightGray),
+                                ),
+                                const SizedBox(
+                                  width: 3,
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    height: 1,
+                                    color: Pallete.lightGray,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.height -
+                            (56 +
+                                kToolbarHeight +
+                                195 +
+                                5), // (appbar + toolbar + bottomSlide mini)
+                        child: ScrollablePositionedList.builder(
+                          padding: EdgeInsets.zero,
+                          itemScrollController: itemScrollController,
+                          itemPositionsListener: itemPositionsListener,
+                          initialScrollIndex: model.setInfoCompleteList[
+                                      model.exerciseIndex] ==
+                                  model.maxSetInfoList[model.exerciseIndex]
+                              ? model.maxSetInfoList[model.exerciseIndex] - 1
+                              : model.setInfoCompleteList[model.exerciseIndex],
+                          itemCount: model
+                                  .modifiedExercises[model.exerciseIndex]
+                                  .setInfo
+                                  .length +
+                              1,
+                          itemBuilder: (context, index) {
+                            if (index !=
+                                model.modifiedExercises[model.exerciseIndex]
+                                    .setInfo.length) {
+                              final element = model
+                                  .modifiedExercises[model.exerciseIndex]
+                                  .setInfo[index];
+
+                              if (model.modifiedExercises[model.exerciseIndex]
+                                      .trackingFieldId ==
+                                  1) {
+                                return SetInfoBoxForWeightReps(
+                                  key: ValueKey(
+                                      '${model.modifiedExercises[model.exerciseIndex].workoutPlanId}_$index'),
+                                  workoutScheduleId: widget.workoutScheduleId,
+                                  initialReps: element.reps!,
+                                  initialWeight: element.weight!,
+                                  model: model,
+                                  setInfoIndex: index,
+                                  refresh: () {
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
+                                  },
+                                );
+                              } else if (model
+                                      .modifiedExercises[model.exerciseIndex]
+                                      .trackingFieldId ==
+                                  2) {
+                                return SetInfoBoxForReps(
+                                  key: ValueKey(
+                                      '${model.modifiedExercises[model.exerciseIndex].workoutPlanId}_$index'),
+                                  workoutScheduleId: widget.workoutScheduleId,
+                                  initialReps: element.reps!,
+                                  model: model,
+                                  setInfoIndex: index,
+                                  refresh: () {
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
+                                  },
+                                );
+                              } else if (model
+                                          .modifiedExercises[
+                                              model.exerciseIndex]
+                                          .trackingFieldId ==
+                                      3 ||
+                                  model.modifiedExercises[model.exerciseIndex]
+                                          .trackingFieldId ==
+                                      4) {
+                                return SetInfoBoxForTimer(
+                                  key: ValueKey(
+                                      '${model.modifiedExercises[model.exerciseIndex].workoutPlanId}_$index'),
+                                  workoutScheduleId: widget.workoutScheduleId,
+                                  initialSeconds: element.seconds!,
+                                  model: model,
+                                  setInfoIndex: index,
+                                  refresh: () {
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
+                                  },
+                                );
+                              }
+                            } else {
+                              return Container(
+                                color: Pallete.lightGray.withOpacity(0.15),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 28,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      SvgPicture.asset(SVGConstants.message),
+                                      InkWell(
+                                        onTap: () async {
+                                          if (mounted) {
+                                            if (model.isWorkoutChangeGuide) {
+                                              ref
+                                                  .read(workoutProcessProvider(
+                                                          widget
+                                                              .workoutScheduleId)
+                                                      .notifier)
+                                                  .putIsGuide(
+                                                    isWorkoutChangeGuide: false,
+                                                  );
+                                            }
+                                          }
+
+                                          Navigator.of(context)
+                                              .push(CupertinoPageRoute(
+                                            builder: (context) =>
+                                                WorkoutChangeScreen(
+                                              exerciseIndex:
+                                                  model.exerciseIndex,
+                                              workout: widget.workout,
+                                            ),
+                                          ))
+                                              .then(
+                                            (value) {
+                                              if (value != null) {
+                                                ref
+                                                    .read(workoutProcessProvider(
+                                                            widget
+                                                                .workoutScheduleId)
+                                                        .notifier)
+                                                    .exerciseChange(value);
+                                                isTooltipVisible = false;
+                                                tooltipCount = 0;
+                                                onTooltipPressed();
+                                                tooltipSeq = 0;
+                                                if (mounted) {
+                                                  setState(() {});
+                                                }
+
+                                                if (isSwipeUp) {
+                                                  final index = model
+                                                                  .setInfoCompleteList[
+                                                              model
+                                                                  .exerciseIndex] ==
+                                                          model.maxSetInfoList[
+                                                              model
+                                                                  .exerciseIndex]
+                                                      ? model.setInfoCompleteList[
+                                                              model
+                                                                  .exerciseIndex] -
+                                                          1
+                                                      : model.setInfoCompleteList[
+                                                          model.exerciseIndex];
+
+                                                  itemScrollController.jumpTo(
+                                                      index: index);
+                                                }
+                                              }
+                                            },
+                                          );
+                                        },
+                                        child: SizedBox(
+                                          height: 55,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              SvgPicture.asset(
+                                                SVGConstants.list,
+                                                width: 24,
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                '운동 리스트',
+                                                style: h5Headline.copyWith(
+                                                  height: 1,
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 20,
+                                              ),
+                                              if (model.isWorkoutChangeGuide)
+                                                TipBubble(
+                                                  text: '운동 순서를 바꿀 수 있어요!',
+                                                  textStyle:
+                                                      s3SubTitle.copyWith(
+                                                    color: Colors.white,
+                                                    height: 1,
+                                                  ),
+                                                  bubbleColor: Pallete.point,
+                                                  bubblePosition:
+                                                      BubblePosition.left,
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .push(CupertinoPageRoute(
+                                            builder: (context) =>
+                                                ExerciseScreen(
+                                                    exercise: widget.exercises[
+                                                        model.exerciseIndex]),
+                                          ));
+                                        },
+                                        child: SizedBox(
+                                          height: 55,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              SvgPicture.asset(
+                                                SVGConstants.guide,
+                                                width: 24,
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                '운동 가이드',
+                                                style: h5Headline.copyWith(
+                                                  height: 1,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.of(context)
+                                              .push(CupertinoPageRoute(
+                                            builder: (context) =>
+                                                WorkoutHistoryScreen(
+                                              workoutPlanId: widget
+                                                  .exercises[
+                                                      model.exerciseIndex]
+                                                  .workoutPlanId,
+                                            ),
+                                          ));
+                                        },
+                                        child: SizedBox(
+                                          height: 55,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              SvgPicture.asset(
+                                                SVGConstants.history,
+                                                colorFilter:
+                                                    const ColorFilter.mode(
+                                                  Colors.black,
+                                                  BlendMode.srcIn,
+                                                ),
+                                                width: 24,
+                                              ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                '운동 히스토리',
+                                                style: h5Headline.copyWith(
+                                                  height: 1,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: ((11 -
+                                                    model.maxSetInfoList[
+                                                        model.exerciseIndex]) *
+                                                30)
+                                            .toDouble(),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (model.isSwipeGuide)
+                  Positioned(
+                    bottom: 195,
+                    right: 50.w - 59.5,
+                    child: TipBubble(
+                      text: '위로 끌어올려 보세요!',
+                      textStyle:
+                          s3SubTitle.copyWith(color: Colors.white, height: 1),
+                      bubbleColor: Pallete.point,
+                      bubblePosition: BubblePosition.bottomCenter,
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

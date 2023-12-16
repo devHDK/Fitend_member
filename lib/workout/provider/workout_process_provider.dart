@@ -835,6 +835,24 @@ class WorkoutProcessStateNotifier
     }
   }
 
+  void putIsVideoRecordFalse() {
+    final pstate = state as WorkoutProcessModel;
+
+    modifiedExerciseBox.whenData((value) {
+      var record =
+          value.get(pstate.exercises[pstate.exerciseIndex].workoutPlanId);
+
+      if (record is Exercise) {
+        record.isVideoRecord = false;
+        value.put(pstate.exercises[pstate.exerciseIndex].workoutPlanId, record);
+      }
+    });
+
+    pstate.modifiedExercises[pstate.exerciseIndex].isVideoRecord = false;
+
+    state = pstate.copyWith();
+  }
+
   void resetTimer(int setInfoIndex) {
     final pstate = state as WorkoutProcessModel;
 

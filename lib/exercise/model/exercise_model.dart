@@ -34,7 +34,7 @@ class Exercise {
   @HiveField(12)
   final String? setType;
   @HiveField(13)
-  final bool? isVideoRecord;
+  bool? isVideoRecord;
 
   Exercise({
     required this.workoutPlanId,

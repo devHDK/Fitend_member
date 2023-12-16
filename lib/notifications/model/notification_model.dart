@@ -2,6 +2,13 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'notification_model.g.dart';
 
+enum NotificationType {
+  reservation,
+  workoutSchedule,
+  thread,
+  noFeedback,
+}
+
 abstract class NotificationModelBase {}
 
 class NotificationModelError extends NotificationModelBase {

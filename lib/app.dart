@@ -59,6 +59,8 @@ class _AppState extends ConsumerState<App> {
         );
       } else if (message.data['type'].toString().contains('reservation')) {
         ref.read(routerProvider).goNamed(NotificationScreen.routeName);
+      } else if (message.data['type'].toString().contains('noFeedback')) {
+        ref.read(routerProvider).goNamed(NotificationScreen.routeName);
       }
     });
   }

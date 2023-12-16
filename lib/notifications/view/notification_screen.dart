@@ -8,8 +8,14 @@ import 'package:fitend_member/notifications/model/notification_model.dart';
 import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/notifications/provider/notification_provider.dart';
 import 'package:fitend_member/notifications/repository/notifications_repository.dart';
+import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
+import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
+import 'package:fitend_member/workout/model/workout_model.dart';
+import 'package:fitend_member/workout/provider/workout_provider.dart';
+import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
@@ -200,16 +206,21 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
                   }
 
                   return GestureDetector(
-                    onTap: notification.data![index].info != null &&
+                    onTap: notification.data![index].type == 'thread' &&
+                            notification.data![index].info != null &&
                             notification.data![index].info!.threadId != null
                         ? () {
-                            Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (context) => ThreadDetailScreen(
-                                  threadId: notification
-                                      .data![index].info!.threadId!),
-                            ));
+                            _pushThreadScreen(context, index);
                           }
-                        : null,
+                        : notification.data![index].type == 'noFeedback' &&
+                                notification.data![index].info != null &&
+                                notification
+                                        .data![index].info!.workoutScheduleId !=
+                                    null
+                            ? () async {
+                                await _pushFeedbackScreen(index, context);
+                              }
+                            : null,
                     child: NotificationCell(
                       notificationData: notification.data![index],
                     ),
@@ -218,5 +229,44 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
               ),
             ),
     );
+  }
+
+  Future<void> _pushFeedbackScreen(int index, BuildContext context) async {
+    if (mounted) {
+      await ref
+          .read(workoutScheduleRepositoryProvider)
+          .getWorkout(id: notification.data![index].info!.workoutScheduleId!)
+          .then((value) {
+        if (value.isRecord && !value.isWorkoutComplete) {
+          context.pop();
+          GoRouter.of(context).goNamed(
+            WorkoutFeedbackScreen.routeName,
+            pathParameters: {
+              'workoutScheduleId': value.workoutScheduleId.toString(),
+            },
+            extra: value.exercises,
+            queryParameters: {'startDate': value.startDate},
+          );
+        } else if (value.isRecord && value.isWorkoutComplete) {
+          context.pop();
+
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (context) => ScheduleResultScreen(
+                workoutScheduleId: value.workoutScheduleId,
+              ),
+              fullscreenDialog: true,
+            ),
+          );
+        }
+      });
+    }
+  }
+
+  void _pushThreadScreen(BuildContext context, int index) {
+    Navigator.of(context).push(CupertinoPageRoute(
+      builder: (context) => ThreadDetailScreen(
+          threadId: notification.data![index].info!.threadId!),
+    ));
   }
 }

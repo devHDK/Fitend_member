@@ -39,9 +39,6 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   );
 
   processPushMessage(message);
-
-  // await setupFlutterNotifications(); // 셋팅 메소드
-  // showFlutterNotification(message);
 }
 
 void processPushMessage(RemoteMessage message) async {
@@ -187,6 +184,9 @@ void processPushMessage(RemoteMessage message) async {
       default:
         break;
     }
+  } else if (type.contains('noFeedback')) {
+    await SharedPrefUtils.updateIsNeedUpdate(
+        StringConstants.needNotificationUpdate, pref, true);
   }
 }
 
@@ -231,6 +231,7 @@ Future<void> main() async {
     // name: 'dev',
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   await setupFlutterNotifications();
   // foreground 수신처리
   FirebaseMessaging.onMessage.listen(

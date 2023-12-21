@@ -1076,6 +1076,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       ),
                                       InkWell(
                                         onTap: () {
+                                          FirebaseAnalytics.instance.logEvent(
+                                              name:
+                                                  'history_screen_from_workout');
+
                                           Navigator.of(context)
                                               .push(CupertinoPageRoute(
                                             builder: (context) =>
@@ -1169,6 +1173,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         confirmText: '네,  바로할게요',
         cancelText: '조금 이따 할게요',
         confirmOnTap: () {
+          FirebaseAnalytics.instance
+              .logEvent(name: 'click_thread_create_alret');
+
           context.pop();
 
           Navigator.of(context).push(
@@ -1320,6 +1327,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           confirmOnTap: () {
             if (mounted) {
               int count = 0;
+
+              FirebaseAnalytics.instance.logEvent(name: 'click_workout_reset');
+
               ref
                   .read(
                       workoutProcessProvider(widget.workoutScheduleId).notifier)
@@ -1331,6 +1341,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
           cancelOnTap: model.isQuitting
               ? () {}
               : () async {
+                  FirebaseAnalytics.instance
+                      .logEvent(name: 'click_workout_quit');
+
                   try {
                     await ref
                         .read(workoutProcessProvider(widget.workoutScheduleId)

@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/guide_video_player.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
@@ -71,11 +72,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         ),
         actions: [
           GestureDetector(
-            onTap: () => Navigator.of(context).push(CupertinoPageRoute(
-              builder: (context) => WorkoutHistoryScreen(
-                workoutPlanId: widget.exercise.workoutPlanId,
-              ),
-            )),
+            onTap: () {
+              FirebaseAnalytics.instance
+                  .logEvent(name: 'history_screen_from_exercise_detail');
+
+              Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) => WorkoutHistoryScreen(
+                        workoutPlanId: widget.exercise.workoutPlanId,
+                      )));
+            },
             child: SvgPicture.asset(
               SVGConstants.history,
               colorFilter: ColorFilter.mode(

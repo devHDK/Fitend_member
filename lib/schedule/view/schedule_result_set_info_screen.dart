@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
@@ -143,14 +144,19 @@ class _ScheduleResultSetInfoScreenState
                           ),
                         ),
                         InkWell(
-                          onTap: () => Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              builder: (context) => WorkoutHistoryScreen(
-                                workoutPlanId:
-                                    widget.workoutRecords[index].workoutPlanId,
+                          onTap: () {
+                            FirebaseAnalytics.instance
+                                .logEvent(name: 'history_screen_from_result');
+
+                            Navigator.of(context).push(
+                              CupertinoPageRoute(
+                                builder: (context) => WorkoutHistoryScreen(
+                                  workoutPlanId: widget
+                                      .workoutRecords[index].workoutPlanId,
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                           child: Padding(
                               padding: const EdgeInsets.all(6),
                               child: SvgPicture.asset(SVGConstants.history)),

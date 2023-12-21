@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
@@ -227,6 +228,9 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                       _renderTitle('오늘의 결과 🎯'),
                       GestureDetector(
                         onTap: () {
+                          FirebaseAnalytics.instance
+                              .logEvent(name: 'click_set_info_detail');
+
                           Navigator.of(context).push(
                             CupertinoPageRoute(
                               builder: (context) => ScheduleResultSetInfoScreen(

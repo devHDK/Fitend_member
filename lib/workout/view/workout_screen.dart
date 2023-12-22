@@ -933,7 +933,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                   ),
                                   child: Column(
                                     children: [
-                                      SvgPicture.asset(SVGConstants.message),
+                                      SvgPicture.asset(SVGConstants.more),
                                       InkWell(
                                         onTap: () async {
                                           if (mounted) {

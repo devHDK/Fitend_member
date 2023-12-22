@@ -207,7 +207,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                       height: 15,
                     ),
                     Text(resultWorkout.subTitle,
-                        style: s2SubTitle.copyWith(color: Pallete.lightGray)),
+                        style: s1SubTitle.copyWith(color: Pallete.lightGray)),
                     const SizedBox(
                       height: 20,
                     ),
@@ -281,7 +281,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                       _renderTitle('오늘의 평가 📝'),
                       _renderStrengthResult(resultModel),
                       const SizedBox(
-                        height: 24,
+                        height: 8,
                       ),
                       if (resultModel.issueIndexes != null &&
                           resultModel.issueIndexes!.isNotEmpty)
@@ -509,7 +509,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
           ),
         ),
         const SizedBox(
-          height: 20,
+          height: 8,
         )
       ],
     );

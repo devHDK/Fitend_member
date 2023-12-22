@@ -180,7 +180,7 @@ class _WorkoutHistoryScreenState extends ConsumerState<WorkoutHistoryScreen> {
 
                         return SizedBox(
                           width: 100.w,
-                          height: 26 * setInfoCount + 67,
+                          height: 34 * setInfoCount + 67,
                           child: Row(
                             children: [
                               Stack(
@@ -223,7 +223,7 @@ class _WorkoutHistoryScreenState extends ConsumerState<WorkoutHistoryScreen> {
                                         .mapIndexed(
                                           (i, e) => Padding(
                                             padding: const EdgeInsets.symmetric(
-                                                vertical: 1),
+                                                vertical: 5),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment

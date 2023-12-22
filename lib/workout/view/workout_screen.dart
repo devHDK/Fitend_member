@@ -1059,10 +1059,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                               ),
                                               SvgPicture.asset(
                                                 SVGConstants.guide,
-                                                width: 24,
+                                                width: 22,
                                               ),
                                               const SizedBox(
-                                                width: 10,
+                                                width: 11,
                                               ),
                                               Text(
                                                 '운동 가이드',
@@ -1101,7 +1101,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                                 width: 10,
                                               ),
                                               SvgPicture.asset(
-                                                SVGConstants.history,
+                                                SVGConstants.historyThin,
                                                 colorFilter:
                                                     const ColorFilter.mode(
                                                   Colors.black,

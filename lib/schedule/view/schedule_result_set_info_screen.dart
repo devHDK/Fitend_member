@@ -212,78 +212,89 @@ class _ScheduleResultSetInfoScreenState
     );
   }
 
-  Row _setInfoCellWeightReps(SetInfo set) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          '${set.index} Set',
-          style: s2SubTitle.copyWith(
-            color: Pallete.lightGray,
+  Padding _setInfoCellWeightReps(SetInfo set) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '${set.index} Set',
+            style: s2SubTitle.copyWith(
+              color: Pallete.lightGray,
+            ),
           ),
-        ),
-        Text(
-          set.weight != null ? '${set.weight}kg' : '-',
-          style: s2SubTitle.copyWith(
-            color: Pallete.lightGray,
+          Text(
+            set.weight != null ? '${set.weight}kg' : '-',
+            style: s2SubTitle.copyWith(
+              color: Pallete.lightGray,
+            ),
           ),
-        ),
-        Text(
-          set.reps != null ? '${set.reps}회' : '-',
-          style: s2SubTitle.copyWith(
-            color: Pallete.lightGray,
+          Text(
+            set.reps != null ? '${set.reps}회' : '-',
+            style: s2SubTitle.copyWith(
+              color: Pallete.lightGray,
+            ),
           ),
-        ),
-        Text(
-          set.reps != null && set.weight != null ? '✅' : '❌',
-        ),
-      ],
+          Text(
+            set.reps != null && set.weight != null ? '✅' : '❌',
+          ),
+        ],
+      ),
     );
   }
 
-  Row _setInfoCellReps(SetInfo set) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          '${set.index} Set',
-          style: s2SubTitle.copyWith(
-            color: Pallete.lightGray,
+  Padding _setInfoCellReps(SetInfo set) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '${set.index} Set',
+            style: s2SubTitle.copyWith(
+              color: Pallete.lightGray,
+            ),
           ),
-        ),
-        Text(
-          set.reps != null ? '${set.reps}회' : '-',
-          style: s2SubTitle.copyWith(
-            color: Pallete.lightGray,
+          Text(
+            set.reps != null ? '${set.reps}회' : '-',
+            style: s2SubTitle.copyWith(
+              color: Pallete.lightGray,
+            ),
           ),
-        ),
-        Text(
-          set.reps != null ? '✅' : '❌',
-        ),
-      ],
+          Text(
+            set.reps != null ? '✅' : '❌',
+          ),
+        ],
+      ),
     );
   }
 
-  Row _setInfoCellTimer(SetInfo set) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          '${set.index} Set',
-          style: s2SubTitle.copyWith(
-            color: Pallete.lightGray,
+  Padding _setInfoCellTimer(SetInfo set) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '${set.index} Set',
+            style: s2SubTitle.copyWith(
+              color: Pallete.lightGray,
+            ),
           ),
-        ),
-        Text(
-          set.seconds != null ? DataUtils.getTimeStringHour(set.seconds!) : '-',
-          style: s2SubTitle.copyWith(
-            color: Pallete.lightGray,
+          Text(
+            set.seconds != null
+                ? DataUtils.getTimeStringHour(set.seconds!)
+                : '-',
+            style: s2SubTitle.copyWith(
+              color: Pallete.lightGray,
+            ),
           ),
-        ),
-        Text(
-          set.seconds != null ? '✅' : '❌',
-        ),
-      ],
+          Text(
+            set.seconds != null ? '✅' : '❌',
+          ),
+        ],
+      ),
     );
   }
 }

@@ -5,7 +5,10 @@
 	<key>aps-environment</key>
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
-	<array/>
+	<array>
+		<string>applinks:com.raid.fitend</string>
+		<string>applinks:com.raid.fitend.dev</string>
+	</array>
 	<key>com.apple.developer.authentication-services.autofill-credential-provider</key>
 	<true/>
 	<key>keychain-access-groups</key>

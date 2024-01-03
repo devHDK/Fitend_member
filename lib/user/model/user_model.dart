@@ -1,4 +1,5 @@
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/ticket/model/ticket_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'user_model.g.dart';
 
@@ -58,6 +59,8 @@ class User {
   final String? deletedAt;
   @JsonKey(name: "activeTrainers")
   final List<ThreadTrainer> activeTrainers;
+  @JsonKey(name: "activeTickets")
+  final List<ActiveTicket> activeTickets;
 
   User({
     required this.id,
@@ -69,6 +72,7 @@ class User {
     required this.createdAt,
     required this.deletedAt,
     required this.activeTrainers,
+    required this.activeTickets,
   });
 
   User copyWith({
@@ -81,6 +85,7 @@ class User {
     String? createdAt,
     String? deletedAt,
     List<ThreadTrainer>? activeTrainers,
+    List<ActiveTicket>? activeTickets,
   }) =>
       User(
         id: id ?? this.id,
@@ -92,6 +97,7 @@ class User {
         deletedAt: deletedAt ?? this.deletedAt,
         createdAt: createdAt ?? this.createdAt,
         activeTrainers: activeTrainers ?? this.activeTrainers,
+        activeTickets: activeTickets ?? this.activeTickets,
       );
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

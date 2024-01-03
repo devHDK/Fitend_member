@@ -60,7 +60,7 @@ class User {
   @JsonKey(name: "activeTrainers")
   final List<ThreadTrainer> activeTrainers;
   @JsonKey(name: "activeTickets")
-  final List<ActiveTicket> activeTickets;
+  List<ActiveTicket>? activeTickets;
 
   User({
     required this.id,
@@ -72,7 +72,7 @@ class User {
     required this.createdAt,
     required this.deletedAt,
     required this.activeTrainers,
-    required this.activeTickets,
+    this.activeTickets,
   });
 
   User copyWith({

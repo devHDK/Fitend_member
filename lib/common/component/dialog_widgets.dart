@@ -378,6 +378,19 @@ class DialogWidgets {
     );
   }
 
+  static Future<dynamic> ticketBuyModal(
+    BuildContext context,
+  ) {
+    return showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black38,
+      context: context,
+      builder: (context) {
+        return const _TicketContainer();
+      },
+    );
+  }
+
   static void showToast(String content) {
     Fluttertoast.showToast(
       msg: content,
@@ -387,6 +400,22 @@ class DialogWidgets {
       backgroundColor: Colors.black54,
       textColor: Colors.white,
       fontSize: 13.0,
+    );
+  }
+}
+
+class _TicketContainer extends StatelessWidget {
+  const _TicketContainer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Pallete.darkGray,
+      ),
+      width: 100.w,
+      height: 175,
     );
   }
 }

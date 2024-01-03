@@ -11,6 +11,9 @@ import 'package:fitend_member/notifications/repository/notifications_repository.
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
+import 'package:fitend_member/ticket/component/ticket_cell.dart';
+import 'package:fitend_member/ticket/model/ticket_model.dart';
+import 'package:fitend_member/ticket/view/ticket_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/password_confirm_screen.dart';
@@ -83,6 +86,22 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             (m) => '${m[1]}-${m[2]}-${m[3]}')
         : '';
 
+    int ticketLength = 0;
+
+    if (model.user.activeTickets != null &&
+        model.user.activeTickets!.isNotEmpty) {
+      ActiveTicket nowTicket = model.user.activeTickets!.first;
+
+      final diff = nowTicket.expiredAt.difference(nowTicket.startedAt).inDays;
+      if (diff > 92) {
+        ticketLength = 6;
+      } else if (diff > 31) {
+        ticketLength = 3;
+      } else {
+        ticketLength = 1;
+      }
+    }
+
     return Scaffold(
       backgroundColor: Pallete.background,
       appBar: AppBar(
@@ -108,6 +127,29 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
         child: Column(
           children: [
             _renderUserInfo(model, formattedPhoneNumber),
+            const Divider(
+              color: Pallete.darkGray,
+              height: 1,
+            ),
+            if (model.user.activeTickets != null &&
+                model.user.activeTickets!.isNotEmpty)
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (context) =>
+                          TicketScreen(tickets: model.user.activeTickets!),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: TicketCell(
+                    ticket: model.user.activeTickets!.first,
+                    child: SvgPicture.asset(SVGConstants.next),
+                  ),
+                ),
+              ),
             const Divider(
               color: Pallete.darkGray,
               height: 1,

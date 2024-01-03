@@ -26,8 +26,8 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       activeTrainers: (json['activeTrainers'] as List<dynamic>)
           .map((e) => ThreadTrainer.fromJson(e as Map<String, dynamic>))
           .toList(),
-      activeTickets: (json['activeTickets'] as List<dynamic>)
-          .map((e) => ActiveTicket.fromJson(e as Map<String, dynamic>))
+      activeTickets: (json['activeTickets'] as List<dynamic>?)
+          ?.map((e) => ActiveTicket.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

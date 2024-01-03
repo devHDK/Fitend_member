@@ -53,6 +53,7 @@ class SVGConstants {
   static const String turnDown = '${_svgPath}icon_turn_down.svg';
   static const String tunrLine = '${_svgPath}icon_turn_line.svg';
   static const String turnUp = '${_svgPath}icon_turn_up.svg';
+  static const String ticket = '${_svgPath}icon_ticket.svg';
 }
 
 class IMGConstants {

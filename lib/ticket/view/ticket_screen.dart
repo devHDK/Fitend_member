@@ -33,7 +33,7 @@ class _TicketScreenState extends State<TicketScreen> {
           ),
         ),
         title: Text(
-          '멤버쉽',
+          '멤버십',
           style: h4Headline.copyWith(
             color: Colors.white,
           ),
@@ -78,21 +78,17 @@ class _TicketScreenState extends State<TicketScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
-          onPressed: widget.tickets.length >= 2
-              ? () {
-                  DialogWidgets.showToast(
-                      '이미 멤버십을 구매했어요!\n먼저 이용예정 상품을 취소해주세요 🙅‍♀️');
-                }
-              : () {
-                  DialogWidgets.ticketBuyModal(context);
-                },
+      floatingActionButton: GestureDetector(
+        onTap: widget.tickets.length >= 2
+            ? () {
+                DialogWidgets.showToast(
+                    '이미 멤버십을 구매했어요!\n먼저 이용예정 상품을 취소해주세요 🙅‍♀️');
+              }
+            : () {
+                DialogWidgets.ticketBuyModal(context);
+              },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Container(
             height: 44,
             decoration: BoxDecoration(
@@ -101,7 +97,7 @@ class _TicketScreenState extends State<TicketScreen> {
             ),
             child: Center(
               child: Text(
-                '멤버쉽 구매하기',
+                '멤버십 구매하기',
                 style: h6Headline.copyWith(
                   color: Colors.white,
                 ),

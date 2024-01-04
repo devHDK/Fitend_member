@@ -54,8 +54,8 @@ dependencies:
   firebase_crashlytics: ^3.3.3
   firebase_analytics: ^10.5.0
   url_launcher: ^6.1.10
-  shared_preferences: ^2.2.0
-  uuid: ^4.2.1
+  shared_preferences: ^2.1.1
+  uuid: ^3.0.7
   flutter_app_badger: ^1.5.0
   wechat_assets_picker: ^8.7.1
   devicelocale: ^0.7.0
@@ -111,9 +111,15 @@ dependencies:
   emoji_picker_flutter: ^1.6.1
   toggle_switch: ^2.1.0
   any_link_preview: ^3.0.1
-  fluttertoast: ^8.2.2
+  fluttertoast: ^8.2.1
   shimmer: ^3.0.0
   collection: ^1.17.2
+
+  #bootPay
+  bootpay: ^4.8.2
+
+dependency_overrides:
+  http: ^0.13.5 # 버전 충돌나는 패키지에 대해 강제로 버전 지정
 
 dev_dependencies:
   flutter_test:

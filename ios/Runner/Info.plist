@@ -77,5 +77,12 @@
 	<string>게시물에 사용할 동영상을 촬영하기 위해 마이크 접근을 허용해주세요.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>GPS 권한을 허용해주세요.</string>
+	<key>CFBundleURLName</key>
+    <string>com.raid.fitend</string> 
+    <key>CFBundleURLSchemes</key>
+    <array>
+        <string>FITEND</string> 
+    </array>
+
 </dict>
 </plist>

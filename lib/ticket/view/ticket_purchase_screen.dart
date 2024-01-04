@@ -1,5 +1,11 @@
+import 'package:bootpay/bootpay.dart';
+import 'package:bootpay/model/item.dart';
+import 'package:bootpay/model/payload.dart';
+import 'package:bootpay/model/user.dart';
+import 'package:fitend_member/common/const/bootpay_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/flavors.dart';
 import 'package:fitend_member/ticket/model/product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -141,7 +147,52 @@ class _TicketPurchaseScreenState extends State<TicketPurchaseScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Payload payload = getPayload(widget.purchaseProduct);
+
+          Bootpay().requestPayment(
+            context: context,
+            payload: payload,
+            showCloseButton: true,
+            // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
+            onCancel: (String data) {
+              print('------- onCancel: $data');
+              context.pop();
+            },
+            onError: (String data) {
+              print('------- onError: $data');
+            },
+            onClose: () {
+              print('------- onClose');
+              Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+              //TODO - 원하시는 라우터로 페이지 이동
+            },
+            onIssued: (String data) {
+              print('------- onIssued: $data');
+            },
+            onConfirm: (String data) {
+              print('------- onConfirm: $data');
+              /**
+            1. 바로 승인하고자 할 때
+            return true;
+         **/
+              /***
+            2. 비동기 승인 하고자 할 때
+            checkQtyFromServer(data);
+            return false;
+         ***/
+              /***
+            3. 서버승인을 하고자 하실 때 (클라이언트 승인 X)
+            return false; 후에 서버에서 결제승인 수행
+         */
+              // checkQtyFromServer(data);
+              return true;
+            },
+            onDone: (String data) {
+              print('------- onDone: $data');
+            },
+          );
+        },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Container(
@@ -162,5 +213,31 @@ class _TicketPurchaseScreenState extends State<TicketPurchaseScreen> {
         ),
       ),
     );
+  }
+
+  Payload getPayload(Product purchaseProduct) {
+    Payload payload = Payload();
+
+    payload.androidApplicationId =
+        BootPayConstants.aosKey; // android application id
+    payload.iosApplicationId = BootPayConstants.iosKey; // ios application id
+
+    payload.pg = '나이스페이';
+    payload.orderName = 'FITEND 온라인 코칭 ${purchaseProduct.month}개월'; //결제할 상품명
+    payload.price = F.appFlavor == Flavor.production
+        ? purchaseProduct.price.toDouble()
+        : 100; //정기결제시 0 혹은 주석
+
+    payload.orderId = DateTime.now()
+        .millisecondsSinceEpoch
+        .toString(); //주문번호, 개발사에서 고유값으로 지정해야함
+
+    payload.metadata = {
+      "callbackParam1": "value12",
+      "callbackParam2": "value34",
+      "callbackParam3": "value56",
+      "callbackParam4": "value78",
+    }; // 전달할 파라미터, 결제 후 되돌려 주는 값
+    return payload;
   }
 }

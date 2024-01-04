@@ -6,6 +6,7 @@ class SVGConstants {
   static const String camera = '${_svgPath}icon_camera.svg';
   static const String change = '${_svgPath}icon_change.svg';
   static const String checkComplete = '${_svgPath}icon_check_complete.svg';
+  static const String checkVoid = '${_svgPath}icon_check_void.svg';
   static const String checkSave = '${_svgPath}icon_check_save.svg';
   static const String checkSetInfo = '${_svgPath}icon_check_setInfo.svg';
   static const String checkEmpty = '${_svgPath}icon_check.svg';

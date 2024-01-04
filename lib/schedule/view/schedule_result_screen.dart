@@ -58,10 +58,8 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(milliseconds: 300), () {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        getResults();
-      });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getResults();
     });
   }
 

@@ -8,6 +8,7 @@ import 'package:fitend_member/schedule/model/put_workout_schedule_date_model.dar
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:fitend_member/ticket/component/ticket_container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -386,7 +387,7 @@ class DialogWidgets {
       barrierColor: Colors.black38,
       context: context,
       builder: (context) {
-        return const _TicketContainer();
+        return const TicketContainer();
       },
     );
   }
@@ -400,22 +401,6 @@ class DialogWidgets {
       backgroundColor: Colors.black54,
       textColor: Colors.white,
       fontSize: 13.0,
-    );
-  }
-}
-
-class _TicketContainer extends StatelessWidget {
-  const _TicketContainer();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Pallete.darkGray,
-      ),
-      width: 100.w,
-      height: 175,
     );
   }
 }

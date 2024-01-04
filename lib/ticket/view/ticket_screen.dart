@@ -81,7 +81,10 @@ class _TicketScreenState extends State<TicketScreen> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
           onPressed: widget.tickets.length >= 2
               ? () {
                   DialogWidgets.showToast(

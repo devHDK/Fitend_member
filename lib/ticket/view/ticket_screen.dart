@@ -3,22 +3,28 @@ import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/ticket/component/no_ticket_cell.dart';
 import 'package:fitend_member/ticket/component/ticket_cell.dart';
-import 'package:fitend_member/ticket/model/ticket_model.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class TicketScreen extends StatefulWidget {
-  const TicketScreen({super.key, required this.tickets});
-
-  final List<ActiveTicket> tickets;
+class TicketScreen extends ConsumerStatefulWidget {
+  const TicketScreen({super.key});
 
   @override
-  State<TicketScreen> createState() => _TicketScreenState();
+  ConsumerState<TicketScreen> createState() => _TicketScreenState();
 }
 
-class _TicketScreenState extends State<TicketScreen> {
+class _TicketScreenState extends ConsumerState<TicketScreen> {
   @override
   Widget build(BuildContext context) {
+    final userState = ref.watch(getMeProvider);
+
+    final userModel = userState as UserModel;
+
+    final activeTickets = userModel.user.activeTickets ?? [];
+
     return Scaffold(
       backgroundColor: Pallete.background,
       appBar: AppBar(
@@ -41,51 +47,69 @@ class _TicketScreenState extends State<TicketScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            Text(
-              '이용중인 상품',
-              style: s2SubTitle.copyWith(
-                color: Colors.white,
+        child: RefreshIndicator(
+          backgroundColor: Pallete.background,
+          color: Pallete.point,
+          semanticsLabel: '새로고침',
+          onRefresh: () async {
+            await ref.read(getMeProvider.notifier).getMe();
+          },
+          child: ListView(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  Text(
+                    '이용중인 상품',
+                    style: s2SubTitle.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TicketCell(
+                    ticket: activeTickets.first,
+                  ),
+                  const SizedBox(height: 32),
+                  const Divider(
+                    thickness: 1,
+                    color: Pallete.gray,
+                  ),
+                  const SizedBox(height: 32),
+                  Text(
+                    '이용예정 상품',
+                    style: s2SubTitle.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (activeTickets.length > 1)
+                    TicketCell(
+                      ticket: activeTickets[1],
+                    )
+                  else
+                    const NoTicketCell()
+                ],
               ),
-            ),
-            const SizedBox(height: 8),
-            TicketCell(
-              ticket: widget.tickets.first,
-            ),
-            const SizedBox(height: 32),
-            const Divider(
-              thickness: 1,
-              color: Pallete.gray,
-            ),
-            const SizedBox(height: 32),
-            Text(
-              '이용예정 상품',
-              style: s2SubTitle.copyWith(
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 8),
-            if (widget.tickets.length > 1)
-              TicketCell(
-                ticket: widget.tickets[1],
-              )
-            else
-              const NoTicketCell()
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GestureDetector(
-        onTap: widget.tickets.length >= 2
+        onTap: activeTickets.length >= 2
             ? () {
                 DialogWidgets.showToast(
                     '이미 멤버십을 구매했어요!\n먼저 이용예정 상품을 취소해주세요 🙅‍♀️');
               }
             : () {
-                DialogWidgets.ticketBuyModal(context);
+                DialogWidgets.ticketBuyModal(
+                  context: context,
+                  trainerId: userModel.user.activeTrainers.first.id,
+                  activeTicket: userModel.user.activeTickets != null
+                      ? userModel.user.activeTickets!.first
+                      : null,
+                );
               },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),

@@ -7,6 +7,7 @@ import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/update_checker.dart';
+import 'package:fitend_member/ticket/model/ticket_model.dart';
 import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/model/put_fcm_token.dart';
@@ -242,7 +243,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     }
   }
 
-  changeIsNotification({
+  void changeIsNotification({
     required bool isNotification,
   }) {
     final pstate = state as UserModel;
@@ -250,6 +251,16 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     state = pstate.copyWith(
       user: pstate.user.copyWith(isNotification: isNotification),
     );
+  }
+
+  void updateActiveTickets({
+    required List<ActiveTicket> activeTickets,
+  }) {
+    final pstate = state as UserModel;
+
+    pstate.user.activeTickets = activeTickets;
+
+    state = pstate.copyWith();
   }
 
   Future<String> _getDeviceInfo() async {

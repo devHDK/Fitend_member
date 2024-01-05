@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/ticket/model/product_model.dart';
+import 'package:fitend_member/ticket/model/ticket_model.dart';
 import 'package:fitend_member/ticket/provider/product_provider.dart';
 import 'package:fitend_member/ticket/view/ticket_purchase_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +15,14 @@ import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class TicketContainer extends ConsumerStatefulWidget {
-  const TicketContainer({super.key});
+  const TicketContainer({
+    super.key,
+    this.trainerId,
+    this.activeTicket,
+  });
+
+  final int? trainerId;
+  final ActiveTicket? activeTicket;
 
   @override
   ConsumerState<TicketContainer> createState() => _TicketContainerState();
@@ -125,7 +133,10 @@ class _TicketContainerState extends ConsumerState<TicketContainer> {
                 context.pop();
                 Navigator.of(context).push(CupertinoPageRoute(
                   builder: (context) => TicketPurchaseScreen(
-                      purchaseProduct: model.data[model.selectedIndex!]),
+                    purchaseProduct: model.data[model.selectedIndex!],
+                    trainerId: widget.trainerId,
+                    activeTicket: widget.activeTicket,
+                  ),
                 ));
               },
               child: Container(

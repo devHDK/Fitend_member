@@ -1,37 +1,56 @@
+import 'dart:convert';
+
 import 'package:bootpay/bootpay.dart';
-import 'package:bootpay/model/item.dart';
 import 'package:bootpay/model/payload.dart';
-import 'package:bootpay/model/user.dart';
 import 'package:fitend_member/common/const/bootpay_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/flavors.dart';
+import 'package:fitend_member/payment/model/bootpay_confirm_response.dart';
+import 'package:fitend_member/payment/model/payment_confirm_req_model.dart';
+import 'package:fitend_member/payment/provider/payment_provider.dart';
 import 'package:fitend_member/ticket/model/product_model.dart';
+import 'package:fitend_member/ticket/model/ticket_model.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class TicketPurchaseScreen extends StatefulWidget {
+class TicketPurchaseScreen extends ConsumerStatefulWidget {
   final Product purchaseProduct;
+  final int? trainerId;
+  final ActiveTicket? activeTicket;
 
   const TicketPurchaseScreen({
     super.key,
     required this.purchaseProduct,
+    this.trainerId,
+    this.activeTicket,
   });
 
   @override
-  State<TicketPurchaseScreen> createState() => _TicketPurchaseScreenState();
+  ConsumerState<TicketPurchaseScreen> createState() =>
+      _TicketPurchaseScreenState();
 }
 
-class _TicketPurchaseScreenState extends State<TicketPurchaseScreen> {
+class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
   @override
   Widget build(BuildContext context) {
-    final today = DateTime.now();
+    final state = ref.watch(getMeProvider);
+
+    final userModel = state as UserModel;
+
+    final startDate = widget.activeTicket != null
+        ? widget.activeTicket!.expiredAt.add(const Duration(days: 1))
+        : DateTime.now();
+
     final expiredDate = DateTime(
-      today.year,
-      today.month + widget.purchaseProduct.month,
-      today.day - 1,
+      startDate.year,
+      startDate.month + widget.purchaseProduct.month,
+      startDate.day - 1,
     );
 
     return Scaffold(
@@ -103,7 +122,7 @@ class _TicketPurchaseScreenState extends State<TicketPurchaseScreen> {
                           ),
                         ),
                         Text(
-                          '${DateFormat('yyyy.MM.dd').format(today)} ~ ${DateFormat('yyyy.MM.dd').format(expiredDate)}',
+                          '${DateFormat('yyyy.MM.dd').format(startDate)} ~ ${DateFormat('yyyy.MM.dd').format(expiredDate)}',
                           style: s1SubTitle.copyWith(
                             color: Colors.white,
                           ),
@@ -157,7 +176,7 @@ class _TicketPurchaseScreenState extends State<TicketPurchaseScreen> {
             // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
             onCancel: (String data) {
               print('------- onCancel: $data');
-              context.pop();
+              Bootpay().dismiss(context);
             },
             onError: (String data) {
               print('------- onError: $data');
@@ -166,6 +185,7 @@ class _TicketPurchaseScreenState extends State<TicketPurchaseScreen> {
               print('------- onClose');
               Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
               //TODO - 원하시는 라우터로 페이지 이동
+              context.pop();
             },
             onIssued: (String data) {
               print('------- onIssued: $data');
@@ -186,7 +206,13 @@ class _TicketPurchaseScreenState extends State<TicketPurchaseScreen> {
             return false; 후에 서버에서 결제승인 수행
          */
               // checkQtyFromServer(data);
-              return true;
+
+              final result = BootPayConfirmResponse.fromJson(
+                  jsonDecode(data)); //bootPay responseData
+
+              _confirmPayment(result, startDate, expiredDate, userModel);
+
+              return false;
             },
             onDone: (String data) {
               print('------- onDone: $data');
@@ -215,6 +241,38 @@ class _TicketPurchaseScreenState extends State<TicketPurchaseScreen> {
     );
   }
 
+  Future<void> _confirmPayment(BootPayConfirmResponse result,
+      DateTime startDate, DateTime expiredDate, UserModel userModel) async {
+    if (mounted) {
+      final activetickets =
+          await ref.read(paymentProvider.notifier).postConfirmPayments(
+                reqModel: PaymentConfirmReqModel(
+                  receiptId: result.receiptId,
+                  orderId: result.orderId,
+                  price: F.appFlavor == Flavor.production
+                      ? widget.purchaseProduct.price
+                      : 100,
+                  orderName: widget.purchaseProduct.name,
+                  startedAt: startDate,
+                  expiredAt: expiredDate,
+                  trainerId: userModel.user.activeTrainers.first.id,
+                  userId: userModel.user.id,
+                  month: widget.purchaseProduct.month,
+                ),
+              );
+
+      if (activetickets != null) {
+        print('active tickets =====> ${activetickets.toJson()}');
+
+        ref
+            .read(getMeProvider.notifier)
+            .updateActiveTickets(activeTickets: activetickets.data);
+
+        final user = ref.read(getMeProvider) as UserModel;
+      }
+    }
+  }
+
   Payload getPayload(Product purchaseProduct) {
     Payload payload = Payload();
 
@@ -232,12 +290,6 @@ class _TicketPurchaseScreenState extends State<TicketPurchaseScreen> {
         .millisecondsSinceEpoch
         .toString(); //주문번호, 개발사에서 고유값으로 지정해야함
 
-    payload.metadata = {
-      "callbackParam1": "value12",
-      "callbackParam2": "value34",
-      "callbackParam3": "value56",
-      "callbackParam4": "value78",
-    }; // 전달할 파라미터, 결제 후 되돌려 주는 값
     return payload;
   }
 }

@@ -9,6 +9,7 @@ import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:fitend_member/ticket/component/ticket_container.dart';
+import 'package:fitend_member/ticket/model/ticket_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -379,15 +380,20 @@ class DialogWidgets {
     );
   }
 
-  static Future<dynamic> ticketBuyModal(
-    BuildContext context,
-  ) {
+  static Future<dynamic> ticketBuyModal({
+    required BuildContext context,
+    int? trainerId,
+    ActiveTicket? activeTicket,
+  }) {
     return showModalBottomSheet(
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black38,
       context: context,
       builder: (context) {
-        return const TicketContainer();
+        return TicketContainer(
+          trainerId: trainerId,
+          activeTicket: activeTicket,
+        );
       },
     );
   }

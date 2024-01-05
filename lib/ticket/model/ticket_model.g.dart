@@ -6,6 +6,20 @@ part of 'ticket_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+ActiveTicketResponse _$ActiveTicketResponseFromJson(
+        Map<String, dynamic> json) =>
+    ActiveTicketResponse(
+      data: (json['data'] as List<dynamic>)
+          .map((e) => ActiveTicket.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$ActiveTicketResponseToJson(
+        ActiveTicketResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+    };
+
 ActiveTicket _$ActiveTicketFromJson(Map<String, dynamic> json) => ActiveTicket(
       id: json['id'] as int,
       type: json['type'] as String,

@@ -2,6 +2,42 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'ticket_model.g.dart';
 
+abstract class ActiveTicketResponseBase {}
+
+class ActiveTicketResponseLoading extends ActiveTicketResponseBase {}
+
+class ActiveTicketResponseError extends ActiveTicketResponseBase {
+  final String error;
+  final int statusCode;
+
+  ActiveTicketResponseError({
+    required this.error,
+    required this.statusCode,
+  });
+}
+
+@JsonSerializable()
+class ActiveTicketResponse extends ActiveTicketResponseBase {
+  @JsonKey(name: "data")
+  final List<ActiveTicket> data;
+
+  ActiveTicketResponse({
+    required this.data,
+  });
+
+  ActiveTicketResponse copyWith({
+    List<ActiveTicket>? data,
+  }) =>
+      ActiveTicketResponse(
+        data: data ?? this.data,
+      );
+
+  factory ActiveTicketResponse.fromJson(Map<String, dynamic> json) =>
+      _$ActiveTicketResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ActiveTicketResponseToJson(this);
+}
+
 @JsonSerializable()
 class ActiveTicket {
   @JsonKey(name: "id")

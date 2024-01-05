@@ -137,8 +137,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 onTap: () {
                   Navigator.of(context).push(
                     CupertinoPageRoute(
-                      builder: (context) =>
-                          TicketScreen(tickets: model.user.activeTickets!),
+                      builder: (context) => const TicketScreen(),
                     ),
                   );
                 },

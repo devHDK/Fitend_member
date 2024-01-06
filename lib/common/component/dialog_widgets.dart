@@ -113,7 +113,7 @@ class DialogWidgets {
     );
   }
 
-  static DialogBackground errorDialog({
+  static DialogBackground oneButtonDialog({
     required String message,
     required String confirmText,
     required GestureTapCallback confirmOnTap,
@@ -512,7 +512,7 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
       if (!context.mounted) return;
       showDialog(
         context: context,
-        builder: (context) => DialogWidgets.errorDialog(
+        builder: (context) => DialogWidgets.oneButtonDialog(
           message: '오류가 발생하였습니다 다시 시도해주세요!',
           confirmText: '확인',
           confirmOnTap: () => context.pop(),
@@ -587,7 +587,8 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
                             // debugPrint('오늘날짜 선택!');
                             showDialog(
                               context: context,
-                              builder: (context) => DialogWidgets.errorDialog(
+                              builder: (context) =>
+                                  DialogWidgets.oneButtonDialog(
                                 message: '기존 스케줄 이외의 날짜를 선택해주세요!',
                                 confirmText: '확인',
                                 confirmOnTap: () => context.pop(),

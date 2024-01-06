@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/ticket/model/product_model.dart';
@@ -130,14 +131,28 @@ class _TicketContainerState extends ConsumerState<TicketContainer> {
             ),
             GestureDetector(
               onTap: () {
-                context.pop();
-                Navigator.of(context).push(CupertinoPageRoute(
+                Navigator.of(context)
+                    .push(CupertinoPageRoute(
                   builder: (context) => TicketPurchaseScreen(
                     purchaseProduct: model.data[model.selectedIndex!],
                     trainerId: widget.trainerId,
                     activeTicket: widget.activeTicket,
                   ),
-                ));
+                ))
+                    .then((value) {
+                  if (value != null &&
+                      value['buyTicket'] != null &&
+                      value['buyTicket'] == true) {
+                    DialogWidgets.oneButtonDialog(
+                      message: '멤버십 구매를 완료했어요!\n결제취소는 시작일 하루 전까지 가능해요 🙆️️',
+                      confirmText: '확인',
+                      confirmOnTap: () {
+                        int count = 0;
+                        Navigator.of(context).popUntil((_) => count++ >= 2);
+                      },
+                    ).show(context);
+                  }
+                });
               },
               child: Container(
                 height: 44,

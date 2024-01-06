@@ -70,7 +70,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
       return Scaffold(
         backgroundColor: Pallete.background,
         body: Center(
-          child: DialogWidgets.errorDialog(
+          child: DialogWidgets.oneButtonDialog(
             message: '데이터를 불러올수없습니다😂',
             confirmText: '확인',
             confirmOnTap: () => context.pop(),

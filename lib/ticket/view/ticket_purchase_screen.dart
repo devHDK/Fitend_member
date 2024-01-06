@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bootpay/bootpay.dart';
 import 'package:bootpay/model/payload.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/bootpay_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -184,38 +185,27 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
             onClose: () {
               print('------- onClose');
               Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
-              //TODO - 원하시는 라우터로 페이지 이동
-              context.pop();
             },
             onIssued: (String data) {
               print('------- onIssued: $data');
             },
             onConfirm: (String data) {
-              print('------- onConfirm: $data');
-              /**
-            1. 바로 승인하고자 할 때
-            return true;
-         **/
-              /***
-            2. 비동기 승인 하고자 할 때
-            checkQtyFromServer(data);
-            return false;
-         ***/
-              /***
-            3. 서버승인을 하고자 하실 때 (클라이언트 승인 X)
-            return false; 후에 서버에서 결제승인 수행
-         */
-              // checkQtyFromServer(data);
+              try {
+                final result = BootPayConfirmResponse.fromJson(
+                    jsonDecode(data)); //bootPay responseData
+                _confirmPayment(result, startDate, expiredDate, userModel);
+              } catch (e) {
+                DialogWidgets.showToast('결제중 오류가 발생하였습니다! 다시 시도해주세요');
+              }
 
-              final result = BootPayConfirmResponse.fromJson(
-                  jsonDecode(data)); //bootPay responseData
-
-              _confirmPayment(result, startDate, expiredDate, userModel);
-
-              return false;
+              return true;
             },
             onDone: (String data) {
               print('------- onDone: $data');
+              Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+
+              //route
+              context.pop({'buyTicket': true});
             },
           );
         },
@@ -261,15 +251,7 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
                 ),
               );
 
-      if (activetickets != null) {
-        print('active tickets =====> ${activetickets.toJson()}');
-
-        ref
-            .read(getMeProvider.notifier)
-            .updateActiveTickets(activeTickets: activetickets.data);
-
-        final user = ref.read(getMeProvider) as UserModel;
-      }
+      ref.read(getMeProvider.notifier).getMe();
     }
   }
 

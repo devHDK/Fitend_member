@@ -184,7 +184,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                   barrierDismissible: false,
                                   context: context,
                                   builder: (context) =>
-                                      DialogWidgets.errorDialog(
+                                      DialogWidgets.oneButtonDialog(
                                     message: '운동 강도를 평가해 주세요!',
                                     confirmText: '확인',
                                     confirmOnTap: () {
@@ -290,7 +290,7 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                         barrierDismissible: false,
                                         context: context,
                                         builder: (context) =>
-                                            DialogWidgets.errorDialog(
+                                            DialogWidgets.oneButtonDialog(
                                           message:
                                               e.response!.statusCode.toString(),
                                           confirmText: '확인',

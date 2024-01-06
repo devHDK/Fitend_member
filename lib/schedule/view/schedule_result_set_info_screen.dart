@@ -56,7 +56,7 @@ class _ScheduleResultSetInfoScreenState
     if (state is WorkoutModelError) {
       return Scaffold(
         backgroundColor: Pallete.background,
-        body: DialogWidgets.errorDialog(
+        body: DialogWidgets.oneButtonDialog(
           message: state.message,
           confirmText: '확인',
           confirmOnTap: () => context.pop(),

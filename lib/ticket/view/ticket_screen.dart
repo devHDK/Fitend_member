@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/payment/provider/payment_provider.dart';
 import 'package:fitend_member/ticket/component/no_ticket_cell.dart';
 import 'package:fitend_member/ticket/component/ticket_cell.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -86,6 +87,50 @@ class _TicketScreenState extends ConsumerState<TicketScreen> {
                   if (activeTickets.length > 1)
                     TicketCell(
                       ticket: activeTickets[1],
+                      child: activeTickets[1].receiptId != null
+                          ? GestureDetector(
+                              onTap: () {
+                                DialogWidgets.oneButtonDialog(
+                                    message:
+                                        '멤버십 결제를 취소할까요?\n기간만료시 더 이상 코칭을 받을 수 없어요 🥲',
+                                    confirmText: '결제 취소하기',
+                                    confirmOnTap: () async {
+                                      try {
+                                        await ref
+                                            .read(paymentProvider.notifier)
+                                            .deletePayments(
+                                                ticketId: activeTickets[1].id)
+                                            .then((value) {
+                                          context.pop();
+
+                                          ref
+                                              .read(getMeProvider.notifier)
+                                              .updateActiveTickets(
+                                                  activeTickets: [
+                                                activeTickets[0]
+                                              ]);
+
+                                          DialogWidgets.oneButtonDialog(
+                                            message:
+                                                '결제하신 멤버십을 취소했어요.\n환불은 영업일 기준 3~5일 소요되요 👌️',
+                                            confirmText: '확인',
+                                            confirmOnTap: () => context.pop(),
+                                          ).show(context);
+                                        });
+                                      } catch (e) {
+                                        DialogWidgets.showToast('error - $e');
+                                      }
+                                    }).show(context);
+                              },
+                              child: Text(
+                                '결제취소',
+                                style: s2SubTitle.copyWith(
+                                    color: Pallete.gray,
+                                    height: 1,
+                                    decoration: TextDecoration.underline),
+                              ),
+                            )
+                          : null,
                     )
                   else
                     const NoTicketCell()

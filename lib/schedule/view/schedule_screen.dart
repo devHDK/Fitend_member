@@ -213,7 +213,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
       return Scaffold(
         backgroundColor: Pallete.background,
         body: Center(
-          child: DialogWidgets.errorDialog(
+          child: DialogWidgets.oneButtonDialog(
             message: '데이터를 불러오지 못했습니다.',
             confirmText: '새로 고침',
             confirmOnTap: () {
@@ -404,7 +404,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
       }
 
       if (!hasData) {
-        DialogWidgets.errorDialog(
+        DialogWidgets.oneButtonDialog(
           message: '회원님을 위한 플랜을 준비중이에요!\n플랜이 완성되면 알려드릴게요 😊',
           confirmText: '확인',
           confirmOnTap: () => context.pop(),

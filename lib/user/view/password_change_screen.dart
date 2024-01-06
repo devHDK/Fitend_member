@@ -137,7 +137,7 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
 
                     showDialog(
                       context: context,
-                      builder: (context) => DialogWidgets.errorDialog(
+                      builder: (context) => DialogWidgets.oneButtonDialog(
                         message: '입력하신 비밀번호가 일치하지 않아요 😭',
                         confirmText: '확인',
                         confirmOnTap: () => context.pop(),
@@ -212,7 +212,7 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
 
                     showDialog(
                       context: context,
-                      builder: (context) => DialogWidgets.errorDialog(
+                      builder: (context) => DialogWidgets.oneButtonDialog(
                         message: '오류가 발생하였습니다.😂',
                         confirmText: '확인',
                         confirmOnTap: () => context.pop(),

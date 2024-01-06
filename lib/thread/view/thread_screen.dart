@@ -187,7 +187,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
       return Scaffold(
         backgroundColor: Pallete.background,
         body: Center(
-          child: DialogWidgets.errorDialog(
+          child: DialogWidgets.oneButtonDialog(
             message: '데이터를 불러오지 못했습니다.',
             confirmText: '새로 고침',
             confirmOnTap: () {

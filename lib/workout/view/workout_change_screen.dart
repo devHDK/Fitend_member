@@ -252,7 +252,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutChangeScreen> {
                             widget.workout.exercises[selectedIndex].setInfo
                                     .length <=
                                 record.setInfo.length) {
-                          DialogWidgets.errorDialog(
+                          DialogWidgets.oneButtonDialog(
                             message: '이미 완료한 운동이에요 😗',
                             confirmText: '확인',
                             confirmOnTap: () {

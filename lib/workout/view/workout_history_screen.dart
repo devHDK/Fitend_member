@@ -74,7 +74,7 @@ class _WorkoutHistoryScreenState extends ConsumerState<WorkoutHistoryScreen> {
       return Scaffold(
         backgroundColor: Pallete.background,
         body: Center(
-          child: DialogWidgets.errorDialog(
+          child: DialogWidgets.oneButtonDialog(
             message: state.message,
             confirmText: '확인',
             confirmOnTap: () => context.pop(),

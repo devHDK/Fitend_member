@@ -139,7 +139,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
       return Scaffold(
         backgroundColor: Pallete.background,
         body: Center(
-          child: DialogWidgets.errorDialog(
+          child: DialogWidgets.oneButtonDialog(
             message: state.message,
             confirmText: '확인',
             confirmOnTap: () => context.pop(),

@@ -24,4 +24,12 @@ abstract class PaymentsRepository {
   Future<ActiveTicketResponse> postConfirmPayment(
     @Body() PaymentConfirmReqModel reqModel,
   );
+
+  @DELETE('/payments/{id}')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<void> deletePayment({
+    @Path('id') required int ticketId,
+  });
 }

@@ -226,7 +226,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               _passwordTextController.text.isEmpty) {
                             showDialog(
                               context: context,
-                              builder: (context) => DialogWidgets.errorDialog(
+                              builder: (context) =>
+                                  DialogWidgets.oneButtonDialog(
                                 message: '이메일 또는 비밀번호를 입력해주세요',
                                 confirmText: '확인',
                                 confirmOnTap: () => context.pop(),
@@ -244,7 +245,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               _passwordTextController.text.length < 8) {
                             showDialog(
                               context: context,
-                              builder: (context) => DialogWidgets.errorDialog(
+                              builder: (context) =>
+                                  DialogWidgets.oneButtonDialog(
                                 message: '이메일 또는 비밀번호를 확인해주세요 😭',
                                 confirmText: '확인',
                                 confirmOnTap: () => context.pop(),
@@ -274,7 +276,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             // errorDialog(ret).show(context);
                             showDialog(
                               context: context,
-                              builder: (context) => DialogWidgets.errorDialog(
+                              builder: (context) =>
+                                  DialogWidgets.oneButtonDialog(
                                 message: ret.error,
                                 confirmText: '확인',
                                 confirmOnTap: () {

@@ -34,7 +34,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
     final state = ref.watch(getMeProvider);
 
     if (state is UserModelError && state.statusCode == 444) {
-      return DialogWidgets.errorDialog(
+      return DialogWidgets.oneButtonDialog(
         message: '회원님들의 의견을 반영하여\n서비스 사용성을 개선했어요 🎉',
         confirmText: '업데이트 하러 가기',
         confirmOnTap: () {

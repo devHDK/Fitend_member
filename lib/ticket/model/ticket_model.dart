@@ -56,6 +56,8 @@ class ActiveTicket {
   final DateTime expiredAt;
   @JsonKey(name: "createdAt")
   final DateTime createdAt;
+  @JsonKey(name: "receiptId")
+  String? receiptId;
   @JsonKey(name: "users")
   final List<String> users;
   @JsonKey(name: "isHolding")
@@ -70,6 +72,7 @@ class ActiveTicket {
     required this.startedAt,
     required this.expiredAt,
     required this.createdAt,
+    this.receiptId,
     required this.users,
     required this.isHolding,
   });
@@ -83,6 +86,7 @@ class ActiveTicket {
     DateTime? startedAt,
     DateTime? expiredAt,
     DateTime? createdAt,
+    String? receiptId,
     List<String>? users,
     bool? isHolding,
   }) =>
@@ -96,6 +100,7 @@ class ActiveTicket {
         expiredAt: expiredAt ?? this.expiredAt,
         createdAt: createdAt ?? this.createdAt,
         users: users ?? this.users,
+        receiptId: receiptId ?? this.receiptId,
         isHolding: isHolding ?? this.isHolding,
       );
 

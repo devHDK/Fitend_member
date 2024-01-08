@@ -4,6 +4,8 @@ import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
+import 'package:fitend_member/user/view/register_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -72,11 +74,37 @@ class _BottomView extends StatelessWidget {
                   backgroundColor: Pallete.point,
                 ),
                 onPressed: () {
+                  // context.goNamed(RegisterScreen.routeName);
+                  Navigator.of(context).push(CupertinoPageRoute(
+                    builder: (context) => const RegisterScreen(),
+                  ));
+                },
+                child: Text(
+                  '14일 무료 체험 하기',
+                  style: h6Headline,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+          SizedBox(
+            height: 44,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                ),
+                onPressed: () {
                   context.goNamed(LoginScreen.routeName);
                 },
                 child: Text(
-                  '시작하기',
-                  style: h6Headline,
+                  '로그인',
+                  style: h6Headline.copyWith(
+                    color: Pallete.point,
+                  ),
                 ),
               ),
             ),

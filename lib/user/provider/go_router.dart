@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+final routeObserverProvider = Provider((ref) => RouteObserver<PageRoute>());
+
 final routerProvider = Provider<GoRouter>(
   (ref) {
     final auth = ref.read(authProvider);
@@ -17,5 +19,3 @@ final routerProvider = Provider<GoRouter>(
     );
   },
 );
-
-final routeObserverProvider = Provider((ref) => RouteObserver<PageRoute>());

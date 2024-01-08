@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextFormField extends StatefulWidget {
   final String? hintText;
@@ -13,6 +14,9 @@ class CustomTextFormField extends StatefulWidget {
   final TextInputType? textInputType;
   final Iterable<String>? autoFillHint;
   final TextEditingController controller;
+  final List<TextInputFormatter>? formatter;
+  final int? maxLength;
+  final int? maxLine;
 
   const CustomTextFormField({
     super.key,
@@ -26,6 +30,9 @@ class CustomTextFormField extends StatefulWidget {
     required this.controller,
     this.textInputType,
     this.autoFillHint,
+    this.formatter,
+    this.maxLength,
+    this.maxLine,
   });
 
   @override
@@ -74,6 +81,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     );
 
     return TextFormField(
+      maxLength: widget.maxLength,
+      maxLines: widget.maxLine,
       autocorrect: false,
       controller: widget.controller,
       style: const TextStyle(
@@ -90,30 +99,61 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       onTapOutside: (event) {
         focusNode.unfocus();
       },
+      inputFormatters: widget.formatter,
       decoration: InputDecoration(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
-        hintText: widget.hintText,
-        // errorText: errorText,
-        hintStyle: s2SubTitle.copyWith(
-          color: Pallete.gray,
-        ),
-        filled: true,
-        fillColor: Pallete.background,
-        border: baseBorder,
-        enabledBorder: baseBorder,
-        focusedBorder: baseBorder.copyWith(
-          borderSide: baseBorder.borderSide.copyWith(
-            color: Pallete.point,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+          hintText: widget.hintText,
+          // errorText: errorText,
+          hintStyle: s2SubTitle.copyWith(
+            color: Pallete.gray,
           ),
-        ),
-        labelText: focusNode.hasFocus || widget.controller.text.isEmpty
-            ? widget.fullLabelText
-            : widget.labelText,
-        labelStyle: s2SubTitle.copyWith(
-          color: focusNode.hasFocus ? Pallete.point : Pallete.gray,
-        ),
-      ),
+          filled: true,
+          fillColor: Pallete.background,
+          border: baseBorder,
+          enabledBorder: baseBorder,
+          focusedBorder: baseBorder.copyWith(
+            borderSide: baseBorder.borderSide.copyWith(
+              color: Pallete.point,
+            ),
+          ),
+          labelText: focusNode.hasFocus || widget.controller.text.isEmpty
+              ? widget.fullLabelText
+              : widget.labelText,
+          labelStyle: s2SubTitle.copyWith(
+            color: focusNode.hasFocus ? Pallete.point : Pallete.gray,
+          ),
+          counterText: ''),
+    );
+  }
+}
+
+class PhoneNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
+
+    var newString = '';
+    var index = 0;
+
+    for (var i = 0; i < digitsOnly.length; i++) {
+      newString += digitsOnly[i];
+
+      if (index == 2 || index == 6) {
+        newString += '-';
+      }
+      index++;
+    }
+
+    // 새로운 문자열의 길이에서 추가된 '-'의 개수를 뺀 값이 커서의 위치가 되어야 합니다.
+    var selectionOffset = newString.length - 1;
+
+    return newValue.copyWith(
+      text: newString,
+      selection: newString[newString.length - 1] != '-'
+          ? TextSelection.collapsed(offset: newString.length)
+          : TextSelection.collapsed(offset: selectionOffset),
     );
   }
 }

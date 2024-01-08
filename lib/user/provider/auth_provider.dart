@@ -11,6 +11,7 @@ import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:fitend_member/home_screen.dart';
+import 'package:fitend_member/user/view/register_screen.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -53,11 +54,13 @@ class AuthProvider extends ChangeNotifier {
             GoRoute(
               path: 'login',
               name: LoginScreen.routeName,
-              pageBuilder: (context, state) => _rightToLeftTransiton(
-                state,
-                const LoginScreen(),
-              ),
+              builder: (context, state) => const LoginScreen(),
             ),
+            // GoRoute(
+            //   path: 'register',
+            //   name: RegisterScreen.routeName,
+            //   builder: (context, state) => const RegisterScreen(),
+            // ),
           ],
         ),
         // GoRoute(

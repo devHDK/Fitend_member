@@ -74,4 +74,22 @@ class AuthRepository {
 
     return TokenResponse.fromJson(response.data);
   }
+
+  Future<void> passwordReset({
+    required String phoneToken,
+    required String phone,
+    required String email,
+    required String password,
+  }) async {
+    await dio.put(
+      '/auth/reset',
+      options: Options(),
+      data: {
+        'phoneToken': phoneToken,
+        'phone': phone,
+        'email': email,
+        'password': password,
+      },
+    );
+  }
 }

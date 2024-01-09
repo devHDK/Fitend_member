@@ -18,15 +18,17 @@ class TicketCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int ticketLength = 0;
+    int fcMonths = 0;
     final diff = ticket.expiredAt.difference(ticket.startedAt).inDays;
     if (diff > 92) {
-      ticketLength = 6;
+      fcMonths = 6;
     } else if (diff > 31) {
-      ticketLength = 3;
+      fcMonths = 3;
     } else {
-      ticketLength = 1;
+      fcMonths = 1;
     }
+
+    bool isIn7days = ticket.expiredAt.difference(DateTime.now()).inDays <= 7;
 
     return Row(
       children: [
@@ -53,7 +55,7 @@ class TicketCell extends StatelessWidget {
           children: [
             Text(
               ticket.type == 'fitness'
-                  ? '온라인 코칭 $ticketLength개월'
+                  ? '온라인 코칭 $fcMonths개월'
                   : '오프라인 PT ${ticket.totalSession}회',
               style: s1SubTitle.copyWith(
                 color: Colors.white,
@@ -70,11 +72,11 @@ class TicketCell extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${DateFormat('yyyy.MM.dd').format(
+                  DateFormat('yyyy.MM.dd').format(
                     ticket.expiredAt,
-                  )}  ',
+                  ),
                   style: s2SubTitle.copyWith(
-                    color: Colors.white,
+                    color: isIn7days ? Pallete.point : Colors.white,
                   ),
                 ),
               ],

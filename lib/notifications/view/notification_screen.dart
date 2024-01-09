@@ -10,11 +10,8 @@ import 'package:fitend_member/notifications/provider/notification_provider.dart'
 import 'package:fitend_member/notifications/repository/notifications_repository.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
-import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
-import 'package:fitend_member/workout/model/workout_model.dart';
-import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

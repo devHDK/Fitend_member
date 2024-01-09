@@ -13,9 +13,9 @@ class TipBubble extends StatelessWidget {
   final TextStyle textStyle;
   final Color bubbleColor;
   final BubblePosition bubblePosition;
-  double? distance;
+  final double? distance;
 
-  TipBubble({
+  const TipBubble({
     super.key,
     required this.text,
     required this.textStyle,

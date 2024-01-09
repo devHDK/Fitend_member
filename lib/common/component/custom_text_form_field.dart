@@ -32,7 +32,7 @@ class CustomTextFormField extends StatefulWidget {
     this.autoFillHint,
     this.formatter,
     this.maxLength,
-    this.maxLine,
+    this.maxLine = 1,
   });
 
   @override
@@ -147,11 +147,11 @@ class PhoneNumberFormatter extends TextInputFormatter {
     }
 
     // 새로운 문자열의 길이에서 추가된 '-'의 개수를 뺀 값이 커서의 위치가 되어야 합니다.
-    var selectionOffset = newString.length - 1;
+    var selectionOffset = newString.isNotEmpty ? newString.length - 1 : 0;
 
     return newValue.copyWith(
       text: newString,
-      selection: newString[newString.length - 1] != '-'
+      selection: newString.isNotEmpty && newString[newString.length - 1] != '-'
           ? TextSelection.collapsed(offset: newString.length)
           : TextSelection.collapsed(offset: selectionOffset),
     );

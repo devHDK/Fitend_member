@@ -12,7 +12,6 @@ import 'package:fitend_member/schedule/provider/schedule_provider.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/ticket/component/ticket_cell.dart';
-import 'package:fitend_member/ticket/model/ticket_model.dart';
 import 'package:fitend_member/ticket/view/ticket_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -86,20 +85,20 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             (m) => '${m[1]}-${m[2]}-${m[3]}')
         : '';
 
-    int ticketLength = 0;
+    // int ticketLength = 0;
 
     if (model.user.activeTickets != null &&
         model.user.activeTickets!.isNotEmpty) {
-      ActiveTicket nowTicket = model.user.activeTickets!.first;
+      // ActiveTicket nowTicket = model.user.activeTickets!.first;
 
-      final diff = nowTicket.expiredAt.difference(nowTicket.startedAt).inDays;
-      if (diff > 92) {
-        ticketLength = 6;
-      } else if (diff > 31) {
-        ticketLength = 3;
-      } else {
-        ticketLength = 1;
-      }
+      // final diff = nowTicket.expiredAt.difference(nowTicket.startedAt).inDays;
+      // if (diff > 92) {
+      //   ticketLength = 6;
+      // } else if (diff > 31) {
+      //   ticketLength = 3;
+      // } else {
+      //   ticketLength = 1;
+      // }
     }
 
     return Scaffold(

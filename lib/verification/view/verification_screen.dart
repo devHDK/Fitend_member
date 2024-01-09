@@ -2,22 +2,28 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/verification/model/post_verification_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class RegisterScreen extends ConsumerStatefulWidget {
+class VerificationScreen extends ConsumerStatefulWidget {
   static String get routeName => 'register';
 
-  const RegisterScreen({super.key});
+  final String verificationType;
+
+  const VerificationScreen({
+    super.key,
+    required this.verificationType,
+  });
 
   @override
-  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<VerificationScreen> createState() => _VerificationScreenState();
 }
 
-class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+class _VerificationScreenState extends ConsumerState<VerificationScreen> {
   final _phoneTextController = TextEditingController();
   final _codeTextController = TextEditingController();
 
@@ -138,7 +144,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   height: 24,
                 ),
                 AutoSizeText(
-                  '가입확인을 위해\n휴대폰 번호를 입력해주세요.',
+                  widget.verificationType == VerificationType.register
+                      ? '시작하기 위해\n 휴대폰 번호를 입력해주세요.'
+                      : '가입확인을 위해\n 휴대폰 번호를 입력해주세요.',
                   style: h3Headline.copyWith(
                     color: Colors.white,
                   ),
@@ -198,6 +206,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                     '발송',
                                     style: s2SubTitle.copyWith(
                                       color: Colors.white,
+                                      height: 1,
                                     ),
                                   ),
                                 ),

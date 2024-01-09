@@ -4,7 +4,8 @@ import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
-import 'package:fitend_member/user/view/register_screen.dart';
+import 'package:fitend_member/verification/model/post_verification_model.dart';
+import 'package:fitend_member/verification/view/verification_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -76,7 +77,8 @@ class _BottomView extends StatelessWidget {
                 onPressed: () {
                   // context.goNamed(RegisterScreen.routeName);
                   Navigator.of(context).push(CupertinoPageRoute(
-                    builder: (context) => const RegisterScreen(),
+                    builder: (context) => VerificationScreen(
+                        verificationType: VerificationType.register),
                   ));
                 },
                 child: Text(

@@ -234,22 +234,21 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
   Future<void> _confirmPayment(BootPayConfirmResponse result,
       DateTime startDate, DateTime expiredDate, UserModel userModel) async {
     if (mounted) {
-      final activetickets =
-          await ref.read(paymentProvider.notifier).postConfirmPayments(
-                reqModel: PaymentConfirmReqModel(
-                  receiptId: result.receiptId,
-                  orderId: result.orderId,
-                  price: F.appFlavor == Flavor.production
-                      ? widget.purchaseProduct.price
-                      : 100,
-                  orderName: widget.purchaseProduct.name,
-                  startedAt: startDate,
-                  expiredAt: expiredDate,
-                  trainerId: userModel.user.activeTrainers.first.id,
-                  userId: userModel.user.id,
-                  month: widget.purchaseProduct.month,
-                ),
-              );
+      await ref.read(paymentProvider.notifier).postConfirmPayments(
+            reqModel: PaymentConfirmReqModel(
+              receiptId: result.receiptId,
+              orderId: result.orderId,
+              price: F.appFlavor == Flavor.production
+                  ? widget.purchaseProduct.price
+                  : 100,
+              orderName: widget.purchaseProduct.name,
+              startedAt: startDate,
+              expiredAt: expiredDate,
+              trainerId: userModel.user.activeTrainers.first.id,
+              userId: userModel.user.id,
+              month: widget.purchaseProduct.month,
+            ),
+          );
 
       ref.read(getMeProvider.notifier).getMe();
     }

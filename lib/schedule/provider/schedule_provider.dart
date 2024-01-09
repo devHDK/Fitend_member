@@ -197,6 +197,8 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
       return false;
     });
 
+    if (beforeChangeScheduleIndex == -1) return;
+
     scheduleListGlobal[beforeChangeScheduleIndex].schedule![beforWorkoutIndex] =
         scheduleListGlobal[beforeChangeScheduleIndex]
             .schedule![beforWorkoutIndex]

@@ -145,7 +145,7 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
                       if (isShowControlls)
                         Positioned(
                           right: 10,
-                          top: 10,
+                          bottom: 50,
                           child: IconButton(
                             onPressed: () {
                               if (mounted) {
@@ -163,7 +163,7 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
                             icon: Icon(
                               mute ? Icons.volume_off : Icons.volume_up_rounded,
                               color: Colors.white,
-                              size: 30.0,
+                              size: 25.0,
                             ),
                           ),
                         ),
@@ -172,7 +172,7 @@ class _NetworkVideoPlayerState extends ConsumerState<NetworkVideoPlayer> {
                           currentPosition: currentPosition,
                           maxPpsition: _videoController!.value.duration,
                           onSlideChanged: onSlideChanged,
-                        )
+                        ),
                     ],
                   ),
                 ),

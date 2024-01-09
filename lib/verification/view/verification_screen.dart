@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class VerificationScreen extends ConsumerStatefulWidget {
-  static String get routeName => 'register';
+  static String get routeName => 'verification';
 
   final String verificationType;
 

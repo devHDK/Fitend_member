@@ -21,8 +21,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
-final workoutResultProvider = StateNotifierProvider.family<
-    WorkoutRecordStateNotifier, WorkoutResultModelBase?, int>((ref, id) {
+final workoutResultProvider = StateNotifierProvider.family
+    .autoDispose<WorkoutRecordStateNotifier, WorkoutResultModelBase?, int>(
+        (ref, id) {
   final workoutRecordsRepository = ref.watch(workoutRecordsRepositoryProvider);
   final workoutscheduleRepository =
       ref.watch(workoutScheduleRepositoryProvider);

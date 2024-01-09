@@ -59,7 +59,9 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getResults();
+      Future.delayed(const Duration(milliseconds: 300), () {
+        getResults();
+      });
     });
   }
 
@@ -199,6 +201,10 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                     ),
                     if (muscleSecondRow.isNotEmpty)
                       _secondRowMuscleImage(muscleSecondRow, muscleIds),
+                    if (muscleSecondRow.isNotEmpty)
+                      const SizedBox(
+                        height: 20,
+                      ),
                     Text(resultWorkout!.title,
                         style: h4Headline.copyWith(color: Colors.white)),
                     const SizedBox(

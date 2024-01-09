@@ -55,18 +55,8 @@ class AuthProvider extends ChangeNotifier {
               name: LoginScreen.routeName,
               builder: (context, state) => const LoginScreen(),
             ),
-            // GoRoute(
-            //   path: 'register',
-            //   name: RegisterScreen.routeName,
-            //   builder: (context, state) => const RegisterScreen(),
-            // ),
           ],
         ),
-        // GoRoute(
-        //   path: '/',
-        //   name: HomeScreen.routeName,
-        //   builder: (context, state) => const HomeScreen(),
-        // ),
         GoRoute(
           path: '/',
           name: HomeScreen.routeName,
@@ -148,6 +138,9 @@ class AuthProvider extends ChangeNotifier {
             ),
           ],
         ),
+
+        //TODO: register route, 멤버쉽 구매 route
+
         GoRoute(
           path: '/error',
           name: ErrorScreen.routeName,

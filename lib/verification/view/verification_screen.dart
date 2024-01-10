@@ -1,13 +1,21 @@
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/verification/model/post_verification_confirm_model.dart';
+import 'package:fitend_member/verification/model/post_verification_confirm_response.dart';
 import 'package:fitend_member/verification/model/post_verification_model.dart';
+import 'package:fitend_member/verification/model/verification_state_model.dart';
 import 'package:fitend_member/verification/provider/verification_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class VerificationScreen extends ConsumerStatefulWidget {
@@ -32,6 +40,9 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
   String code = '';
   bool nextButtonEnable = false;
   bool sendButtonEnable = false;
+
+  late Timer timer;
+  int count = 0;
 
   @override
   void initState() {
@@ -80,6 +91,31 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
     }
   }
 
+  void onMessageSendPressed() {
+    count = 180;
+
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      onTick,
+    );
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void onTick(Timer timer) {
+    if (count > 0) {
+      if (mounted) {
+        setState(() {
+          count--;
+        });
+      }
+    } else {
+      timer.cancel();
+    }
+  }
+
   @override
   void dispose() {
     _phoneTextController.removeListener(phoneTextListener);
@@ -124,43 +160,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                   ? Pallete.point
                   : Pallete.point.withOpacity(0.4),
             ),
-            child: ElevatedButton(
-              onPressed: nextButtonEnable &&
-                      verificationModel.isMessageSended &&
-                      !verificationModel.isCodeSended
-                  ? () {
-                      ref
-                          .read(verificationProvider.notifier)
-                          .postVerificationConfirm(
-                            reqModel: PostVerificationConfirmModel(
-                              codeToken: verificationModel.codeToken!,
-                              code: verificationModel.code!,
-                            ),
-                          );
-                    }
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-              ),
-              child: verificationModel.isCodeSended
-                  ? const SizedBox(
-                      width: 15,
-                      height: 15,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
-                    )
-                  : Text(
-                      '다음',
-                      style: h6Headline.copyWith(
-                        color:
-                            nextButtonEnable && !verificationModel.isCodeSended
-                                ? Colors.white
-                                : Colors.white.withOpacity(0.4),
-                      ),
-                    ),
-            ),
+            child: _nextButton(verificationModel, context),
           ),
         ),
       ),
@@ -224,42 +224,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                               const SizedBox(
                                 width: 12,
                               ),
-                              InkWell(
-                                onTap: sendButtonEnable &&
-                                        !verificationModel.isMessageSended
-                                    ? () {
-                                        ref
-                                            .read(verificationProvider.notifier)
-                                            .postVerificationMessage(
-                                              reqModel: PostVerificationModel(
-                                                type: widget.verificationType,
-                                                phone: verificationModel
-                                                    .phoneNumber!,
-                                              ),
-                                            );
-                                      }
-                                    : null,
-                                child: Container(
-                                  width: 73,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: sendButtonEnable &&
-                                            !verificationModel.isMessageSended
-                                        ? Pallete.point
-                                        : Pallete.gray,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '발송',
-                                      style: s2SubTitle.copyWith(
-                                        color: Colors.white,
-                                        height: 1,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
+                              _messageSendButton(verificationModel, context)
                             ],
                           ),
                           const SizedBox(
@@ -298,5 +263,149 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
         ),
       ),
     );
+  }
+
+  InkWell _messageSendButton(
+      VerificationStateModel verificationModel, BuildContext context) {
+    return InkWell(
+      onTap: sendButtonEnable && !verificationModel.isMessageSended
+          ? () {
+              try {
+                ref.read(verificationProvider.notifier).postVerificationMessage(
+                      reqModel: PostVerificationModel(
+                        type: widget.verificationType,
+                        phone: verificationModel.phoneNumber!,
+                      ),
+                    );
+
+                onMessageSendPressed();
+              } on DioException {
+                String message = '서버와 통신중 오류가 발생하였습니다!';
+
+                showDialog(
+                    context: context,
+                    builder: (context) => DialogWidgets.oneButtonDialog(
+                          message: message,
+                          confirmText: '확인',
+                          confirmOnTap: () => context.pop(),
+                        ));
+              }
+            }
+          : null,
+      child: Container(
+        width: 73,
+        height: 44,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: sendButtonEnable && !verificationModel.isMessageSended
+              ? Pallete.point
+              : verificationModel.isMessageSended
+                  ? Colors.white
+                  : Pallete.gray,
+          border: Border.all(
+            color: verificationModel.isMessageSended
+                ? Pallete.point
+                : Colors.transparent,
+            width: 1,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            !verificationModel.isMessageSended
+                ? '발송'
+                : count == 0
+                    ? '재발송'
+                    : DataUtils.getTimeStringMinutes(
+                        count,
+                      ),
+            style: s2SubTitle.copyWith(
+              color: !verificationModel.isMessageSended
+                  ? Colors.white
+                  : Pallete.point,
+              height: 1,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  ElevatedButton _nextButton(
+      VerificationStateModel verificationModel, BuildContext context) {
+    return ElevatedButton(
+      onPressed: nextButtonEnable &&
+              verificationModel.isMessageSended &&
+              !verificationModel.isCodeSended
+          ? () async {
+              try {
+                await ref
+                    .read(verificationProvider.notifier)
+                    .postVerificationConfirm(
+                      reqModel: PostVerificationConfirmModel(
+                        codeToken: verificationModel.codeToken!,
+                        code: verificationModel.code!,
+                      ),
+                    )
+                    .then((response) {
+                  ref.read(verificationProvider.notifier).init();
+
+                  _routeNextPage(model: response);
+                });
+              } catch (e) {
+                String message = '';
+                if (e is DioException) {
+                  if (e.response!.statusCode == 401) {
+                    message = '인증번호가 만료되었어요!\n확인 후 재발송을 눌러주세요 🙏';
+                  } else if (e.response!.statusCode == 403) {
+                    message = '인증번호가 일치하지 않아요 😣';
+                  }
+
+                  if (!context.mounted) return;
+
+                  ref
+                      .read(verificationProvider.notifier)
+                      .updateData(isCodeSended: false);
+
+                  showDialog(
+                    context: context,
+                    builder: (context) => DialogWidgets.oneButtonDialog(
+                      message: message,
+                      confirmText: '확인',
+                      confirmOnTap: () => context.pop(),
+                    ),
+                  );
+                }
+              }
+            }
+          : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      child: verificationModel.isCodeSended
+          ? const SizedBox(
+              width: 15,
+              height: 15,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
+            )
+          : Text(
+              '다음',
+              style: h6Headline.copyWith(
+                color: nextButtonEnable && !verificationModel.isCodeSended
+                    ? Colors.white
+                    : Colors.white.withOpacity(0.4),
+              ),
+            ),
+    );
+  }
+
+  void _routeNextPage({PostVerificationConfirmResponse? model}) {
+    if (model != null) {}
+
+    if (widget.verificationType == VerificationType.register) {
+    } else if (widget.verificationType == VerificationType.reset) {
+    } else if (widget.verificationType == VerificationType.id) {}
   }
 }

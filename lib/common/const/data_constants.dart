@@ -40,6 +40,7 @@ enum ThreadType {
 }
 
 class StringConstants {
+  // 절대 변경 X
   static String needNotificationUpdate = 'notificationUpdate';
   static String hasNewNotification = 'hasNewNotification';
 
@@ -67,6 +68,7 @@ class StringConstants {
   static String modifiedExercise = 'modifiedExercise';
   static String workoutFeedback = 'WorkoutFeedback';
   static String processingExerciseIndex = 'processExerciseIndex';
+  static String registerUserInfo = 'registerUserInfo';
 
   static String isFirstRunWorkout = 'isFirstRunWorkout';
   static String isFirstRunThread = 'isFirstRunThread';

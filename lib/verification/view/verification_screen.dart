@@ -7,11 +7,13 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/user/view/user_register_screen.dart';
 import 'package:fitend_member/verification/model/post_verification_confirm_model.dart';
 import 'package:fitend_member/verification/model/post_verification_confirm_response.dart';
 import 'package:fitend_member/verification/model/post_verification_model.dart';
 import 'package:fitend_member/verification/model/verification_state_model.dart';
 import 'package:fitend_member/verification/provider/verification_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -135,15 +137,21 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context); //뒤로가기
-          },
-          icon: const Padding(
-            padding: EdgeInsets.only(left: 18),
-            child: Icon(Icons.arrow_back_sharp),
-          ),
-        ),
+        automaticallyImplyLeading: false,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: IconButton(
+              onPressed: () {
+                context.pop();
+              },
+              icon: const Icon(
+                Icons.close_sharp,
+                color: Colors.white,
+              ),
+            ),
+          )
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(
@@ -302,12 +310,6 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
               : verificationModel.isMessageSended
                   ? Colors.white
                   : Pallete.gray,
-          border: Border.all(
-            color: verificationModel.isMessageSended
-                ? Pallete.point
-                : Colors.transparent,
-            width: 1,
-          ),
         ),
         child: Center(
           child: Text(
@@ -349,7 +351,10 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                     .then((response) {
                   ref.read(verificationProvider.notifier).init();
 
-                  _routeNextPage(model: response);
+                  _routeNextPage(
+                    model: response,
+                    phone: verificationModel.phoneNumber!,
+                  );
                 });
               } catch (e) {
                 String message = '';
@@ -401,10 +406,16 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
     );
   }
 
-  void _routeNextPage({PostVerificationConfirmResponse? model}) {
+  void _routeNextPage(
+      {PostVerificationConfirmResponse? model, required String phone}) {
     if (model != null) {}
 
     if (widget.verificationType == VerificationType.register) {
+      Navigator.of(context).push(CupertinoPageRoute(
+        builder: (context) => UserRegisterScreen(
+          phone: phone,
+        ),
+      ));
     } else if (widget.verificationType == VerificationType.reset) {
     } else if (widget.verificationType == VerificationType.id) {}
   }

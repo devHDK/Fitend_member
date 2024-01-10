@@ -77,6 +77,7 @@ class _BottomView extends StatelessWidget {
                 onPressed: () {
                   // context.goNamed(RegisterScreen.routeName);
                   Navigator.of(context).push(CupertinoPageRoute(
+                    fullscreenDialog: true,
                     builder: (context) => VerificationScreen(
                         verificationType: VerificationType.register),
                   ));

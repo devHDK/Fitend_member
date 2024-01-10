@@ -166,7 +166,6 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
               icon: const Icon(
                 Icons.close_sharp,
                 color: Colors.white,
-                size: 36,
               ),
             ),
           )

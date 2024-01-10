@@ -7,7 +7,7 @@ class PostVerificationResponse {
   @JsonKey(name: "codeToken")
   final String codeToken;
   @JsonKey(name: "expireAt")
-  final String expireAt;
+  final DateTime expireAt;
 
   PostVerificationResponse({
     required this.codeToken,
@@ -16,7 +16,7 @@ class PostVerificationResponse {
 
   PostVerificationResponse copyWith({
     String? codeToken,
-    String? expireAt,
+    DateTime? expireAt,
   }) =>
       PostVerificationResponse(
         codeToken: codeToken ?? this.codeToken,

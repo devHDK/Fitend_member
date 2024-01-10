@@ -2,10 +2,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/verification/model/post_verification_confirm_model.dart';
 import 'package:fitend_member/verification/model/post_verification_model.dart';
+import 'package:fitend_member/verification/provider/verification_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -41,23 +42,39 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
 
   void phoneTextListener() {
     String phone = _phoneTextController.text;
+    String phoneString = phone.replaceAll('-', '');
 
-    if (phone.replaceAll('-', '').length < 11) {
+    if (phoneString.isNotEmpty) {
+      ref
+          .read(verificationProvider.notifier)
+          .updateData(phoneNumber: phoneString);
+    }
+
+    if (phoneString.length < 11) {
       sendButtonEnable = false;
     } else {
       sendButtonEnable = true;
     }
+
     if (mounted) {
       setState(() {});
     }
   }
 
   void codeTextListener() {
+    String codeString = _codeTextController.text;
+
+    if (codeString.isNotEmpty) {
+      int code = int.parse(_codeTextController.text);
+      ref.read(verificationProvider.notifier).updateData(code: code);
+    }
+
     if (_codeTextController.text.length < 6) {
       nextButtonEnable = false;
     } else {
       nextButtonEnable = true;
     }
+
     if (mounted) {
       setState(() {});
     }
@@ -75,6 +92,8 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final verificationModel = ref.watch(verificationProvider);
+
     return Scaffold(
       backgroundColor: Pallete.background,
       appBar: AppBar(
@@ -99,35 +118,48 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: nextButtonEnable
+              color: nextButtonEnable &&
+                      verificationModel.isMessageSended &&
+                      !verificationModel.isCodeSended
                   ? Pallete.point
                   : Pallete.point.withOpacity(0.4),
             ),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: nextButtonEnable &&
+                      verificationModel.isMessageSended &&
+                      !verificationModel.isCodeSended
+                  ? () {
+                      ref
+                          .read(verificationProvider.notifier)
+                          .postVerificationConfirm(
+                            reqModel: PostVerificationConfirmModel(
+                              codeToken: verificationModel.codeToken!,
+                              code: verificationModel.code!,
+                            ),
+                          );
+                    }
+                  : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 elevation: 0,
               ),
-              child:
-                  // state is UserModelLoading
-                  //     ? const SizedBox(
-                  //         width: 15,
-                  //         height: 15,
-                  //         child: CircularProgressIndicator(
-                  //           color: Pallete.point,
-                  //         ),
-                  //       )
-                  //     :
-                  Text(
-                '다음',
-                style: h6Headline.copyWith(
-                  color: _phoneTextController.text.isEmpty ||
-                          _codeTextController.text.isEmpty
-                      ? Colors.white.withOpacity(0.4)
-                      : Colors.white,
-                ),
-              ),
+              child: verificationModel.isCodeSended
+                  ? const SizedBox(
+                      width: 15,
+                      height: 15,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(
+                      '다음',
+                      style: h6Headline.copyWith(
+                        color:
+                            nextButtonEnable && !verificationModel.isCodeSended
+                                ? Colors.white
+                                : Colors.white.withOpacity(0.4),
+                      ),
+                    ),
             ),
           ),
         ),
@@ -192,21 +224,38 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                               const SizedBox(
                                 width: 12,
                               ),
-                              Container(
-                                width: 73,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: sendButtonEnable
-                                      ? Pallete.point
-                                      : Pallete.gray,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '발송',
-                                    style: s2SubTitle.copyWith(
-                                      color: Colors.white,
-                                      height: 1,
+                              InkWell(
+                                onTap: sendButtonEnable &&
+                                        !verificationModel.isMessageSended
+                                    ? () {
+                                        ref
+                                            .read(verificationProvider.notifier)
+                                            .postVerificationMessage(
+                                              reqModel: PostVerificationModel(
+                                                type: widget.verificationType,
+                                                phone: verificationModel
+                                                    .phoneNumber!,
+                                              ),
+                                            );
+                                      }
+                                    : null,
+                                child: Container(
+                                  width: 73,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: sendButtonEnable &&
+                                            !verificationModel.isMessageSended
+                                        ? Pallete.point
+                                        : Pallete.gray,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      '발송',
+                                      style: s2SubTitle.copyWith(
+                                        color: Colors.white,
+                                        height: 1,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -216,24 +265,25 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                           const SizedBox(
                             height: 12,
                           ),
-                          SizedBox(
-                            height: 44,
-                            child: CustomTextFormField(
-                              maxLength: 6,
-                              maxLine: 1,
-                              controller: _codeTextController,
-                              fullLabelText: '인증번호 6자리를 입력해주세요',
-                              labelText: '인증번호',
-                              autoFocus: false,
-                              textInputType: TextInputType.number,
-                              autoFillHint: const [
-                                AutofillHints.oneTimeCode,
-                              ],
-                              onChanged: (value) {
-                                code = value;
-                              },
+                          if (verificationModel.isMessageSended)
+                            SizedBox(
+                              height: 44,
+                              child: CustomTextFormField(
+                                maxLength: 6,
+                                maxLine: 1,
+                                controller: _codeTextController,
+                                fullLabelText: '인증번호 6자리를 입력해주세요',
+                                labelText: '인증번호',
+                                autoFocus: false,
+                                textInputType: TextInputType.number,
+                                autoFillHint: const [
+                                  AutofillHints.oneTimeCode,
+                                ],
+                                onChanged: (value) {
+                                  code = value;
+                                },
+                              ),
                             ),
-                          ),
                           const SizedBox(
                             height: 12,
                           ),
@@ -241,15 +291,6 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                       ),
                     ),
                   ],
-                ),
-                KeyboardVisibilityBuilder(
-                  builder: (p0, isKeyboardVisible) {
-                    return SizedBox(
-                      height: !isKeyboardVisible
-                          ? 100.h - kToolbarHeight - 56 - 370
-                          : 50,
-                    );
-                  },
                 ),
               ],
             ),

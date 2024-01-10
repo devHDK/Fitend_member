@@ -64,7 +64,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     // getMe();
   }
 
-  getMe() async {
+  Future<void> getMe() async {
     try {
       checkStoreVersion().then((storeVersion) async {
         debugPrint('$storeVersion');

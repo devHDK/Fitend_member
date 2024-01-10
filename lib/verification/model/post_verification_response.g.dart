@@ -10,12 +10,12 @@ PostVerificationResponse _$PostVerificationResponseFromJson(
         Map<String, dynamic> json) =>
     PostVerificationResponse(
       codeToken: json['codeToken'] as String,
-      expireAt: json['expireAt'] as String,
+      expireAt: DateTime.parse(json['expireAt'] as String),
     );
 
 Map<String, dynamic> _$PostVerificationResponseToJson(
         PostVerificationResponse instance) =>
     <String, dynamic>{
       'codeToken': instance.codeToken,
-      'expireAt': instance.expireAt,
+      'expireAt': instance.expireAt.toIso8601String(),
     };

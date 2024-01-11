@@ -17,6 +17,7 @@ class CustomTextFormField extends StatefulWidget {
   final List<TextInputFormatter>? formatter;
   final int? maxLength;
   final int? maxLine;
+  final TextAlign? textAlign;
 
   const CustomTextFormField({
     super.key,
@@ -33,6 +34,7 @@ class CustomTextFormField extends StatefulWidget {
     this.formatter,
     this.maxLength,
     this.maxLine = 1,
+    this.textAlign = TextAlign.start,
   });
 
   @override
@@ -100,30 +102,33 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         focusNode.unfocus();
       },
       inputFormatters: widget.formatter,
+      textAlign: widget.textAlign!,
+
       decoration: InputDecoration(
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
-          hintText: widget.hintText,
-          // errorText: errorText,
-          hintStyle: s2SubTitle.copyWith(
-            color: Pallete.gray,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+        hintText: widget.hintText,
+        // errorText: errorText,
+        hintStyle: s2SubTitle.copyWith(
+          color: Pallete.gray,
+        ),
+        filled: true,
+        fillColor: Pallete.background,
+        border: baseBorder,
+        enabledBorder: baseBorder,
+        focusedBorder: baseBorder.copyWith(
+          borderSide: baseBorder.borderSide.copyWith(
+            color: Pallete.point,
           ),
-          filled: true,
-          fillColor: Pallete.background,
-          border: baseBorder,
-          enabledBorder: baseBorder,
-          focusedBorder: baseBorder.copyWith(
-            borderSide: baseBorder.borderSide.copyWith(
-              color: Pallete.point,
-            ),
-          ),
-          labelText: focusNode.hasFocus || widget.controller.text.isEmpty
-              ? widget.fullLabelText
-              : widget.labelText,
-          labelStyle: s2SubTitle.copyWith(
-            color: focusNode.hasFocus ? Pallete.point : Pallete.gray,
-          ),
-          counterText: ''),
+        ),
+        labelText: focusNode.hasFocus || widget.controller.text.isEmpty
+            ? widget.fullLabelText
+            : widget.labelText,
+        labelStyle: s2SubTitle.copyWith(
+          color: focusNode.hasFocus ? Pallete.point : Pallete.gray,
+        ),
+        counterText: '',
+      ),
     );
   }
 }

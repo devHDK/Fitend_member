@@ -277,9 +277,11 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
       VerificationStateModel verificationModel, BuildContext context) {
     return InkWell(
       onTap: sendButtonEnable && !verificationModel.isMessageSended
-          ? () {
+          ? () async {
               try {
-                ref.read(verificationProvider.notifier).postVerificationMessage(
+                await ref
+                    .read(verificationProvider.notifier)
+                    .postVerificationMessage(
                       reqModel: PostVerificationModel(
                         type: widget.verificationType,
                         phone: verificationModel.phoneNumber!,
@@ -287,16 +289,25 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                     );
 
                 onMessageSendPressed();
-              } on DioException {
-                String message = '서버와 통신중 오류가 발생하였습니다!';
+              } on DioException catch (e) {
+                String message = '';
+
+                if (e.response!.statusCode == 405) {
+                  message = '잠시후 다시 시도해 주세요!';
+                } else {
+                  message = '서버와 통신중 오류가 발생하였습니다!';
+                }
+
+                if (!context.mounted) return;
 
                 showDialog(
-                    context: context,
-                    builder: (context) => DialogWidgets.oneButtonDialog(
-                          message: message,
-                          confirmText: '확인',
-                          confirmOnTap: () => context.pop(),
-                        ));
+                  context: context,
+                  builder: (context) => DialogWidgets.oneButtonDialog(
+                    message: message,
+                    confirmText: '확인',
+                    confirmOnTap: () => context.pop(),
+                  ),
+                );
               }
             }
           : null,

@@ -24,8 +24,8 @@ class PostUserRegisterModelAdapter extends TypeAdapter<PostUserRegisterModel> {
       phone: fields[9] as String?,
       birth: fields[11] as DateTime?,
       gender: fields[13] as String?,
-      height: fields[15] as int?,
-      weight: fields[17] as int?,
+      height: fields[15] as double?,
+      weight: fields[17] as double?,
       experience: fields[19] as int?,
       purpose: fields[21] as int?,
       achievement: (fields[23] as List?)?.cast<int>(),
@@ -104,8 +104,8 @@ PostUserRegisterModel _$PostUserRegisterModelFromJson(
           ? null
           : DateTime.parse(json['birth'] as String),
       gender: json['gender'] as String?,
-      height: json['height'] as int?,
-      weight: json['weight'] as int?,
+      height: (json['height'] as num?)?.toDouble(),
+      weight: (json['weight'] as num?)?.toDouble(),
       experience: json['experience'] as int?,
       purpose: json['purpose'] as int?,
       achievement: (json['achievement'] as List<dynamic>?)

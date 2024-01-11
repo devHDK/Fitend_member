@@ -58,6 +58,9 @@ class VerificationStateNotifier extends StateNotifier<VerificationStateModel> {
       );
     } catch (e) {
       if (e is DioException && e.response != null) {
+        state =
+            VerificationStateModel(isMessageSended: false, isCodeSended: false);
+
         rethrow;
       }
     }

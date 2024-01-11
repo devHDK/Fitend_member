@@ -29,10 +29,10 @@ class PostUserRegisterModel {
   String? gender;
   @HiveField(15)
   @JsonKey(name: "height")
-  int? height;
+  double? height;
   @HiveField(17)
   @JsonKey(name: "weight")
-  int? weight;
+  double? weight;
   @HiveField(19)
   @JsonKey(name: "experience")
   int? experience;
@@ -85,8 +85,8 @@ class PostUserRegisterModel {
     String? phone,
     DateTime? birth,
     String? gender,
-    int? height,
-    int? weight,
+    double? height,
+    double? weight,
     int? experience,
     int? purpose,
     List<int>? achievement,

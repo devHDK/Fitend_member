@@ -1,6 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/user/component/custom_date_picker.dart';
@@ -125,11 +127,23 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
               else if (model.step == 5)
                 _step5BodySpecWidget(model)
               else if (model.step == 6)
-                _step6_11_VentilWidget(
-                    '이제 지속가능한\n운동습관을 경험하세요', '이제 지속가능한운동습관을 경험하세요')
+                _step6_11VentilWidget(
+                    '이제 지속가능한\n운동습관을 경험하세요', '이제 지속가능한 운동습관을 경험하세요')
+              else if (model.step == 7)
+                _step7ExperienceWidget(model)
+              else if (model.step == 8)
+                _step8PurposeWidget(model)
+              else if (model.step == 9)
+                _step9AchieveWidget(model)
+              else if (model.step == 10)
+                _step10ObstacleWidget(model)
+              else if (model.step == 11)
+                _step6_11VentilWidget(
+                    '언제, 어디서든\n당신의 코치와 함께하세요', '언제, 어디서든 당신의 코치와 함께하세요')
             ],
           ),
         ),
+        floatingActionButtonAnimator: _NoAnimationFabAnimator(),
         floatingActionButton: model.step == 6 || model.step == 11
             ? Padding(
                 padding: const EdgeInsets.only(right: 28),
@@ -230,14 +244,35 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
         }
         break;
       case 6:
+        buttonEnable = true;
         break;
       case 7:
+        if (model.experience != null) {
+          buttonEnable = true;
+        } else {
+          buttonEnable = false;
+        }
         break;
       case 8:
+        if (model.purpose != null) {
+          buttonEnable = true;
+        } else {
+          buttonEnable = false;
+        }
         break;
       case 9:
+        if (model.achievement != null && model.achievement!.isNotEmpty) {
+          buttonEnable = true;
+        } else {
+          buttonEnable = false;
+        }
         break;
       case 10:
+        if (model.obstacle != null && model.obstacle!.isNotEmpty) {
+          buttonEnable = true;
+        } else {
+          buttonEnable = false;
+        }
         break;
       case 11:
         break;
@@ -634,7 +669,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
-  SizedBox _step6_11_VentilWidget(String header, String content) {
+  SizedBox _step6_11VentilWidget(String header, String content) {
     return SizedBox(
       width: 100.w,
       child: Column(
@@ -662,6 +697,194 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
       ),
     );
   }
+
+  Column _step7ExperienceWidget(PostUserRegisterModel model) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '헬스를 해본 경험이 있으신가요?',
+          style: h3Headline.copyWith(
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        ...SurveyConstants.experiences.mapIndexed((index, element) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: SurveyButton(
+              content: element,
+              onTap: () {
+                if (!mounted) return;
+
+                ref
+                    .read(userRegisterProvider(widget.phone).notifier)
+                    .updateData(experience: index + 1);
+              },
+              isSelected: model.experience == index + 1,
+            ),
+          );
+        })
+      ],
+    );
+  }
+
+  Column _step8PurposeWidget(PostUserRegisterModel model) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '어떤 목표를 이루고 싶으신가요?',
+          style: h3Headline.copyWith(
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        ...SurveyConstants.purposes.mapIndexed((index, element) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: SurveyButton(
+              content: element,
+              onTap: () {
+                if (!mounted) return;
+
+                ref
+                    .read(userRegisterProvider(widget.phone).notifier)
+                    .updateData(purpose: index + 1);
+              },
+              isSelected: model.purpose == index + 1,
+            ),
+          );
+        })
+      ],
+    );
+  }
+
+  Column _step9AchieveWidget(PostUserRegisterModel model) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '어떨 때 성취감을 느끼시나요?',
+              style: h3Headline.copyWith(
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              '(최대 3개)',
+              style: s2SubTitle.copyWith(
+                color: Pallete.lightGray,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        ...SurveyConstants.achievements.mapIndexed((index, element) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: SurveyButton(
+              content: element,
+              onTap: () {
+                List<int> tempList = model.achievement ?? [];
+
+                if (tempList.contains(index + 1)) {
+                  tempList.remove(index + 1);
+                } else {
+                  if (tempList.length == 3) {
+                    tempList.removeAt(0);
+                    tempList.add(index + 1);
+                  } else {
+                    tempList.add(index + 1);
+                  }
+                }
+
+                if (!mounted) {
+                  return;
+                }
+
+                ref
+                    .read(userRegisterProvider(widget.phone).notifier)
+                    .updateData(
+                      achievement: tempList.toSet().toList(),
+                    );
+              },
+              isSelected: model.achievement!.contains(index + 1),
+            ),
+          );
+        })
+      ],
+    );
+  }
+
+  Column _step10ObstacleWidget(PostUserRegisterModel model) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '목표 달성에 장애물이 있나요?',
+              style: h3Headline.copyWith(
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              '(최대 3개)',
+              style: s2SubTitle.copyWith(
+                color: Pallete.lightGray,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        ...SurveyConstants.obstacles.mapIndexed((index, element) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: SurveyButton(
+              content: element,
+              onTap: () {
+                List<int> tempList = model.obstacle ?? [];
+
+                if (tempList.contains(index + 1)) {
+                  tempList.remove(index + 1);
+                } else {
+                  if (tempList.length == 3) {
+                    tempList.removeAt(0);
+                    tempList.add(index + 1);
+                  } else {
+                    tempList.add(index + 1);
+                  }
+                }
+
+                if (!mounted) {
+                  return;
+                }
+
+                ref
+                    .read(userRegisterProvider(widget.phone).notifier)
+                    .updateData(
+                      obstacle: tempList.toSet().toList(),
+                    );
+              },
+              isSelected: model.obstacle!.contains(index + 1),
+            ),
+          );
+        })
+      ],
+    );
+  }
 }
 
 Widget _buildContainer(Widget picker) {
@@ -683,4 +906,22 @@ Widget _buildContainer(Widget picker) {
       ),
     ),
   );
+}
+
+class _NoAnimationFabAnimator extends FloatingActionButtonAnimator {
+  @override
+  Offset getOffset(
+      {required Offset begin, required Offset end, required double progress}) {
+    return end;
+  }
+
+  @override
+  Animation<double> getRotationAnimation({required Animation<double> parent}) {
+    return const AlwaysStoppedAnimation<double>(0);
+  }
+
+  @override
+  Animation<double> getScaleAnimation({required Animation<double> parent}) {
+    return const AlwaysStoppedAnimation<double>(1.0);
+  }
 }

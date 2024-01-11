@@ -35,7 +35,7 @@ class SurveyButton extends StatelessWidget {
           child: Text(
             content,
             style: s2SubTitle.copyWith(
-                color: isSelected ? Pallete.point : Pallete.gray,
+                color: isSelected ? Pallete.point : Colors.white,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
                 height: 1),
           ),

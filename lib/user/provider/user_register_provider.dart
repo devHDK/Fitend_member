@@ -34,6 +34,7 @@ class UserRegisterStateNotifier extends StateNotifier<PostUserRegisterModel> {
           progressStep: 1,
           achievement: [],
           obstacle: [],
+          preferDays: [],
         )) {
     init();
   }
@@ -51,6 +52,7 @@ class UserRegisterStateNotifier extends StateNotifier<PostUserRegisterModel> {
           progressStep: 1,
           achievement: [],
           obstacle: [],
+          preferDays: [],
         );
       }
     });

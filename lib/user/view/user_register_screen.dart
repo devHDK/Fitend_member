@@ -7,6 +7,7 @@ import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/user/component/custom_date_picker.dart';
 import 'package:fitend_member/user/component/date_picker_button.dart';
+import 'package:fitend_member/user/component/place_button.dart';
 import 'package:fitend_member/user/component/survey_button.dart';
 import 'package:fitend_member/user/model/post_user_register_model.dart';
 import 'package:fitend_member/user/provider/user_register_provider.dart';
@@ -63,7 +64,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
   Widget build(BuildContext context) {
     final model = ref.watch(userRegisterProvider(widget.phone));
 
-    print(model.toJson());
+    debugPrint('${model.toJson()}');
 
     _checkButtonEnable(model);
 
@@ -140,6 +141,10 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
               else if (model.step == 11)
                 _step6_11VentilWidget(
                     '언제, 어디서든\n당신의 코치와 함께하세요', '언제, 어디서든 당신의 코치와 함께하세요')
+              else if (model.step == 12)
+                _step12PlaceWidget(model)
+              else if (model.step == 13)
+                _step13PreferDayWidget(model)
             ],
           ),
         ),
@@ -277,8 +282,18 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
       case 11:
         break;
       case 12:
+        if (model.place != null) {
+          buttonEnable = true;
+        } else {
+          buttonEnable = false;
+        }
         break;
       case 13:
+        if (model.place != null) {
+          buttonEnable = true;
+        } else {
+          buttonEnable = false;
+        }
         break;
 
       default:
@@ -882,6 +897,99 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
             ),
           );
         })
+      ],
+    );
+  }
+
+  Column _step12PlaceWidget(PostUserRegisterModel model) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '어디서 운동하실 계획이세요?',
+          style: h3Headline.copyWith(
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(
+          height: 36,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            PlaceButton(
+              content: '집 🏠\n(시공간의 제약 없이\n자유롭게 하길 원해요)',
+              onTap: () {
+                if (!mounted) return;
+
+                ref
+                    .read(userRegisterProvider(widget.phone).notifier)
+                    .updateData(place: 'home');
+              },
+              isSelected: model.place == 'home',
+            ),
+            PlaceButton(
+              content: '헬스장 🎟️\n(이미 등록했거나\n등록할 계획이에요)',
+              onTap: () {
+                if (!mounted) return;
+
+                ref
+                    .read(userRegisterProvider(widget.phone).notifier)
+                    .updateData(place: 'gym');
+              },
+              isSelected: model.place == 'gym',
+            )
+          ],
+        )
+      ],
+    );
+  }
+
+  Column _step13PreferDayWidget(PostUserRegisterModel model) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '주로 어떤 요일을 희망하세요?',
+          style: h3Headline.copyWith(
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          alignment: WrapAlignment.center,
+          children: [
+            ...weekday.mapIndexed(
+              (index, element) {
+                return SurveyButton(
+                  content: element,
+                  textAlign: TextAlign.center,
+                  width: index < 5 ? 15.w : 40.w,
+                  onTap: () {
+                    List<int> tempList = model.preferDays ?? [];
+
+                    if (tempList.contains(index + 1)) {
+                      tempList.remove(index + 1);
+                    } else {
+                      tempList.add(index + 1);
+                    }
+
+                    ref
+                        .read(userRegisterProvider(widget.phone).notifier)
+                        .updateData(
+                          preferDays: tempList.toSet().toList(),
+                        );
+                  },
+                  isSelected: model.preferDays!.contains(index + 1),
+                );
+              },
+            )
+          ],
+        ),
       ],
     );
   }

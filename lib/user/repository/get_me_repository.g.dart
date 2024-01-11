@@ -77,7 +77,8 @@ class _GetMeRepository implements GetMeRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = model;
+    final _data = <String, dynamic>{};
+    _data.addAll(model.toJson());
     await _dio.fetch<void>(_setStreamType<void>(Options(
       method: 'POST',
       headers: _headers,

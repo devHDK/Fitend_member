@@ -3,41 +3,60 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'post_user_register_model.g.dart';
 
-@JsonSerializable()
 @HiveType(typeId: 9)
+@JsonSerializable()
 class PostUserRegisterModel {
   @HiveField(1)
+  @JsonKey(name: "trainerId")
   int? trainerId;
-  @HiveField(2)
-  String? nickname;
   @HiveField(3)
-  String? password;
-  @HiveField(4)
-  String? email;
+  @JsonKey(name: "nickname")
+  String? nickname;
   @HiveField(5)
-  String? phone;
-  @HiveField(6)
-  DateTime? birth;
+  @JsonKey(name: "password")
+  String? password;
   @HiveField(7)
-  String? gender;
-  @HiveField(8)
-  int? height;
+  @JsonKey(name: "email")
+  String? email;
   @HiveField(9)
-  int? weight;
-  @HiveField(10)
-  int? experience;
+  @JsonKey(name: "phone")
+  String? phone;
   @HiveField(11)
-  int? purpose;
-  @HiveField(12)
-  List<int>? achievement;
+  @JsonKey(name: "birth")
+  DateTime? birth;
   @HiveField(13)
-  List<int>? obstacle;
-  @HiveField(14)
-  String? place;
+  @JsonKey(name: "gender")
+  String? gender;
   @HiveField(15)
+  @JsonKey(name: "height")
+  int? height;
+  @HiveField(17)
+  @JsonKey(name: "weight")
+  int? weight;
+  @HiveField(19)
+  @JsonKey(name: "experience")
+  int? experience;
+  @HiveField(21)
+  @JsonKey(name: "purpose")
+  int? purpose;
+  @HiveField(23)
+  @JsonKey(name: "achievement")
+  List<int>? achievement;
+  @HiveField(25)
+  @JsonKey(name: "obstacle")
+  List<int>? obstacle;
+  @HiveField(27)
+  @JsonKey(name: "place")
+  String? place;
+  @HiveField(29)
+  @JsonKey(name: "preferDays")
   List<int>? preferDays;
-  @HiveField(16)
-  String? step;
+  @HiveField(31)
+  @JsonKey(name: "step")
+  int? step;
+  @HiveField(33)
+  @JsonKey(name: "progressStep")
+  int? progressStep;
 
   PostUserRegisterModel({
     this.trainerId,
@@ -56,6 +75,7 @@ class PostUserRegisterModel {
     this.place,
     this.preferDays,
     this.step,
+    this.progressStep,
   });
 
   PostUserRegisterModel copyWith({
@@ -74,7 +94,8 @@ class PostUserRegisterModel {
     List<int>? obstacle,
     String? place,
     List<int>? preferDays,
-    String? step,
+    int? step,
+    int? progressStep,
   }) =>
       PostUserRegisterModel(
         trainerId: trainerId ?? this.trainerId,
@@ -93,5 +114,11 @@ class PostUserRegisterModel {
         place: place ?? this.place,
         preferDays: preferDays ?? this.preferDays,
         step: step ?? this.step,
+        progressStep: progressStep ?? this.progressStep,
       );
+
+  factory PostUserRegisterModel.fromJson(Map<String, dynamic> json) =>
+      _$PostUserRegisterModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PostUserRegisterModelToJson(this);
 }

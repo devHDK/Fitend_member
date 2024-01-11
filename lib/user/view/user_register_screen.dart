@@ -1,6 +1,7 @@
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/user/provider/user_register_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -34,87 +35,98 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Pallete.background,
-      appBar: AppBar(
+    final model = ref.watch(userRegisterProvider(widget.phone));
+
+    print(model.toJson());
+
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
         backgroundColor: Pallete.background,
-        elevation: 0,
-        title: Text(
-          '',
-          style: h4Headline,
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context); //뒤로가기
-          },
-          icon: const Padding(
-            padding: EdgeInsets.only(left: 18),
-            child: Icon(Icons.arrow_back_sharp),
+        appBar: AppBar(
+          backgroundColor: Pallete.background,
+          elevation: 0,
+          title: SizedBox(
+            width: 250,
+            child: LinearProgressIndicator(
+              backgroundColor: Pallete.lightGray,
+              color: Pallete.point,
+              value: model.step! / 11,
+            ),
+          ),
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context); //뒤로가기
+            },
+            icon: const Padding(
+              padding: EdgeInsets.only(left: 18),
+              child: Icon(Icons.arrow_back_sharp),
+            ),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 24,
-            ),
-            Text(
-              '회원님의 성함을 입력해주세요.',
-              style: h3Headline.copyWith(
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(
-              height: 36,
-            ),
-            CustomTextFormField(
-              onChanged: (value) {
-                if (mounted) {
-                  setState(() {});
-                }
-              },
-              controller: _nicknameController,
-              fullLabelText: '성함을 입력해주세요',
-              labelText: '성함',
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: TextButton(
-        onPressed: _nicknameController.text.length > 1 || buttonEnable
-            ? null
-            : () async {
-                try {} catch (e) {}
-              },
-        child: Padding(
+        body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Container(
-            height: 44,
-            width: 100.w,
-            decoration: BoxDecoration(
-              color: _nicknameController.text.length < 8
-                  ? Pallete.point.withOpacity(0.5)
-                  : Pallete.point,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: Text(
-                '다음',
-                style: h6Headline.copyWith(
-                  color: _nicknameController.text.length < 8
-                      ? Colors.white.withOpacity(0.5)
-                      : Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 24,
+              ),
+              Text(
+                '회원님의 성함을 입력해주세요.',
+                style: h3Headline.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(
+                height: 36,
+              ),
+              CustomTextFormField(
+                onChanged: (value) {
+                  if (mounted) {
+                    setState(() {});
+                  }
+                },
+                controller: _nicknameController,
+                fullLabelText: '성함을 입력해주세요',
+                labelText: '성함',
+              )
+            ],
+          ),
+        ),
+        floatingActionButton: TextButton(
+          onPressed: _nicknameController.text.length > 1 || buttonEnable
+              ? null
+              : () async {
+                  try {} catch (e) {}
+                },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28),
+            child: Container(
+              height: 44,
+              width: 100.w,
+              decoration: BoxDecoration(
+                color: _nicknameController.text.length < 8
+                    ? Pallete.point.withOpacity(0.5)
+                    : Pallete.point,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: Text(
+                  '다음',
+                  style: h6Headline.copyWith(
+                    color: _nicknameController.text.length < 8
+                        ? Colors.white.withOpacity(0.5)
+                        : Colors.white,
+                  ),
                 ),
               ),
             ),
           ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

@@ -18,7 +18,7 @@ import 'package:fitend_member/firebase_options.dart';
 import 'package:fitend_member/firebase_setup.dart';
 import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart';
 import 'package:fitend_member/thread/model/emojis/emoji_model.dart';
-import 'package:fitend_member/user/model/post_user_register_model.dart';
+import 'package:fitend_member/user/model/user_register_state_model.dart';
 import 'package:fitend_member/workout/model/schedule_record_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:fitend_member/workout/model/workout_result_model.dart';
@@ -271,7 +271,7 @@ Future<void> main() async {
   Hive.registerAdapter<TargetMuscle>(TargetMuscleAdapter());
   Hive.registerAdapter<ExerciseVideo>(ExerciseVideoAdapter());
   Hive.registerAdapter<ScheduleRecordsModel>(ScheduleRecordsModelAdapter());
-  Hive.registerAdapter<PostUserRegisterModel>(PostUserRegisterModelAdapter());
+  Hive.registerAdapter<UserRegisterStateModel>(UserRegisterStateModelAdapter());
 
   runApp(
     const ProviderScope(

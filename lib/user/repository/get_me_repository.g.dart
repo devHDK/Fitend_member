@@ -98,7 +98,7 @@ class _GetMeRepository implements GetMeRepository {
   }
 
   @override
-  Future<void> userRegister({required PostUserRegisterModel model}) async {
+  Future<void> userRegister({required UserRegisterStateModel model}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};

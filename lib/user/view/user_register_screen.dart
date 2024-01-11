@@ -9,7 +9,7 @@ import 'package:fitend_member/user/component/custom_date_picker.dart';
 import 'package:fitend_member/user/component/date_picker_button.dart';
 import 'package:fitend_member/user/component/place_button.dart';
 import 'package:fitend_member/user/component/survey_button.dart';
-import 'package:fitend_member/user/model/post_user_register_model.dart';
+import 'package:fitend_member/user/model/user_register_state_model.dart';
 import 'package:fitend_member/user/provider/user_register_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -203,7 +203,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
-  void _checkButtonEnable(PostUserRegisterModel model) {
+  void _checkButtonEnable(UserRegisterStateModel model) {
     switch (model.step) {
       case 1:
         if (model.nickname != null && model.nickname!.length >= 2) {
@@ -301,7 +301,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     }
   }
 
-  void _pressNextButton(PostUserRegisterModel model) async {
+  void _pressNextButton(UserRegisterStateModel model) async {
     try {
       int tempStep = model.step!;
       int tempProgressStep = model.progressStep!;
@@ -332,16 +332,20 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
       }
       tempStep++;
 
-      ref.read(userRegisterProvider(widget.phone).notifier).updateData(
-            step: tempStep,
-            progressStep: tempProgressStep,
-          );
+      if (model.step == 13) {
+        //TODO: 트레이너 선택 screen으로 이동
+      } else {
+        ref.read(userRegisterProvider(widget.phone).notifier).updateData(
+              step: tempStep,
+              progressStep: tempProgressStep,
+            );
+      }
     } catch (e) {
       debugPrint('$e');
     }
   }
 
-  Future<bool> _checkEmail(int tempStep, PostUserRegisterModel model) async {
+  Future<bool> _checkEmail(int tempStep, UserRegisterStateModel model) async {
     if (!emailRegExp.hasMatch(model.email!)) {
       showDialog(
         context: context,
@@ -437,6 +441,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
                   );
             }
           },
+          textInputType: TextInputType.emailAddress,
           controller: _emailController,
           fullLabelText: '이메일을 입력해주세요.',
           labelText: '이메일',
@@ -489,7 +494,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
-  Column _step4GenderWidget(PostUserRegisterModel model) {
+  Column _step4GenderWidget(UserRegisterStateModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -527,7 +532,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
-  Column _step5BodySpecWidget(PostUserRegisterModel model) {
+  Column _step5BodySpecWidget(UserRegisterStateModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -713,7 +718,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
-  Column _step7ExperienceWidget(PostUserRegisterModel model) {
+  Column _step7ExperienceWidget(UserRegisterStateModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -746,7 +751,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
-  Column _step8PurposeWidget(PostUserRegisterModel model) {
+  Column _step8PurposeWidget(UserRegisterStateModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -779,7 +784,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
-  Column _step9AchieveWidget(PostUserRegisterModel model) {
+  Column _step9AchieveWidget(UserRegisterStateModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -840,7 +845,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
-  Column _step10ObstacleWidget(PostUserRegisterModel model) {
+  Column _step10ObstacleWidget(UserRegisterStateModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -901,7 +906,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
-  Column _step12PlaceWidget(PostUserRegisterModel model) {
+  Column _step12PlaceWidget(UserRegisterStateModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -945,7 +950,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
-  Column _step13PreferDayWidget(PostUserRegisterModel model) {
+  Column _step13PreferDayWidget(UserRegisterStateModel model) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

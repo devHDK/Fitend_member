@@ -2,6 +2,7 @@ import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
 import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
+import 'package:fitend_member/user/model/post_email_exist_model.dart';
 import 'package:fitend_member/user/model/post_user_register_model.dart';
 import 'package:fitend_member/user/model/put_fcm_token.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -32,6 +33,11 @@ abstract class GetMeRepository {
   })
   Future<void> confirmPassword({
     @Body() required PostConfirmPassword password,
+  });
+
+  @POST('/users/exist')
+  Future<void> postEmailExist({
+    @Body() required PostEmailExistModel model,
   });
 
   @POST('/users/resister')

@@ -1,5 +1,7 @@
 import 'package:fitend_member/common/provider/hive_post_user_register_record_provider.dart';
+import 'package:fitend_member/user/model/post_email_exist_model.dart';
 import 'package:fitend_member/user/model/post_user_register_model.dart';
+import 'package:fitend_member/user/repository/get_me_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -8,20 +10,29 @@ final userRegisterProvider = StateNotifierProvider.family<
   final AsyncValue<Box> userRegisterBox =
       ref.watch(hiveUserRegisterRecordProvider);
 
+  final getMeRepository = ref.read(getMeRepositoryProvider);
+
   return UserRegisterStateNotifier(
     phone: phone,
     userRegisterBox: userRegisterBox,
+    getMeRepository: getMeRepository,
   );
 });
 
 class UserRegisterStateNotifier extends StateNotifier<PostUserRegisterModel> {
   final String phone;
   final AsyncValue<Box> userRegisterBox;
+  final GetMeRepository getMeRepository;
 
   UserRegisterStateNotifier({
     required this.phone,
     required this.userRegisterBox,
-  }) : super(PostUserRegisterModel(phone: phone, step: 1)) {
+    required this.getMeRepository,
+  }) : super(PostUserRegisterModel(
+          phone: phone,
+          step: 1,
+          progressStep: 1,
+        )) {
     init();
   }
 
@@ -35,6 +46,7 @@ class UserRegisterStateNotifier extends StateNotifier<PostUserRegisterModel> {
         state = PostUserRegisterModel(
           phone: phone,
           step: 1,
+          progressStep: 1,
         );
       }
     });
@@ -57,6 +69,7 @@ class UserRegisterStateNotifier extends StateNotifier<PostUserRegisterModel> {
     String? place,
     List<int>? preferDays,
     int? step,
+    int? progressStep,
   }) {
     final pstate = state;
 
@@ -77,6 +90,16 @@ class UserRegisterStateNotifier extends StateNotifier<PostUserRegisterModel> {
       place: place ?? place,
       preferDays: preferDays ?? preferDays,
       step: step ?? step,
+      progressStep: progressStep ?? progressStep,
     );
+  }
+
+  Future<void> checkEmail(String email) async {
+    try {
+      await getMeRepository.postEmailExist(
+          model: PostEmailExistModel(email: email));
+    } catch (e) {
+      rethrow;
+    }
   }
 }

@@ -1,18 +1,11 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/const/aseet_constants.dart';
-import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/trainer/model/trainer_detail_model.dart';
-import 'package:fitend_member/trainer/model/trainer_list_model.dart';
 import 'package:fitend_member/trainer/provider/trainer_detail_provider.dart';
-import 'package:fitend_member/trainer/provider/trainer_list_provider.dart';
 import 'package:fitend_member/user/provider/user_register_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -31,6 +24,15 @@ class _TrainerListScreenState extends ConsumerState<TrainerDetailScreen> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (ref.read(trainerDetailProvider(widget.trainerId))
+          is TrainerDetailModelError) {
+        ref
+            .read(trainerDetailProvider(widget.trainerId).notifier)
+            .getTrainerDetail(widget.trainerId);
+      }
+    });
   }
 
   @override

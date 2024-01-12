@@ -5,6 +5,7 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/provider/hive_post_user_register_record_provider.dart';
 import 'package:fitend_member/trainer/screen/trainer_list_screen.dart';
 import 'package:fitend_member/user/component/custom_date_picker.dart';
 import 'package:fitend_member/user/component/date_picker_button.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -43,11 +45,52 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
   final _heightController = TextEditingController();
   final _wightController = TextEditingController();
 
+  late AsyncValue<Box> userRegisterBox;
+
   bool buttonEnable = false;
+
+  bool initial = true;
 
   @override
   void initState() {
     super.initState();
+
+    Future.delayed(
+      const Duration(milliseconds: 300),
+      () {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+          if (initial) {
+            initial = false;
+
+            userRegisterBox.whenData((value) {
+              final record = value.get(widget.phone);
+
+              if (record != null && record is UserRegisterStateModel) {
+                if (!context.mounted) return;
+
+                showDialog(
+                  context: context,
+                  builder: (context) => DialogWidgets.confirmDialog(
+                    message: '이전에 작성중이던 정보가 있어요 📝️\n이어서 진행할까요?',
+                    confirmText: '네, 이어서 할게요',
+                    cancelText: '아니요, 처음부터 할래요',
+                    confirmOnTap: () {
+                      ref
+                          .read(userRegisterProvider(widget.phone).notifier)
+                          .initFromLocalDB();
+                      context.pop();
+                    },
+                    cancelOnTap: () {
+                      context.pop();
+                    },
+                  ),
+                );
+              }
+            });
+          }
+        });
+      },
+    );
   }
 
   @override
@@ -64,6 +107,10 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final model = ref.watch(userRegisterProvider(widget.phone));
+    final AsyncValue<Box> registerBox =
+        ref.watch(hiveUserRegisterRecordProvider);
+
+    userRegisterBox = registerBox;
 
     debugPrint('${model.toJson()}');
 
@@ -332,6 +379,8 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
         tempProgressStep++;
       }
       tempStep++;
+
+      ref.read(userRegisterProvider(widget.phone).notifier).saveState();
 
       if (model.step == 13) {
         if (!context.mounted) return;

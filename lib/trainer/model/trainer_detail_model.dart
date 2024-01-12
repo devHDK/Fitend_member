@@ -41,7 +41,7 @@ class TrainerDetailModel extends TrainerDetailModelBase {
   @JsonKey(name: "favorite")
   final CoachingStyle favorite;
   @JsonKey(name: "franchises")
-  final List<Franchise> franchises;
+  final List<Franchise>? franchises;
 
   TrainerDetailModel({
     required this.id,
@@ -56,7 +56,7 @@ class TrainerDetailModel extends TrainerDetailModelBase {
     required this.speciality,
     required this.coachingStyle,
     required this.favorite,
-    required this.franchises,
+    this.franchises,
   });
 
   TrainerDetailModel copyWith({

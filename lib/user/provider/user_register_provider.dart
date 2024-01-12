@@ -2,6 +2,7 @@ import 'package:fitend_member/common/provider/hive_post_user_register_record_pro
 import 'package:fitend_member/user/model/post_email_exist_model.dart';
 import 'package:fitend_member/user/model/user_register_state_model.dart';
 import 'package:fitend_member/user/repository/get_me_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -40,6 +41,17 @@ class UserRegisterStateNotifier extends StateNotifier<UserRegisterStateModel> {
   }
 
   void init() {
+    state = UserRegisterStateModel(
+      phone: phone,
+      step: 1,
+      progressStep: 1,
+      achievement: [],
+      obstacle: [],
+      preferDays: [],
+    );
+  }
+
+  void initFromLocalDB() {
     userRegisterBox.whenData((value) {
       final record = value.get(phone);
 
@@ -107,5 +119,15 @@ class UserRegisterStateNotifier extends StateNotifier<UserRegisterStateModel> {
     } catch (e) {
       rethrow;
     }
+  }
+
+  void saveState() {
+    final pstate = state;
+
+    userRegisterBox.whenData((value) {
+      value.put(pstate.phone, pstate);
+
+      debugPrint('saved user register state ===> ${pstate.toJson()}');
+    });
   }
 }

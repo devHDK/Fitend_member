@@ -4,9 +4,11 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'user_register_state_model.g.dart';
 
+abstract class UserRegisterStateModelBase {}
+
 @HiveType(typeId: 9)
 @JsonSerializable()
-class UserRegisterStateModel {
+class UserRegisterStateModel extends UserRegisterStateModelBase {
   @HiveField(1)
   @JsonKey(name: "trainerId")
   int? trainerId;

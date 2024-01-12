@@ -9,7 +9,10 @@ part of 'trainer_repository.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
 class _TrainerRepository implements TrainerRepository {
-  _TrainerRepository(this._dio);
+  _TrainerRepository(
+    this._dio, {
+    this.baseUrl,
+  });
 
   final Dio _dio;
 
@@ -20,7 +23,7 @@ class _TrainerRepository implements TrainerRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<TrainerListModel>(Options(
       method: 'GET',
@@ -47,7 +50,7 @@ class _TrainerRepository implements TrainerRepository {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<TrainerDetailModel>(Options(
       method: 'GET',

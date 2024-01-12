@@ -24,8 +24,8 @@ TrainerDetailModel _$TrainerDetailModelFromJson(Map<String, dynamic> json) =>
           CoachingStyle.fromJson(json['coachingStyle'] as Map<String, dynamic>),
       favorite:
           CoachingStyle.fromJson(json['favorite'] as Map<String, dynamic>),
-      franchises: (json['franchises'] as List<dynamic>)
-          .map((e) => Franchise.fromJson(e as Map<String, dynamic>))
+      franchises: (json['franchises'] as List<dynamic>?)
+          ?.map((e) => Franchise.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

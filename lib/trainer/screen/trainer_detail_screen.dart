@@ -1,4 +1,7 @@
+import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/trainer/model/trainer_detail_model.dart';
@@ -6,6 +9,7 @@ import 'package:fitend_member/trainer/provider/trainer_detail_provider.dart';
 import 'package:fitend_member/user/provider/user_register_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -17,10 +21,11 @@ class TrainerDetailScreen extends ConsumerStatefulWidget {
   final int trainerId;
 
   @override
-  ConsumerState<TrainerDetailScreen> createState() => _TrainerListScreenState();
+  ConsumerState<TrainerDetailScreen> createState() =>
+      _TrainerDetailScreenState();
 }
 
-class _TrainerListScreenState extends ConsumerState<TrainerDetailScreen> {
+class _TrainerDetailScreenState extends ConsumerState<TrainerDetailScreen> {
   @override
   void initState() {
     super.initState();
@@ -68,17 +73,135 @@ class _TrainerListScreenState extends ConsumerState<TrainerDetailScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Pallete.background,
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Padding(
-            padding: EdgeInsets.only(left: 10),
-            child: Icon(Icons.arrow_back),
-          ),
+        title: Text(
+          '코치 프로필',
+          style: h3Headline.copyWith(color: Colors.white),
         ),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: () => context.pop(),
+            icon: const Padding(
+              padding: EdgeInsets.only(right: 28),
+              child: Icon(Icons.close_sharp),
+            ),
+          )
+        ],
       ),
-      body: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [],
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 28),
+        child: ListView(
+          children: [
+            SizedBox(
+              width: 100.w,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  _introProfile(trainerModel),
+                  const SizedBox(
+                    height: 20,
+                  ),
+
+                  //소개
+                  Text('소개', style: h4Headline.copyWith(color: Colors.white)),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    trainerModel.intro,
+                    style: s1SubTitle.copyWith(color: Colors.white),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  //자격사항
+                  Text('자격사항', style: h4Headline.copyWith(color: Colors.white)),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ...trainerModel.qualification.data.map(
+                    (e) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: Text(
+                          '✅ $e',
+                          style: s1SubTitle.copyWith(color: Colors.white),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  //전문 분야
+                  Text('전문 분야',
+                      style: h4Headline.copyWith(color: Colors.white)),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ...trainerModel.speciality.data.map(
+                    (e) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: Text(
+                          '📌 $e',
+                          style: s1SubTitle.copyWith(color: Colors.white),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  //코칭 스타일
+                  Text('코칭 스타일',
+                      style: h4Headline.copyWith(color: Colors.white)),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ...trainerModel.speciality.data.map(
+                    (e) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: Text(
+                          '✨ $e',
+                          style: s1SubTitle.copyWith(color: Colors.white),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  //코칭 스타일
+                  Text('좋아하는 것',
+                      style: h4Headline.copyWith(color: Colors.white)),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ...trainerModel.favorite.data.map(
+                    (e) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 5),
+                        child: Text(
+                          '🌈 $e',
+                          style: s1SubTitle.copyWith(color: Colors.white),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(
+                    height: 100,
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: TextButton(
         onPressed: () {},
@@ -93,7 +216,7 @@ class _TrainerListScreenState extends ConsumerState<TrainerDetailScreen> {
             ),
             child: Center(
               child: Text(
-                ' 코치와 함께하기',
+                '${trainerModel.nickname} 코치와 함께하기',
                 style: h6Headline.copyWith(color: Colors.white),
               ),
             ),
@@ -101,6 +224,49 @@ class _TrainerListScreenState extends ConsumerState<TrainerDetailScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  SizedBox _introProfile(TrainerDetailModel trainerModel) {
+    return SizedBox(
+      width: 100.w,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CustomNetworkImage(
+              imageUrl: '${URLConstants.s3Url}${trainerModel.profileImage}'),
+          const SizedBox(
+            height: 14,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                trainerModel.nickname,
+                style: h4Headline.copyWith(
+                  color: Colors.white,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              InkWell(
+                child: SvgPicture.asset(SVGConstants.instagram),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Text(
+            trainerModel.shortIntro,
+            style: s2SubTitle.copyWith(
+              color: Pallete.lightGray,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

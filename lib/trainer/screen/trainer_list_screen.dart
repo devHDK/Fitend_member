@@ -135,22 +135,26 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
                     },
                     child: Stack(
                       children: [
-                        Container(
-                          width: 214,
-                          height: 332,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.red,
-                                  Pallete.point,
-                                  Colors.orange,
-                                  Colors.pink
-                                ]),
-                            color:
-                                selected ? Pallete.point : Colors.transparent,
-                            borderRadius: BorderRadius.circular(10),
+                        AnimatedOpacity(
+                          opacity: selected ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 300),
+                          child: Container(
+                            width: 214,
+                            height: 332,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.red,
+                                    Pallete.point,
+                                    Colors.orange,
+                                    Colors.pink
+                                  ]),
+                              color:
+                                  selected ? Pallete.point : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
                         Positioned(
@@ -216,6 +220,7 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
                                                     phone: widget.phone,
                                                     trainerId: trainer.id,
                                                   ),
+                                                  fullscreenDialog: true,
                                                 ),
                                               );
                                             },

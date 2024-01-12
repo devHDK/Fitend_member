@@ -16,6 +16,7 @@ class SVGConstants {
   static const String edit = '${_svgPath}icon_edit.svg';
   static const String email = '${_svgPath}icon_email.svg';
   static const String emojiButton = '${_svgPath}icon_emoji_button.svg';
+  static const String instagram = '${_svgPath}icon_Instagram.svg';
   static const String history = '${_svgPath}icon_history.svg';
   static const String historyThin = '${_svgPath}icon_history_thin.svg';
   static const String exit = '${_svgPath}icon_exit.svg';

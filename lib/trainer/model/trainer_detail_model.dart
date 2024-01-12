@@ -2,8 +2,20 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'trainer_detail_model.g.dart';
 
+abstract class TrainerDetailModelBase {}
+
+class TrainerDetailModelError extends TrainerDetailModelBase {
+  final String message;
+
+  TrainerDetailModelError({
+    required this.message,
+  });
+}
+
+class TrainerDetailModelLoading extends TrainerDetailModelBase {}
+
 @JsonSerializable()
-class TrainerDetailModel {
+class TrainerDetailModel extends TrainerDetailModelBase {
   @JsonKey(name: "id")
   final int id;
   @JsonKey(name: "nickname")

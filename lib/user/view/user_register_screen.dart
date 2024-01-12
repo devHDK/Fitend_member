@@ -5,6 +5,7 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/trainer/screen/trainer_list_screen.dart';
 import 'package:fitend_member/user/component/custom_date_picker.dart';
 import 'package:fitend_member/user/component/date_picker_button.dart';
 import 'package:fitend_member/user/component/place_button.dart';
@@ -289,7 +290,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
         }
         break;
       case 13:
-        if (model.place != null) {
+        if (model.preferDays != null && model.preferDays!.isNotEmpty) {
           buttonEnable = true;
         } else {
           buttonEnable = false;
@@ -333,7 +334,11 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
       tempStep++;
 
       if (model.step == 13) {
-        //TODO: 트레이너 선택 screen으로 이동
+        if (!context.mounted) return;
+
+        Navigator.of(context).push(CupertinoPageRoute(
+          builder: (context) => TrainerListScreen(phone: widget.phone),
+        ));
       } else {
         ref.read(userRegisterProvider(widget.phone).notifier).updateData(
               step: tempStep,

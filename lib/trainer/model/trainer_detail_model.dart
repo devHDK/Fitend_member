@@ -32,6 +32,8 @@ class TrainerDetailModel extends TrainerDetailModelBase {
   final String shortIntro;
   @JsonKey(name: "intro")
   final String intro;
+  @JsonKey(name: "instagram")
+  final String instagram;
   @JsonKey(name: "qualification")
   final CoachingStyle qualification;
   @JsonKey(name: "speciality")
@@ -52,6 +54,7 @@ class TrainerDetailModel extends TrainerDetailModelBase {
     required this.largeProfileImage,
     required this.shortIntro,
     required this.intro,
+    required this.instagram,
     required this.qualification,
     required this.speciality,
     required this.coachingStyle,
@@ -68,6 +71,7 @@ class TrainerDetailModel extends TrainerDetailModelBase {
     String? largeProfileImage,
     String? shortIntro,
     String? intro,
+    String? instagram,
     CoachingStyle? qualification,
     CoachingStyle? speciality,
     CoachingStyle? coachingStyle,
@@ -83,6 +87,7 @@ class TrainerDetailModel extends TrainerDetailModelBase {
         largeProfileImage: largeProfileImage ?? this.largeProfileImage,
         shortIntro: shortIntro ?? this.shortIntro,
         intro: intro ?? this.intro,
+        instagram: instagram ?? this.instagram,
         qualification: qualification ?? this.qualification,
         speciality: speciality ?? this.speciality,
         coachingStyle: coachingStyle ?? this.coachingStyle,

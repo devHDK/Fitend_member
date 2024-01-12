@@ -7,11 +7,14 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/trainer/model/trainer_detail_model.dart';
 import 'package:fitend_member/trainer/provider/trainer_detail_provider.dart';
 import 'package:fitend_member/user/provider/user_register_provider.dart';
+import 'package:fitend_member/user/view/register_complete_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TrainerDetailScreen extends ConsumerStatefulWidget {
   const TrainerDetailScreen(
@@ -204,7 +207,18 @@ class _TrainerDetailScreenState extends ConsumerState<TrainerDetailScreen> {
         ),
       ),
       floatingActionButton: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          ref
+              .read(userRegisterProvider(widget.phone).notifier)
+              .updateData(trainerId: trainerModel.id);
+
+          Navigator.of(context).push(CupertinoPageRoute(
+            builder: (context) => RegisterCompleteScreen(
+              phone: widget.phone,
+              trainerName: trainerModel.nickname,
+            ),
+          ));
+        },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Container(
@@ -252,6 +266,12 @@ class _TrainerDetailScreenState extends ConsumerState<TrainerDetailScreen> {
                 width: 5,
               ),
               InkWell(
+                onTap: () {
+                  launchUrl(
+                    Uri.parse(trainerModel.instagram),
+                    mode: LaunchMode.externalApplication,
+                  );
+                },
                 child: SvgPicture.asset(SVGConstants.instagram),
               ),
             ],

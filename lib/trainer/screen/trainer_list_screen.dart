@@ -9,6 +9,7 @@ import 'package:fitend_member/trainer/model/trainer_list_model.dart';
 import 'package:fitend_member/trainer/provider/trainer_list_provider.dart';
 import 'package:fitend_member/trainer/screen/trainer_detail_screen.dart';
 import 'package:fitend_member/user/provider/user_register_provider.dart';
+import 'package:fitend_member/user/view/register_complete_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -273,7 +274,14 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
         ],
       ),
       floatingActionButton: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(CupertinoPageRoute(
+            builder: (context) => RegisterCompleteScreen(
+              phone: widget.phone,
+              trainerName: trainerName,
+            ),
+          ));
+        },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Container(

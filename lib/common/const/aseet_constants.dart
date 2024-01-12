@@ -11,6 +11,7 @@ class SVGConstants {
   static const String checkSave = '${_svgPath}icon_check_save.svg';
   static const String checkSetInfo = '${_svgPath}icon_check_setInfo.svg';
   static const String checkEmpty = '${_svgPath}icon_check.svg';
+  static const String checkWhite = '${_svgPath}icon_check_white.svg';
   static const String clock = '${_svgPath}icon_clock.svg';
   static const String daymove = '${_svgPath}icon_daymove.svg';
   static const String edit = '${_svgPath}icon_edit.svg';

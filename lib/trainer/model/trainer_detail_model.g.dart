@@ -16,6 +16,7 @@ TrainerDetailModel _$TrainerDetailModelFromJson(Map<String, dynamic> json) =>
       largeProfileImage: json['largeProfileImage'] as String,
       shortIntro: json['shortIntro'] as String,
       intro: json['intro'] as String,
+      instagram: json['instagram'] as String,
       qualification:
           CoachingStyle.fromJson(json['qualification'] as Map<String, dynamic>),
       speciality:
@@ -39,6 +40,7 @@ Map<String, dynamic> _$TrainerDetailModelToJson(TrainerDetailModel instance) =>
       'largeProfileImage': instance.largeProfileImage,
       'shortIntro': instance.shortIntro,
       'intro': instance.intro,
+      'instagram': instance.instagram,
       'qualification': instance.qualification,
       'speciality': instance.speciality,
       'coachingStyle': instance.coachingStyle,

@@ -14,9 +14,7 @@ PostUserRegisterModel _$PostUserRegisterModelFromJson(
       password: json['password'] as String?,
       email: json['email'] as String?,
       phone: json['phone'] as String?,
-      birth: json['birth'] == null
-          ? null
-          : DateTime.parse(json['birth'] as String),
+      birth: json['birth'] as String?,
       gender: json['gender'] as String?,
       height: (json['height'] as num?)?.toDouble(),
       weight: (json['weight'] as num?)?.toDouble(),
@@ -40,7 +38,7 @@ Map<String, dynamic> _$PostUserRegisterModelToJson(
       'password': instance.password,
       'email': instance.email,
       'phone': instance.phone,
-      'birth': instance.birth?.toIso8601String(),
+      'birth': instance.birth,
       'gender': instance.gender,
       'height': instance.height,
       'weight': instance.weight,

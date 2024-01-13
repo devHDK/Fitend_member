@@ -1,5 +1,6 @@
 import 'package:fitend_member/user/model/post_user_register_model.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_register_state_model.g.dart';
@@ -135,7 +136,7 @@ class UserRegisterStateModel extends UserRegisterStateModelBase {
       gender: stateModel.gender,
       height: stateModel.height,
       weight: stateModel.weight,
-      birth: stateModel.birth,
+      birth: DateFormat('yyyy-MM-dd').format(stateModel.birth!),
       experience: stateModel.experience,
       purpose: stateModel.purpose,
       achievement: stateModel.achievement,

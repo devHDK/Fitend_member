@@ -215,6 +215,7 @@ class _TrainerDetailScreenState extends ConsumerState<TrainerDetailScreen> {
             builder: (context) => RegisterCompleteScreen(
               phone: widget.phone,
               trainerName: trainerModel.nickname,
+              trainerProfileImage: trainerModel.profileImage,
             ),
           ));
         },

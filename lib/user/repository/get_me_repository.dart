@@ -3,7 +3,7 @@ import 'package:fitend_member/common/dio/dio.dart';
 import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/model/post_email_exist_model.dart';
-import 'package:fitend_member/user/model/user_register_state_model.dart';
+import 'package:fitend_member/user/model/post_user_register_model.dart';
 import 'package:fitend_member/user/model/put_fcm_token.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,9 +40,9 @@ abstract class GetMeRepository {
     @Body() required PostEmailExistModel model,
   });
 
-  @POST('/users/resister')
+  @POST('/users/register')
   Future<void> userRegister({
-    @Body() required UserRegisterStateModel model,
+    @Body() required PostUserRegisterModel model,
   });
 
   @PUT('/users/fcmToken')

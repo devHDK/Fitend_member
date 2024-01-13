@@ -40,6 +40,7 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
     final state = ref.watch(trainerListProvider);
     final registerModel = ref.watch(userRegisterProvider(widget.phone));
     String trainerName = '';
+    String trainerProfileImage = '';
 
     if (state is TrainerListModelLoading) {
       return const Center(
@@ -69,6 +70,7 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
           .indexWhere((element) => element.id == registerModel.trainerId);
 
       trainerName = trainerListModel.data[trainerIndex].nickname;
+      trainerProfileImage = trainerListModel.data[trainerIndex].profileImage;
     }
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -279,6 +281,7 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
             builder: (context) => RegisterCompleteScreen(
               phone: widget.phone,
               trainerName: trainerName,
+              trainerProfileImage: trainerProfileImage,
             ),
           ));
         },

@@ -15,7 +15,7 @@ class PostUserRegisterModel {
   @JsonKey(name: "phone")
   final String? phone;
   @JsonKey(name: "birth")
-  final DateTime? birth;
+  final String? birth;
   @JsonKey(name: "gender")
   final String? gender;
   @JsonKey(name: "height")
@@ -59,7 +59,7 @@ class PostUserRegisterModel {
     String? password,
     String? email,
     String? phone,
-    DateTime? birth,
+    String? birth,
     String? gender,
     double? height,
     double? weight,

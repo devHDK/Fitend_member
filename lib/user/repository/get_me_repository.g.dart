@@ -98,7 +98,7 @@ class _GetMeRepository implements GetMeRepository {
   }
 
   @override
-  Future<void> userRegister({required UserRegisterStateModel model}) async {
+  Future<void> userRegister({required PostUserRegisterModel model}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -111,7 +111,7 @@ class _GetMeRepository implements GetMeRepository {
     )
         .compose(
           _dio.options,
-          '/users/resister',
+          '/users/register',
           queryParameters: queryParameters,
           data: _data,
         )

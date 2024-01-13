@@ -65,6 +65,8 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
             userRegisterBox.whenData((value) {
               final record = value.get(widget.phone);
 
+              print('record ===> $record');
+
               if (record != null && record is UserRegisterStateModel) {
                 if (!context.mounted) return;
 

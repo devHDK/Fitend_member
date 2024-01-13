@@ -1,23 +1,38 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/user/model/user_register_state_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/provider/user_register_provider.dart';
+import 'package:fitend_member/user/repository/get_me_repository.dart';
+import 'package:fitend_member/user/view/register_welcome_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:uuid/uuid.dart';
 
 class RegisterCompleteScreen extends ConsumerStatefulWidget {
   const RegisterCompleteScreen({
     super.key,
     required this.phone,
     required this.trainerName,
+    required this.trainerProfileImage,
   });
 
   final String phone;
   final String trainerName;
+  final String trainerProfileImage;
 
   @override
   ConsumerState<RegisterCompleteScreen> createState() =>
@@ -26,6 +41,8 @@ class RegisterCompleteScreen extends ConsumerStatefulWidget {
 
 class _RegisterCompleteScreenState
     extends ConsumerState<RegisterCompleteScreen> {
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -78,7 +95,7 @@ class _RegisterCompleteScreenState
                       style: h4Headline.copyWith(color: Colors.white),
                     ),
                     Text(
-                      '${registerModel.nickname}님의 사전설문 데이터를 바탕으로\n실현가능한 운동루틴을 만들어드려요.',
+                      '${registerModel.nickname!.substring(1)}님의 사전설문 데이터를 바탕으로\n실현가능한 운동루틴을 만들어드려요.',
                       style: s1SubTitle.copyWith(color: Colors.white),
                     ),
                   ],
@@ -171,7 +188,45 @@ class _RegisterCompleteScreenState
         ),
       ),
       floatingActionButton: TextButton(
-        onPressed: () {},
+        onPressed: () async {
+          setState(() {
+            isLoading = true;
+          });
+          final model =
+              UserRegisterStateModel().stateModelToPostModel(registerModel);
+          try {
+            final token = await FirebaseMessaging.instance.getToken();
+
+            final deviceId = await _getDeviceInfo();
+
+            await ref
+                .read(getMeRepositoryProvider)
+                .userRegister(model: model)
+                .then((value) async {
+              await ref.read(getMeProvider.notifier).login(
+                    email: registerModel.email!,
+                    password: registerModel.password!,
+                    platform: Platform.isAndroid ? 'android' : 'ios',
+                    token: token!,
+                    deviceId: deviceId,
+                  );
+
+              if (!context.mounted) return;
+
+              Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) => RegisterWelcomScreen(
+                        userNickname: registerModel.nickname!,
+                        trainerName: widget.trainerName,
+                        trainerProfileImage: widget.trainerProfileImage,
+                      )));
+            });
+          } catch (e) {
+            setState(() {
+              isLoading = false;
+            });
+            DialogWidgets.showToast('통신중 문제가 발생하였습니다.');
+          }
+        },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Container(
@@ -182,15 +237,53 @@ class _RegisterCompleteScreenState
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
-              child: Text(
-                '14일 무료체험 시작',
-                style: h6Headline.copyWith(color: Colors.white),
-              ),
+              child: isLoading
+                  ? const Center(
+                      child: SizedBox(
+                        width: 15,
+                        height: 15,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  : Text(
+                      '14일 무료체험 시작',
+                      style: h6Headline.copyWith(color: Colors.white),
+                    ),
             ),
           ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+  }
+
+  Future<String> _getDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    IosDeviceInfo? iosInfo;
+    String? androidUuid;
+
+    if (Platform.isAndroid) {
+      final savedUuid = await ref
+          .read(secureStorageProvider)
+          .read(key: StringConstants.deviceId);
+      if (savedUuid == null) {
+        var uuid = const Uuid();
+        androidUuid = uuid.v1();
+        await ref
+            .read(secureStorageProvider)
+            .write(key: StringConstants.deviceId, value: androidUuid);
+      } else {
+        androidUuid = savedUuid;
+      }
+
+      debugPrint('deviceId : $androidUuid');
+    } else if (Platform.isIOS) {
+      iosInfo = await deviceInfo.iosInfo;
+      debugPrint('deviceId : ${iosInfo.identifierForVendor!}');
+    }
+
+    return Platform.isAndroid ? androidUuid! : iosInfo!.identifierForVendor!;
   }
 }

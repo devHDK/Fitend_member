@@ -46,7 +46,6 @@ class _TrainerDetailScreenState extends ConsumerState<TrainerDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(trainerDetailProvider(widget.trainerId));
-    final registerModel = ref.watch(userRegisterProvider(widget.phone));
 
     if (state is TrainerDetailModelLoading) {
       return const Center(

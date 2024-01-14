@@ -58,9 +58,13 @@ class User {
   @JsonKey(name: "deletedAt")
   final String? deletedAt;
   @JsonKey(name: "activeTrainers")
-  final List<ThreadTrainer> activeTrainers;
+  final List<TrainerInfo> activeTrainers;
   @JsonKey(name: "activeTickets")
-  List<ActiveTicket>? activeTickets;
+  List<TicketModel>? activeTickets;
+  @JsonKey(name: "lastTrainers")
+  final List<TrainerInfo> lastTrainers;
+  @JsonKey(name: "lastTickets")
+  List<TicketModel>? lastTickets;
 
   User({
     required this.id,
@@ -73,6 +77,8 @@ class User {
     required this.deletedAt,
     required this.activeTrainers,
     this.activeTickets,
+    required this.lastTrainers,
+    this.lastTickets,
   });
 
   User copyWith({
@@ -84,8 +90,10 @@ class User {
     bool? isNotification,
     String? createdAt,
     String? deletedAt,
-    List<ThreadTrainer>? activeTrainers,
-    List<ActiveTicket>? activeTickets,
+    List<TrainerInfo>? activeTrainers,
+    List<TicketModel>? activeTickets,
+    List<TrainerInfo>? lastTrainers,
+    List<TicketModel>? lastTickets,
   }) =>
       User(
         id: id ?? this.id,
@@ -98,9 +106,49 @@ class User {
         createdAt: createdAt ?? this.createdAt,
         activeTrainers: activeTrainers ?? this.activeTrainers,
         activeTickets: activeTickets ?? this.activeTickets,
+        lastTrainers: lastTrainers ?? this.lastTrainers,
+        lastTickets: lastTickets ?? this.lastTickets,
       );
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+
+@JsonSerializable()
+class TrainerInfo extends ThreadTrainer {
+  @JsonKey(name: "workStartTime")
+  final String workStartTime;
+  @JsonKey(name: "workEndTime")
+  final String workEndTime;
+
+  TrainerInfo({
+    required super.id,
+    required super.nickname,
+    required super.profileImage,
+    required this.workStartTime,
+    required this.workEndTime,
+  });
+
+  @override
+  TrainerInfo copyWith({
+    int? id,
+    String? nickname,
+    String? profileImage,
+    String? workStartTime,
+    String? workEndTime,
+  }) =>
+      TrainerInfo(
+        id: id ?? this.id,
+        nickname: nickname ?? this.nickname,
+        profileImage: profileImage ?? this.profileImage,
+        workStartTime: workStartTime ?? this.workStartTime,
+        workEndTime: workEndTime ?? this.workEndTime,
+      );
+
+  factory TrainerInfo.fromJson(Map<String, dynamic> json) =>
+      _$TrainerInfoFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$TrainerInfoToJson(this);
 }

@@ -13,7 +13,7 @@ class TicketCell extends StatelessWidget {
     this.child,
   });
 
-  final ActiveTicket ticket;
+  final TicketModel ticket;
   final Widget? child;
 
   @override

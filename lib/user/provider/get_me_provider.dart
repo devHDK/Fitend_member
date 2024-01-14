@@ -12,7 +12,6 @@ import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/model/put_fcm_token.dart';
 import 'package:fitend_member/user/model/user_model.dart';
-import 'package:fitend_member/user/model/user_register_state_model.dart';
 import 'package:fitend_member/user/repository/auth_repository.dart';
 import 'package:fitend_member/user/repository/get_me_repository.dart';
 import 'package:flutter/material.dart';
@@ -255,7 +254,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   }
 
   void updateActiveTickets({
-    required List<ActiveTicket> activeTickets,
+    required List<TicketModel> activeTickets,
   }) {
     final pstate = state as UserModel;
 

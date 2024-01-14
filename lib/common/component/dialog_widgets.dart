@@ -182,6 +182,81 @@ class DialogWidgets {
     );
   }
 
+  static DialogBackground oneButtonDialogBold({
+    required String message1,
+    required String message2,
+    required String confirmText,
+    required GestureTapCallback confirmOnTap,
+    bool? dismissable = true,
+  }) {
+    return DialogBackground(
+      blur: 0.2,
+      dismissable: dismissable,
+      dialog: SimpleDialog(
+        insetPadding: const EdgeInsets.symmetric(
+          vertical: 20,
+          horizontal: 20,
+        ),
+        backgroundColor: Colors.transparent,
+        children: [
+          Container(
+            width: 335,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 20,
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    message1,
+                    style: s1SubTitle.copyWith(fontWeight: FontWeight.w700),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    message2,
+                    style: s1SubTitle,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  GestureDetector(
+                    onTap: confirmOnTap,
+                    child: Container(
+                      width: 279,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Pallete.point,
+                      ),
+                      child: Center(
+                        child: Text(
+                          confirmText,
+                          style: h6Headline.copyWith(
+                            color: Colors.white,
+                            height: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   static DialogBackground progressDialog({
     required int totalCount,
     required int doneCount,
@@ -383,7 +458,7 @@ class DialogWidgets {
   static Future<dynamic> ticketBuyModal({
     required BuildContext context,
     int? trainerId,
-    ActiveTicket? activeTicket,
+    TicketModel? activeTicket,
   }) {
     return showModalBottomSheet(
       backgroundColor: Colors.transparent,

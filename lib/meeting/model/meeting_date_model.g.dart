@@ -33,9 +33,10 @@ Map<String, dynamic> _$ScheduleDataToJson(ScheduleData instance) =>
 
 TrainerSchedule _$TrainerScheduleFromJson(Map<String, dynamic> json) =>
     TrainerSchedule(
-      endTime: DateTime.parse(json['endTime'] as String),
-      startTime: DateTime.parse(json['startTime'] as String),
+      endTime: DataUtils.dateTimeToLocal(json['endTime'] as String),
+      startTime: DataUtils.dateTimeToLocal(json['startTime'] as String),
       type: json['type'] as String,
+      isAvail: json['isAvail'] as bool?,
     );
 
 Map<String, dynamic> _$TrainerScheduleToJson(TrainerSchedule instance) =>
@@ -43,4 +44,5 @@ Map<String, dynamic> _$TrainerScheduleToJson(TrainerSchedule instance) =>
       'endTime': instance.endTime.toIso8601String(),
       'startTime': instance.startTime.toIso8601String(),
       'type': instance.type,
+      'isAvail': instance.isAvail,
     };

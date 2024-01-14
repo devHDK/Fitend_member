@@ -10,7 +10,7 @@ ActiveTicketResponse _$ActiveTicketResponseFromJson(
         Map<String, dynamic> json) =>
     ActiveTicketResponse(
       data: (json['data'] as List<dynamic>)
-          .map((e) => ActiveTicket.fromJson(e as Map<String, dynamic>))
+          .map((e) => TicketModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -20,7 +20,7 @@ Map<String, dynamic> _$ActiveTicketResponseToJson(
       'data': instance.data,
     };
 
-ActiveTicket _$ActiveTicketFromJson(Map<String, dynamic> json) => ActiveTicket(
+TicketModel _$TicketModelFromJson(Map<String, dynamic> json) => TicketModel(
       id: json['id'] as int,
       type: json['type'] as String,
       totalSession: json['totalSession'] as int,
@@ -34,7 +34,7 @@ ActiveTicket _$ActiveTicketFromJson(Map<String, dynamic> json) => ActiveTicket(
       isHolding: json['isHolding'] as bool,
     );
 
-Map<String, dynamic> _$ActiveTicketToJson(ActiveTicket instance) =>
+Map<String, dynamic> _$TicketModelToJson(TicketModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'type': instance.type,

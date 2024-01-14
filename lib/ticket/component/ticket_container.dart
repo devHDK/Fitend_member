@@ -23,7 +23,7 @@ class TicketContainer extends ConsumerStatefulWidget {
   });
 
   final int? trainerId;
-  final ActiveTicket? activeTicket;
+  final TicketModel? activeTicket;
 
   @override
   ConsumerState<TicketContainer> createState() => _TicketContainerState();

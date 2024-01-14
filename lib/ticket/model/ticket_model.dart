@@ -19,14 +19,14 @@ class ActiveTicketResponseError extends ActiveTicketResponseBase {
 @JsonSerializable()
 class ActiveTicketResponse extends ActiveTicketResponseBase {
   @JsonKey(name: "data")
-  final List<ActiveTicket> data;
+  final List<TicketModel> data;
 
   ActiveTicketResponse({
     required this.data,
   });
 
   ActiveTicketResponse copyWith({
-    List<ActiveTicket>? data,
+    List<TicketModel>? data,
   }) =>
       ActiveTicketResponse(
         data: data ?? this.data,
@@ -39,7 +39,7 @@ class ActiveTicketResponse extends ActiveTicketResponseBase {
 }
 
 @JsonSerializable()
-class ActiveTicket {
+class TicketModel {
   @JsonKey(name: "id")
   final int id;
   @JsonKey(name: "type")
@@ -63,7 +63,7 @@ class ActiveTicket {
   @JsonKey(name: "isHolding")
   final bool isHolding;
 
-  ActiveTicket({
+  TicketModel({
     required this.id,
     required this.type,
     required this.totalSession,
@@ -77,7 +77,7 @@ class ActiveTicket {
     required this.isHolding,
   });
 
-  ActiveTicket copyWith({
+  TicketModel copyWith({
     int? id,
     String? type,
     int? totalSession,
@@ -90,7 +90,7 @@ class ActiveTicket {
     List<String>? users,
     bool? isHolding,
   }) =>
-      ActiveTicket(
+      TicketModel(
         id: id ?? this.id,
         type: type ?? this.type,
         totalSession: totalSession ?? this.totalSession,
@@ -104,8 +104,8 @@ class ActiveTicket {
         isHolding: isHolding ?? this.isHolding,
       );
 
-  factory ActiveTicket.fromJson(Map<String, dynamic> json) =>
-      _$ActiveTicketFromJson(json);
+  factory TicketModel.fromJson(Map<String, dynamic> json) =>
+      _$TicketModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ActiveTicketToJson(this);
+  Map<String, dynamic> toJson() => _$TicketModelToJson(this);
 }

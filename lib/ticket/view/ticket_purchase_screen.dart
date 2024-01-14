@@ -23,7 +23,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class TicketPurchaseScreen extends ConsumerStatefulWidget {
   final Product purchaseProduct;
   final int? trainerId;
-  final ActiveTicket? activeTicket;
+  final TicketModel? activeTicket;
 
   const TicketPurchaseScreen({
     super.key,

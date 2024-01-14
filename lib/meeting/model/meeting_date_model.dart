@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'meeting_date_model.g.dart';
@@ -65,28 +66,38 @@ class ScheduleData {
 
 @JsonSerializable()
 class TrainerSchedule {
-  @JsonKey(name: "endTime")
+  @JsonKey(
+    name: "endTime",
+    fromJson: DataUtils.dateTimeToLocal,
+  )
   final DateTime endTime;
-  @JsonKey(name: "startTime")
+  @JsonKey(
+    name: "startTime",
+    fromJson: DataUtils.dateTimeToLocal,
+  )
   final DateTime startTime;
   @JsonKey(name: "type")
   final String type;
+  bool? isAvail;
 
   TrainerSchedule({
     required this.endTime,
     required this.startTime,
     required this.type,
+    required this.isAvail,
   });
 
   TrainerSchedule copyWith({
     DateTime? endTime,
     DateTime? startTime,
     String? type,
+    bool? isAvail,
   }) =>
       TrainerSchedule(
         endTime: endTime ?? this.endTime,
         startTime: startTime ?? this.startTime,
         type: type ?? this.type,
+        isAvail: isAvail ?? this.isAvail,
       );
 
   factory TrainerSchedule.fromJson(Map<String, dynamic> json) =>

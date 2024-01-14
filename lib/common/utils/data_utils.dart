@@ -208,4 +208,10 @@ class DataUtils {
 
     return ret;
   }
+
+  static DateTime dateTimeToLocal(String date) {
+    DateTime tempDate = DateTime.parse(date).toUtc().toLocal();
+
+    return tempDate;
+  }
 }

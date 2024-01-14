@@ -404,7 +404,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         child: Container(
           color: Pallete.point,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 5),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

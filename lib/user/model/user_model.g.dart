@@ -24,10 +24,16 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       createdAt: json['createdAt'] as String?,
       deletedAt: json['deletedAt'] as String?,
       activeTrainers: (json['activeTrainers'] as List<dynamic>)
-          .map((e) => ThreadTrainer.fromJson(e as Map<String, dynamic>))
+          .map((e) => TrainerInfo.fromJson(e as Map<String, dynamic>))
           .toList(),
       activeTickets: (json['activeTickets'] as List<dynamic>?)
-          ?.map((e) => ActiveTicket.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => TicketModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      lastTrainers: (json['lastTrainers'] as List<dynamic>)
+          .map((e) => TrainerInfo.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      lastTickets: (json['lastTickets'] as List<dynamic>?)
+          ?.map((e) => TicketModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -42,4 +48,23 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'deletedAt': instance.deletedAt,
       'activeTrainers': instance.activeTrainers,
       'activeTickets': instance.activeTickets,
+      'lastTrainers': instance.lastTrainers,
+      'lastTickets': instance.lastTickets,
+    };
+
+TrainerInfo _$TrainerInfoFromJson(Map<String, dynamic> json) => TrainerInfo(
+      id: json['id'] as int,
+      nickname: json['nickname'] as String,
+      profileImage: json['profileImage'] as String,
+      workStartTime: json['workStartTime'] as String,
+      workEndTime: json['workEndTime'] as String,
+    );
+
+Map<String, dynamic> _$TrainerInfoToJson(TrainerInfo instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'nickname': instance.nickname,
+      'profileImage': instance.profileImage,
+      'workStartTime': instance.workStartTime,
+      'workEndTime': instance.workEndTime,
     };

@@ -33,23 +33,25 @@ class MeetingDateStateNotifier extends StateNotifier<MeetingDateModelBase?> {
     required this.trainerRepository,
     required this.meetingRepository,
     required this.user,
-  }) : super(MeetingDateModelLoading()) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final endDate = today.add(const Duration(days: 5));
+  }) : super(null) {
+    // final now = DateTime.now();
+    // final today = DateTime(now.year, now.month, now.day);
+    // final endDate = today.add(const Duration(days: 5));
 
-    getTrainerSchedules(
-      trainerId,
-      GetTrainerScheduleModel(
-        startDate: today,
-        endDate: endDate,
-      ),
-    );
+    // getTrainerSchedules(
+    //   trainerId,
+    //   GetTrainerScheduleModel(
+    //     startDate: today,
+    //     endDate: endDate,
+    //   ),
+    // );
   }
 
   Future<void> getTrainerSchedules(
       int trainerId, GetTrainerScheduleModel model) async {
     try {
+      if (state is MeetingDateModelLoading) return;
+
       state = MeetingDateModelLoading();
 
       final trainerWorkStartTime =

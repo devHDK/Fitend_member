@@ -1,4 +1,5 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -8,11 +9,20 @@ import 'package:fitend_member/meeting/model/meeting_date_model.dart';
 import 'package:fitend_member/meeting/model/post_meeting_create_model.dart';
 import 'package:fitend_member/meeting/provider/meeting_date_provider.dart';
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/trainer/model/get_trainer_schedule_model.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
+    as picker;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:ndialog/ndialog.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -53,17 +63,14 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
 
   void fetch() async {
     if (mounted) {
-      if (ref.read(meetingDateProvider(widget.trainerId))
-          is MeetingDateModelError) {
-        final now = DateTime.now();
-        final today = DateTime(now.year, now.month, now.day);
-        final endDate = today.add(const Duration(days: 5));
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final endDate = today.add(const Duration(days: 5));
 
-        await ref
-            .read(meetingDateProvider(widget.trainerId).notifier)
-            .getTrainerSchedules(widget.trainerId,
-                GetTrainerScheduleModel(startDate: today, endDate: endDate));
-      }
+      await ref
+          .read(meetingDateProvider(widget.trainerId).notifier)
+          .getTrainerSchedules(widget.trainerId,
+              GetTrainerScheduleModel(startDate: today, endDate: endDate));
     }
   }
 
@@ -133,74 +140,28 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                 height: 24,
               ),
               _dateListBox(scheduleModel),
-              SizedBox(
-                width: 100.w,
-                height: 380,
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10.0, // 가로축 아이템 간격
-                    mainAxisSpacing: 10.0, // 세로축 아이템 간격
-                    childAspectRatio: 4.0, // 아이템의 가로 세로 비율
-                  ),
-                  itemCount: scheduleModel.data[dateIndex].schedules.length,
-                  itemBuilder: (context, index) {
-                    final isAvail =
-                        scheduleModel.data[dateIndex].schedules[index].isAvail!;
-                    final data = scheduleModel.data[dateIndex].schedules[index];
-
-                    final isSelected = selectStartTime == data.startTime;
-
-                    return InkWell(
-                      onTap: isAvail
-                          ? () {
-                              if (!mounted) return;
-
-                              if (selectStartTime != data.startTime) {
-                                selectStartTime = data.startTime;
-                                selectEndTime = data.endTime;
-                              } else {
-                                selectStartTime = DateTime(2024);
-                                selectEndTime = DateTime(2024);
-                              }
-
-                              setState(() {});
-                            }
-                          : null,
-                      child: Container(
-                          width: 154,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color:
-                                isSelected ? Colors.white : Colors.transparent,
-                            border: Border.all(
-                              width: 1,
-                              color: isSelected
-                                  ? Pallete.point
-                                  : isAvail
-                                      ? Pallete.gray
-                                      : Pallete.darkGray,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Center(
-                            child: Text(
-                              DateFormat('hh:mm a').format(data.startTime),
-                              style: s2SubTitle.copyWith(
-                                color: isSelected
-                                    ? Pallete.point
-                                    : isAvail
-                                        ? Pallete.lightGray
-                                        : Pallete.darkGray,
-                                fontWeight: isSelected
-                                    ? FontWeight.w700
-                                    : FontWeight.w400,
-                                height: 1,
-                              ),
-                            ),
-                          )),
+              _dateGridView(scheduleModel),
+              const SizedBox(
+                height: 50,
+              ),
+              Center(
+                child: InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const _MeetingDatePickDialog(
+                        message: '희망 일정을 선택해주시면\n빠르게 확인 후 연락드릴게요 🙏',
+                        confirmText: '확인',
+                      ),
                     );
                   },
+                  child: Text(
+                    '이중에 가능한 일정이 없어요 🥲',
+                    style: s2SubTitle.copyWith(
+                      color: Colors.white,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 ),
               )
             ],
@@ -217,7 +178,7 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                         '${DateFormat('M월 d일').format(selectStartTime)} (${weekday[selectStartTime.weekday - 1]}) ∙ ${selectStartTime.hour >= 12 ? ' 오후 ' : ' 오전 '}  ${DateFormat('h:mm').format(selectStartTime)}',
                     message2: '일정으로 미팅을 예약할까요?',
                     confirmText: '확인',
-                    confirmOnTap: () {
+                    confirmOnTap: () async {
                       context.pop();
 
                       ref
@@ -228,7 +189,11 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                               startTime: selectStartTime.toUtc(),
                               endTime: selectEndTime.toUtc(),
                             ),
-                          );
+                          )
+                          .onError((error, stackTrace) {
+                        DialogWidgets.showToast('서버와 통신중 문제가 발생하였습니다.');
+                      });
+
                       DateTime fifteenDaysAgo =
                           DateTime.now().subtract(const Duration(days: 15));
 
@@ -261,6 +226,77 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  SizedBox _dateGridView(MeetingDateModel scheduleModel) {
+    return SizedBox(
+      width: 100.w,
+      height: 100.h - 480,
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10.0, // 가로축 아이템 간격
+          mainAxisSpacing: 10.0, // 세로축 아이템 간격
+          childAspectRatio: 4.0, // 아이템의 가로 세로 비율
+        ),
+        itemCount: scheduleModel.data[dateIndex].schedules.length,
+        itemBuilder: (context, index) {
+          final isAvail =
+              scheduleModel.data[dateIndex].schedules[index].isAvail!;
+          final data = scheduleModel.data[dateIndex].schedules[index];
+
+          final isSelected = selectStartTime == data.startTime;
+
+          return InkWell(
+            onTap: isAvail
+                ? () {
+                    if (!mounted) return;
+
+                    if (selectStartTime != data.startTime) {
+                      selectStartTime = data.startTime;
+                      selectEndTime = data.endTime;
+                    } else {
+                      selectStartTime = DateTime(2024);
+                      selectEndTime = DateTime(2024);
+                    }
+
+                    setState(() {});
+                  }
+                : null,
+            child: Container(
+                width: 154,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.white : Colors.transparent,
+                  border: Border.all(
+                    width: 1,
+                    color: isSelected
+                        ? Pallete.point
+                        : isAvail
+                            ? Pallete.gray
+                            : Pallete.darkGray,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Text(
+                    DateFormat('hh:mm a').format(data.startTime),
+                    style: s2SubTitle.copyWith(
+                      color: isSelected
+                          ? Pallete.point
+                          : isAvail
+                              ? Pallete.lightGray
+                              : Pallete.darkGray,
+                      fontWeight:
+                          isSelected ? FontWeight.w700 : FontWeight.w400,
+                      height: 1,
+                    ),
+                  ),
+                )),
+          );
+        },
       ),
     );
   }
@@ -388,5 +424,258 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
         ),
       ],
     );
+  }
+}
+
+class _MeetingDatePickDialog extends ConsumerStatefulWidget {
+  const _MeetingDatePickDialog({
+    required this.message,
+    required this.confirmText,
+  });
+  final String message;
+  final String confirmText;
+
+  @override
+  ConsumerState<_MeetingDatePickDialog> createState() =>
+      _MeetingDatePickDialogState();
+}
+
+class _MeetingDatePickDialogState
+    extends ConsumerState<_MeetingDatePickDialog> {
+  DateTime selectDate = DateTime.now().add(const Duration(hours: 2));
+  bool isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final userModel = ref.watch(getMeProvider) as UserModel;
+    final threadCreate = ref.watch(threadCreateProvider);
+
+    return DialogBackground(
+      blur: 0.2,
+      dismissable: true,
+      dialog: SimpleDialog(
+        insetPadding: const EdgeInsets.symmetric(
+          vertical: 20,
+          horizontal: 20,
+        ),
+        backgroundColor: Colors.transparent,
+        children: [
+          Container(
+            width: 335,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 20,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.message,
+                    style: s1SubTitle,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () async {
+                          final pickTime = await _dateTimePicker();
+
+                          if (pickTime != null && mounted) {
+                            setState(() {
+                              selectDate = pickTime;
+                            });
+                          }
+                        },
+                        child: Container(
+                          height: 25,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(SVGConstants.calendar,
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.black,
+                                    BlendMode.srcIn,
+                                  )),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                '${DateFormat('yyyy.MM.dd').format(selectDate)} ${weekday[selectDate.weekday - 1]} ',
+                                style: h6Headline.copyWith(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          final pickTime = await _dateTimePicker();
+
+                          if (pickTime != null && mounted) {
+                            setState(() {
+                              selectDate = pickTime;
+                            });
+                          }
+                        },
+                        child: Container(
+                          height: 25,
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                width: 1,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(SVGConstants.timer,
+                                  colorFilter: const ColorFilter.mode(
+                                    Colors.black,
+                                    BlendMode.srcIn,
+                                  )),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                DateFormat('hh:mm a').format(selectDate),
+                                style: h6Headline.copyWith(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  GestureDetector(
+                    onTap: !isLoading
+                        ? () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+
+                            try {
+                              ref
+                                  .read(threadCreateProvider.notifier)
+                                  .updateTitle('온보딩 미팅 희망일정');
+
+                              ref.read(threadCreateProvider.notifier).updateContent(
+                                  '${DateFormat('yyyy년 M월 d일').format(selectDate)} (${weekday[selectDate.weekday - 1]}) ∙${selectDate.hour >= 12 ? ' 오후 ' : ' 오전 '}${DateFormat('h:mm').format(selectDate)}');
+
+                              await ref
+                                  .read(threadCreateProvider.notifier)
+                                  .createThread(
+                                    ThreadUser(
+                                      id: userModel.user.id,
+                                      nickname: userModel.user.nickname,
+                                      gender: userModel.user.gender,
+                                    ),
+                                    ThreadTrainer(
+                                      id: userModel
+                                          .user.activeTrainers.first.id,
+                                      nickname: userModel
+                                          .user.activeTrainers.first.nickname,
+                                      profileImage: userModel.user
+                                          .activeTrainers.first.profileImage,
+                                    ),
+                                  )
+                                  .then((value) {
+                                context.goNamed(HomeScreen.routeName);
+                              });
+                            } catch (e) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              DialogWidgets.showToast('서버와 통신중 에러가 발생했습니다.');
+                            }
+                          }
+                        : null,
+                    child: Container(
+                      width: 279,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Pallete.point,
+                      ),
+                      child: Center(
+                        child: isLoading
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                widget.confirmText,
+                                style: h6Headline.copyWith(
+                                  color: Colors.white,
+                                  height: 1,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<DateTime?> _dateTimePicker() async {
+    final pickTime = await picker.DatePicker.showDateTimePicker(
+      context,
+      locale: picker.LocaleType.ko,
+      minTime: DateTime.now(),
+      maxTime: DateTime.now().add(
+        const Duration(days: 13),
+      ),
+      theme: picker.DatePickerTheme(
+        backgroundColor: Pallete.background,
+        itemStyle: h2Headline.copyWith(
+          color: Colors.white,
+        ),
+        doneStyle: s2SubTitle.copyWith(
+          color: Colors.white,
+        ),
+        cancelStyle: s2SubTitle.copyWith(
+          color: Colors.white,
+        ),
+      ),
+    );
+
+    if (pickTime != null) {
+      return pickTime;
+    } else {
+      return null;
+    }
   }
 }

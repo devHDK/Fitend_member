@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
+import 'package:fitend_member/meeting/model/meeting_date_model.dart';
+import 'package:fitend_member/trainer/model/get_trainer_schedule_model.dart';
 import 'package:fitend_member/trainer/model/trainer_detail_model.dart';
 import 'package:fitend_member/trainer/model/trainer_list_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,5 +25,14 @@ abstract class TrainerRepository {
   @GET('/trainers/{id}')
   Future<TrainerDetailModel> getTrainerDetail({
     @Path('id') required int id,
+  });
+
+  @GET('/trainers/{id}/schedules')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<MeetingDateModel> getTrainerSchedules({
+    @Path('id') required int id,
+    @Queries() required GetTrainerScheduleModel model,
   });
 }

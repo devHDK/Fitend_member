@@ -3,6 +3,7 @@ import 'package:fitend_member/common/view/onboarding_screen.dart';
 import 'package:fitend_member/common/view/splash_screen.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
+import 'package:fitend_member/meeting/view/meeting_date_screen.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
@@ -96,6 +97,13 @@ class AuthProvider extends ChangeNotifier {
               ),
             ),
             GoRoute(
+              path: 'meetingDate/:trainerId',
+              name: MeetingDateScreen.routeName,
+              builder: (context, state) => MeetingDateScreen(
+                trainerId: int.parse(state.pathParameters['trainerId']!),
+              ),
+            ),
+            GoRoute(
               path: 'notification',
               name: NotificationScreen.routeName,
               builder: (context, state) => const NotificationScreen(),
@@ -138,9 +146,6 @@ class AuthProvider extends ChangeNotifier {
             ),
           ],
         ),
-
-        //TODO: register route, 멤버쉽 구매 route
-
         GoRoute(
           path: '/error',
           name: ErrorScreen.routeName,

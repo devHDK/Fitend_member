@@ -9,6 +9,7 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
+import 'package:fitend_member/meeting/view/meeting_date_screen.dart';
 import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
 import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
@@ -16,6 +17,8 @@ import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,6 +28,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -149,14 +153,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     super.didPush();
   }
 
-  // @override
-  // void didPop() async {
-  //   if (mounted) {
-  //     await _checkIsNeedUpdate();
-  //   }
-  //   super.didPop();
-  // }
-
   Future<void> _checkIsNeedUpdate() async {
     if (mounted) {
       final pref = await SharedPreferences.getInstance();
@@ -199,6 +195,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   Widget build(BuildContext context) {
     final state = ref.watch(scheduleProvider);
     final notificationState = ref.watch(notificationHomeProvider);
+    final userState = ref.watch(getMeProvider) as UserModel;
 
     if (state is ScheduleModelLoading ||
         notificationState is NotificationMainModelLoading) {
@@ -283,109 +280,149 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
             ),
           ],
         ),
-        body: ScrollablePositionedList.builder(
-          itemScrollController: itemScrollController,
-          itemPositionsListener: itemPositionsListener,
-          initialScrollIndex:
-              schedules.scrollIndex != null ? schedules.scrollIndex! : 15,
-          itemCount: schedules.data.length + 2,
-          itemBuilder: (context, index) {
-            if (index == schedules.data.length + 1 || index == 0) {
-              return const SizedBox(
-                height: 100,
-                child: Center(
-                  child: CircularProgressIndicator(color: Pallete.point),
-                ),
-              );
-            }
-
-            final model = schedules.data[index - 1].schedule;
-
-            if (model!.isEmpty) {
-              return Column(
-                children: [
-                  if (schedules.data[index - 1].startDate.day == 1)
-                    Container(
-                      height: 34,
-                      color: Pallete.darkGray,
-                      child: Center(
-                        child: Text(
-                          DateFormat('yyyy년 M월')
-                              .format(schedules.data[index - 1].startDate),
-                          style: h3Headline.copyWith(
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+        body: Stack(
+          children: [
+            ScrollablePositionedList.builder(
+              itemScrollController: itemScrollController,
+              itemPositionsListener: itemPositionsListener,
+              initialScrollIndex:
+                  schedules.scrollIndex != null ? schedules.scrollIndex! : 15,
+              itemCount: schedules.data.length + 2,
+              itemBuilder: (context, index) {
+                if (index == schedules.data.length + 1 || index == 0) {
+                  return const SizedBox(
+                    height: 100,
+                    child: Center(
+                      child: CircularProgressIndicator(color: Pallete.point),
                     ),
-                  WorkoutScheduleCard(
-                    date: schedules.data[index - 1].startDate,
-                    selected: false,
-                    isComplete: null,
-                  ),
-                ],
-              );
-            }
+                  );
+                }
 
-            if (model.isNotEmpty) {
-              return Column(
-                children: [
-                  if (schedules.data[index - 1].startDate.day == 1)
-                    Container(
-                      height: 34,
-                      color: Pallete.darkGray,
-                      child: Center(
-                        child: Text(
-                          DateFormat('yyyy년 M월')
-                              .format(schedules.data[index - 1].startDate),
-                          style: h3Headline.copyWith(
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ...model.mapIndexed(
-                    (seq, e) {
-                      return InkWell(
-                        onTap: () {
-                          if (model[seq].selected!) {
-                            return;
-                          }
-                          if (mounted) {
-                            setState(
-                              () {
-                                for (var e in schedules.data) {
-                                  for (var element in e.schedule!) {
-                                    element.selected = false;
-                                  }
-                                }
-                                model[seq].selected = true;
-                              },
-                            );
-                          }
-                        },
-                        child: e is Workout
-                            ? WorkoutScheduleCard.fromWorkoutModel(
-                                model: e,
-                                date: schedules.data[index - 1].startDate,
-                                isDateVisible: seq == 0 ? true : false,
-                                onNotifyParent: _onChildEvent,
-                              )
-                            : ReservationScheduleCard.fromReservationModel(
-                                date: schedules.data[index - 1].startDate,
-                                isDateVisible: seq == 0 ? true : false,
-                                model: e as Reservation,
+                final model = schedules.data[index - 1].schedule;
+
+                if (model!.isEmpty) {
+                  return Column(
+                    children: [
+                      if (schedules.data[index - 1].startDate.day == 1)
+                        Container(
+                          height: 34,
+                          color: Pallete.darkGray,
+                          child: Center(
+                            child: Text(
+                              DateFormat('yyyy년 M월')
+                                  .format(schedules.data[index - 1].startDate),
+                              style: h3Headline.copyWith(
+                                fontSize: 14,
+                                color: Colors.white,
                               ),
-                      );
-                    },
-                  )
-                ],
-              );
-            }
-            return const SizedBox();
-          },
+                            ),
+                          ),
+                        ),
+                      WorkoutScheduleCard(
+                        date: schedules.data[index - 1].startDate,
+                        selected: false,
+                        isComplete: null,
+                      ),
+                    ],
+                  );
+                }
+
+                if (model.isNotEmpty) {
+                  return Column(
+                    children: [
+                      if (schedules.data[index - 1].startDate.day == 1)
+                        Container(
+                          height: 34,
+                          color: Pallete.darkGray,
+                          child: Center(
+                            child: Text(
+                              DateFormat('yyyy년 M월')
+                                  .format(schedules.data[index - 1].startDate),
+                              style: h3Headline.copyWith(
+                                fontSize: 14,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ...model.mapIndexed(
+                        (seq, e) {
+                          return InkWell(
+                            onTap: () {
+                              if (model[seq].selected!) {
+                                return;
+                              }
+                              if (mounted) {
+                                setState(
+                                  () {
+                                    for (var e in schedules.data) {
+                                      for (var element in e.schedule!) {
+                                        element.selected = false;
+                                      }
+                                    }
+                                    model[seq].selected = true;
+                                  },
+                                );
+                              }
+                            },
+                            child: e is Workout
+                                ? WorkoutScheduleCard.fromWorkoutModel(
+                                    model: e,
+                                    date: schedules.data[index - 1].startDate,
+                                    isDateVisible: seq == 0 ? true : false,
+                                    onNotifyParent: _onChildEvent,
+                                  )
+                                : ReservationScheduleCard.fromReservationModel(
+                                    date: schedules.data[index - 1].startDate,
+                                    isDateVisible: seq == 0 ? true : false,
+                                    model: e as Reservation,
+                                  ),
+                          );
+                        },
+                      )
+                    ],
+                  );
+                }
+                return const SizedBox();
+              },
+            ),
+            _needMeetingBanner(context, userState),
+          ],
+        ),
+      ),
+    );
+  }
+
+  PreferredSize _needMeetingBanner(BuildContext context, UserModel userState) {
+    return PreferredSize(
+      preferredSize: Size(100.w, 30),
+      child: InkWell(
+        onTap: () => context.goNamed(MeetingDateScreen.routeName,
+            pathParameters: {
+              'trainerId': userState.user.activeTrainers.first.id.toString()
+            }),
+        child: Container(
+          color: Pallete.point,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 1),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '⚠️  먼저 코치님과의 미팅일정을 예약해주세요',
+                  style: h6Headline.copyWith(
+                    color: Pallete.lightGray,
+                    height: 1,
+                  ),
+                ),
+                const Icon(
+                  Icons.navigate_next,
+                  color: Colors.white,
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

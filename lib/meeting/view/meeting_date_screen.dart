@@ -600,6 +600,8 @@ class _MeetingDatePickDialogState
                                     ),
                                   )
                                   .then((value) {
+                                DialogWidgets.showToast(
+                                    '미팅 희망일 확인후 연락 드릴게요 😀');
                                 context.goNamed(HomeScreen.routeName);
                               });
                             } catch (e) {

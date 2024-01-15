@@ -39,11 +39,12 @@ MeetingSchedule _$MeetingScheduleFromJson(Map<String, dynamic> json) =>
     MeetingSchedule(
       id: json['id'] as int,
       status: json['status'] as String,
-      endTime: DateTime.parse(json['endTime'] as String),
+      endTime: DataUtils.dateTimeToLocal(json['endTime'] as String),
       trainer: ThreadTrainer.fromJson(json['trainer'] as Map<String, dynamic>),
-      startTime: DateTime.parse(json['startTime'] as String),
+      startTime: DataUtils.dateTimeToLocal(json['startTime'] as String),
       userNickname: json['userNickname'] as String,
-    )..isSelect = json['isSelect'] as bool?;
+      selected: json['selected'] as bool? ?? false,
+    );
 
 Map<String, dynamic> _$MeetingScheduleToJson(MeetingSchedule instance) =>
     <String, dynamic>{
@@ -53,5 +54,5 @@ Map<String, dynamic> _$MeetingScheduleToJson(MeetingSchedule instance) =>
       'trainer': instance.trainer,
       'startTime': instance.startTime.toIso8601String(),
       'userNickname': instance.userNickname,
-      'isSelect': instance.isSelect,
+      'selected': instance.selected,
     };

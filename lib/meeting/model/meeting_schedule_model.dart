@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -58,11 +59,17 @@ class MeetingSchedule {
   final int id;
   @JsonKey(name: "status")
   final String status;
-  @JsonKey(name: "endTime")
+  @JsonKey(
+    name: "endTime",
+    fromJson: DataUtils.dateTimeToLocal,
+  )
   final DateTime endTime;
   @JsonKey(name: "trainer")
   final ThreadTrainer trainer;
-  @JsonKey(name: "startTime")
+  @JsonKey(
+    name: "startTime",
+    fromJson: DataUtils.dateTimeToLocal,
+  )
   final DateTime startTime;
   @JsonKey(name: "userNickname")
   final String userNickname;
@@ -75,7 +82,7 @@ class MeetingSchedule {
     required this.trainer,
     required this.startTime,
     required this.userNickname,
-    this.selected,
+    this.selected = false,
   });
 
   MeetingSchedule copyWith({

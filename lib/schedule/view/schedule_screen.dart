@@ -1,5 +1,6 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/component/logo_appbar.dart';
+import 'package:fitend_member/common/component/meeting_schedule_card.dart';
 import 'package:fitend_member/common/component/reservation_schedule_card.dart';
 import 'package:fitend_member/common/component/workout_schedule_card.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
@@ -9,6 +10,7 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
+import 'package:fitend_member/meeting/model/meeting_schedule_model.dart';
 import 'package:fitend_member/meeting/view/meeting_date_screen.dart';
 import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
 import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
@@ -151,6 +153,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   @override
   void didPush() async {
     await _checkIsNeedUpdate();
+    await _checkIsNeedMeeting();
 
     super.didPush();
   }
@@ -211,7 +214,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   Widget build(BuildContext context) {
     final state = ref.watch(scheduleProvider);
     final notificationState = ref.watch(notificationHomeProvider);
-    final userState = ref.watch(getMeProvider) as UserModel;
 
     if (state is ScheduleModelLoading ||
         notificationState is NotificationMainModelLoading) {
@@ -236,7 +238,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         ),
       );
     }
-
+    final userState = ref.watch(getMeProvider) as UserModel;
     final schedules = state as ScheduleModel;
     final notificationHomeModel = notificationState as NotificationMainModel;
 
@@ -391,11 +393,20 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                                     isDateVisible: seq == 0 ? true : false,
                                     onNotifyParent: _onChildEvent,
                                   )
-                                : ReservationScheduleCard.fromReservationModel(
-                                    date: schedules.data[index - 1].startDate,
-                                    isDateVisible: seq == 0 ? true : false,
-                                    model: e as Reservation,
-                                  ),
+                                : e is Reservation
+                                    ? ReservationScheduleCard
+                                        .fromReservationModel(
+                                        date:
+                                            schedules.data[index - 1].startDate,
+                                        isDateVisible: seq == 0 ? true : false,
+                                        model: e,
+                                      )
+                                    : MeetingScheduleCard.fromMeetingSchedule(
+                                        date:
+                                            schedules.data[index - 1].startDate,
+                                        model: e as MeetingSchedule,
+                                        isDateVisible: seq == 0 ? true : false,
+                                      ),
                           );
                         },
                       )

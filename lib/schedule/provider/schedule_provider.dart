@@ -101,7 +101,7 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
 
       if (meetingResponse.data.isNotEmpty) {
         for (var e in tempScheduleList) {
-          if (index >= workoutResponse.data!.length) {
+          if (index >= meetingResponse.data.length) {
             break;
           }
 

@@ -72,6 +72,7 @@ class StringConstants {
 
   static String isFirstRunWorkout = 'isFirstRunWorkout';
   static String isFirstRunThread = 'isFirstRunThread';
+  static String isNeedMeeting = 'isNeedMeeting';
 
   static final accessToken =
       F.appFlavor == Flavor.production ? 'ACCESS_TOKEN' : 'ACCESS_TOKEN_DEV';

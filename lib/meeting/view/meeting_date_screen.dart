@@ -25,6 +25,7 @@ import 'package:intl/intl.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MeetingDateScreen extends ConsumerStatefulWidget {
   static String get routeName => 'meetingDate';
@@ -180,6 +181,8 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                     confirmText: '확인',
                     confirmOnTap: () async {
                       context.pop();
+                      final pref = await SharedPreferences.getInstance();
+                      pref.setBool(StringConstants.isNeedMeeting, false);
 
                       ref
                           .read(meetingDateProvider(widget.trainerId).notifier)
@@ -191,6 +194,7 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                             ),
                           )
                           .onError((error, stackTrace) {
+                        pref.setBool(StringConstants.isNeedMeeting, true);
                         DialogWidgets.showToast('서버와 통신중 문제가 발생하였습니다.');
                       });
 
@@ -199,6 +203,8 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
 
                       ref.read(scheduleProvider.notifier).paginate(
                           startDate: DataUtils.getDate(fifteenDaysAgo));
+
+                      if (!context.mounted) return;
 
                       context.goNamed(HomeScreen.routeName);
                     },
@@ -574,6 +580,9 @@ class _MeetingDatePickDialogState
                               isLoading = true;
                             });
 
+                            final pref = await SharedPreferences.getInstance();
+                            pref.setBool(StringConstants.isNeedMeeting, false);
+
                             try {
                               ref
                                   .read(threadCreateProvider.notifier)
@@ -605,6 +614,10 @@ class _MeetingDatePickDialogState
                                 context.goNamed(HomeScreen.routeName);
                               });
                             } catch (e) {
+                              final pref =
+                                  await SharedPreferences.getInstance();
+                              pref.setBool(StringConstants.isNeedMeeting, true);
+
                               setState(() {
                                 isLoading = false;
                               });

@@ -7,6 +7,7 @@ import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/user/model/user_register_state_model.dart';
@@ -20,6 +21,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class RegisterCompleteScreen extends ConsumerStatefulWidget {
@@ -196,8 +198,10 @@ class _RegisterCompleteScreenState
               UserRegisterStateModel().stateModelToPostModel(registerModel);
           try {
             final token = await FirebaseMessaging.instance.getToken();
-
             final deviceId = await _getDeviceInfo();
+
+            final pref = await SharedPreferences.getInstance();
+            pref.setBool(StringConstants.isNeedMeeting, true);
 
             await ref
                 .read(getMeRepositoryProvider)
@@ -226,6 +230,10 @@ class _RegisterCompleteScreenState
             setState(() {
               isLoading = false;
             });
+
+            final pref = await SharedPreferences.getInstance();
+            pref.setBool(StringConstants.isNeedMeeting, false);
+
             DialogWidgets.showToast('통신중 문제가 발생하였습니다.');
           }
         },

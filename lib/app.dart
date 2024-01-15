@@ -77,6 +77,10 @@ class _AppState extends ConsumerState<App> {
       pref.setBool(StringConstants.isFirstRunThread, true);
     }
 
+    if (pref.getBool(StringConstants.isNeedMeeting) == null) {
+      pref.setBool(StringConstants.isNeedMeeting, false);
+    }
+
     Future.wait([
       pref.setBool(StringConstants.needScheduleUpdate, false),
       pref.setBool(StringConstants.needNotificationUpdate, false),

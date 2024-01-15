@@ -53,6 +53,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   bool initial = true;
   bool buildInitial = true;
   bool isLoading = false;
+  bool isNeedMeeting = false;
 
   @override
   void initState() {
@@ -158,10 +159,24 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
       final pref = await SharedPreferences.getInstance();
       final isNeedUpdate = SharedPrefUtils.getIsNeedUpdate(
           StringConstants.needScheduleUpdate, pref);
+
       if (isNeedUpdate) {
         await _resetScheduleList();
         await SharedPrefUtils.updateIsNeedUpdate(
             StringConstants.needScheduleUpdate, pref, false);
+      }
+    }
+  }
+
+  Future<void> _checkIsNeedMeeting() async {
+    if (mounted) {
+      final pref = await SharedPreferences.getInstance();
+      final meetingNeed = pref.getBool(StringConstants.isNeedMeeting);
+
+      if (meetingNeed != null && meetingNeed) {
+        setState(() {
+          isNeedMeeting = true;
+        });
       }
     }
   }
@@ -386,7 +401,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                 return const SizedBox();
               },
             ),
-            _needMeetingBanner(context, userState),
+            if (isNeedMeeting) _needMeetingBanner(context, userState),
           ],
         ),
       ),

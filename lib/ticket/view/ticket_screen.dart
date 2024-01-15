@@ -11,6 +11,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class TicketScreen extends ConsumerStatefulWidget {
+  static String get routeName => 'ticket';
+
   const TicketScreen({super.key});
 
   @override
@@ -68,9 +70,15 @@ class _TicketScreenState extends ConsumerState<TicketScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  TicketCell(
-                    ticket: activeTickets.first,
-                  ),
+                  if (activeTickets.isNotEmpty)
+                    TicketCell(
+                      ticket: activeTickets.first,
+                    )
+                  else
+                    const NoTicketCell(
+                      title: '멤버십을 구매하여',
+                      content: '맞춤형 운동플랜과 코칭을 받아보세요!',
+                    ),
                   const SizedBox(height: 32),
                   const Divider(
                     thickness: 1,
@@ -132,8 +140,11 @@ class _TicketScreenState extends ConsumerState<TicketScreen> {
                             )
                           : null,
                     )
-                  else
-                    const NoTicketCell()
+                  else if (activeTickets.length == 1)
+                    const NoTicketCell(
+                      title: '없음',
+                      content: '만료 전 멤버십을 미리 구매해주세요!',
+                    )
                 ],
               ),
             ],

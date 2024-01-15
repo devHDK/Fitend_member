@@ -17,6 +17,7 @@ import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
+import 'package:fitend_member/ticket/view/ticket_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
@@ -244,6 +245,9 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     scheduleListGlobal = schedules.data;
 
+    final isActiveUser = userState.user.activeTickets != null &&
+        userState.user.activeTickets!.isNotEmpty;
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -402,6 +406,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
               },
             ),
             if (isNeedMeeting) _needMeetingBanner(context, userState),
+            if (!isActiveUser) _needPurchaseTicketBanner(context, userState),
           ],
         ),
       ),
@@ -426,6 +431,39 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
               children: [
                 Text(
                   '⚠️  먼저 코치님과의 미팅일정을 예약해주세요',
+                  style: h6Headline.copyWith(
+                    color: Pallete.lightGray,
+                    height: 1,
+                  ),
+                ),
+                const Icon(
+                  Icons.navigate_next,
+                  color: Colors.white,
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  PreferredSize _needPurchaseTicketBanner(
+      BuildContext context, UserModel userState) {
+    return PreferredSize(
+      preferredSize: Size(100.w, 30),
+      child: InkWell(
+        onTap: () => context.goNamed(TicketScreen.routeName),
+        child: Container(
+          color: Pallete.point,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 5),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '⚠️  운동 플랜은 멤버십 구매 후 이용할 수 있어요',
                   style: h6Headline.copyWith(
                     color: Pallete.lightGray,
                     height: 1,

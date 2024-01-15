@@ -24,8 +24,10 @@ class TicketCell extends StatelessWidget {
       fcMonths = 6;
     } else if (diff > 31) {
       fcMonths = 3;
-    } else {
+    } else if (diff > 15) {
       fcMonths = 1;
+    } else {
+      fcMonths = 0;
     }
 
     bool isIn7days = ticket.expiredAt.difference(DateTime.now()).inDays <= 7;
@@ -54,9 +56,11 @@ class TicketCell extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              ticket.type == 'fitness'
+              ticket.type == 'fitness' && fcMonths > 0
                   ? '온라인 코칭 $fcMonths개월'
-                  : '오프라인 PT ${ticket.totalSession}회',
+                  : ticket.type == 'fitness' && fcMonths == 0
+                      ? '온라인 코칭 14일 (무료체험)'
+                      : '오프라인 PT ${ticket.totalSession}회',
               style: s1SubTitle.copyWith(
                 color: Colors.white,
               ),

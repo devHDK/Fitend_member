@@ -7,8 +7,13 @@ import 'package:flutter_svg/svg.dart';
 class NoTicketCell extends StatelessWidget {
   const NoTicketCell({
     super.key,
+    required this.title,
+    required this.content,
     this.child,
   });
+
+  final String title;
+  final String content;
 
   final Widget? child;
 
@@ -38,13 +43,13 @@ class NoTicketCell extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '없음',
+              title,
               style: s1SubTitle.copyWith(
                 color: Colors.white,
               ),
             ),
             Text(
-              '만료 전 멤버십을 미리 구매해주세요!',
+              content,
               style: s2SubTitle.copyWith(
                 color: Colors.white,
               ),

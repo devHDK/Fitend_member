@@ -104,7 +104,5 @@ class VerificationStateNotifier extends StateNotifier<VerificationStateModel> {
       expireAt: expireAt ?? expireAt,
       code: code ?? code,
     );
-
-    print(state.toJson());
   }
 }

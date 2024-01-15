@@ -419,15 +419,27 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
 
   void _routeNextPage(
       {PostVerificationConfirmResponse? model, required String phone}) {
-    if (model != null) {}
+    bool isAlreadyRegister = false;
 
-    if (widget.verificationType == VerificationType.register) {
-      Navigator.of(context).push(CupertinoPageRoute(
-        builder: (context) => UserRegisterScreen(
-          phone: phone,
+    if (model != null && model.email != null) {
+      isAlreadyRegister = true;
+    }
+
+    if (widget.verificationType == VerificationType.register &&
+        !isAlreadyRegister) {
+      Navigator.of(context).push(
+        CupertinoPageRoute(
+          builder: (context) => UserRegisterScreen(
+            phone: phone,
+          ),
         ),
-      ));
+      );
+    } else if ((widget.verificationType == VerificationType.register &&
+            widget.verificationType == VerificationType.id) ||
+        isAlreadyRegister) {
+      //TODO:이메일 표기 페이지로 이동
     } else if (widget.verificationType == VerificationType.reset) {
-    } else if (widget.verificationType == VerificationType.id) {}
+      //TODO:비밀번호 변경 페이지로 이동
+    }
   }
 }

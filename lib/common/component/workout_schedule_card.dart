@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
@@ -5,6 +6,9 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:fitend_member/ticket/view/ticket_screen.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:fitend_member/workout/view/workout_list_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -79,6 +83,11 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = ref.read(getMeProvider) as UserModel;
+
+    final isActiveUser = userState.user.activeTickets != null &&
+        userState.user.activeTickets!.isNotEmpty;
+
     return Container(
       height: widget.selected ? 175 : 130,
       width: 100.w,
@@ -252,17 +261,30 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                                     //   },
                                     // );
 
-                                    var dateChanged =
-                                        await Navigator.of(context)
-                                            .push(CupertinoPageRoute(
-                                      builder: (context) => WorkoutListScreen(
-                                        id: widget.workoutScheduleId!,
-                                      ),
-                                    ));
+                                    if (!isActiveUser) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            DialogWidgets.oneButtonDialog(
+                                          message: '이용중인 멤버십이 없어요 😰',
+                                          confirmText: ' 멤버쉽 구매하기',
+                                          confirmOnTap: () => context
+                                              .goNamed(TicketScreen.routeName),
+                                        ),
+                                      );
+                                    } else {
+                                      var dateChanged =
+                                          await Navigator.of(context)
+                                              .push(CupertinoPageRoute(
+                                        builder: (context) => WorkoutListScreen(
+                                          id: widget.workoutScheduleId!,
+                                        ),
+                                      ));
 
-                                    if (dateChanged == true &&
-                                        widget.onNotifyParent != null) {
-                                      widget.onNotifyParent!();
+                                      if (dateChanged == true &&
+                                          widget.onNotifyParent != null) {
+                                        widget.onNotifyParent!();
+                                      }
                                     }
                                   },
                         child: Text(

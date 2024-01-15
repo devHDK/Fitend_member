@@ -11,6 +11,7 @@ import 'package:fitend_member/notifications/repository/notifications_repository.
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
+import 'package:fitend_member/ticket/component/no_ticket_cell.dart';
 import 'package:fitend_member/ticket/component/ticket_cell.dart';
 import 'package:fitend_member/ticket/view/ticket_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -130,24 +131,29 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               color: Pallete.darkGray,
               height: 1,
             ),
-            if (model.user.activeTickets != null &&
-                model.user.activeTickets!.isNotEmpty)
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).push(
-                    CupertinoPageRoute(
-                      builder: (context) => const TicketScreen(),
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24),
-                  child: TicketCell(
-                    ticket: model.user.activeTickets!.first,
-                    child: SvgPicture.asset(SVGConstants.next),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => const TicketScreen(),
                   ),
-                ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: model.user.activeTickets != null &&
+                        model.user.activeTickets!.isNotEmpty
+                    ? TicketCell(
+                        ticket: model.user.activeTickets!.first,
+                        child: SvgPicture.asset(SVGConstants.next),
+                      )
+                    : NoTicketCell(
+                        title: '멤버십을 구매하여',
+                        content: '맞춤형 운동플랜과 코칭을 받아보세요!',
+                        child: SvgPicture.asset(SVGConstants.next),
+                      ),
               ),
+            ),
             const Divider(
               color: Pallete.darkGray,
               height: 1,

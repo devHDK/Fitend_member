@@ -214,11 +214,13 @@ class _RegisterCompleteScreenState
               if (!context.mounted) return;
 
               Navigator.of(context).push(CupertinoPageRoute(
-                  builder: (context) => RegisterWelcomScreen(
-                        userNickname: registerModel.nickname!,
-                        trainerName: widget.trainerName,
-                        trainerProfileImage: widget.trainerProfileImage,
-                      )));
+                builder: (context) => RegisterWelcomScreen(
+                  userNickname: registerModel.nickname!,
+                  trainerName: widget.trainerName,
+                  trainerProfileImage: widget.trainerProfileImage,
+                  trainerId: registerModel.trainerId!,
+                ),
+              ));
             });
           } catch (e) {
             setState(() {

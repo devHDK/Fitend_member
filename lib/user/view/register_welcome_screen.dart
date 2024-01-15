@@ -4,7 +4,9 @@ import 'package:fitend_member/common/component/custom_network_image.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/meeting/view/meeting_date_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class RegisterWelcomScreen extends StatefulWidget {
@@ -13,11 +15,13 @@ class RegisterWelcomScreen extends StatefulWidget {
     required this.trainerName,
     required this.trainerProfileImage,
     required this.userNickname,
+    required this.trainerId,
   });
 
   final String trainerName;
   final String trainerProfileImage;
   final String userNickname;
+  final int trainerId;
 
   @override
   State<RegisterWelcomScreen> createState() => _RegisterWelcomScreenState();
@@ -157,7 +161,14 @@ class _RegisterWelcomScreenState extends State<RegisterWelcomScreen> {
           opacity: _items.length > 4 ? 1.0 : 0.0,
           duration: const Duration(seconds: 1),
           child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              context.goNamed(
+                MeetingDateScreen.routeName,
+                pathParameters: {
+                  'trainerId': widget.trainerId.toString(),
+                },
+              );
+            },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28),
               child: Container(

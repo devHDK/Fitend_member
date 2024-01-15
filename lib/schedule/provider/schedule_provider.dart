@@ -1,5 +1,7 @@
 import 'package:fitend_member/common/data/global_varialbles.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/meeting/model/meeting_schedule_model.dart';
+import 'package:fitend_member/meeting/repository/meeting_repository.dart';
 import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
@@ -13,20 +15,24 @@ final scheduleProvider =
     StateNotifierProvider<ScheduleStateNotifier, ScheduleModelBase>((ref) {
   final workoutRepository = ref.watch(workoutScheduleRepositoryProvider);
   final reservationRepository = ref.watch(reservaionScheduleRepositoryProvider);
+  final meetingRepository = ref.watch(meetingRepositoryProvider);
 
   return ScheduleStateNotifier(
     workoutRepository: workoutRepository,
     reservationRepository: reservationRepository,
+    meetingRepository: meetingRepository,
   );
 });
 
 class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
   final WorkoutScheduleRepository workoutRepository;
   final ReservationScheduleRepository reservationRepository;
+  final MeetingRepository meetingRepository;
 
   ScheduleStateNotifier({
     required this.workoutRepository,
     required this.reservationRepository,
+    required this.meetingRepository,
   }) : super(ScheduleModelLoading()) {
     DateTime fifteenDaysAgo = DateTime.now().subtract(const Duration(days: 15));
     paginate(startDate: DataUtils.getDate(fifteenDaysAgo));
@@ -76,6 +82,13 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
         ),
       );
 
+      final meetingResponse = await meetingRepository.getMeetings(
+        params: SchedulePagenateParams(
+          startDate: startDate,
+          interval: 30,
+        ),
+      );
+
       List<ScheduleData> tempScheduleList = List.generate(
         31,
         (index) => ScheduleData(
@@ -85,6 +98,31 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
       );
 
       int index = 0;
+
+      if (meetingResponse.data.isNotEmpty) {
+        for (var e in tempScheduleList) {
+          if (index >= workoutResponse.data!.length) {
+            break;
+          }
+
+          if (e.startDate.year == meetingResponse.data[index].startDate.year &&
+              e.startDate.month ==
+                  meetingResponse.data[index].startDate.month &&
+              e.startDate.day == meetingResponse.data[index].startDate.day) {
+            e.schedule!.addAll(meetingResponse.data[index].meetings);
+
+            if (e.startDate.year == DateTime.now().year &&
+                e.startDate.month == DateTime.now().month &&
+                e.startDate.day == DateTime.now().day &&
+                e.schedule![0] is MeetingSchedule) {
+              e.schedule![0].selected = true;
+            }
+            index++;
+          }
+        }
+      }
+
+      index = 0;
 
       if (reservationResponse.data != null &&
           reservationResponse.data!.isNotEmpty) {

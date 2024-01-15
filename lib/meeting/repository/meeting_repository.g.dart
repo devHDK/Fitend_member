@@ -19,7 +19,7 @@ class _MeetingRepository implements MeetingRepository {
   String? baseUrl;
 
   @override
-  Future<MeetingDateModel> getMeetings(
+  Future<MeetingScheduleModel> getMeetings(
       {required SchedulePagenateParams params}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -27,8 +27,8 @@ class _MeetingRepository implements MeetingRepository {
     final _headers = <String, dynamic>{r'accessToken': 'true'};
     _headers.removeWhere((k, v) => v == null);
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<MeetingDateModel>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<MeetingScheduleModel>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -44,7 +44,7 @@ class _MeetingRepository implements MeetingRepository {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = MeetingDateModel.fromJson(_result.data!);
+    final value = MeetingScheduleModel.fromJson(_result.data!);
     return value;
   }
 

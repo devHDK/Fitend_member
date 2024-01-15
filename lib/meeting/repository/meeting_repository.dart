@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
 import 'package:fitend_member/meeting/model/meeting_date_model.dart';
+import 'package:fitend_member/meeting/model/meeting_schedule_model.dart';
 import 'package:fitend_member/meeting/model/post_meeting_create_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_pagenate_params.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +23,7 @@ abstract class MeetingRepository {
   @Headers({
     'accessToken': 'true',
   })
-  Future<MeetingDateModel> getMeetings({
+  Future<MeetingScheduleModel> getMeetings({
     @Queries() required SchedulePagenateParams params,
   });
 

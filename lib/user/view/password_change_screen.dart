@@ -6,17 +6,24 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PasswordChangeScreen extends ConsumerStatefulWidget {
   static String get routeName => 'passwordConfirm';
 
-  final String password;
+  final String? password;
+  final String? email;
+  final String? phoneToken;
+  final String? phone;
 
   const PasswordChangeScreen({
     super.key,
-    required this.password,
+    this.password,
+    this.email,
+    this.phoneToken,
+    this.phone,
   });
 
   @override
@@ -147,55 +154,41 @@ class _PasswordChangeScreen extends ConsumerState<PasswordChangeScreen> {
                   }
 
                   try {
-                    await ref
-                        .read(getMeProvider.notifier)
-                        .changePassword(
-                          password: widget.password,
-                          newPassword: _newPasswordController.text,
-                        )
-                        .then((value) {
-                      int count = 0;
-                      Navigator.of(context).popUntil((_) => count++ >= 2);
+                    if (widget.password != null) {
+                      await ref
+                          .read(getMeProvider.notifier)
+                          .changePassword(
+                            password: widget.password!,
+                            newPassword: _newPasswordController.text,
+                          )
+                          .then((value) {
+                        int count = 0;
+                        Navigator.of(context).popUntil((_) => count++ >= 2);
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          duration: const Duration(seconds: 2),
-                          backgroundColor: Colors.transparent,
-                          elevation: 0,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: (100.w - 160) / 2),
-                          content: Container(
-                            width: 160,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Pallete.darkGray,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 5),
-                              child: Center(
-                                child: AutoSizeText(
-                                  '비밀번호가 변경되었습니다',
-                                  style: s3SubTitle.copyWith(
-                                    color: Colors.white,
-                                  ),
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
+                        DialogWidgets.showToast(
+                          content: '비밀번호가 변경 되었습니다.',
+                          gravity: ToastGravity.CENTER,
+                        );
+                      });
+                    } else if (widget.email != null) {
+                      await ref
+                          .read(getMeProvider.notifier)
+                          .changePasswordReset(
+                            password: _newPasswordController.text,
+                            phoneToken: widget.phoneToken!,
+                            email: widget.email!,
+                            phone: widget.phone!,
+                          )
+                          .then((value) {
+                        int count = 0;
+                        Navigator.of(context).popUntil((_) => count++ >= 3);
 
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (context) => DialogWidgets.errorDialog(
-                      //     message: '비밀번호가 변경되었습니다!',
-                      //     confirmText: '확인',
-                      //     confirmOnTap: () => context.pop(),
-                      //   ),
-                      // );
-                    });
+                        DialogWidgets.showToast(
+                          content: '비밀번호가 변경 되었습니다.',
+                          gravity: ToastGravity.CENTER,
+                        );
+                      });
+                    }
                     if (mounted) {
                       setState(() {
                         buttonOn = true;

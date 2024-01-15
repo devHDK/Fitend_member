@@ -82,7 +82,7 @@ class _VideoEditScreenState extends ConsumerState<VideoEditorScreen> {
         debugPrint('video edit error ===> $e');
         debugPrint('video edit stackTrace ===> $s');
 
-        DialogWidgets.showToast("저장이 실패하였습니다.");
+        DialogWidgets.showToast(content: "저장이 실패하였습니다.");
       },
       onCompleted: (file) async {
         if (!mounted) return;

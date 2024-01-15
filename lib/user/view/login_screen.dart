@@ -12,10 +12,14 @@ import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
+import 'package:fitend_member/verification/model/post_verification_model.dart';
+import 'package:fitend_member/verification/view/verification_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -133,8 +137,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   builder: (p0, isKeyboardVisible) {
                     return SizedBox(
                       height: !isKeyboardVisible
-                          ? 100.h - kToolbarHeight - 56 - 370
-                          : 50,
+                          ? 100.h - kToolbarHeight - 56 - 400
+                          : 30,
                     );
                   },
                 ),
@@ -313,6 +317,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
           ),
         ),
+        const SizedBox(
+          height: 20,
+        ),
+        Center(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(CupertinoPageRoute(
+                builder: (context) => VerificationScreen(
+                  verificationType: VerificationType.reset,
+                ),
+              ));
+            },
+            child: Text(
+              '로그인 정보를 잊으셨나요?',
+              style: s3SubTitle.copyWith(
+                color: Pallete.lightGray,
+              ),
+            ),
+          ),
+        )
       ],
     );
   }

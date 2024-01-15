@@ -7,6 +7,7 @@ import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/user/view/email_show_screen.dart';
 import 'package:fitend_member/user/view/user_register_screen.dart';
 import 'package:fitend_member/verification/model/post_verification_confirm_model.dart';
 import 'package:fitend_member/verification/model/post_verification_confirm_response.dart';
@@ -420,10 +421,11 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
   void _routeNextPage(
       {PostVerificationConfirmResponse? model, required String phone}) {
     bool isAlreadyRegister = false;
-
     if (model != null && model.email != null) {
       isAlreadyRegister = true;
     }
+
+    context.pop();
 
     if (widget.verificationType == VerificationType.register &&
         !isAlreadyRegister) {
@@ -438,8 +440,19 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
             widget.verificationType == VerificationType.id) ||
         isAlreadyRegister) {
       //TODO:이메일 표기 페이지로 이동
-    } else if (widget.verificationType == VerificationType.reset) {
-      //TODO:비밀번호 변경 페이지로 이동
+      Navigator.of(context).push(
+        CupertinoPageRoute(
+          builder: (context) => EmailShowScreen(
+            verificationType: widget.verificationType,
+            email: model!.email!,
+            phone: phone,
+            phoneToken: model.phoneToken,
+          ),
+        ),
+      );
     }
+    // else if (widget.verificationType == VerificationType.reset) {
+    //   //TODO:비밀번호 변경 페이지로 이동
+    // }
   }
 }

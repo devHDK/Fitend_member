@@ -243,6 +243,26 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     }
   }
 
+  Future<void> changePasswordReset({
+    required String password,
+    required String phoneToken,
+    required String email,
+    required String phone,
+  }) async {
+    try {
+      await authRepository.passwordReset(
+          password: password,
+          phone: phone,
+          phoneToken: phoneToken,
+          email: email);
+    } on DioException catch (e) {
+      throw DioException(
+        requestOptions: e.requestOptions,
+        response: e.response,
+      );
+    }
+  }
+
   void changeIsNotification({
     required bool isNotification,
   }) {

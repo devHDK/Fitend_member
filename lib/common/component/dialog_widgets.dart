@@ -473,15 +473,15 @@ class DialogWidgets {
     );
   }
 
-  static void showToast(String content) {
+  static void showToast({required String content, ToastGravity? gravity}) {
     Fluttertoast.showToast(
       msg: content,
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
+      gravity: gravity ?? ToastGravity.BOTTOM,
       timeInSecForIosWeb: 3,
-      backgroundColor: Colors.black54,
+      backgroundColor: Colors.black87,
       textColor: Colors.white,
-      fontSize: 13.0,
+      fontSize: 15.0,
     );
   }
 }

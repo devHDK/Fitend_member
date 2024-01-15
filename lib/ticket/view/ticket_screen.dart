@@ -126,7 +126,8 @@ class _TicketScreenState extends ConsumerState<TicketScreen> {
                                           ).show(context);
                                         });
                                       } catch (e) {
-                                        DialogWidgets.showToast('error - $e');
+                                        DialogWidgets.showToast(
+                                            content: 'error - $e');
                                       }
                                     }).show(context);
                               },
@@ -156,7 +157,7 @@ class _TicketScreenState extends ConsumerState<TicketScreen> {
         onTap: activeTickets.length >= 2
             ? () {
                 DialogWidgets.showToast(
-                    '이미 멤버십을 구매했어요!\n먼저 이용예정 상품을 취소해주세요 🙅‍♀️');
+                    content: '이미 멤버십을 구매했어요!\n먼저 이용예정 상품을 취소해주세요 🙅‍♀️');
               }
             : () {
                 DialogWidgets.ticketBuyModal(

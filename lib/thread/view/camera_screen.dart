@@ -855,7 +855,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                   },
                 );
               } else {
-                DialogWidgets.showToast('사진 또는 영상은 10개까지만 첨부할수있습니다!');
+                DialogWidgets.showToast(content: '사진 또는 영상은 10개까지만 첨부할수있습니다!');
               }
             }
           : () async {
@@ -893,7 +893,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
                   }
                 });
               } else {
-                DialogWidgets.showToast('사진 또는 영상은 10개까지만 첨부할수있습니다!');
+                DialogWidgets.showToast(content: '사진 또는 영상은 10개까지만 첨부할수있습니다!');
               }
             },
       child: Stack(

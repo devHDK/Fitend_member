@@ -7,7 +7,6 @@ import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/user/model/user_register_state_model.dart';
@@ -234,7 +233,7 @@ class _RegisterCompleteScreenState
             final pref = await SharedPreferences.getInstance();
             pref.setBool(StringConstants.isNeedMeeting, false);
 
-            DialogWidgets.showToast('통신중 문제가 발생하였습니다.');
+            DialogWidgets.showToast(content: '통신중 문제가 발생하였습니다.');
           }
         },
         child: Padding(

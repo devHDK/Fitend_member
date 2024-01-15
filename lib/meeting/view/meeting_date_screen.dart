@@ -195,7 +195,8 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                           )
                           .onError((error, stackTrace) {
                         pref.setBool(StringConstants.isNeedMeeting, true);
-                        DialogWidgets.showToast('서버와 통신중 문제가 발생하였습니다.');
+                        DialogWidgets.showToast(
+                            content: '서버와 통신중 문제가 발생하였습니다.');
                       });
 
                       DateTime fifteenDaysAgo =
@@ -610,7 +611,7 @@ class _MeetingDatePickDialogState
                                   )
                                   .then((value) {
                                 DialogWidgets.showToast(
-                                    '미팅 희망일 확인후 연락 드릴게요 😀');
+                                    content: '미팅 희망일 확인후 연락 드릴게요 😀');
                                 context.goNamed(HomeScreen.routeName);
                               });
                             } catch (e) {
@@ -621,7 +622,8 @@ class _MeetingDatePickDialogState
                               setState(() {
                                 isLoading = false;
                               });
-                              DialogWidgets.showToast('서버와 통신중 에러가 발생했습니다.');
+                              DialogWidgets.showToast(
+                                  content: '서버와 통신중 에러가 발생했습니다.');
                             }
                           }
                         : null,

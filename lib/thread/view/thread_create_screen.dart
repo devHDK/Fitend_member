@@ -261,12 +261,14 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                             if (e is UploadException) {
                               if (e.message == 'oversize_file_include_error') {
                                 DialogWidgets.showToast(
-                                    '400MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
+                                    content: '400MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
                               } else {
-                                DialogWidgets.showToast('업로드 중 문제가 발생하였습니다.');
+                                DialogWidgets.showToast(
+                                    content: '업로드 중 문제가 발생하였습니다.');
                               }
                             } else {
-                              DialogWidgets.showToast('업로드 중 문제가 발생하였습니다.');
+                              DialogWidgets.showToast(
+                                  content: '업로드 중 문제가 발생하였습니다.');
                             }
                           }
                         }
@@ -303,12 +305,14 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                             if (e is UploadException) {
                               if (e.message == 'oversize_file_include_error') {
                                 DialogWidgets.showToast(
-                                    '400MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
+                                    content: '400MB가 넘는 사진 또는 영상은 첨부할수 없습니다.');
                               } else {
-                                DialogWidgets.showToast('업로드 중 문제가 발생하였습니다.');
+                                DialogWidgets.showToast(
+                                    content: '업로드 중 문제가 발생하였습니다.');
                               }
                             } else {
-                              DialogWidgets.showToast('업로드 중 문제가 발생하였습니다.');
+                              DialogWidgets.showToast(
+                                  content: '업로드 중 문제가 발생하였습니다.');
                             }
                           }
                         },
@@ -408,7 +412,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                               });
                             } else {
                               DialogWidgets.showToast(
-                                  '사진 또는 영상은 10개까지만 첨부할수있습니다!');
+                                  content: '사진 또는 영상은 10개까지만 첨부할수있습니다!');
                             }
                           },
                           child: Padding(

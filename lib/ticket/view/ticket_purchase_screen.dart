@@ -195,7 +195,7 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
                     jsonDecode(data)); //bootPay responseData
                 _confirmPayment(result, startDate, expiredDate, userModel);
               } catch (e) {
-                DialogWidgets.showToast('결제중 오류가 발생하였습니다! 다시 시도해주세요');
+                DialogWidgets.showToast(content: '결제중 오류가 발생하였습니다! 다시 시도해주세요');
               }
 
               return true;

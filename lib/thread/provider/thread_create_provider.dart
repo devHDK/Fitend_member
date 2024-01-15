@@ -282,7 +282,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       );
       init();
       if (state.assetsPaths!.isNotEmpty) {
-        DialogWidgets.showToast('업로드가 완료되었습니다!');
+        DialogWidgets.showToast(content: '업로드가 완료되었습니다!');
       }
     } catch (e) {
       final tstate = state.copyWith();
@@ -614,7 +614,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       await threadRepository.putThreadWithId(id: threadId, model: model);
 
       init();
-      DialogWidgets.showToast('수정이 완료되었습니다!');
+      DialogWidgets.showToast(content: '수정이 완료되었습니다!');
 
       return model;
     } catch (e) {

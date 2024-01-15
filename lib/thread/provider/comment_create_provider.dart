@@ -239,7 +239,7 @@ class CommentCreateStateNotifier
       init();
 
       if (state.assetsPaths.isNotEmpty) {
-        DialogWidgets.showToast('업로드가 완료되었습니다!');
+        DialogWidgets.showToast(content: '업로드가 완료되었습니다!');
       }
     } catch (e) {
       debugPrint('comment create error : $e');
@@ -508,7 +508,7 @@ class CommentCreateStateNotifier
 
       init();
 
-      DialogWidgets.showToast('수정이 완료되었습니다!');
+      DialogWidgets.showToast(content: '수정이 완료되었습니다!');
 
       return model;
     } catch (e) {

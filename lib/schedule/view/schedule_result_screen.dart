@@ -99,7 +99,7 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
 
     if (state is WorkoutResultModelError) {
       // context.pop();
-      DialogWidgets.showToast('운동 평가를 완료해주세요');
+      DialogWidgets.showToast(content: '운동 평가를 완료해주세요');
       context.pop();
       return const Scaffold(
         backgroundColor: Pallete.background,

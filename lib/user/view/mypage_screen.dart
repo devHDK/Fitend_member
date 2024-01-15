@@ -283,7 +283,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
 
                 if (tempDir.existsSync()) {
                   tempDir.deleteSync(recursive: true);
-                  DialogWidgets.showToast('캐시가 삭제되었습니다!');
+                  DialogWidgets.showToast(content: '캐시가 삭제되었습니다!');
                 }
               },
               child: _renderLabel(

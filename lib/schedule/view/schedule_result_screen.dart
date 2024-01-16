@@ -278,6 +278,17 @@ class _ScheduleResultScreenState extends ConsumerState<ScheduleResultScreen> {
                                 color: Pallete.lightGray, height: 1),
                           ),
                         ),
+                      if (resultModel.scheduleRecords != null &&
+                          resultModel.scheduleRecords!.calories != null)
+                        _borderContainer(
+                          icon: SVGConstants.calories,
+                          title: '소모 칼로리',
+                          tail: Text(
+                            '${NumberFormat('#,###').format(resultModel.scheduleRecords!.calories!)} kcal',
+                            style: h5Headline.copyWith(
+                                color: Pallete.lightGray, height: 1),
+                          ),
+                        ),
                       const SizedBox(
                         height: 30,
                       ),

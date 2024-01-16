@@ -57,6 +57,10 @@ class User {
   final String? createdAt;
   @JsonKey(name: "deletedAt")
   final String? deletedAt;
+  @JsonKey(name: "weight")
+  final double? weight;
+  @JsonKey(name: "height")
+  final double? height;
   @JsonKey(name: "activeTrainers")
   final List<TrainerInfo> activeTrainers;
   @JsonKey(name: "activeTickets")
@@ -79,6 +83,8 @@ class User {
     this.activeTickets,
     required this.lastTrainers,
     this.lastTickets,
+    this.weight,
+    this.height,
   });
 
   User copyWith({
@@ -90,6 +96,8 @@ class User {
     bool? isNotification,
     String? createdAt,
     String? deletedAt,
+    double? weight,
+    double? height,
     List<TrainerInfo>? activeTrainers,
     List<TicketModel>? activeTickets,
     List<TrainerInfo>? lastTrainers,
@@ -103,6 +111,8 @@ class User {
         gender: gender ?? this.gender,
         isNotification: isNotification ?? this.isNotification,
         deletedAt: deletedAt ?? this.deletedAt,
+        weight: weight ?? this.weight,
+        height: height ?? this.height,
         createdAt: createdAt ?? this.createdAt,
         activeTrainers: activeTrainers ?? this.activeTrainers,
         activeTickets: activeTickets ?? this.activeTickets,

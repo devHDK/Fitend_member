@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/provider/hive_schedule_record_provider.dart';
 import 'package:fitend_member/common/provider/hive_workout_feedback_provider.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/post_workout_record_feedback_model.dart';
@@ -9,6 +10,9 @@ import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart'
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
+import 'package:fitend_member/workout/model/schedule_record_model.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -127,6 +131,10 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
     final AsyncValue<Box> workoutFeedbackBox =
         ref.watch(hiveWorkoutFeedbackProvider);
 
+    final AsyncValue<Box> scheduleRecordBox = ref.watch(hiveScheduleRecordBox);
+
+    final userModel = ref.watch(getMeProvider) as UserModel;
+
     final baseBorder = OutlineInputBorder(
       borderSide: const BorderSide(
         color: Pallete.darkGray,
@@ -240,6 +248,41 @@ class _WorkoutFeedbackScreenState extends ConsumerState<WorkoutFeedbackScreen> {
                                               }
                                             },
                                           );
+
+                                          scheduleRecordBox.whenData((_) {
+                                            final record =
+                                                _.get(widget.workoutScheduleId);
+
+                                            if (record != null &&
+                                                record
+                                                    is ScheduleRecordsModel &&
+                                                record.workoutDuration !=
+                                                    null) {
+                                              final workoutMin =
+                                                  record.workoutDuration! / 60;
+                                              final mets = strengthIndex == 1 ||
+                                                      strengthIndex == 2
+                                                  ? 3.5
+                                                  : strengthIndex == 3 ||
+                                                          strengthIndex == 4
+                                                      ? 5
+                                                      : 6;
+                                              // [(x)METs * 3.5mL/kg/min * 체중(kg) /1000] * 5kcal * 운동시간(min)
+                                              final calories = (mets *
+                                                      userModel.user.weight! *
+                                                      workoutMin *
+                                                      0.0172)
+                                                  .floor()
+                                                  .toInt();
+
+                                              _.put(
+                                                widget.workoutScheduleId,
+                                                record.copyWith(
+                                                  calories: calories,
+                                                ),
+                                              );
+                                            }
+                                          });
 
                                           ref
                                               .read(scheduleProvider.notifier)

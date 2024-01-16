@@ -4,6 +4,7 @@ class SVGConstants {
   static const String alarmOn = '${_svgPath}icon_alarm_on.svg';
   static const String barbell = '${_svgPath}icon_barbell.svg';
   static const String calendar = '${_svgPath}icon_calendar.svg';
+  static const String calories = '${_svgPath}icon_calories.svg';
   static const String camera = '${_svgPath}icon_camera.svg';
   static const String change = '${_svgPath}icon_change.svg';
   static const String checkComplete = '${_svgPath}icon_check_complete.svg';

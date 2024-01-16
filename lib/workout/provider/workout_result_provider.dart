@@ -11,6 +11,8 @@ import 'package:fitend_member/schedule/model/workout_feedback_record_model.dart'
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_pagenate_params.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/workout/model/get_workout_records_params.dart';
 import 'package:fitend_member/workout/model/schedule_record_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
@@ -34,6 +36,8 @@ final workoutResultProvider = StateNotifierProvider.family
   final AsyncValue<Box> scheduleRecordBox = ref.watch(hiveScheduleRecordBox);
   final AsyncValue<Box> totalTimeBox = ref.watch(hiveProcessTotalTimeBox);
 
+  final user = ref.watch(getMeProvider) as UserModel;
+
   return WorkoutRecordStateNotifier(
     resultRepository: workoutRecordsRepository,
     scheduleRepository: workoutscheduleRepository,
@@ -42,6 +46,7 @@ final workoutResultProvider = StateNotifierProvider.family
     workoutRecordSimpleBox: workoutRecordSimpleBox,
     scheduleRecordBox: scheduleRecordBox,
     totalTimeBox: totalTimeBox,
+    user: user,
   );
 });
 
@@ -54,6 +59,7 @@ class WorkoutRecordStateNotifier
   final AsyncValue<Box> scheduleRecordBox;
   final AsyncValue<Box> totalTimeBox;
   final int id;
+  final UserModel user;
 
   WorkoutRecordStateNotifier({
     required this.resultRepository,
@@ -63,6 +69,7 @@ class WorkoutRecordStateNotifier
     required this.workoutFeedbackBox,
     required this.scheduleRecordBox,
     required this.totalTimeBox,
+    required this.user,
   }) : super(null);
 
   Future<void> getWorkoutResults({
@@ -97,6 +104,7 @@ class WorkoutRecordStateNotifier
         ScheduleRecordsModel? savedScheduleRecord;
         List<WorkoutRecordSimple> savedWorkoutRecords = [];
         int? totalTime;
+        // int? calories;
 
         workoutFeedbackBox.whenData(
           (value) {
@@ -133,7 +141,7 @@ class WorkoutRecordStateNotifier
           }
 
           if (savedScheduleRecord == null && totalTime != null) {
-            value.put(id, totalTime);
+            value.put(id, ScheduleRecordsModel(workoutDuration: totalTime));
           }
         });
 

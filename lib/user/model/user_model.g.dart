@@ -35,6 +35,8 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       lastTickets: (json['lastTickets'] as List<dynamic>?)
           ?.map((e) => TicketModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      weight: (json['weight'] as num?)?.toDouble(),
+      height: (json['height'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -46,6 +48,8 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'isNotification': instance.isNotification,
       'createdAt': instance.createdAt,
       'deletedAt': instance.deletedAt,
+      'weight': instance.weight,
+      'height': instance.height,
       'activeTrainers': instance.activeTrainers,
       'activeTickets': instance.activeTickets,
       'lastTrainers': instance.lastTrainers,

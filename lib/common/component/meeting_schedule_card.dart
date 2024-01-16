@@ -1,26 +1,31 @@
 import 'package:fitend_member/common/component/custom_network_image.dart';
+import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/meeting/model/meeting_schedule_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MeetingScheduleCard extends ConsumerStatefulWidget {
   final DateTime? date;
   final String? title;
   final String? subTitle;
-  final DateTime? startTime;
-  final DateTime? endTime;
+  final DateTime startTime;
+  final DateTime endTime;
   final bool? isDateVisible;
   final int? id;
   final String? status;
   final ThreadTrainer trainer;
   final String? userNickname;
+  final String meetingLink;
   final bool selected;
 
   const MeetingScheduleCard({
@@ -29,13 +34,14 @@ class MeetingScheduleCard extends ConsumerStatefulWidget {
     this.subTitle,
     super.key,
     required this.selected,
-    this.startTime,
-    this.endTime,
+    required this.startTime,
+    required this.endTime,
     this.isDateVisible = true,
     this.id,
     this.status,
     required this.trainer,
     this.userNickname,
+    required this.meetingLink,
   });
 
   factory MeetingScheduleCard.fromMeetingSchedule({
@@ -51,6 +57,9 @@ class MeetingScheduleCard extends ConsumerStatefulWidget {
       selected: model.selected!,
       isDateVisible: isDateVisible,
       trainer: model.trainer,
+      meetingLink: model.meetingLink,
+      startTime: model.startTime,
+      endTime: model.endTime,
     );
   }
 
@@ -200,7 +209,43 @@ class _ScheduleCardState extends ConsumerState<MeetingScheduleCard> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent, elevation: 0),
                         onPressed: () {
-                          //TODO: 미팅 입장!
+                          final now = DateTime.now();
+
+                          final timeDiffStart =
+                              widget.startTime.difference(now).inMinutes;
+                          final timeDiffEnd =
+                              widget.endTime.difference(now).inMinutes;
+
+                          if (timeDiffStart > 5) {
+                            showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  DialogWidgets.oneButtonDialog(
+                                message: '미팅 5분 전부터 입장할 수 있어요 🙌 ',
+                                confirmText: '확인',
+                                confirmOnTap: () => context.pop(),
+                              ),
+                            );
+                            return;
+                          }
+
+                          if (timeDiffEnd < 0) {
+                            showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  DialogWidgets.oneButtonDialog(
+                                message: '초대링크가 이미 만료되었어요 😯  ',
+                                confirmText: '확인',
+                                confirmOnTap: () => context.pop(),
+                              ),
+                            );
+                            return;
+                          }
+
+                          launchUrl(
+                            Uri.parse(widget.meetingLink),
+                            mode: LaunchMode.externalApplication,
+                          );
                         },
                         child: Text(
                           '초대링크 열기 👥',

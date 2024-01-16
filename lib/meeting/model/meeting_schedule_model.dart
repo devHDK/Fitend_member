@@ -64,6 +64,7 @@ class MeetingSchedule {
     fromJson: DataUtils.dateTimeToLocal,
   )
   final DateTime endTime;
+  final String meetingLink;
   @JsonKey(name: "trainer")
   final ThreadTrainer trainer;
   @JsonKey(
@@ -80,6 +81,7 @@ class MeetingSchedule {
     required this.status,
     required this.endTime,
     required this.trainer,
+    required this.meetingLink,
     required this.startTime,
     required this.userNickname,
     this.selected = false,
@@ -88,6 +90,7 @@ class MeetingSchedule {
   MeetingSchedule copyWith({
     int? id,
     String? status,
+    String? meetingLink,
     DateTime? endTime,
     ThreadTrainer? trainer,
     DateTime? startTime,
@@ -97,6 +100,7 @@ class MeetingSchedule {
       MeetingSchedule(
         id: id ?? this.id,
         status: status ?? this.status,
+        meetingLink: meetingLink ?? this.meetingLink,
         endTime: endTime ?? this.endTime,
         trainer: trainer ?? this.trainer,
         startTime: startTime ?? this.startTime,

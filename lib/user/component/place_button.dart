@@ -20,7 +20,7 @@ class PlaceButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 40.w,
+        width: 100.w,
         height: 100,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),

@@ -56,7 +56,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   bool initial = true;
   bool buildInitial = true;
   bool isLoading = false;
-  bool isNeedMeeting = false;
 
   @override
   void initState() {
@@ -153,7 +152,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   @override
   void didPush() async {
     await _checkIsNeedUpdate();
-    await _checkIsNeedMeeting();
 
     super.didPush();
   }
@@ -168,19 +166,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         await _resetScheduleList();
         await SharedPrefUtils.updateIsNeedUpdate(
             StringConstants.needScheduleUpdate, pref, false);
-      }
-    }
-  }
-
-  Future<void> _checkIsNeedMeeting() async {
-    if (mounted) {
-      final pref = await SharedPreferences.getInstance();
-      final meetingNeed = pref.getBool(StringConstants.isNeedMeeting);
-
-      if (meetingNeed != null && meetingNeed) {
-        setState(() {
-          isNeedMeeting = true;
-        });
       }
     }
   }
@@ -249,6 +234,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     final isActiveUser = userState.user.activeTickets != null &&
         userState.user.activeTickets!.isNotEmpty;
+
+    print('schedules.isNeedMeeing ===> ${schedules.isNeedMeeing}');
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -416,7 +403,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                 return const SizedBox();
               },
             ),
-            if (isNeedMeeting) _needMeetingBanner(context, userState),
+            if (schedules.isNeedMeeing != null && schedules.isNeedMeeing!)
+              _needMeetingBanner(context, userState),
             if (!isActiveUser) _needPurchaseTicketBanner(context, userState),
           ],
         ),

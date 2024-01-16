@@ -66,4 +66,6 @@ class IMGConstants {
   static const String scheduleOffline = '${_imgPath}schedule_offline.png';
   static const String scheduleOnline = '${_imgPath}schedule_online.png';
   static const String scheduleMeeting = '${_imgPath}schedule_meeting.png';
+  static const String registerRefresh1 = '${_imgPath}register_refresh1.png';
+  static const String registerRefresh2 = '${_imgPath}register_refresh2.png';
 }

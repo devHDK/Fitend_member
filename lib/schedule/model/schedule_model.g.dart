@@ -12,12 +12,14 @@ ScheduleModel _$ScheduleModelFromJson(Map<String, dynamic> json) =>
           .map((e) => ScheduleData.fromJson(e as Map<String, dynamic>))
           .toList(),
       scrollIndex: json['scrollIndex'] as int?,
+      isNeedMeeing: json['isNeedMeeing'] as bool?,
     );
 
 Map<String, dynamic> _$ScheduleModelToJson(ScheduleModel instance) =>
     <String, dynamic>{
       'data': instance.data,
       'scrollIndex': instance.scrollIndex,
+      'isNeedMeeing': instance.isNeedMeeing,
     };
 
 ScheduleData _$ScheduleDataFromJson(Map<String, dynamic> json) => ScheduleData(

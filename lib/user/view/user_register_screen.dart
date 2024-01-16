@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -65,8 +66,6 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
             userRegisterBox.whenData((value) {
               final record = value.get(widget.phone);
 
-              print('record ===> $record');
-
               if (record != null && record is UserRegisterStateModel) {
                 if (!context.mounted) return;
 
@@ -120,135 +119,153 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
     return WillPopScope(
       onWillPop: () async => false,
-      child: Scaffold(
-        backgroundColor: Pallete.background,
-        appBar: AppBar(
-          backgroundColor: Pallete.background,
-          elevation: 0,
-          title: SizedBox(
-            width: 250,
-            child: LinearProgressIndicator(
-              backgroundColor: Pallete.lightGray,
-              color: Pallete.point,
-              value: model.progressStep! / 11,
-            ),
-          ),
-          centerTitle: true,
-          leading: IconButton(
-            onPressed: () {
-              int tempStep = model.step!;
-              int tempProgressStep = model.progressStep!;
-
-              if (tempStep == 1) {
-                context.pop();
-              } else {
-                if (tempStep != 6 && tempStep != 11) tempProgressStep--;
-                tempStep--;
-
-                ref
-                    .read(userRegisterProvider(widget.phone).notifier)
-                    .updateData(
-                      step: tempStep,
-                      progressStep: tempProgressStep,
-                    );
-              }
-            },
-            icon: const Padding(
-              padding: EdgeInsets.only(left: 18),
-              child: Icon(Icons.arrow_back_sharp),
-            ),
-          ),
+      child: Container(
+        decoration: BoxDecoration(
+          image: model.step == 6
+              ? const DecorationImage(
+                  image: AssetImage(IMGConstants.registerRefresh1),
+                  fit: BoxFit.fill,
+                  opacity: 0.4)
+              : model.step == 11
+                  ? const DecorationImage(
+                      image: AssetImage(IMGConstants.registerRefresh2),
+                      fit: BoxFit.fill,
+                      opacity: 0.4,
+                    )
+                  : null,
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 24,
+        child: Scaffold(
+          backgroundColor: model.step == 6 || model.step == 11
+              ? Colors.transparent
+              : Pallete.background,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: SizedBox(
+              width: 250,
+              child: LinearProgressIndicator(
+                backgroundColor: Pallete.lightGray,
+                color: Pallete.point,
+                value: model.progressStep! / 11,
               ),
-              if (model.step == 1)
-                _step1NicknameWidget()
-              else if (model.step == 2)
-                _step2EmailWidget()
-              else if (model.step == 3)
-                _step3PasswordWidget()
-              else if (model.step == 4)
-                _step4GenderWidget(model)
-              else if (model.step == 5)
-                _step5BodySpecWidget(model)
-              else if (model.step == 6)
-                _step6_11VentilWidget(
-                    '이제 지속가능한\n운동습관을 경험하세요', '이제 지속가능한 운동습관을 경험하세요')
-              else if (model.step == 7)
-                _step7ExperienceWidget(model)
-              else if (model.step == 8)
-                _step8PurposeWidget(model)
-              else if (model.step == 9)
-                _step9AchieveWidget(model)
-              else if (model.step == 10)
-                _step10ObstacleWidget(model)
-              else if (model.step == 11)
-                _step6_11VentilWidget(
-                    '언제, 어디서든\n당신의 코치와 함께하세요', '언제, 어디서든 당신의 코치와 함께하세요')
-              else if (model.step == 12)
-                _step12PlaceWidget(model)
-              else if (model.step == 13)
-                _step13PreferDayWidget(model)
-            ],
+            ),
+            centerTitle: true,
+            leading: IconButton(
+              onPressed: () {
+                int tempStep = model.step!;
+                int tempProgressStep = model.progressStep!;
+
+                if (tempStep == 1) {
+                  context.pop();
+                } else {
+                  if (tempStep != 6 && tempStep != 11) tempProgressStep--;
+                  tempStep--;
+
+                  ref
+                      .read(userRegisterProvider(widget.phone).notifier)
+                      .updateData(
+                        step: tempStep,
+                        progressStep: tempProgressStep,
+                      );
+                }
+              },
+              icon: const Padding(
+                padding: EdgeInsets.only(left: 18),
+                child: Icon(Icons.arrow_back_sharp),
+              ),
+            ),
           ),
-        ),
-        floatingActionButtonAnimator: _NoAnimationFabAnimator(),
-        floatingActionButton: model.step == 6 || model.step == 11
-            ? Padding(
-                padding: const EdgeInsets.only(right: 28),
-                child: FloatingActionButton(
-                  elevation: 0,
-                  backgroundColor: Pallete.point,
-                  onPressed: () {
-                    _pressNextButton(model);
-                  },
-                  child: const Center(
-                    child: Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 18,
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 24,
+                ),
+                if (model.step == 1)
+                  _step1NicknameWidget()
+                else if (model.step == 2)
+                  _step2EmailWidget()
+                else if (model.step == 3)
+                  _step3PasswordWidget()
+                else if (model.step == 4)
+                  _step4GenderWidget(model)
+                else if (model.step == 5)
+                  _step5BodySpecWidget(model)
+                else if (model.step == 6)
+                  _step6_11VentilWidget(
+                      '이제 지속가능한\n운동습관을 경험하세요', '이제 지속가능한 운동습관을 경험하세요')
+                else if (model.step == 7)
+                  _step7ExperienceWidget(model)
+                else if (model.step == 8)
+                  _step8PurposeWidget(model)
+                else if (model.step == 9)
+                  _step9AchieveWidget(model)
+                else if (model.step == 10)
+                  _step10ObstacleWidget(model)
+                else if (model.step == 11)
+                  _step6_11VentilWidget(
+                      '언제, 어디서든\n당신의 코치와 함께하세요', '언제, 어디서든 당신의 코치와 함께하세요')
+                else if (model.step == 12)
+                  _step12PlaceWidget(model)
+                else if (model.step == 13)
+                  _step13PreferDayWidget(model)
+              ],
+            ),
+          ),
+          floatingActionButtonAnimator: _NoAnimationFabAnimator(),
+          floatingActionButton: model.step == 6 || model.step == 11
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 28),
+                  child: FloatingActionButton(
+                    elevation: 0,
+                    backgroundColor: Pallete.point,
+                    onPressed: () {
+                      _pressNextButton(model);
+                    },
+                    child: const Center(
+                      child: Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 18,
+                      ),
                     ),
                   ),
-                ),
-              )
-            : TextButton(
-                onPressed: buttonEnable
-                    ? () async {
-                        _pressNextButton(model);
-                      }
-                    : null,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 28),
-                  child: Container(
-                    height: 44,
-                    width: 100.w,
-                    decoration: BoxDecoration(
-                      color: buttonEnable
-                          ? Pallete.point
-                          : Pallete.point.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '다음',
-                        style: h6Headline.copyWith(
-                          color: buttonEnable
-                              ? Colors.white
-                              : Colors.white.withOpacity(0.5),
+                )
+              : TextButton(
+                  onPressed: buttonEnable
+                      ? () async {
+                          _pressNextButton(model);
+                        }
+                      : null,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 28),
+                    child: Container(
+                      height: 44,
+                      width: 100.w,
+                      decoration: BoxDecoration(
+                        color: buttonEnable
+                            ? Pallete.point
+                            : Pallete.point.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '다음',
+                          style: h6Headline.copyWith(
+                            color: buttonEnable
+                                ? Colors.white
+                                : Colors.white.withOpacity(0.5),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-        floatingActionButtonLocation: model.step == 6 || model.step == 11
-            ? FloatingActionButtonLocation.endFloat
-            : FloatingActionButtonLocation.centerDocked,
+          floatingActionButtonLocation: model.step == 6 || model.step == 11
+              ? FloatingActionButtonLocation.endFloat
+              : FloatingActionButtonLocation.centerDocked,
+        ),
       ),
     );
   }
@@ -975,11 +992,11 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
         const SizedBox(
           height: 36,
         ),
-        Row(
+        Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             PlaceButton(
-              content: '집 🏠\n(시공간의 제약 없이\n자유롭게 하길 원해요)',
+              content: '집 🏠\n(시공간의 제약 없이 자유롭게 하길 원해요)',
               onTap: () {
                 if (!mounted) return;
 
@@ -989,8 +1006,11 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
               },
               isSelected: model.place == 'home',
             ),
+            const SizedBox(
+              height: 12,
+            ),
             PlaceButton(
-              content: '헬스장 🎟️\n(이미 등록했거나\n등록할 계획이에요)',
+              content: '헬스장 🎟️\n(이미 등록했거나 등록할 계획이에요)',
               onTap: () {
                 if (!mounted) return;
 

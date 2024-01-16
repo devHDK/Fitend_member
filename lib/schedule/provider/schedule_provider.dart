@@ -1,4 +1,6 @@
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/data/global_varialbles.dart';
+import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/meeting/model/meeting_schedule_model.dart';
 import 'package:fitend_member/meeting/repository/meeting_repository.dart';
@@ -10,29 +12,33 @@ import 'package:fitend_member/schedule/repository/reservation_schedule_repositor
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final scheduleProvider =
     StateNotifierProvider<ScheduleStateNotifier, ScheduleModelBase>((ref) {
   final workoutRepository = ref.watch(workoutScheduleRepositoryProvider);
   final reservationRepository = ref.watch(reservaionScheduleRepositoryProvider);
   final meetingRepository = ref.watch(meetingRepositoryProvider);
+  final sharedPref = ref.watch(sharedPrefsProvider);
 
   return ScheduleStateNotifier(
-    workoutRepository: workoutRepository,
-    reservationRepository: reservationRepository,
-    meetingRepository: meetingRepository,
-  );
+      workoutRepository: workoutRepository,
+      reservationRepository: reservationRepository,
+      meetingRepository: meetingRepository,
+      sharedPref: sharedPref);
 });
 
 class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
   final WorkoutScheduleRepository workoutRepository;
   final ReservationScheduleRepository reservationRepository;
   final MeetingRepository meetingRepository;
+  final Future<SharedPreferences> sharedPref;
 
   ScheduleStateNotifier({
     required this.workoutRepository,
     required this.reservationRepository,
     required this.meetingRepository,
+    required this.sharedPref,
   }) : super(ScheduleModelLoading()) {
     DateTime fifteenDaysAgo = DateTime.now().subtract(const Duration(days: 15));
     paginate(startDate: DataUtils.getDate(fifteenDaysAgo));
@@ -181,15 +187,27 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
           state = ScheduleModel(data: <ScheduleData>[
             ...tempScheduleList,
             ...pState.data,
-          ]);
+          ], isNeedMeeing: pState.isNeedMeeing);
         } else if (isDownScrolling) {
           state = ScheduleModel(data: <ScheduleData>[
             ...pState.data,
             ...tempScheduleList,
-          ]);
+          ], isNeedMeeing: pState.isNeedMeeing);
         }
       } else {
-        state = ScheduleModel(data: tempScheduleList, scrollIndex: 15);
+        final pref = await sharedPref;
+        bool isNeedMeeting = false;
+
+        final ret = pref.getBool(StringConstants.isNeedMeeting);
+        if (ret != null && ret) {
+          isNeedMeeting = true;
+        }
+
+        state = ScheduleModel(
+          data: tempScheduleList,
+          scrollIndex: 15,
+          isNeedMeeing: isNeedMeeting,
+        );
         if (state is ScheduleModel) {
           final pstate = state as ScheduleModel;
           scheduleListGlobal = pstate.data;
@@ -205,6 +223,14 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
     final pstate = state as ScheduleModel;
 
     pstate.scrollIndex = scrollIndex;
+
+    state = pstate;
+  }
+
+  void updateIsNeedMeeting(bool isNeedMeeting) {
+    final pstate = state as ScheduleModel;
+
+    pstate.isNeedMeeing = isNeedMeeting;
 
     state = pstate;
   }

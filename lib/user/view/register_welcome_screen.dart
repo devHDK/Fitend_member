@@ -136,57 +136,61 @@ class _RegisterWelcomScreenState extends State<RegisterWelcomScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Pallete.background,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
-          child: AnimatedList(
-            key: _listKey,
-            initialItemCount: _items.length,
-            itemBuilder: (context, index, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: _items[index],
-              );
-            },
+    return WillPopScope(
+      onWillPop: () async => Future.value(true),
+      child: Scaffold(
+          backgroundColor: Pallete.background,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            automaticallyImplyLeading: false,
           ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: AnimatedOpacity(
-          opacity: _items.length > 4 ? 1.0 : 0.0,
-          duration: const Duration(seconds: 1),
-          child: TextButton(
-            onPressed: () {
-              context.goNamed(
-                MeetingDateScreen.routeName,
-                pathParameters: {
-                  'trainerId': widget.trainerId.toString(),
-                },
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28),
-              child: Container(
-                height: 44,
-                width: 100.w,
-                decoration: BoxDecoration(
-                  color: Pallete.point,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                  child: Text(
-                    '일정 선택하기 🗓️',
-                    style: h6Headline.copyWith(color: Colors.white),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+            child: AnimatedList(
+              key: _listKey,
+              initialItemCount: _items.length,
+              itemBuilder: (context, index, animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: _items[index],
+                );
+              },
+            ),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: AnimatedOpacity(
+            opacity: _items.length > 4 ? 1.0 : 0.0,
+            duration: const Duration(seconds: 1),
+            child: TextButton(
+              onPressed: () {
+                context.goNamed(
+                  MeetingDateScreen.routeName,
+                  pathParameters: {
+                    'trainerId': widget.trainerId.toString(),
+                  },
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: Container(
+                  height: 44,
+                  width: 100.w,
+                  decoration: BoxDecoration(
+                    color: Pallete.point,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '일정 선택하기 🗓️',
+                      style: h6Headline.copyWith(color: Colors.white),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ));
+          )),
+    );
   }
 }

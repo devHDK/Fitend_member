@@ -18,10 +18,12 @@ class ScheduleModelLoading extends ScheduleModelBase {}
 class ScheduleModel extends ScheduleModelBase {
   final List<ScheduleData> data;
   int? scrollIndex;
+  bool? isNeedMeeing;
 
   ScheduleModel({
     required this.data,
     this.scrollIndex,
+    this.isNeedMeeing,
   });
 
   factory ScheduleModel.fromJson(Map<String, dynamic> json) =>
@@ -34,6 +36,7 @@ class ScheduleModelFetchingMore extends ScheduleModel {
   ScheduleModelFetchingMore({
     required super.data,
     super.scrollIndex,
+    super.isNeedMeeing,
   });
 }
 
@@ -41,6 +44,7 @@ class ScheduleModelRefetching extends ScheduleModel {
   ScheduleModelRefetching({
     required super.data,
     super.scrollIndex,
+    super.isNeedMeeing,
   });
 }
 

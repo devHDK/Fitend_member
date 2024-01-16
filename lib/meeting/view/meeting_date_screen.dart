@@ -20,6 +20,7 @@ import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
     as picker;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:ndialog/ndialog.dart';
@@ -181,8 +182,13 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                     confirmText: '확인',
                     confirmOnTap: () async {
                       context.pop();
+
                       final pref = await SharedPreferences.getInstance();
                       pref.setBool(StringConstants.isNeedMeeting, false);
+
+                      ref
+                          .read(scheduleProvider.notifier)
+                          .updateIsNeedMeeting(false);
 
                       ref
                           .read(meetingDateProvider(widget.trainerId).notifier)
@@ -195,6 +201,11 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                           )
                           .onError((error, stackTrace) {
                         pref.setBool(StringConstants.isNeedMeeting, true);
+
+                        ref
+                            .read(scheduleProvider.notifier)
+                            .updateIsNeedMeeting(true);
+
                         DialogWidgets.showToast(
                             content: '서버와 통신중 문제가 발생하였습니다.');
                       });
@@ -584,6 +595,10 @@ class _MeetingDatePickDialogState
                             final pref = await SharedPreferences.getInstance();
                             pref.setBool(StringConstants.isNeedMeeting, false);
 
+                            ref
+                                .read(scheduleProvider.notifier)
+                                .updateIsNeedMeeting(false);
+
                             try {
                               ref
                                   .read(threadCreateProvider.notifier)
@@ -611,7 +626,9 @@ class _MeetingDatePickDialogState
                                   )
                                   .then((value) {
                                 DialogWidgets.showToast(
-                                    content: '미팅 희망일 확인후 연락 드릴게요 😀');
+                                  content: '미팅 희망일 확인후 연락 드릴게요 😀',
+                                  gravity: ToastGravity.CENTER,
+                                );
                                 context.goNamed(HomeScreen.routeName);
                               });
                             } catch (e) {
@@ -619,6 +636,9 @@ class _MeetingDatePickDialogState
                                   await SharedPreferences.getInstance();
                               pref.setBool(StringConstants.isNeedMeeting, true);
 
+                              ref
+                                  .read(scheduleProvider.notifier)
+                                  .updateIsNeedMeeting(true);
                               setState(() {
                                 isLoading = false;
                               });

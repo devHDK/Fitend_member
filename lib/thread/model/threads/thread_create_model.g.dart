@@ -10,6 +10,7 @@ ThreadCreateModel _$ThreadCreateModelFromJson(Map<String, dynamic> json) =>
     ThreadCreateModel(
       trainerId: json['trainerId'] as int,
       title: json['title'] as String?,
+      isMeetingThread: json['isMeetingThread'] as bool?,
       content: json['content'] as String,
       gallery: (json['gallery'] as List<dynamic>?)
           ?.map((e) => GalleryModel.fromJson(e as Map<String, dynamic>))
@@ -21,6 +22,7 @@ Map<String, dynamic> _$ThreadCreateModelToJson(ThreadCreateModel instance) =>
       'trainerId': instance.trainerId,
       'title': instance.title,
       'content': instance.content,
+      'isMeetingThread': instance.isMeetingThread,
       'gallery': instance.gallery,
     };
 

@@ -11,12 +11,15 @@ class ThreadCreateModel {
   String? title;
   @JsonKey(name: "content")
   final String content;
+  @JsonKey(name: "isMeetingThread")
+  bool? isMeetingThread;
   @JsonKey(name: "gallery")
   List<GalleryModel>? gallery;
 
   ThreadCreateModel({
     required this.trainerId,
     this.title,
+    this.isMeetingThread,
     required this.content,
     this.gallery,
   });
@@ -24,6 +27,7 @@ class ThreadCreateModel {
   ThreadCreateModel copyWith({
     int? trainerId,
     String? title,
+    bool? isMeetingThread,
     String? content,
     List<GalleryModel>? gallery,
   }) =>
@@ -31,6 +35,7 @@ class ThreadCreateModel {
         trainerId: trainerId ?? this.trainerId,
         title: title ?? this.title,
         content: content ?? this.content,
+        isMeetingThread: isMeetingThread ?? this.isMeetingThread,
         gallery: gallery ?? this.gallery,
       );
 

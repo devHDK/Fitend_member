@@ -110,10 +110,11 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     );
   }
 
-  Future<void> createThread(
-    ThreadUser user,
-    ThreadTrainer trainer,
-  ) async {
+  Future<void> createThread({
+    required ThreadUser user,
+    required ThreadTrainer trainer,
+    bool? isMeetingThread,
+  }) async {
     try {
       if (state.isUploading || state.isLoading) {
         return;
@@ -131,6 +132,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
             : null,
         content: state.content,
         gallery: [],
+        isMeetingThread: isMeetingThread,
       );
 
       if (state.isFirstRun) {

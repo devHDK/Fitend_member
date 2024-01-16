@@ -252,8 +252,8 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
                             ref
                                 .read(threadCreateProvider.notifier)
                                 .createThread(
-                                  widget.user,
-                                  widget.trainer,
+                                  user: widget.user,
+                                  trainer: widget.trainer,
                                 );
 
                             context.pop();

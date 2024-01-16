@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/component/custom_one_button_dialog.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
@@ -175,14 +176,12 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
         onPressed: () {
           showDialog(
               context: context,
-              builder: (context) => DialogWidgets.oneButtonDialogBold(
-                    message1:
+              builder: (context) => CustomOneButtonDialog(
+                    title:
                         '${DateFormat('M월 d일').format(selectStartTime)} (${weekday[selectStartTime.weekday - 1]}) ∙ ${selectStartTime.hour >= 12 ? ' 오후 ' : ' 오전 '}  ${DateFormat('h:mm').format(selectStartTime)}',
-                    message2: '일정으로 미팅을 예약할까요?',
+                    content: '일정으로 미팅을 예약할까요?',
                     confirmText: '확인',
                     confirmOnTap: () async {
-                      context.pop();
-
                       final pref = await SharedPreferences.getInstance();
                       pref.setBool(StringConstants.isNeedMeeting, false);
 
@@ -190,16 +189,30 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                           .read(scheduleProvider.notifier)
                           .updateIsNeedMeeting(false);
 
-                      ref
-                          .read(meetingDateProvider(widget.trainerId).notifier)
-                          .createMeeting(
-                            PostMeetingCreateModel(
-                              trainerId: widget.trainerId,
-                              startTime: selectStartTime.toUtc(),
-                              endTime: selectEndTime.toUtc(),
-                            ),
-                          )
-                          .onError((error, stackTrace) {
+                      try {
+                        await ref
+                            .read(
+                                meetingDateProvider(widget.trainerId).notifier)
+                            .createMeeting(
+                              PostMeetingCreateModel(
+                                trainerId: widget.trainerId,
+                                startTime: selectStartTime.toUtc(),
+                                endTime: selectEndTime.toUtc(),
+                              ),
+                            )
+                            .then((value) {
+                          DateTime fifteenDaysAgo =
+                              DateTime.now().subtract(const Duration(days: 15));
+
+                          ref
+                              .read(scheduleProvider.notifier)
+                              .paginate(startDate: fifteenDaysAgo);
+                        });
+
+                        if (!context.mounted) return;
+
+                        context.goNamed(HomeScreen.routeName);
+                      } catch (e) {
                         pref.setBool(StringConstants.isNeedMeeting, true);
 
                         ref
@@ -207,18 +220,10 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                             .updateIsNeedMeeting(true);
 
                         DialogWidgets.showToast(
-                            content: '서버와 통신중 문제가 발생하였습니다.');
-                      });
-
-                      DateTime fifteenDaysAgo =
-                          DateTime.now().subtract(const Duration(days: 15));
-
-                      ref.read(scheduleProvider.notifier).paginate(
-                          startDate: DataUtils.getDate(fifteenDaysAgo));
-
-                      if (!context.mounted) return;
-
-                      context.goNamed(HomeScreen.routeName);
+                          content: '서버와 통신중 문제가 발생하였습니다.',
+                          gravity: ToastGravity.CENTER,
+                        );
+                      }
                     },
                   ));
         },
@@ -466,7 +471,7 @@ class _MeetingDatePickDialogState
   @override
   Widget build(BuildContext context) {
     final userModel = ref.watch(getMeProvider) as UserModel;
-    final threadCreate = ref.watch(threadCreateProvider);
+    // final threadCreate = ref.watch(threadCreateProvider);
 
     return DialogBackground(
       blur: 0.2,
@@ -610,12 +615,12 @@ class _MeetingDatePickDialogState
                               await ref
                                   .read(threadCreateProvider.notifier)
                                   .createThread(
-                                    ThreadUser(
+                                    user: ThreadUser(
                                       id: userModel.user.id,
                                       nickname: userModel.user.nickname,
                                       gender: userModel.user.gender,
                                     ),
-                                    ThreadTrainer(
+                                    trainer: ThreadTrainer(
                                       id: userModel
                                           .user.activeTrainers.first.id,
                                       nickname: userModel
@@ -623,6 +628,7 @@ class _MeetingDatePickDialogState
                                       profileImage: userModel.user
                                           .activeTrainers.first.profileImage,
                                     ),
+                                    isMeetingThread: true,
                                   )
                                   .then((value) {
                                 DialogWidgets.showToast(

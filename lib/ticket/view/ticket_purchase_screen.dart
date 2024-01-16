@@ -16,6 +16,7 @@ import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -44,9 +45,11 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
 
     final userModel = state as UserModel;
 
+    final now = DateTime.now();
+
     final startDate = widget.activeTicket != null
         ? widget.activeTicket!.expiredAt.add(const Duration(days: 1))
-        : DateTime.now();
+        : DateTime(now.year, now.month, now.day);
 
     final expiredDate = DateTime(
       startDate.year,
@@ -195,7 +198,10 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
                     jsonDecode(data)); //bootPay responseData
                 _confirmPayment(result, startDate, expiredDate, userModel);
               } catch (e) {
-                DialogWidgets.showToast(content: '결제중 오류가 발생하였습니다! 다시 시도해주세요');
+                DialogWidgets.showToast(
+                  content: '결제중 오류가 발생하였습니다! 다시 시도해주세요',
+                  gravity: ToastGravity.CENTER,
+                );
               }
 
               return true;

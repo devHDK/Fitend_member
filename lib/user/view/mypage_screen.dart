@@ -9,10 +9,13 @@ import 'package:fitend_member/notifications/provider/notification_home_screen_pr
 import 'package:fitend_member/notifications/provider/notification_provider.dart';
 import 'package:fitend_member/notifications/repository/notifications_repository.dart';
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
+import 'package:fitend_member/thread/provider/comment_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
+import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/ticket/component/no_ticket_cell.dart';
 import 'package:fitend_member/ticket/component/ticket_cell.dart';
+import 'package:fitend_member/ticket/provider/ticket_provider.dart';
 import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
 import 'package:fitend_member/ticket/view/ticket_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -278,10 +281,17 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                       await ref.read(getMeProvider.notifier).logout();
 
                       ref.invalidate(threadProvider);
+                      ref.invalidate(threadDetailProvider);
+
                       ref.invalidate(scheduleProvider);
-                      ref.invalidate(notificationProvider);
+
                       ref.invalidate(threadCreateProvider);
+                      ref.invalidate(commentCreateProvider);
+
+                      ref.invalidate(notificationProvider);
                       ref.invalidate(notificationHomeProvider);
+
+                      ref.invalidate(ticketProvider);
                     },
                     cancelOnTap: () => context.pop(),
                   ),

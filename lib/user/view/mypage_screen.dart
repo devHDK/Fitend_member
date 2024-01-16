@@ -13,6 +13,7 @@ import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/ticket/component/no_ticket_cell.dart';
 import 'package:fitend_member/ticket/component/ticket_cell.dart';
+import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
 import 'package:fitend_member/ticket/view/ticket_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -135,7 +136,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               onTap: () {
                 Navigator.of(context).push(
                   CupertinoPageRoute(
-                    builder: (context) => const TicketScreen(),
+                    builder: (context) => const ActiveTicketScreen(),
                   ),
                 );
               },
@@ -152,6 +153,23 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                         content: '맞춤형 운동플랜과 코칭을 받아보세요!',
                         child: SvgPicture.asset(SVGConstants.next),
                       ),
+              ),
+            ),
+            const Divider(
+              color: Pallete.darkGray,
+              height: 1,
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => const TicketScreen(),
+                  ),
+                );
+              },
+              child: _renderLabel(
+                name: '멤버쉽 결제 내역',
+                child: SvgPicture.asset(SVGConstants.next),
               ),
             ),
             const Divider(

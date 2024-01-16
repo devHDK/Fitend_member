@@ -19,7 +19,7 @@ import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
-import 'package:fitend_member/ticket/view/ticket_screen.dart';
+import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
@@ -69,7 +69,17 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         _checkHasData(scheduleListGlobal, context);
         initial = false;
       }
+
+      fetch();
     });
+  }
+
+  void fetch() async {
+    if (mounted && ref.read(scheduleProvider) is ScheduleModelError) {
+      await ref
+          .read(scheduleProvider.notifier)
+          .paginate(startDate: fifteenDaysAgo);
+    }
   }
 
   void _handleItemPositionChange() {
@@ -234,8 +244,6 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     final isActiveUser = userState.user.activeTickets != null &&
         userState.user.activeTickets!.isNotEmpty;
-
-    print('schedules.isNeedMeeing ===> ${schedules.isNeedMeeing}');
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -452,7 +460,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     return PreferredSize(
       preferredSize: Size(100.w, 30),
       child: InkWell(
-        onTap: () => context.goNamed(TicketScreen.routeName),
+        onTap: () => context.goNamed(ActiveTicketScreen.routeName),
         child: Container(
           color: Pallete.point,
           child: Padding(

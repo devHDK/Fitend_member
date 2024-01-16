@@ -109,3 +109,104 @@ class TicketModel {
 
   Map<String, dynamic> toJson() => _$TicketModelToJson(this);
 }
+
+abstract class TicketDetailListModelBase {}
+
+class TicketDetailListModelLoading extends TicketDetailListModelBase {}
+
+class TicketDetailListModelError extends TicketDetailListModelBase {
+  final String message;
+
+  TicketDetailListModelError({
+    required this.message,
+  });
+}
+
+@JsonSerializable()
+class TicketDetailListModel extends TicketDetailListModelBase {
+  @JsonKey(name: "data")
+  final List<TicketDetailModel> data;
+
+  TicketDetailListModel({
+    required this.data,
+  });
+
+  TicketDetailListModel copyWith({
+    List<TicketDetailModel>? data,
+  }) =>
+      TicketDetailListModel(
+        data: data ?? this.data,
+      );
+
+  factory TicketDetailListModel.fromJson(Map<String, dynamic> json) =>
+      _$TicketDetailListModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TicketDetailListModelToJson(this);
+}
+
+@JsonSerializable()
+class TicketDetailModel extends TicketModel {
+  @JsonKey(name: "serviceSession")
+  final int serviceSession;
+  @JsonKey(name: "sessionPrice")
+  final int sessionPrice;
+  @JsonKey(name: "coachingPrice")
+  final int coachingPrice;
+
+  TicketDetailModel({
+    required super.id,
+    required super.type,
+    required super.totalSession,
+    required super.restSession,
+    required super.availSession,
+    required super.startedAt,
+    required super.expiredAt,
+    required super.createdAt,
+    required super.users,
+    required super.isHolding,
+    super.receiptId,
+    required this.serviceSession,
+    required this.sessionPrice,
+    required this.coachingPrice,
+  });
+
+  @override
+  TicketDetailModel copyWith({
+    int? id,
+    String? type,
+    int? totalSession,
+    int? serviceSession,
+    int? restSession,
+    int? availSession,
+    DateTime? startedAt,
+    DateTime? expiredAt,
+    DateTime? createdAt,
+    int? sessionPrice,
+    int? coachingPrice,
+    List<String>? users,
+    String? receiptId,
+    bool? isHolding,
+  }) =>
+      TicketDetailModel(
+        id: id ?? this.id,
+        type: type ?? this.type,
+        totalSession: totalSession ?? this.totalSession,
+        serviceSession: serviceSession ?? this.serviceSession,
+        restSession: restSession ?? this.restSession,
+        availSession: availSession ?? this.availSession,
+        startedAt: startedAt ?? this.startedAt,
+        expiredAt: expiredAt ?? this.expiredAt,
+        createdAt: createdAt ?? this.createdAt,
+        sessionPrice: sessionPrice ?? this.sessionPrice,
+        coachingPrice: coachingPrice ?? this.coachingPrice,
+        users: users ?? this.users,
+        receiptId: receiptId ?? this.receiptId,
+        isHolding: isHolding ?? this.isHolding,
+      );
+
+  factory TicketDetailModel.fromJson(Map<String, dynamic> json) =>
+      _$TicketDetailModelFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$TicketDetailModelToJson(this);
+}

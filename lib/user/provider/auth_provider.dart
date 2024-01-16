@@ -7,7 +7,7 @@ import 'package:fitend_member/meeting/view/meeting_date_screen.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
-import 'package:fitend_member/ticket/view/ticket_screen.dart';
+import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/view/login_screen.dart';
@@ -96,8 +96,8 @@ class AuthProvider extends ChangeNotifier {
                 routes: [
                   GoRoute(
                     path: 'ticket',
-                    name: TicketScreen.routeName,
-                    builder: (context, state) => const TicketScreen(),
+                    name: ActiveTicketScreen.routeName,
+                    builder: (context, state) => const ActiveTicketScreen(),
                   ),
                 ]),
             GoRoute(

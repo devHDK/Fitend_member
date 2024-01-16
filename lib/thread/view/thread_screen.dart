@@ -64,6 +64,21 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     });
   }
 
+  void fetch() async {
+    if (mounted && ref.read(threadProvider) is ThreadListModelError) {
+      await ref
+          .read(threadProvider.notifier)
+          .paginate(
+            startIndex: 0,
+            isRefetch: true,
+          )
+          .then((value) {
+        itemScrollController.jumpTo(index: 0);
+        isLoading = false;
+      });
+    }
+  }
+
   void updateBadge() {
     if (mounted) {
       threadBadgeCountReset();

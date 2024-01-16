@@ -1,14 +1,13 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/payment/provider/payment_provider.dart';
-import 'package:fitend_member/ticket/component/no_ticket_cell.dart';
-import 'package:fitend_member/ticket/component/ticket_cell.dart';
-import 'package:fitend_member/user/model/user_model.dart';
-import 'package:fitend_member/user/provider/get_me_provider.dart';
+import 'package:fitend_member/ticket/model/ticket_model.dart';
+import 'package:fitend_member/ticket/provider/ticket_provider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class TicketScreen extends ConsumerStatefulWidget {
   static String get routeName => 'ticket';
@@ -21,12 +20,49 @@ class TicketScreen extends ConsumerStatefulWidget {
 
 class _TicketScreenState extends ConsumerState<TicketScreen> {
   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      fetch();
+    });
+  }
+
+  void fetch() async {
+    if (mounted && ref.read(ticketProvider) is TicketDetailListModelError) {
+      await ref.read(ticketProvider.notifier).getTickets();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final userState = ref.watch(getMeProvider);
+    final state = ref.watch(ticketProvider);
 
-    final userModel = userState as UserModel;
+    if (state is TicketDetailListModelLoading) {
+      return const Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Pallete.point,
+          ),
+        ),
+      );
+    }
 
-    final activeTickets = userModel.user.activeTickets ?? [];
+    if (state is TicketDetailListModelError) {
+      return Scaffold(
+        backgroundColor: Pallete.background,
+        body: DialogWidgets.oneButtonDialog(
+          message: state.message,
+          confirmText: '확인',
+          confirmOnTap: () => context.pop(),
+        ),
+      );
+    }
+
+    final model = state as TicketDetailListModel;
+
+    print(model);
 
     return Scaffold(
       backgroundColor: Pallete.background,
@@ -42,7 +78,7 @@ class _TicketScreenState extends ConsumerState<TicketScreen> {
           ),
         ),
         title: Text(
-          '멤버십',
+          '멤버십 결제 내역',
           style: h4Headline.copyWith(
             color: Colors.white,
           ),
@@ -55,135 +91,80 @@ class _TicketScreenState extends ConsumerState<TicketScreen> {
           color: Pallete.point,
           semanticsLabel: '새로고침',
           onRefresh: () async {
-            await ref.read(getMeProvider.notifier).getMe();
+            await ref.read(ticketProvider.notifier).getTickets();
           },
-          child: ListView(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    '이용중인 상품',
-                    style: s2SubTitle.copyWith(
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  if (activeTickets.isNotEmpty)
-                    TicketCell(
-                      ticket: activeTickets.first,
-                    )
-                  else
-                    const NoTicketCell(
-                      title: '멤버십을 구매하여',
-                      content: '맞춤형 운동플랜과 코칭을 받아보세요!',
-                    ),
-                  const SizedBox(height: 32),
-                  const Divider(
-                    thickness: 1,
-                    color: Pallete.gray,
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    '이용예정 상품',
-                    style: s2SubTitle.copyWith(
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  if (activeTickets.length > 1)
-                    TicketCell(
-                      ticket: activeTickets[1],
-                      child: activeTickets[1].receiptId != null
-                          ? GestureDetector(
-                              onTap: () {
-                                DialogWidgets.oneButtonDialog(
-                                    message:
-                                        '멤버십 결제를 취소할까요?\n기간만료시 더 이상 코칭을 받을 수 없어요 🥲',
-                                    confirmText: '결제 취소하기',
-                                    confirmOnTap: () async {
-                                      try {
-                                        await ref
-                                            .read(paymentProvider.notifier)
-                                            .deletePayments(
-                                                ticketId: activeTickets[1].id)
-                                            .then((value) {
-                                          context.pop();
+          child: ListView.builder(
+            itemBuilder: (context, index) {
+              final ticket = model.data[index];
 
-                                          ref
-                                              .read(getMeProvider.notifier)
-                                              .updateActiveTickets(
-                                                  activeTickets: [
-                                                activeTickets[0]
-                                              ]);
-
-                                          DialogWidgets.oneButtonDialog(
-                                            message:
-                                                '결제하신 멤버십을 취소했어요.\n환불은 영업일 기준 3~5일 소요되요 👌️',
-                                            confirmText: '확인',
-                                            confirmOnTap: () => context.pop(),
-                                          ).show(context);
-                                        });
-                                      } catch (e) {
-                                        DialogWidgets.showToast(
-                                            content: 'error - $e');
-                                      }
-                                    }).show(context);
-                              },
-                              child: Text(
-                                '결제취소',
-                                style: s2SubTitle.copyWith(
-                                    color: Pallete.gray,
-                                    height: 1,
-                                    decoration: TextDecoration.underline),
-                              ),
-                            )
-                          : null,
-                    )
-                  else if (activeTickets.length == 1)
-                    const NoTicketCell(
-                      title: '없음',
-                      content: '만료 전 멤버십을 미리 구매해주세요!',
-                    )
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: GestureDetector(
-        onTap: activeTickets.length >= 2
-            ? () {
-                DialogWidgets.showToast(
-                    content: '이미 멤버십을 구매했어요!\n먼저 이용예정 상품을 취소해주세요 🙅‍♀️');
+              int fcMonths = 0;
+              final diff = ticket.expiredAt.difference(ticket.startedAt).inDays;
+              if (diff > 92) {
+                fcMonths = 6;
+              } else if (diff > 31) {
+                fcMonths = 3;
+              } else if (diff > 15) {
+                fcMonths = 1;
+              } else {
+                fcMonths = 0;
               }
-            : () {
-                DialogWidgets.ticketBuyModal(
-                  context: context,
-                  trainerId: userModel.user.activeTrainers.first.id,
-                  activeTicket: userModel.user.activeTickets != null
-                      ? userModel.user.activeTickets!.first
-                      : null,
-                );
-              },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Container(
-            height: 44,
-            decoration: BoxDecoration(
-              color: Pallete.point,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: Text(
-                '멤버십 구매하기',
-                style: h6Headline.copyWith(
-                  color: Colors.white,
-                ),
-              ),
-            ),
+
+              int price = ticket.totalSession * ticket.sessionPrice +
+                  ticket.coachingPrice;
+
+              price += (price * 0.1).toInt();
+
+              String ticketName = ticket.type == 'fitness' && fcMonths > 0
+                  ? '온라인 코칭 $fcMonths개월'
+                  : ticket.type == 'fitness' && fcMonths == 0
+                      ? '온라인 코칭 14일 (무료체험)'
+                      : '오프라인 PT ${ticket.totalSession}회';
+
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              ticketName,
+                              style: h5Headline.copyWith(color: Colors.white),
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              '${DateFormat('yyyy.MM.dd').format(
+                                ticket.startedAt,
+                              )} ~ ${DateFormat('yyyy.MM.dd').format(
+                                ticket.expiredAt,
+                              )}',
+                              style: s2SubTitle.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '${NumberFormat('#,###').format(price)}원',
+                          style: h4Headline.copyWith(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    height: 1,
+                    color: Pallete.gray,
+                  )
+                ],
+              );
+            },
+            itemCount: model.data.length,
           ),
         ),
       ),

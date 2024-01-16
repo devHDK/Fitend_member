@@ -71,9 +71,19 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             }
             initial = false;
           }
+
+          fetch();
         },
       );
     });
+  }
+
+  void fetch() async {
+    if (mounted && ref.read(workoutProvider(widget.id)) is WorkoutModelError) {
+      await ref
+          .read(workoutProvider(widget.id).notifier)
+          .getWorkout(id: widget.id);
+    }
   }
 
   @override

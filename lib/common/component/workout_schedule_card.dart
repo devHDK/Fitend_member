@@ -6,7 +6,7 @@ import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
-import 'package:fitend_member/ticket/view/ticket_screen.dart';
+import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
@@ -268,8 +268,8 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                                             DialogWidgets.oneButtonDialog(
                                           message: '이용중인 멤버십이 없어요 😰',
                                           confirmText: ' 멤버쉽 구매하기',
-                                          confirmOnTap: () => context
-                                              .goNamed(TicketScreen.routeName),
+                                          confirmOnTap: () => context.goNamed(
+                                              ActiveTicketScreen.routeName),
                                         ),
                                       );
                                     } else {

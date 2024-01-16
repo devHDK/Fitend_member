@@ -62,6 +62,18 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
 
     WidgetsBinding.instance.addObserver(this);
     commentFocusNode.addListener(_commentFocusnodeListner);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
+  }
+
+  void fetch() async {
+    if (mounted &&
+        ref.read(threadDetailProvider(widget.threadId)) is ThreadModelError) {
+      await ref
+          .read(threadDetailProvider(widget.threadId).notifier)
+          .getThreadDetail(
+            threadId: widget.threadId,
+          );
+    }
   }
 
   @override

@@ -220,7 +220,7 @@ class _RegisterCompleteScreenState
               if (!context.mounted) return;
 
               Navigator.of(context).push(CupertinoPageRoute(
-                builder: (context) => RegisterWelcomScreen(
+                builder: (context) => RegisterWelcomeScreen(
                   userNickname: registerModel.nickname!,
                   trainerName: widget.trainerName,
                   trainerProfileImage: widget.trainerProfileImage,

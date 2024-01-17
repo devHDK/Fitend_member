@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class RegisterWelcomScreen extends StatefulWidget {
-  const RegisterWelcomScreen({
+class RegisterWelcomeScreen extends StatefulWidget {
+  const RegisterWelcomeScreen({
     super.key,
     required this.trainerName,
     required this.trainerProfileImage,
@@ -24,10 +24,10 @@ class RegisterWelcomScreen extends StatefulWidget {
   final int trainerId;
 
   @override
-  State<RegisterWelcomScreen> createState() => _RegisterWelcomScreenState();
+  State<RegisterWelcomeScreen> createState() => _RegisterWelcomeScreenState();
 }
 
-class _RegisterWelcomScreenState extends State<RegisterWelcomScreen> {
+class _RegisterWelcomeScreenState extends State<RegisterWelcomeScreen> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
   final List<Widget> _items = [];
 
@@ -61,6 +61,7 @@ class _RegisterWelcomScreenState extends State<RegisterWelcomScreen> {
             _items.insert(
                 index,
                 _chattingBubble(
+                  index,
                   chattingStrings[index],
                   widget.trainerName,
                   '${URLConstants.s3Url}${widget.trainerProfileImage}',
@@ -72,11 +73,12 @@ class _RegisterWelcomScreenState extends State<RegisterWelcomScreen> {
     }
   }
 
-  Widget _chattingBubble(String text, String trainerName, String imageUrl) {
+  Widget _chattingBubble(
+      int index, String text, String trainerName, String imageUrl) {
     return Padding(
       padding: const EdgeInsets.only(top: 20),
       child: SizedBox(
-        height: 85,
+        height: index == 0 ? 75 : 85,
         child: Stack(
           children: [
             Row(

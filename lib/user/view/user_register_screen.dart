@@ -52,6 +52,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
   bool buttonEnable = false;
 
   bool initial = true;
+  UserRegisterStateModel? initModel;
 
   @override
   void initState() {
@@ -80,7 +81,11 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
                       ref
                           .read(userRegisterProvider(widget.phone).notifier)
                           .initFromLocalDB();
-                      context.pop();
+                      if (initModel != null) {
+                        _initState();
+
+                        context.pop();
+                      }
                     },
                     cancelOnTap: () {
                       ref
@@ -110,6 +115,25 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
+  void _initState() {
+    if (initModel!.nickname != null) {
+      _nicknameController.text = initModel!.nickname!;
+    }
+    if (initModel!.email != null) {
+      _emailController.text = initModel!.email!;
+    }
+    if (initModel!.password != null) {
+      _passwordController.text = initModel!.password!;
+    }
+
+    if (initModel!.height != null) {
+      _heightController.text = initModel!.height!.toString();
+    }
+    if (initModel!.weight != null) {
+      _weightController.text = initModel!.weight!.toString();
+    }
+  }
+
   @override
   void dispose() {
     _nicknameController.dispose();
@@ -133,14 +157,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
     _checkButtonEnable(model);
 
-    if (model.nickname != null) _nicknameController.text = model.nickname!;
-    if (model.email != null) _emailController.text = model.email!;
-    if (model.password != null) {
-      _passwordController.text = model.password!;
-      _passwordConfirmController.text = model.password!;
-    }
-    if (model.height != null) _heightController.text = model.height!.toString();
-    if (model.weight != null) _weightController.text = model.weight!.toString();
+    final initModel = model;
 
     return WillPopScope(
       onWillPop: () async => false,

@@ -6,8 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-final userRegisterProvider = StateNotifierProvider.family<
-    UserRegisterStateNotifier, UserRegisterStateModel, String>((ref, phone) {
+final userRegisterProvider = StateNotifierProvider.family
+    .autoDispose<UserRegisterStateNotifier, UserRegisterStateModel, String>(
+        (ref, phone) {
   final AsyncValue<Box> userRegisterBox =
       ref.watch(hiveUserRegisterRecordProvider);
 
@@ -67,6 +68,16 @@ class UserRegisterStateNotifier extends StateNotifier<UserRegisterStateModel> {
           preferDays: [],
         );
       }
+    });
+  }
+
+  void resetLocalDB() {
+    userRegisterBox.whenData((value) {
+      value.delete(phone);
+
+      final record = value.get(phone);
+
+      print('record ====> $record');
     });
   }
 

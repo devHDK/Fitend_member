@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
@@ -206,6 +207,8 @@ class _RegisterCompleteScreenState
                 .read(getMeRepositoryProvider)
                 .userRegister(model: model)
                 .then((value) async {
+              FirebaseAnalytics.instance.logEvent(name: 'sign_up');
+
               await ref.read(getMeProvider.notifier).login(
                     email: registerModel.email!,
                     password: registerModel.password!,
@@ -233,7 +236,7 @@ class _RegisterCompleteScreenState
             final pref = await SharedPreferences.getInstance();
             pref.setBool(StringConstants.isNeedMeeting, false);
 
-            DialogWidgets.showToast(content: '통신중 문제가 발생하였습니다.');
+            DialogWidgets.showToast(content: '서버와 통신 중 문제가 발생하였습니다.');
           }
         },
         child: Padding(

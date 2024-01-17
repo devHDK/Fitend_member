@@ -391,8 +391,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               onTap: model.isQuitting
                                   ? null
                                   : () async {
-                                      FirebaseAnalytics.instance.logEvent(
-                                          name: 'click_large_next_button');
+                                      // FirebaseAnalytics.instance.logEvent(
+                                      //     name: 'click_large_next_button');
 
                                       await _onTapNext(context, model);
 
@@ -669,8 +669,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 proccessOnTap: model.isQuitting
                                     ? () {}
                                     : () async {
-                                        FirebaseAnalytics.instance.logEvent(
-                                            name: 'click_small_next_button');
+                                        // FirebaseAnalytics.instance.logEvent(
+                                        //     name: 'click_small_next_button');
 
                                         await _onTapNext(context, model);
 
@@ -768,8 +768,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                 proccessOnTap: model.isQuitting
                                     ? () {}
                                     : () async {
-                                        FirebaseAnalytics.instance.logEvent(
-                                            name: 'click_small_next_button');
+                                        // FirebaseAnalytics.instance.logEvent(
+                                        //     name: 'click_small_next_button');
+
                                         await _onTapNext(context, model);
 
                                         isTooltipVisible = false;

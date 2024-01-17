@@ -1,3 +1,4 @@
+import 'package:advance_animated_progress_indicator/advance_animated_progress_indicator.dart';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_text_form_field.dart';
@@ -44,7 +45,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
   final _passwordController = TextEditingController();
   final _passwordConfirmController = TextEditingController();
   final _heightController = TextEditingController();
-  final _wightController = TextEditingController();
+  final _weightController = TextEditingController();
 
   late AsyncValue<Box> userRegisterBox;
 
@@ -57,7 +58,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     super.initState();
 
     Future.delayed(
-      const Duration(milliseconds: 300),
+      const Duration(milliseconds: 500),
       () {
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
           if (initial) {
@@ -82,6 +83,21 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
                       context.pop();
                     },
                     cancelOnTap: () {
+                      ref
+                          .read(userRegisterProvider(widget.phone).notifier)
+                          .resetLocalDB();
+
+                      ref
+                          .read(userRegisterProvider(widget.phone).notifier)
+                          .init();
+
+                      _emailController.text = '';
+                      _nicknameController.text = '';
+                      _passwordController.text = '';
+                      _passwordConfirmController.text = '';
+                      _heightController.text = '';
+                      _weightController.text = '';
+
                       context.pop();
                     },
                   ),
@@ -101,7 +117,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     _passwordController.dispose();
     _passwordConfirmController.dispose();
     _heightController.dispose();
-    _wightController.dispose();
+    _weightController.dispose();
     super.dispose();
   }
 
@@ -116,6 +132,15 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     debugPrint('${model.toJson()}');
 
     _checkButtonEnable(model);
+
+    if (model.nickname != null) _nicknameController.text = model.nickname!;
+    if (model.email != null) _emailController.text = model.email!;
+    if (model.password != null) {
+      _passwordController.text = model.password!;
+      _passwordConfirmController.text = model.password!;
+    }
+    if (model.height != null) _heightController.text = model.height!.toString();
+    if (model.weight != null) _weightController.text = model.weight!.toString();
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -143,10 +168,12 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
             elevation: 0,
             title: SizedBox(
               width: 250,
-              child: LinearProgressIndicator(
-                backgroundColor: Pallete.lightGray,
-                color: Pallete.point,
-                value: model.progressStep! / 11,
+              child: AnimatedLinearProgressIndicator(
+                percentage: model.progressStep! / 11,
+                indicatorBackgroundColor: Pallete.lightGray,
+                indicatorColor: Pallete.point,
+                label: '',
+                animationDuration: const Duration(seconds: 1),
               ),
             ),
             centerTitle: true,
@@ -309,7 +336,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
             model.height != null &&
             model.birth != null &&
             _heightController.text.isNotEmpty &&
-            _wightController.text.isNotEmpty) {
+            _weightController.text.isNotEmpty) {
           buttonEnable = true;
         } else {
           buttonEnable = false;
@@ -692,7 +719,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
                           .read(userRegisterProvider(widget.phone).notifier)
                           .updateData(weight: double.tryParse(value));
                     },
-                    controller: _wightController,
+                    controller: _weightController,
                     fullLabelText: '',
                     labelText: '',
                     textInputType: const TextInputType.numberWithOptions(

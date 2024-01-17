@@ -1,3 +1,4 @@
+import 'package:fitend_member/common/component/custom_one_button_dialog.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
@@ -85,12 +86,13 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
                     color: Pallete.gray,
                   ),
                   const SizedBox(height: 32),
-                  Text(
-                    '이용예정 상품',
-                    style: s2SubTitle.copyWith(
-                      color: Colors.white,
+                  if (activeTickets.isNotEmpty)
+                    Text(
+                      '이용예정 상품',
+                      style: s2SubTitle.copyWith(
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 8),
                   if (activeTickets.length > 1)
                     TicketCell(
@@ -98,8 +100,10 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
                       child: activeTickets[1].receiptId != null
                           ? GestureDetector(
                               onTap: () {
-                                DialogWidgets.oneButtonDialog(
-                                    message:
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => CustomOneButtonDialog(
+                                    content:
                                         '멤버십 결제를 취소할까요?\n기간만료시 더 이상 코칭을 받을 수 없어요 🥲',
                                     confirmText: '결제 취소하기',
                                     confirmOnTap: () async {
@@ -109,7 +113,7 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
                                             .deletePayments(
                                                 ticketId: activeTickets[1].id)
                                             .then((value) {
-                                          context.pop();
+                                          _.pop();
 
                                           ref
                                               .read(getMeProvider.notifier)
@@ -129,7 +133,9 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
                                         DialogWidgets.showToast(
                                             content: 'error - $e');
                                       }
-                                    }).show(context);
+                                    },
+                                  ),
+                                );
                               },
                               child: Text(
                                 '결제취소',
@@ -156,14 +162,16 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
       floatingActionButton: GestureDetector(
         onTap: activeTickets.length >= 2
             ? () {
-                DialogWidgets.showToast(
-                    content: '이미 멤버십을 구매했어요!\n먼저 이용예정 상품을 취소해주세요 🙅‍♀️');
+                DialogWidgets.showToast(content: '이미 멤버십을 구매했어요!');
               }
             : () {
                 DialogWidgets.ticketBuyModal(
                   context: context,
-                  trainerId: userModel.user.activeTrainers.first.id,
-                  activeTicket: userModel.user.activeTickets != null
+                  trainerId: userModel.user.activeTrainers.isNotEmpty
+                      ? userModel.user.activeTrainers.first.id
+                      : userModel.user.lastTrainers.first.id,
+                  activeTicket: userModel.user.activeTickets != null &&
+                          userModel.user.activeTickets!.isNotEmpty
                       ? userModel.user.activeTickets!.first
                       : null,
                 );

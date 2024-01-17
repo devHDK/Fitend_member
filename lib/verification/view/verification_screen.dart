@@ -295,6 +295,8 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
 
                 if (e.response!.statusCode == 405) {
                   message = '잠시후 다시 시도해 주세요!';
+                } else if (e.response!.statusCode == 404) {
+                  message = '입력하신 번호로 가입된 계정이 없어요 😯';
                 } else {
                   message = '서버와 통신중 오류가 발생하였습니다!';
                 }
@@ -309,6 +311,8 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                     confirmOnTap: () => context.pop(),
                   ),
                 );
+
+                _phoneTextController.text = '';
               }
             }
           : null,
@@ -391,6 +395,8 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                       confirmOnTap: () => context.pop(),
                     ),
                   );
+
+                  _codeTextController.text = '';
                 }
               }
             }

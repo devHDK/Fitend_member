@@ -266,11 +266,15 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                                         context: context,
                                         builder: (context) =>
                                             DialogWidgets.oneButtonDialog(
-                                          message: '이용중인 멤버십이 없어요 😰',
-                                          confirmText: ' 멤버쉽 구매하기',
-                                          confirmOnTap: () => context.goNamed(
-                                              ActiveTicketScreen.routeName),
-                                        ),
+                                                message: '이용중인 멤버십이 없어요 😰',
+                                                confirmText: '멤버십 구매하기',
+                                                confirmOnTap: () {
+                                                  context.pop();
+
+                                                  context.goNamed(
+                                                      ActiveTicketScreen
+                                                          .routeName);
+                                                }),
                                       );
                                     } else {
                                       var dateChanged =

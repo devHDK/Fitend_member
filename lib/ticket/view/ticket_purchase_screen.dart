@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:bootpay/bootpay.dart';
 import 'package:bootpay/model/payload.dart';
@@ -19,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class TicketPurchaseScreen extends ConsumerStatefulWidget {
@@ -195,16 +197,22 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
             onConfirm: (String data) {
               try {
                 final result = BootPayConfirmResponse.fromJson(
-                    jsonDecode(data)); //bootPay responseData
-                _confirmPayment(result, startDate, expiredDate, userModel);
+                  jsonDecode(data),
+                ); //bootPay responseData
+
+                _confirmPayment(result, startDate, expiredDate, userModel)
+                    .then((value) {
+                  Bootpay().transactionConfirm();
+                });
               } catch (e) {
                 DialogWidgets.showToast(
-                  content: '결제중 오류가 발생하였습니다! 다시 시도해주세요',
+                  content: '결제 중 오류가 발생하였습니다! 다시 시도해주세요',
                   gravity: ToastGravity.CENTER,
                 );
+                Bootpay().dismiss(context);
               }
-
-              return true;
+              // Bootpay().dismiss(context);
+              return false;
             },
             onDone: (String data) {
               print('------- onDone: $data');
@@ -239,24 +247,35 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
 
   Future<void> _confirmPayment(BootPayConfirmResponse result,
       DateTime startDate, DateTime expiredDate, UserModel userModel) async {
-    if (mounted) {
-      await ref.read(paymentProvider.notifier).postConfirmPayments(
-            reqModel: PaymentConfirmReqModel(
-              receiptId: result.receiptId,
-              orderId: result.orderId,
-              price: F.appFlavor == Flavor.production
-                  ? widget.purchaseProduct.price
-                  : 100,
-              orderName: widget.purchaseProduct.name,
-              startedAt: startDate,
-              expiredAt: expiredDate,
-              trainerId: userModel.user.activeTrainers.first.id,
-              userId: userModel.user.id,
-              month: widget.purchaseProduct.month,
-            ),
-          );
+    debugPrint('결제 confirm중...');
 
-      ref.read(getMeProvider.notifier).getMe();
+    try {
+      if (mounted) {
+        await ref
+            .read(paymentProvider.notifier)
+            .postConfirmPayments(
+              reqModel: PaymentConfirmReqModel(
+                receiptId: result.receiptId,
+                orderId: result.orderId,
+                price: F.appFlavor == Flavor.production
+                    ? widget.purchaseProduct.price
+                    : 100,
+                orderName: widget.purchaseProduct.name,
+                startedAt: startDate,
+                expiredAt: expiredDate,
+                trainerId: userModel.user.activeTrainers.isNotEmpty
+                    ? userModel.user.activeTrainers.first.id
+                    : userModel.user.lastTrainers.first.id,
+                userId: userModel.user.id,
+                month: widget.purchaseProduct.month,
+              ),
+            )
+            .then((value) {
+          ref.read(getMeProvider.notifier).getMe();
+        });
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 

@@ -69,4 +69,16 @@ class IMGConstants {
   static const String scheduleMeeting = '${_imgPath}schedule_meeting.png';
   static const String registerRefresh1 = '${_imgPath}register_refresh1.png';
   static const String registerRefresh2 = '${_imgPath}register_refresh2.png';
+  static const List<String> onboardBackground = [
+    '${_imgPath}onboarding_background_image_0.png',
+    '${_imgPath}onboarding_background_image_1.png',
+    '${_imgPath}onboarding_background_image_2.png',
+    '${_imgPath}onboarding_background_image_3.png',
+  ];
+  static const List<String> onboardComponent = [
+    '${_imgPath}onboarding_component_image_0.png',
+    '${_imgPath}onboarding_component_image_1.png',
+    '${_imgPath}onboarding_component_image_2.png',
+    '${_imgPath}onboarding_component_image_3.png',
+  ];
 }

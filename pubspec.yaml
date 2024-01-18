@@ -66,6 +66,7 @@ dependencies:
   flutter_datetime_picker_plus: ^2.1.0
   advance_animated_progress_indicator: ^0.0.1
   page_view_dot_indicator: ^2.3.0
+  slack_notifier: ^1.4.0
 
   #asset edit
   ffmpeg_kit_flutter_min: ^5.1.0

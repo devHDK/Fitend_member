@@ -1589,6 +1589,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  slack_notifier:
+    dependency: "direct main"
+    description:
+      name: slack_notifier
+      sha256: "9aaacd94e26b775d3e0bb6341699269f9c2deaabf527cc2449744a56adbcb208"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   sliding_up_panel:
     dependency: "direct main"
     description:

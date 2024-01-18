@@ -315,9 +315,7 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
                 orderId: result.orderId,
                 price: F.appFlavor == Flavor.production
                     ? widget.purchaseProduct.price
-                    : widget.purchaseProduct.price
-                // 100
-                ,
+                    : 100,
                 orderName: widget.purchaseProduct.name,
                 startedAt: startDate,
                 expiredAt: expiredDate,
@@ -347,10 +345,8 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
     payload.pg = '나이스페이';
     payload.orderName = 'FITEND 온라인 코칭 ${purchaseProduct.month}개월'; //결제할 상품명
     payload.price = F.appFlavor == Flavor.production
-            ? purchaseProduct.price.toDouble()
-            : purchaseProduct.price.toDouble()
-        // 100
-        ; //정기결제시 0 혹은 주석
+        ? purchaseProduct.price.toDouble()
+        : 100; //정기결제시 0 혹은 주석
 
     payload.orderId = DateTime.now()
         .millisecondsSinceEpoch

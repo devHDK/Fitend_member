@@ -10,6 +10,7 @@ import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
+import 'package:fitend_member/flavors.dart';
 import 'package:fitend_member/user/model/user_register_state_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/provider/user_register_provider.dart';
@@ -20,8 +21,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:slack_notifier/slack_notifier.dart';
 import 'package:uuid/uuid.dart';
 
 class RegisterCompleteScreen extends ConsumerStatefulWidget {
@@ -214,6 +217,12 @@ class _RegisterCompleteScreenState
                     token: token!,
                     deviceId: deviceId,
                   );
+
+              final slack = SlackNotifier(URLConstants.slackNewUserWebhook);
+              await slack.send(
+                '${F.appFlavor != Flavor.production ? '[TEST]' : ''} [${registerModel.nickname}] 회원님이 신규가입! 🎉🎉🎉 생년월일${DateFormat('yyyy-MM-dd').format(registerModel.birth!)} ',
+                channel: '#cs6_신규가입-알림',
+              );
 
               if (!context.mounted) return;
 

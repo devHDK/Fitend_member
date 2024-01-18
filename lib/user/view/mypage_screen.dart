@@ -350,7 +350,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                   child: _renderLabel(
                     name: '사업자 정보',
                     child: Icon(
-                      !opneDetailInfo
+                      opneDetailInfo
                           ? Icons.keyboard_arrow_up
                           : Icons.keyboard_arrow_down,
                       color: Colors.white,

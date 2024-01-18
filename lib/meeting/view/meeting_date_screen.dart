@@ -4,6 +4,7 @@ import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/flavors.dart';
 import 'package:fitend_member/home_screen.dart';
 import 'package:fitend_member/meeting/model/meeting_date_model.dart';
 import 'package:fitend_member/meeting/model/post_meeting_create_model.dart';
@@ -27,6 +28,7 @@ import 'package:ndialog/ndialog.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:slack_notifier/slack_notifier.dart';
 
 class MeetingDateScreen extends ConsumerStatefulWidget {
   static String get routeName => 'meetingDate';
@@ -105,6 +107,8 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
 
     final scheduleModel = trainerScheduleState as MeetingDateModel;
     maxDateIndex = scheduleModel.data.length - 1;
+
+    final userModel = ref.watch(getMeProvider) as UserModel;
 
     buttonEnable = selectStartTime.isAfter(DateTime.now());
 
@@ -207,6 +211,13 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                               .read(scheduleProvider.notifier)
                               .paginate(startDate: fifteenDaysAgo);
                         });
+
+                        final slack =
+                            SlackNotifier(URLConstants.slackMeetingWebhook);
+                        await slack.send(
+                          '${F.appFlavor != Flavor.production ? '[TEST]' : ''} [${userModel.user.nickname}] 새로운 온보딩 미팅 예약이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectStartTime)} ${weekday[selectStartTime.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectStartTime)} ',
+                          channel: '#cs7_온보딩-미팅-알림',
+                        );
 
                         if (!context.mounted) return;
 
@@ -630,6 +641,13 @@ class _MeetingDatePickDialogState
                                     isMeetingThread: true,
                                   )
                                   .then((value) {
+                                final slack = SlackNotifier(
+                                    URLConstants.slackMeetingWebhook);
+                                slack.send(
+                                  '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[미팅일 희망] [${userModel.user.nickname}] 새로운 온보딩 미팅예약이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectDate)} ${weekday[selectDate.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectDate)} ',
+                                  channel: '#cs7_온보딩-미팅-알림',
+                                );
+
                                 DialogWidgets.showToast(
                                   content: '미팅 희망일 확인후 연락 드릴게요 😀',
                                   gravity: ToastGravity.CENTER,

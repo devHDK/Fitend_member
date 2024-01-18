@@ -122,7 +122,7 @@ class _BottomViewState extends State<_BottomView> {
                     height: 320,
                     child: Image.asset(
                       IMGConstants.onboardComponent[index],
-                      fit: BoxFit.fill,
+                      fit: BoxFit.fitHeight,
                     ),
                   ),
                   const SizedBox(

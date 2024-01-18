@@ -240,9 +240,12 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     final threadCreateState = ref.watch(threadCreateProvider);
 
     if (state is WorkoutProcessModelLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: Pallete.point,
+      return const Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Pallete.point,
+          ),
         ),
       );
     }

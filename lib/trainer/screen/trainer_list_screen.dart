@@ -43,9 +43,12 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
     String trainerProfileImage = '';
 
     if (state is TrainerListModelLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: Pallete.point,
+      return const Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Pallete.point,
+          ),
         ),
       );
     }

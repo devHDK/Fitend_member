@@ -212,9 +212,12 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     if (state is ScheduleModelLoading ||
         notificationState is NotificationMainModelLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: Pallete.point,
+      return const Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Pallete.point,
+          ),
         ),
       );
     }

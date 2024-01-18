@@ -63,9 +63,12 @@ class _WorkoutHistoryScreenState extends ConsumerState<WorkoutHistoryScreen> {
     final state = ref.watch(workoutHistoryProvider(widget.workoutPlanId));
 
     if (state is WorkoutHistoryModelLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: Pallete.point,
+      return const Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Pallete.point,
+          ),
         ),
       );
     }

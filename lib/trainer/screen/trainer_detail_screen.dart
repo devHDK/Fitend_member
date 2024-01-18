@@ -48,9 +48,12 @@ class _TrainerDetailScreenState extends ConsumerState<TrainerDetailScreen> {
     final state = ref.watch(trainerDetailProvider(widget.trainerId));
 
     if (state is TrainerDetailModelLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: Pallete.point,
+      return const Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Pallete.point,
+          ),
         ),
       );
     }

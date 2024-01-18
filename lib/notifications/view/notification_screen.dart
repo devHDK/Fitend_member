@@ -125,9 +125,12 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
     final state = ref.watch(notificationProvider);
 
     if (state is NotificationModelLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: Pallete.point,
+      return const Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Pallete.point,
+          ),
         ),
       );
     }

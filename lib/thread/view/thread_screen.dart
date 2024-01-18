@@ -191,9 +191,12 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     final threadCreateState = ref.watch(threadCreateProvider);
 
     if (state is ThreadListModelLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          color: Pallete.point,
+      return const Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Pallete.point,
+          ),
         ),
       );
     }

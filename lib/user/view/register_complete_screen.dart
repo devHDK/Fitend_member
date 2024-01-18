@@ -220,7 +220,7 @@ class _RegisterCompleteScreenState
 
               final slack = SlackNotifier(URLConstants.slackNewUserWebhook);
               await slack.send(
-                '${F.appFlavor != Flavor.production ? '[TEST]' : ''} [${registerModel.nickname}] 회원님이 신규가입! 🎉🎉🎉 생년월일${DateFormat('yyyy-MM-dd').format(registerModel.birth!)} ',
+                '${F.appFlavor != Flavor.production ? '[TEST]' : ''} [${registerModel.nickname}] 회원님이 신규 가입! [${registerModel.gender == 'male' ? '남' : '여'}] 생년월일 : ${DateFormat('yyyy-MM-dd').format(registerModel.birth!)} 🎉🎉🎉',
                 channel: '#cs6_신규가입-알림',
               );
 

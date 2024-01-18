@@ -411,8 +411,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
                 return const SizedBox();
               },
             ),
-            // if (schedules.isNeedMeeing != null && schedules.isNeedMeeing!)
-            _needMeetingBanner(context, userState),
+            if (schedules.isNeedMeeing != null && schedules.isNeedMeeing!)
+              _needMeetingBanner(context, userState),
             if (!isActiveUser) _needPurchaseTicketBanner(context, userState),
           ],
         ),

@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:fitend_member/meeting/model/meeting_date_model.dart';
 import 'package:fitend_member/meeting/model/post_meeting_create_model.dart';
 import 'package:fitend_member/meeting/repository/meeting_repository.dart';
@@ -114,12 +113,24 @@ class MeetingDateStateNotifier extends StateNotifier<MeetingDateModelBase?> {
 
           for (var schedule in scheduleData.schedules) {
             for (var trainerSchedule in trainerSchedule) {
-              if ((schedule.startTime.isBefore(trainerSchedule.endTime) &&
-                      schedule.endTime.isAfter(trainerSchedule.startTime)) ||
-                  schedule.startTime
-                      .isBefore(DateTime.now().add(const Duration(hours: 1)))) {
+              if (schedule.startTime
+                  .isBefore(DateTime.now().add(const Duration(hours: 2)))) {
                 schedule.isAvail = false;
+                break;
               }
+
+              if ((schedule.startTime.isBefore(trainerSchedule.endTime) &&
+                  schedule.endTime.isAfter(trainerSchedule.startTime))) {
+                schedule.isAvail = false;
+                break;
+              }
+            }
+          }
+        } else {
+          for (var schedule in scheduleData.schedules) {
+            if (schedule.startTime
+                .isBefore(DateTime.now().add(const Duration(hours: 2)))) {
+              schedule.isAvail = false;
             }
           }
         }

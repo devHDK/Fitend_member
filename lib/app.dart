@@ -1,8 +1,10 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
+import 'package:fitend_member/home_screen.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
+import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,6 +63,10 @@ class _AppState extends ConsumerState<App> {
         ref.read(routerProvider).goNamed(NotificationScreen.routeName);
       } else if (message.data['type'].toString().contains('noFeedback')) {
         ref.read(routerProvider).goNamed(NotificationScreen.routeName);
+      } else if (message.data['type'].toString().contains('ticketExpire')) {
+        ref.read(routerProvider).goNamed(ActiveTicketScreen.routeName);
+      } else if (message.data['type'].toString().contains('meeting')) {
+        ref.read(routerProvider).goNamed(HomeScreen.routeName);
       }
     });
   }

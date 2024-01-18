@@ -73,8 +73,13 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
 
       await ref
           .read(meetingDateProvider(widget.trainerId).notifier)
-          .getTrainerSchedules(widget.trainerId,
-              GetTrainerScheduleModel(startDate: today, endDate: endDate));
+          .getTrainerSchedules(
+            widget.trainerId,
+            GetTrainerScheduleModel(
+              startDate: today,
+              endDate: endDate,
+            ),
+          );
     }
   }
 
@@ -215,7 +220,7 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                         final slack =
                             SlackNotifier(URLConstants.slackMeetingWebhook);
                         await slack.send(
-                          '${F.appFlavor != Flavor.production ? '[TEST]' : ''} [${userModel.user.nickname}] 새로운 온보딩 미팅 예약이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectStartTime)} ${weekday[selectStartTime.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectStartTime)} ',
+                          '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[미팅일 확정✅][${userModel.user.activeTrainers.first.nickname} 코치님]-[${userModel.user.nickname}] 새로운 온보딩 미팅이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectStartTime)} ${weekday[selectStartTime.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectStartTime)} ',
                           channel: '#cs7_온보딩-미팅-알림',
                         );
 
@@ -644,7 +649,7 @@ class _MeetingDatePickDialogState
                                 final slack = SlackNotifier(
                                     URLConstants.slackMeetingWebhook);
                                 slack.send(
-                                  '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[미팅일 희망] [${userModel.user.nickname}] 새로운 온보딩 미팅예약이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectDate)} ${weekday[selectDate.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectDate)} ',
+                                  '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[미팅일 희망희망📆] [${userModel.user.activeTrainers.first.nickname} 코치님] [${userModel.user.nickname}] 새로운 온보딩 미팅이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectDate)} ${weekday[selectDate.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectDate)} ',
                                   channel: '#cs7_온보딩-미팅-알림',
                                 );
 

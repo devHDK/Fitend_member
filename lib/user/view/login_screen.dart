@@ -355,9 +355,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
-              onPressed: () => DataUtils.onWebViewTap(
-                  uri:
-                      "https://weareraid.notion.site/06b383e3c7aa4515a4637c2c11f3d908?pvs=4"),
+              onPressed: () =>
+                  DataUtils.onWebViewTap(uri: URLConstants.notionPrivacy),
               child: Text(
                 '개인정보 처리방침',
                 style: s3SubTitle.copyWith(
@@ -370,9 +369,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               width: 40,
             ),
             TextButton(
-              onPressed: () => DataUtils.onWebViewTap(
-                  uri:
-                      "https://weareraid.notion.site/87468f88c99b427b81ae3e44aeb1f37b?pvs=4"),
+              onPressed: () =>
+                  DataUtils.onWebViewTap(uri: URLConstants.notionServiceUser),
               child: Text(
                 '서비스 이용약관',
                 style: s3SubTitle.copyWith(

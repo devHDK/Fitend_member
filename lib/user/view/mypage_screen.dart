@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
@@ -232,9 +233,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               height: 1,
             ),
             InkWell(
-              onTap: () => DataUtils.onWebViewTap(
-                  uri:
-                      "https://weareraid.notion.site/87468f88c99b427b81ae3e44aeb1f37b?pvs=4"),
+              onTap: () =>
+                  DataUtils.onWebViewTap(uri: URLConstants.notionServiceUser),
               child: _renderLabel(
                 name: '서비스 이용약관',
                 child: SvgPicture.asset(SVGConstants.next),
@@ -245,9 +245,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               height: 1,
             ),
             InkWell(
-              onTap: () => DataUtils.onWebViewTap(
-                  uri:
-                      "https://weareraid.notion.site/06b383e3c7aa4515a4637c2c11f3d908?pvs=4"),
+              onTap: () =>
+                  DataUtils.onWebViewTap(uri: URLConstants.notionPrivacy),
               child: _renderLabel(
                 name: '개인정보 처리방침',
                 child: SvgPicture.asset(SVGConstants.next),

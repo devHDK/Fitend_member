@@ -166,8 +166,7 @@ class _RegisterCompleteScreenState
                     ),
                     recognizer: TapAndPanGestureRecognizer()
                       ..onTapDown = (detail) => DataUtils.onWebViewTap(
-                          uri:
-                              "https://weareraid.notion.site/06b383e3c7aa4515a4637c2c11f3d908?pvs=4"),
+                          uri: URLConstants.notionPrivacy),
                   ),
                   const TextSpan(text: ' 과 서비스 '),
                   TextSpan(
@@ -178,8 +177,7 @@ class _RegisterCompleteScreenState
                     ),
                     recognizer: TapAndPanGestureRecognizer()
                       ..onTapDown = (detail) => DataUtils.onWebViewTap(
-                            uri:
-                                "https://weareraid.notion.site/87468f88c99b427b81ae3e44aeb1f37b?pvs=4",
+                            uri: URLConstants.notionServiceUser,
                           ),
                   ),
                   const TextSpan(text: '에\n    동의하는 것으로 간주됩니다.'),

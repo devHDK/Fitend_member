@@ -1,12 +1,14 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:bootpay/bootpay.dart';
 import 'package:bootpay/model/payload.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
+import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/bootpay_constants.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/flavors.dart';
 import 'package:fitend_member/payment/model/bootpay_confirm_response.dart';
 import 'package:fitend_member/payment/model/payment_confirm_req_model.dart';
@@ -17,10 +19,10 @@ import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class TicketPurchaseScreen extends ConsumerStatefulWidget {
@@ -41,6 +43,8 @@ class TicketPurchaseScreen extends ConsumerStatefulWidget {
 }
 
 class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
+  bool isAgreed = false;
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(getMeProvider);
@@ -166,76 +170,128 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
                   ],
                 ),
               ),
+            ),
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isAgreed = !isAgreed;
+                });
+              },
+              child: Container(
+                width: 100.w,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Pallete.darkGray,
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
+                  child: Row(
+                    children: [
+                      if (!isAgreed)
+                        SvgPicture.asset(SVGConstants.checkVoid)
+                      else
+                        SvgPicture.asset(SVGConstants.checkComplete),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        '필수 유의사항 및 환불 규정을 확인했어요.',
+                        style: s3SubTitle.copyWith(
+                          color: Colors.white,
+                          height: 1,
+                        ),
+                      ),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () => DataUtils.onWebViewTap(
+                            uri: URLConstants.notionPurcharse),
+                        child: Text(
+                          '보기',
+                          style: s3SubTitle.copyWith(
+                            color: Colors.white,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
             )
           ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GestureDetector(
-        onTap: () {
-          Payload payload = getPayload(widget.purchaseProduct);
+        onTap: !isAgreed
+            ? null
+            : () {
+                Payload payload = getPayload(widget.purchaseProduct);
 
-          Bootpay().requestPayment(
-            context: context,
-            payload: payload,
-            showCloseButton: true,
-            // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
-            onCancel: (String data) {
-              print('------- onCancel: $data');
-              Bootpay().dismiss(context);
-            },
-            onError: (String data) {
-              print('------- onError: $data');
-            },
-            onClose: () {
-              print('------- onClose');
-              Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
-            },
-            onIssued: (String data) {
-              print('------- onIssued: $data');
-            },
-            onConfirm: (String data) {
-              try {
-                final result = BootPayConfirmResponse.fromJson(
-                  jsonDecode(data),
-                ); //bootPay responseData
+                Bootpay().requestPayment(
+                  context: context,
+                  payload: payload,
+                  showCloseButton: true,
+                  // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
+                  onCancel: (String data) {
+                    // print('------- onCancel: $data');
+                    Bootpay().dismiss(context);
+                  },
+                  onError: (String data) {
+                    // print('------- onError: $data');
+                  },
+                  onClose: () {
+                    print('------- onClose');
+                    // Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+                  },
+                  onIssued: (String data) {
+                    print('------- onIssued: $data');
+                  },
+                  onConfirm: (String data) {
+                    try {
+                      final result = BootPayConfirmResponse.fromJson(
+                        jsonDecode(data),
+                      ); //bootPay responseData
 
-                _confirmPayment(result, startDate, expiredDate, userModel)
-                    .then((value) {
-                  Bootpay().transactionConfirm();
-                });
-              } catch (e) {
-                DialogWidgets.showToast(
-                  content: '결제 중 오류가 발생하였습니다! 다시 시도해주세요',
-                  gravity: ToastGravity.CENTER,
+                      _confirmPayment(result, startDate, expiredDate, userModel)
+                          .then((value) {
+                        Bootpay().transactionConfirm();
+                      });
+                    } catch (e) {
+                      DialogWidgets.showToast(
+                        content: '결제 중 오류가 발생하였습니다! 다시 시도해주세요',
+                        gravity: ToastGravity.CENTER,
+                      );
+                      Bootpay().dismiss(context);
+                    }
+                    // Bootpay().dismiss(context);
+                    return false;
+                  },
+                  onDone: (String data) {
+                    // print('------- onDone: $data');
+                    Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+
+                    //route
+                    context.pop({'buyTicket': true});
+                  },
                 );
-                Bootpay().dismiss(context);
-              }
-              // Bootpay().dismiss(context);
-              return false;
-            },
-            onDone: (String data) {
-              print('------- onDone: $data');
-              Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
-
-              //route
-              context.pop({'buyTicket': true});
-            },
-          );
-        },
+              },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Container(
             height: 44,
             decoration: BoxDecoration(
-              color: Pallete.point,
+              color: !isAgreed ? Pallete.point.withOpacity(0.4) : Pallete.point,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
               child: Text(
                 '결제하기',
                 style: h6Headline.copyWith(
-                  color: Colors.white,
+                  color:
+                      !isAgreed ? Colors.white.withOpacity(0.4) : Colors.white,
                 ),
               ),
             ),
@@ -259,7 +315,9 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
                 orderId: result.orderId,
                 price: F.appFlavor == Flavor.production
                     ? widget.purchaseProduct.price
-                    : 100,
+                    : widget.purchaseProduct.price
+                // 100
+                ,
                 orderName: widget.purchaseProduct.name,
                 startedAt: startDate,
                 expiredAt: expiredDate,
@@ -289,8 +347,10 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
     payload.pg = '나이스페이';
     payload.orderName = 'FITEND 온라인 코칭 ${purchaseProduct.month}개월'; //결제할 상품명
     payload.price = F.appFlavor == Flavor.production
-        ? purchaseProduct.price.toDouble()
-        : 100; //정기결제시 0 혹은 주석
+            ? purchaseProduct.price.toDouble()
+            : purchaseProduct.price.toDouble()
+        // 100
+        ; //정기결제시 0 혹은 주석
 
     payload.orderId = DateTime.now()
         .millisecondsSinceEpoch

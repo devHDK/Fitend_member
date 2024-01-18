@@ -52,7 +52,6 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
   bool buttonEnable = false;
 
   bool initial = true;
-  UserRegisterStateModel? initModel;
 
   @override
   void initState() {
@@ -81,11 +80,13 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
                       ref
                           .read(userRegisterProvider(widget.phone).notifier)
                           .initFromLocalDB();
-                      if (initModel != null) {
-                        _initState();
 
-                        context.pop();
-                      }
+                      final model =
+                          ref.read(userRegisterProvider(widget.phone));
+
+                      _initState(model);
+
+                      context.pop();
                     },
                     cancelOnTap: () {
                       ref
@@ -115,22 +116,23 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
     );
   }
 
-  void _initState() {
-    if (initModel!.nickname != null) {
-      _nicknameController.text = initModel!.nickname!;
+  void _initState(UserRegisterStateModel initModel) {
+    if (initModel.nickname != null) {
+      _nicknameController.text = initModel.nickname!;
     }
-    if (initModel!.email != null) {
-      _emailController.text = initModel!.email!;
+    if (initModel.email != null) {
+      _emailController.text = initModel.email!;
     }
-    if (initModel!.password != null) {
-      _passwordController.text = initModel!.password!;
+    if (initModel.password != null) {
+      _passwordController.text = initModel.password!;
+      _passwordConfirmController.text = initModel.password!;
     }
 
-    if (initModel!.height != null) {
-      _heightController.text = initModel!.height!.toString();
+    if (initModel.height != null) {
+      _heightController.text = initModel.height!.toString();
     }
-    if (initModel!.weight != null) {
-      _weightController.text = initModel!.weight!.toString();
+    if (initModel.weight != null) {
+      _weightController.text = initModel.weight!.toString();
     }
   }
 
@@ -152,12 +154,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
         ref.watch(hiveUserRegisterRecordProvider);
 
     userRegisterBox = registerBox;
-
-    debugPrint('${model.toJson()}');
-
     _checkButtonEnable(model);
-
-    // final initModel = model;
 
     return WillPopScope(
       onWillPop: () async => false,

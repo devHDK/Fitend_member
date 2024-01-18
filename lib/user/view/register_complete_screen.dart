@@ -143,7 +143,7 @@ class _RegisterCompleteScreenState
                       style: h4Headline.copyWith(color: Colors.white),
                     ),
                     Text(
-                      '포기하지 않고 꾸준히 지속할 수 있도록\n동기부여와 멘탈케어를 해드릴게요.  ',
+                      '포기하지 않고 꾸준히 지속할 수 있도록\n동기부여와 멘탈케어를 해드릴게요.',
                       style: s1SubTitle.copyWith(color: Colors.white),
                     ),
                   ],

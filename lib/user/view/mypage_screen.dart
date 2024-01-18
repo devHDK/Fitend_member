@@ -41,6 +41,17 @@ class MyPageScreen extends ConsumerStatefulWidget {
 class _MyPageScreenState extends ConsumerState<MyPageScreen> {
   PackageInfo? packageInfo;
   String? version;
+  bool opneDetailInfo = false;
+
+  final Map<String, String> companyInfo = {
+    "법인명": "주식회사 레이드",
+    "사업자등록번호": "198-88-02055",
+    "대표자명": "장현일, 김시현",
+    "본점주소": "충청남도 천안시 서북구 천안천4길 32,\n그린스타트업타운",
+    "전화번호": "0507-1441-1061",
+    "이메일": "raid@weareraid.io",
+    "통신판매번호": "2021-서울송파-1493"
+  };
 
   @override
   void initState() {
@@ -127,202 +138,263 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Column(
-          children: [
-            _renderUserInfo(model, formattedPhoneNumber),
-            const Divider(
-              color: Pallete.darkGray,
-              height: 1,
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => const ActiveTicketScreen(),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: model.user.activeTickets != null &&
-                        model.user.activeTickets!.isNotEmpty
-                    ? TicketCell(
-                        ticket: model.user.activeTickets!.first,
-                        child: SvgPicture.asset(SVGConstants.next),
-                      )
-                    : NoTicketCell(
-                        title: '멤버십을 구매하여',
-                        content: '맞춤형 운동플랜과 코칭을 받아보세요!',
-                        child: SvgPicture.asset(SVGConstants.next),
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28),
+            child: Column(
+              children: [
+                _renderUserInfo(model, formattedPhoneNumber),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => const ActiveTicketScreen(),
                       ),
-              ),
-            ),
-            const Divider(
-              color: Pallete.darkGray,
-              height: 1,
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => const TicketScreen(),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: model.user.activeTickets != null &&
+                            model.user.activeTickets!.isNotEmpty
+                        ? TicketCell(
+                            ticket: model.user.activeTickets!.first,
+                            child: SvgPicture.asset(SVGConstants.next),
+                          )
+                        : NoTicketCell(
+                            title: '멤버십을 구매하여',
+                            content: '맞춤형 운동플랜과 코칭을 받아보세요!',
+                            child: SvgPicture.asset(SVGConstants.next),
+                          ),
                   ),
-                );
-              },
-              child: _renderLabel(
-                name: '멤버쉽 결제 내역',
-                child: SvgPicture.asset(SVGConstants.next),
-              ),
-            ),
-            const Divider(
-              color: Pallete.darkGray,
-              height: 1,
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => const PasswordConfirmScreen(),
+                ),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => const TicketScreen(),
+                      ),
+                    );
+                  },
+                  child: _renderLabel(
+                    name: '멤버쉽 결제 내역',
+                    child: SvgPicture.asset(SVGConstants.next),
                   ),
-                );
-              },
-              child: _renderLabel(
-                name: '비밀번호 변경',
-                child: SvgPicture.asset(SVGConstants.next),
-              ),
-            ),
-            const Divider(
-              color: Pallete.darkGray,
-              height: 1,
-            ),
-            _renderLabel(
-                name: '알림 설정',
-                child: SizedBox(
-                  width: 42,
-                  height: 24,
-                  child: Transform.scale(
-                    scale: 0.7,
-                    child: CupertinoSwitch(
-                      activeColor: Pallete.point,
-                      trackColor: Pallete.gray,
-                      value: state.user.isNotification!,
-                      onChanged: (value) async {
-                        try {
-                          ref.read(getMeProvider.notifier).changeIsNotification(
-                              isNotification: !state.user.isNotification!);
-
-                          await ref
-                              .read(notificationRepositoryProvider)
-                              .putNotificationsSetting(
-                                  body: NotificationSettingParams(
+                ),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => const PasswordConfirmScreen(),
+                      ),
+                    );
+                  },
+                  child: _renderLabel(
+                    name: '비밀번호 변경',
+                    child: SvgPicture.asset(SVGConstants.next),
+                  ),
+                ),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
+                ),
+                _renderLabel(
+                    name: '알림 설정',
+                    child: SizedBox(
+                      width: 42,
+                      height: 24,
+                      child: Transform.scale(
+                        scale: 0.7,
+                        child: CupertinoSwitch(
+                          activeColor: Pallete.point,
+                          trackColor: Pallete.gray,
+                          value: state.user.isNotification!,
+                          onChanged: (value) async {
+                            try {
+                              ref
+                                  .read(getMeProvider.notifier)
+                                  .changeIsNotification(
                                       isNotification:
-                                          !state.user.isNotification!));
-                        } on DioException catch (e) {
-                          debugPrint('$e');
-                          ref.read(getMeProvider.notifier).changeIsNotification(
-                              isNotification: !state.user.isNotification!);
-                        }
-                      },
+                                          !state.user.isNotification!);
+
+                              await ref
+                                  .read(notificationRepositoryProvider)
+                                  .putNotificationsSetting(
+                                      body: NotificationSettingParams(
+                                          isNotification:
+                                              !state.user.isNotification!));
+                            } on DioException catch (e) {
+                              debugPrint('$e');
+                              ref
+                                  .read(getMeProvider.notifier)
+                                  .changeIsNotification(
+                                      isNotification:
+                                          !state.user.isNotification!);
+                            }
+                          },
+                        ),
+                      ),
+                    )),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
+                ),
+                InkWell(
+                  onTap: () => DataUtils.onWebViewTap(
+                      uri: URLConstants.notionServiceUser),
+                  child: _renderLabel(
+                    name: '서비스 이용약관',
+                    child: SvgPicture.asset(SVGConstants.next),
+                  ),
+                ),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
+                ),
+                InkWell(
+                  onTap: () =>
+                      DataUtils.onWebViewTap(uri: URLConstants.notionPrivacy),
+                  child: _renderLabel(
+                    name: '개인정보 처리방침',
+                    child: SvgPicture.asset(SVGConstants.next),
+                  ),
+                ),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
+                ),
+                _renderLabel(
+                  name: '현재 버전',
+                  child: Text(
+                    packageInfo != null ? 'v${packageInfo!.version}' : '',
+                    style: s3SubTitle.copyWith(
+                      color: Pallete.point,
                     ),
                   ),
-                )),
-            const Divider(
-              color: Pallete.darkGray,
-              height: 1,
-            ),
-            InkWell(
-              onTap: () =>
-                  DataUtils.onWebViewTap(uri: URLConstants.notionServiceUser),
-              child: _renderLabel(
-                name: '서비스 이용약관',
-                child: SvgPicture.asset(SVGConstants.next),
-              ),
-            ),
-            const Divider(
-              color: Pallete.darkGray,
-              height: 1,
-            ),
-            InkWell(
-              onTap: () =>
-                  DataUtils.onWebViewTap(uri: URLConstants.notionPrivacy),
-              child: _renderLabel(
-                name: '개인정보 처리방침',
-                child: SvgPicture.asset(SVGConstants.next),
-              ),
-            ),
-            const Divider(
-              color: Pallete.darkGray,
-              height: 1,
-            ),
-            _renderLabel(
-                name: '현재 버전',
-                child: Text(
-                  packageInfo != null ? 'v${packageInfo!.version}' : '',
-                  style: s3SubTitle.copyWith(
-                    color: Pallete.point,
+                ),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
+                ),
+                InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => DialogWidgets.confirmDialog(
+                        message: '로그아웃 하시겠습니까?',
+                        confirmText: '확인',
+                        cancelText: '취소',
+                        confirmOnTap: () async {
+                          await ref.read(getMeProvider.notifier).logout();
+
+                          ref.invalidate(threadProvider);
+                          ref.invalidate(threadDetailProvider);
+
+                          ref.invalidate(scheduleProvider);
+
+                          ref.invalidate(threadCreateProvider);
+                          ref.invalidate(commentCreateProvider);
+
+                          ref.invalidate(notificationProvider);
+                          ref.invalidate(notificationHomeProvider);
+
+                          ref.invalidate(ticketProvider);
+                        },
+                        cancelOnTap: () => context.pop(),
+                      ),
+                    );
+                  },
+                  child: _renderLabel(
+                    name: '로그아웃',
                   ),
-                )),
-            const Divider(
-              color: Pallete.darkGray,
-              height: 1,
-            ),
-            InkWell(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => DialogWidgets.confirmDialog(
-                    message: '로그아웃 하시겠습니까?',
-                    confirmText: '확인',
-                    cancelText: '취소',
-                    confirmOnTap: () async {
-                      await ref.read(getMeProvider.notifier).logout();
+                ),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
+                ),
+                InkWell(
+                  onTap: () async {
+                    var tempDir = await getTemporaryDirectory();
 
-                      ref.invalidate(threadProvider);
-                      ref.invalidate(threadDetailProvider);
-
-                      ref.invalidate(scheduleProvider);
-
-                      ref.invalidate(threadCreateProvider);
-                      ref.invalidate(commentCreateProvider);
-
-                      ref.invalidate(notificationProvider);
-                      ref.invalidate(notificationHomeProvider);
-
-                      ref.invalidate(ticketProvider);
-                    },
-                    cancelOnTap: () => context.pop(),
+                    if (tempDir.existsSync()) {
+                      tempDir.deleteSync(recursive: true);
+                      DialogWidgets.showToast(content: '캐시가 삭제되었습니다!');
+                    }
+                  },
+                  child: _renderLabel(
+                    name: '캐시 비우기',
                   ),
-                );
-              },
-              child: _renderLabel(
-                name: '로그아웃',
-              ),
+                ),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
+                ),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      opneDetailInfo = !opneDetailInfo;
+                    });
+                  },
+                  child: _renderLabel(
+                    name: '사업자 정보',
+                    child: Icon(
+                      !opneDetailInfo
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+                if (opneDetailInfo)
+                  Column(children: [
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    ...companyInfo.entries.map(
+                      (element) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 115,
+                                child: Text(
+                                  element.key,
+                                  style:
+                                      s2SubTitle.copyWith(color: Colors.white),
+                                ),
+                              ),
+                              Text(
+                                element.value,
+                                style: s2SubTitle.copyWith(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ]),
+                const SizedBox(
+                  height: 50,
+                )
+              ],
             ),
-            const Divider(
-              color: Pallete.darkGray,
-              height: 1,
-            ),
-            InkWell(
-              onTap: () async {
-                var tempDir = await getTemporaryDirectory();
-
-                if (tempDir.existsSync()) {
-                  tempDir.deleteSync(recursive: true);
-                  DialogWidgets.showToast(content: '캐시가 삭제되었습니다!');
-                }
-              },
-              child: _renderLabel(
-                name: '캐시 비우기',
-              ),
-            ),
-            const Divider(
-              color: Pallete.darkGray,
-              height: 1,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -339,6 +411,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 model.user.nickname,
                 style: h1Headline.copyWith(
                   color: Colors.white,
+                  height: 1,
                 ),
               ),
               const SizedBox(
@@ -348,6 +421,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 '회원님',
                 style: s2SubTitle.copyWith(
                   color: Colors.white,
+                  height: 1,
                 ),
               ),
             ],
@@ -356,7 +430,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             height: 8,
           ),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SvgPicture.asset(SVGConstants.email),
@@ -367,7 +441,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 model.user.email,
                 style: s2SubTitle.copyWith(
                   color: Pallete.lightGray,
-                  height: 1.6,
+                  height: 1,
                 ),
               ),
             ],
@@ -376,7 +450,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             height: 8,
           ),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SvgPicture.asset(SVGConstants.phone),
@@ -387,6 +461,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 formattedPhoneNumber,
                 style: s2SubTitle.copyWith(
                   color: Pallete.lightGray,
+                  height: 1,
                 ),
               ),
             ],

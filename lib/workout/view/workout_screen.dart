@@ -264,7 +264,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     bool isLastExercise = false;
 
     if (model.exerciseIndex == model.maxExerciseIndex &&
-        model.maxSetInfoList[model.exerciseIndex] ==
+        model.maxSetInfoList[model.exerciseIndex] <=
             model.setInfoCompleteList[model.exerciseIndex] + 1) {
       isLastExercise = true;
     } else {
@@ -278,7 +278,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         }
       }
 
-      if (model.setInfoCompleteList[model.exerciseIndex] + 1 !=
+      if (model.setInfoCompleteList[model.exerciseIndex] + 1 <
           model.maxSetInfoList[model.exerciseIndex]) {
         isLastExercise = false;
       }

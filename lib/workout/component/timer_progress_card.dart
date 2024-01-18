@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/muscle_group.dart';
@@ -311,7 +312,7 @@ class _TimerProgressCardState extends ConsumerState<TimerProgressCard> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
+                  AutoSizeText(
                     widget.exercise.name,
                     style: h1Headline.copyWith(height: 1.2),
                   ),

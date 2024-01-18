@@ -36,7 +36,6 @@ class _EmailShowScreenState extends State<EmailShowScreen> {
     String obscureId = emailId[0].substring(0, emailId[0].length - 2);
     obscureId += '**';
 
-    print(widget.phoneToken);
     return Scaffold(
       backgroundColor: Pallete.background,
       appBar: AppBar(

@@ -1,6 +1,7 @@
 import 'package:fitend_member/workout/model/get_workout_history_params.dart';
 import 'package:fitend_member/workout/model/workout_history_model.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final workoutHistoryProvider = StateNotifierProvider.family<
@@ -65,7 +66,7 @@ class WorkoutHistoryStateNotifier
         state = WorkoutHistoryModel(data: response.data, total: response.total);
       }
     } catch (e) {
-      print(e);
+      debugPrint('$e');
       state = WorkoutHistoryModelError(message: '데이터를 불러오지 못했습니다.');
     }
   }

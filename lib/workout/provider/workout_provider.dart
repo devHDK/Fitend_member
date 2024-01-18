@@ -243,7 +243,9 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
   void workoutSaveForStart() async {
     try {
       repository.putworkoutScheduleStart(id: id);
-    } catch (e) {}
+    } catch (e) {
+      debugPrint('$e');
+    }
 
     final pstate = state as WorkoutModel;
 

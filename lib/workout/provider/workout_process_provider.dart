@@ -130,8 +130,6 @@ class WorkoutProcessStateNotifier
     List<Exercise> tempExercises = [];
     final workoutProviderState = workoutProvider.state as WorkoutModel;
 
-    print(workoutProviderState.exercises);
-
     tempExercises = workoutProviderState.exercises; // 서버에서 받은 운동 목록
     tempState.exercises = tempExercises;
     tempState.maxExerciseIndex = tempExercises.length - 1; //

@@ -445,7 +445,6 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
     } else if ((widget.verificationType == VerificationType.register &&
             widget.verificationType == VerificationType.id) ||
         isAlreadyRegister) {
-      //TODO:이메일 표기 페이지로 이동
       Navigator.of(context).push(
         CupertinoPageRoute(
           builder: (context) => EmailShowScreen(
@@ -458,7 +457,7 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
       );
     }
     // else if (widget.verificationType == VerificationType.reset) {
-    //   //TODO:비밀번호 변경 페이지로 이동
+
     // }
   }
 }

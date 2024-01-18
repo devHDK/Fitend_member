@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
 
 class CustomOneButtonDialog extends StatefulWidget {
-  CustomOneButtonDialog({
+  const CustomOneButtonDialog({
     super.key,
     this.title,
     required this.content,
@@ -13,11 +13,11 @@ class CustomOneButtonDialog extends StatefulWidget {
     this.dismissable = true,
   });
 
-  String? title;
+  final String? title;
   final String content;
   final String confirmText;
   final GestureTapCallback confirmOnTap;
-  bool? dismissable;
+  final bool? dismissable;
 
   @override
   State<CustomOneButtonDialog> createState() => _CustomOneButtonDialogState();

@@ -243,11 +243,11 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
                     // print('------- onError: $data');
                   },
                   onClose: () {
-                    print('------- onClose');
+                    // print('------- onClose');
                     // Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
                   },
                   onIssued: (String data) {
-                    print('------- onIssued: $data');
+                    // print('------- onIssued: $data');
                   },
                   onConfirm: (String data) {
                     try {

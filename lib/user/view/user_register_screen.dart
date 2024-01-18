@@ -157,7 +157,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
     _checkButtonEnable(model);
 
-    final initModel = model;
+    // final initModel = model;
 
     return WillPopScope(
       onWillPop: () async => false,

@@ -4,7 +4,6 @@ import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/meeting/model/meeting_schedule_model.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:flutter/material.dart';

@@ -74,10 +74,6 @@ class UserRegisterStateNotifier extends StateNotifier<UserRegisterStateModel> {
   void resetLocalDB() {
     userRegisterBox.whenData((value) {
       value.delete(phone);
-
-      final record = value.get(phone);
-
-      print('record ====> $record');
     });
   }
 

@@ -62,8 +62,6 @@ class _TicketScreenState extends ConsumerState<TicketScreen> {
 
     final model = state as TicketDetailListModel;
 
-    print(model);
-
     return Scaffold(
       backgroundColor: Pallete.background,
       appBar: AppBar(

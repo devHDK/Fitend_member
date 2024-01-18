@@ -261,6 +261,29 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
     _changeExercise(model.exerciseIndex);
 
+    bool isLastExercise = false;
+
+    if (model.exerciseIndex == model.maxExerciseIndex &&
+        model.maxSetInfoList[model.exerciseIndex] ==
+            model.setInfoCompleteList[model.exerciseIndex] + 1) {
+      isLastExercise = true;
+    } else {
+      isLastExercise = true;
+      for (int index = model.exerciseIndex + 1;
+          index <= model.maxExerciseIndex;
+          index++) {
+        if (model.maxSetInfoList[index] != model.setInfoCompleteList[index]) {
+          isLastExercise = false;
+          break;
+        }
+      }
+
+      if (model.setInfoCompleteList[model.exerciseIndex] + 1 !=
+          model.maxSetInfoList[model.exerciseIndex]) {
+        isLastExercise = false;
+      }
+    }
+
     return WillPopScope(
       onWillPop: () async {
         _quitDialog(context, model);
@@ -441,7 +464,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                           ),
                                         )
                                       : Text(
-                                          '다음 운동',
+                                          isLastExercise
+                                              ? '운동 완료'
+                                              : '${model.setInfoCompleteList[model.exerciseIndex] + 1}세트 완료',
                                           style: h2Headline.copyWith(
                                             fontSize: 14,
                                             color: Colors.white,

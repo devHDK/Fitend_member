@@ -29,6 +29,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyPageScreen extends ConsumerStatefulWidget {
   static String get routeName => 'mypage';
@@ -274,6 +275,20 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                 const Divider(
                   color: Pallete.darkGray,
                   height: 1,
+                ),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
+                ),
+                InkWell(
+                  onTap: () => launchUrl(
+                    Uri.parse(URLConstants.kakaoChannel),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  child: _renderLabel(
+                    name: '1:1 고객센터',
+                    child: SvgPicture.asset(SVGConstants.next),
+                  ),
                 ),
                 _renderLabel(
                   name: '현재 버전',

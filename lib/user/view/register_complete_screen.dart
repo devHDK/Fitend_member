@@ -224,6 +224,11 @@ class _RegisterCompleteScreenState
                 channel: '#cs6_신규가입-알림',
               );
 
+              //관련 저장 항목 삭제
+              ref
+                  .read(userRegisterProvider(widget.phone).notifier)
+                  .resetLocalDB();
+
               if (!context.mounted) return;
 
               Navigator.of(context).push(CupertinoPageRoute(

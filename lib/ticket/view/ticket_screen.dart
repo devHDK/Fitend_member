@@ -112,6 +112,10 @@ class _TicketScreenState extends ConsumerState<TicketScreen> {
 
               price += (price * 0.1).toInt();
 
+              if (ticket.type == 'fitness') {
+                price = price * fcMonths;
+              }
+
               String ticketName = ticket.type == 'fitness' && fcMonths > 0
                   ? '온라인 코칭 $fcMonths개월'
                   : ticket.type == 'fitness' && fcMonths == 0

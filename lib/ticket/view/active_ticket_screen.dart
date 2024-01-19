@@ -1,8 +1,10 @@
 import 'package:fitend_member/common/component/custom_one_button_dialog.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
+import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
+import 'package:fitend_member/flavors.dart';
 import 'package:fitend_member/payment/provider/payment_provider.dart';
 import 'package:fitend_member/ticket/component/no_ticket_cell.dart';
 import 'package:fitend_member/ticket/component/ticket_cell.dart';
@@ -12,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:slack_notifier/slack_notifier.dart';
 
 class ActiveTicketScreen extends ConsumerStatefulWidget {
   static String get routeName => 'active_ticket';
@@ -119,6 +122,14 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
                                                         activeTickets[1].id)
                                                 .then((value) {
                                               _.pop();
+
+                                              final slack = SlackNotifier(
+                                                  URLConstants
+                                                      .slackMembershipWebhook);
+                                              slack.send(
+                                                '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[결제 취소😓][${userModel.user.activeTrainers.first.nickname} 코치님]-[${userModel.user.nickname}]님이 멤버십 결제 취소!',
+                                                channel: '#cs8_결제-알림',
+                                              );
 
                                               ref
                                                   .read(getMeProvider.notifier)

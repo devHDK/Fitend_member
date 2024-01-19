@@ -24,6 +24,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:slack_notifier/slack_notifier.dart';
 
 class TicketPurchaseScreen extends ConsumerStatefulWidget {
   final Product purchaseProduct;
@@ -303,8 +304,6 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
 
   Future<void> _confirmPayment(BootPayConfirmResponse result,
       DateTime startDate, DateTime expiredDate, UserModel userModel) async {
-    debugPrint('결제 confirm중...');
-
     try {
       if (mounted) {
         await ref
@@ -328,6 +327,12 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
             )
             .then((value) {
           ref.read(getMeProvider.notifier).getMe();
+
+          final slack = SlackNotifier(URLConstants.slackMembershipWebhook);
+          slack.send(
+            '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[멤버십 구매 🎫][${userModel.user.activeTrainers.first.nickname} 코치님]-[${userModel.user.nickname}]님이 [${widget.purchaseProduct.month}개월] 멤버십 구매!',
+            channel: '#cs8_결제-알림',
+          );
         });
       }
     } catch (e) {

@@ -117,6 +117,8 @@ class URLConstants {
       "https://hooks.slack.com/services/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";
   static const slackMeetingWebhook =
       "https://hooks.slack.com/services/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";
+  static const slackMembershipWebhook =
+      "https://hooks.slack.com/services/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";
 
   static const kakaoChannel = "http://pf.kakao.com/_ExanBG/chat";
 }

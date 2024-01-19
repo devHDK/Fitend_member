@@ -176,9 +176,12 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
                               ),
                               child: Column(
                                 children: [
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
                                   SizedBox(
                                     width: 204,
-                                    height: 200,
+                                    height: 190,
                                     child: CustomNetworkImage(
                                       imageUrl:
                                           '${URLConstants.s3Url}${trainer.largeProfileImage}',

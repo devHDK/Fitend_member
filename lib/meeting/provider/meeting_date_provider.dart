@@ -60,6 +60,8 @@ class MeetingDateStateNotifier extends StateNotifier<MeetingDateModelBase?> {
 
       MeetingDateModel ret = MeetingDateModel(data: []);
       final days = model.endDate.difference(model.startDate).inDays + 1;
+      // final now = DateTime.now();
+      // final today = DateTime(now.year, now.month, now.day);
 
       for (int index = 0; index < days; index++) {
         DateTime start = DateTime(
@@ -113,11 +115,18 @@ class MeetingDateStateNotifier extends StateNotifier<MeetingDateModelBase?> {
 
           for (var schedule in scheduleData.schedules) {
             for (var trainerSchedule in trainerSchedule) {
-              if (schedule.startTime
-                  .isBefore(DateTime.now().add(const Duration(hours: 2)))) {
-                schedule.isAvail = false;
-                break;
-              }
+              // if (schedule.startTime.year == today.year &&
+              //     schedule.startTime.month == today.month &&
+              //     schedule.startTime.day == today.day) {
+              //   schedule.isAvail = false;
+              //   break;
+              // }
+
+              // if (schedule.startTime
+              //     .isBefore(DateTime.now().add(const Duration(hours: 2)))) {
+              //   schedule.isAvail = false;
+              //   break;
+              // }
 
               if ((schedule.startTime.isBefore(trainerSchedule.endTime) &&
                   schedule.endTime.isAfter(trainerSchedule.startTime))) {

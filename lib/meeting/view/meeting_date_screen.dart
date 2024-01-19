@@ -68,15 +68,15 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
   void fetch() async {
     if (mounted) {
       final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
-      final endDate = today.add(const Duration(days: 5));
+      final startDate = DateTime(now.year, now.month, now.day + 1);
+      final endDate = startDate.add(const Duration(days: 5));
 
       await ref
           .read(meetingDateProvider(widget.trainerId).notifier)
           .getTrainerSchedules(
             widget.trainerId,
             GetTrainerScheduleModel(
-              startDate: today,
+              startDate: startDate,
               endDate: endDate,
             ),
           );
@@ -269,74 +269,100 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
   }
 
   SizedBox _dateGridView(MeetingDateModel scheduleModel) {
-    return SizedBox(
-      width: 100.w,
-      height: 100.h - 480,
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10.0, // 가로축 아이템 간격
-          mainAxisSpacing: 10.0, // 세로축 아이템 간격
-          childAspectRatio: 4.0, // 아이템의 가로 세로 비율
-        ),
-        itemCount: scheduleModel.data[dateIndex].schedules.length,
-        itemBuilder: (context, index) {
-          final isAvail =
-              scheduleModel.data[dateIndex].schedules[index].isAvail!;
-          final data = scheduleModel.data[dateIndex].schedules[index];
+    bool isEmpty = false;
 
-          final isSelected = selectStartTime == data.startTime;
+    for (var schedule in scheduleModel.data[dateIndex].schedules) {
+      if (schedule.isAvail!) {
+        isEmpty = false;
+        break;
+      }
 
-          return InkWell(
-            onTap: isAvail
-                ? () {
-                    if (!mounted) return;
+      isEmpty = true;
+    }
 
-                    if (selectStartTime != data.startTime) {
-                      selectStartTime = data.startTime;
-                      selectEndTime = data.endTime;
-                    } else {
-                      selectStartTime = DateTime(2024);
-                      selectEndTime = DateTime(2024);
+    if (!isEmpty) {
+      return SizedBox(
+        width: 100.w,
+        height: 100.h - 480,
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10.0, // 가로축 아이템 간격
+            mainAxisSpacing: 10.0, // 세로축 아이템 간격
+            childAspectRatio: 4.0, // 아이템의 가로 세로 비율
+          ),
+          itemCount: scheduleModel.data[dateIndex].schedules.length,
+          itemBuilder: (context, index) {
+            final isAvail =
+                scheduleModel.data[dateIndex].schedules[index].isAvail!;
+            final data = scheduleModel.data[dateIndex].schedules[index];
+
+            final isSelected = selectStartTime == data.startTime;
+
+            return InkWell(
+              onTap: isAvail
+                  ? () {
+                      if (!mounted) return;
+
+                      if (selectStartTime != data.startTime) {
+                        selectStartTime = data.startTime;
+                        selectEndTime = data.endTime;
+                      } else {
+                        selectStartTime = DateTime(2024);
+                        selectEndTime = DateTime(2024);
+                      }
+
+                      setState(() {});
                     }
-
-                    setState(() {});
-                  }
-                : null,
-            child: Container(
-                width: 154,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: isSelected ? Colors.white : Colors.transparent,
-                  border: Border.all(
-                    width: 1,
-                    color: isSelected
-                        ? Pallete.point
-                        : isAvail
-                            ? Pallete.gray
-                            : Pallete.darkGray,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                  child: Text(
-                    DateFormat('hh:mm a').format(data.startTime),
-                    style: s2SubTitle.copyWith(
+                  : null,
+              child: Container(
+                  width: 154,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: isSelected ? Colors.white : Colors.transparent,
+                    border: Border.all(
+                      width: 1,
                       color: isSelected
                           ? Pallete.point
                           : isAvail
-                              ? Pallete.lightGray
+                              ? Pallete.gray
                               : Pallete.darkGray,
-                      fontWeight:
-                          isSelected ? FontWeight.w700 : FontWeight.w400,
-                      height: 1,
                     ),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                )),
-          );
-        },
-      ),
-    );
+                  child: Center(
+                    child: Text(
+                      DateFormat('hh:mm a').format(data.startTime),
+                      style: s2SubTitle.copyWith(
+                        color: isSelected
+                            ? Pallete.point
+                            : isAvail
+                                ? Pallete.lightGray
+                                : Pallete.darkGray,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w400,
+                        height: 1,
+                      ),
+                    ),
+                  )),
+            );
+          },
+        ),
+      );
+    } else {
+      return SizedBox(
+        width: 100.w,
+        height: 100.h - 480,
+        child: Center(
+          child: Text(
+            '예약이 모두 마감되었어요.',
+            style: s2SubTitle.copyWith(
+              color: Pallete.lightGray,
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   Row _dateListBox(MeetingDateModel scheduleModel) {
@@ -649,7 +675,7 @@ class _MeetingDatePickDialogState
                                 final slack = SlackNotifier(
                                     URLConstants.slackMeetingWebhook);
                                 slack.send(
-                                  '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[미팅일 희망희망📆] [${userModel.user.activeTrainers.first.nickname} 코치님] [${userModel.user.nickname}] 새로운 온보딩 미팅이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectDate)} ${weekday[selectDate.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectDate)} ',
+                                  '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[미팅일 희망📆] [${userModel.user.activeTrainers.first.nickname} 코치님] [${userModel.user.nickname}] 새로운 온보딩 미팅이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectDate)} ${weekday[selectDate.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectDate)} ',
                                   channel: '#cs7_온보딩-미팅-알림',
                                 );
 

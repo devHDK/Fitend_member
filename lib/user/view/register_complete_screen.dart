@@ -154,17 +154,42 @@ class _RegisterCompleteScreenState
               ],
             ),
             const SizedBox(
-              height: 135,
+              height: 105,
             ),
             RichText(
               text: TextSpan(
-                style: s3SubTitle,
+                style: s3SubTitle.copyWith(
+                  color: Colors.white,
+                ),
                 children: <TextSpan>[
                   const TextSpan(text: '∙ 14일 무료체험 시작시 '),
                   TextSpan(
-                    text: '개인정보 처리방침',
-                    style: const TextStyle(
+                    text: '개인정보',
+                    style: s3SubTitle.copyWith(
                       decoration: TextDecoration.underline,
+                      decorationStyle: TextDecorationStyle.solid,
+                      color: Colors.white,
+                    ),
+                    recognizer: TapAndPanGestureRecognizer()
+                      ..onTapDown = (detail) => DataUtils.onWebViewTap(
+                          uri: URLConstants.notionPrivacy),
+                  ),
+                  TextSpan(
+                    text: 'n',
+                    style: s2SubTitle.copyWith(
+                      decoration: TextDecoration.underline,
+                      color: Colors.transparent,
+                      decorationColor: Colors.white,
+                      fontSize: 6,
+                      letterSpacing: 0,
+                      decorationThickness: 2.0,
+                    ),
+                  ),
+                  TextSpan(
+                    text: '처리방침',
+                    style: s3SubTitle.copyWith(
+                      decoration: TextDecoration.underline,
+                      decorationStyle: TextDecorationStyle.solid,
                       color: Colors.white,
                     ),
                     recognizer: TapAndPanGestureRecognizer()
@@ -174,7 +199,7 @@ class _RegisterCompleteScreenState
                   const TextSpan(text: ' 과 서비스 '),
                   TextSpan(
                     text: '이용약관',
-                    style: const TextStyle(
+                    style: s3SubTitle.copyWith(
                       decoration: TextDecoration.underline,
                       color: Colors.white,
                     ),

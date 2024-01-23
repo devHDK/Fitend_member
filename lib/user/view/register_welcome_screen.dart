@@ -44,7 +44,7 @@ class _RegisterWelcomeScreenState extends State<RegisterWelcomeScreen> {
     final userName = widget.userNickname.substring(1);
 
     List<String> chattingStrings = [
-      '안녕하세요 $userName 님! ',
+      '안녕하세요 $userName님! ',
       '앞으로 회원님의 건강한 운동여정을 함께하게될\n${widget.trainerName} 코치입니다 💪',
       '시작하기 앞서 저와 15분 정도 간단히 미팅을\n진행하실텐데',
       '$userName님에게 딱 맞는 운동 프로그램을 설계하기\n위해 꼭 필요한 과정이에요!',
@@ -109,7 +109,7 @@ class _RegisterWelcomeScreenState extends State<RegisterWelcomeScreen> {
                 nipWidth: 20,
                 nipHeight: 7,
                 nip: BubbleNip.leftTop,
-                color: Pallete.gray,
+                color: Pallete.darkGray,
                 child: DefaultTextStyle(
                   style: s2SubTitle.copyWith(
                     color: Colors.white,

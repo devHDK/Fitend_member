@@ -125,7 +125,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
         backgroundColor: Pallete.background,
         elevation: 0,
         title: Text(
-          '마이페이지',
+          '마이 페이지',
           style: h4Headline,
         ),
         centerTitle: true,
@@ -276,10 +276,6 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                   color: Pallete.darkGray,
                   height: 1,
                 ),
-                const Divider(
-                  color: Pallete.darkGray,
-                  height: 1,
-                ),
                 InkWell(
                   onTap: () => launchUrl(
                     Uri.parse(URLConstants.kakaoChannel),
@@ -289,6 +285,10 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                     name: '1:1 고객센터',
                     child: SvgPicture.asset(SVGConstants.next),
                   ),
+                ),
+                const Divider(
+                  color: Pallete.darkGray,
+                  height: 1,
                 ),
                 _renderLabel(
                   name: '현재 버전',

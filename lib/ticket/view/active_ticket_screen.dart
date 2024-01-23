@@ -197,7 +197,14 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
                   _benefitCell('지속가능한 운동습관',
                       '포기하지 않고 꾸준히 지속할 수 있도록\n동기부여와 멘탈케어를 해드릴게요.'),
                   const SizedBox(
-                    height: 70,
+                    height: 35,
+                  ),
+                  const Divider(
+                    thickness: 1,
+                    color: Pallete.gray,
+                  ),
+                  const SizedBox(
+                    height: 35,
                   ),
                   Text(
                     '필수 유의사항',

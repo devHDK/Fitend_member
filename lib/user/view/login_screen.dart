@@ -284,9 +284,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 message: ret.error,
                                 confirmText: '확인',
                                 confirmOnTap: () {
-                                  int count = 0;
-                                  Navigator.of(context)
-                                      .popUntil((_) => count++ >= 2);
+                                  context.pop();
                                 },
                               ),
                             );

@@ -186,8 +186,8 @@ class _VerificationScreenState extends ConsumerState<VerificationScreen> {
                 ),
                 AutoSizeText(
                   widget.verificationType == VerificationType.register
-                      ? '시작하기 위해\n 휴대폰 번호를 입력해주세요.'
-                      : '가입확인을 위해\n 휴대폰 번호를 입력해주세요.',
+                      ? '시작하기 위해\n휴대폰 번호를 입력해주세요.'
+                      : '가입확인을 위해\n휴대폰 번호를 입력해주세요.',
                   style: h3Headline.copyWith(
                     color: Colors.white,
                   ),

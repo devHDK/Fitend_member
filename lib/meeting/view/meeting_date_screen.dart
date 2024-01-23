@@ -186,7 +186,7 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
               context: context,
               builder: (context) => CustomOneButtonDialog(
                     title:
-                        '${DateFormat('M월 d일').format(selectStartTime)} (${weekday[selectStartTime.weekday - 1]}) ∙ ${selectStartTime.hour >= 12 ? ' 오후 ' : ' 오전 '}  ${DateFormat('h:mm').format(selectStartTime)}',
+                        '${DateFormat('M월 d일').format(selectStartTime)} (${weekday[selectStartTime.weekday - 1]}) ∙ ${selectStartTime.hour >= 12 ? ' 오후' : ' 오전'}  ${DateFormat('h:mm').format(selectStartTime)}',
                     content: '일정으로 미팅을 예약할까요?',
                     confirmText: '확인',
                     confirmOnTap: () async {

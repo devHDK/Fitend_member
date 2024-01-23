@@ -124,7 +124,8 @@ class _TrainerDetailScreenState extends ConsumerState<TrainerDetailScreen> {
                     height: 20,
                   ),
                   //자격사항
-                  Text('자격사항', style: h4Headline.copyWith(color: Colors.white)),
+                  Text('자격 사항',
+                      style: h4Headline.copyWith(color: Colors.white)),
                   const SizedBox(
                     height: 10,
                   ),

@@ -184,9 +184,12 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
               width: 250,
               child: AnimatedLinearProgressIndicator(
                 percentage: model.progressStep! / 11,
+                percentageTextStyle:
+                    s2SubTitle.copyWith(color: Colors.transparent),
                 indicatorBackgroundColor: Pallete.lightGray,
                 indicatorColor: Pallete.point,
                 label: '',
+                labelStyle: s2SubTitle.copyWith(color: Colors.transparent),
                 animationDuration: const Duration(seconds: 1),
               ),
             ),
@@ -225,9 +228,17 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
                   height: 24,
                 ),
                 if (model.step == 1)
-                  _step1NicknameWidget()
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.bounceIn,
+                    child: _step1NicknameWidget(),
+                  )
                 else if (model.step == 2)
-                  _step2EmailWidget()
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.bounceIn,
+                    child: _step2EmailWidget(),
+                  )
                 else if (model.step == 3)
                   _step3PasswordWidget()
                 else if (model.step == 4)
@@ -768,7 +779,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
             Expanded(
               flex: 1,
               child: Text(
-                '몸무게',
+                '생년월일',
                 style: s2SubTitle.copyWith(color: Pallete.lightGray),
               ),
             ),
@@ -806,28 +817,31 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
   SizedBox _step6_11VentilWidget(String header, String content) {
     return SizedBox(
       width: 100.w,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(
-            height: 350,
-          ),
-          Text(
-            header,
-            style: h1Headline.copyWith(
-              color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 38),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 350,
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            content,
-            style: s1SubTitle.copyWith(
-              color: Colors.white,
+            Text(
+              header,
+              style: h1Headline.copyWith(
+                color: Colors.white,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(
+              height: 20,
+            ),
+            Text(
+              content,
+              style: s1SubTitle.copyWith(
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -870,7 +884,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '어떤 목표를 이루고 싶으신가요?',
+          '가장 이루고 싶은 목표가 무엇인가요?',
           style: h3Headline.copyWith(
             color: Colors.white,
           ),

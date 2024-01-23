@@ -190,7 +190,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
                 indicatorColor: Pallete.point,
                 label: '',
                 labelStyle: s2SubTitle.copyWith(color: Colors.transparent),
-                animationDuration: const Duration(seconds: 1),
+                animationDuration: const Duration(milliseconds: 500),
               ),
             ),
             centerTitle: true,
@@ -227,49 +227,26 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
                 const SizedBox(
                   height: 24,
                 ),
-                if (model.step == 1)
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.bounceIn,
-                    child: _step1NicknameWidget(),
-                  )
-                else if (model.step == 2)
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.bounceIn,
-                    child: _step2EmailWidget(),
-                  )
-                else if (model.step == 3)
-                  _step3PasswordWidget()
-                else if (model.step == 4)
-                  _step4GenderWidget(model)
-                else if (model.step == 5)
-                  _step5BodySpecWidget(model)
-                else if (model.step == 6)
-                  _step6_11VentilWidget(
-                      '이제 지속가능한\n운동습관을 경험하세요', '이제 지속가능한 운동습관을 경험하세요')
-                else if (model.step == 7)
-                  _step7ExperienceWidget(model)
-                else if (model.step == 8)
-                  _step8PurposeWidget(model)
-                else if (model.step == 9)
-                  _step9AchieveWidget(model)
-                else if (model.step == 10)
-                  _step10ObstacleWidget(model)
-                else if (model.step == 11)
-                  _step6_11VentilWidget(
-                      '언제, 어디서든\n당신의 코치와 함께하세요', '언제, 어디서든 당신의 코치와 함께하세요')
-                else if (model.step == 12)
-                  _step12PlaceWidget(model)
-                else if (model.step == 13)
-                  _step13PreferDayWidget(model)
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, animation) {
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(1.0, 0.0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    );
+                  },
+                  child: _getStepWidget(model),
+                ),
               ],
             ),
           ),
           floatingActionButtonAnimator: _NoAnimationFabAnimator(),
           floatingActionButton: model.step == 6 || model.step == 11
               ? Padding(
-                  padding: const EdgeInsets.only(right: 28),
+                  padding: const EdgeInsets.only(right: 12),
                   child: FloatingActionButton(
                     elevation: 0,
                     backgroundColor: Pallete.point,
@@ -518,6 +495,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   Column _step1NicknameWidget() {
     return Column(
+      key: const ValueKey('step1'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -547,6 +525,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   Column _step2EmailWidget() {
     return Column(
+      key: const ValueKey('step2'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -577,6 +556,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   Column _step3PasswordWidget() {
     return Column(
+      key: const ValueKey('step3'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -621,10 +601,11 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   Column _step4GenderWidget(UserRegisterStateModel model) {
     return Column(
+      key: const ValueKey('step4'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '성별를 선택해주세요.',
+          '성별을 선택해주세요.',
           style: h3Headline.copyWith(
             color: Colors.white,
           ),
@@ -659,6 +640,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   Column _step5BodySpecWidget(UserRegisterStateModel model) {
     return Column(
+      key: const ValueKey('step5'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -816,6 +798,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   SizedBox _step6_11VentilWidget(String header, String content) {
     return SizedBox(
+      key: const ValueKey('step6'),
       width: 100.w,
       child: Padding(
         padding: const EdgeInsets.only(left: 38),
@@ -848,6 +831,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   Column _step7ExperienceWidget(UserRegisterStateModel model) {
     return Column(
+      key: const ValueKey('step7'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -881,6 +865,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   Column _step8PurposeWidget(UserRegisterStateModel model) {
     return Column(
+      key: const ValueKey('step8'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -914,6 +899,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   Column _step9AchieveWidget(UserRegisterStateModel model) {
     return Column(
+      key: const ValueKey('step9'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -975,6 +961,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   Column _step10ObstacleWidget(UserRegisterStateModel model) {
     return Column(
+      key: const ValueKey('step10'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -1036,6 +1023,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   Column _step12PlaceWidget(UserRegisterStateModel model) {
     return Column(
+      key: const ValueKey('step12'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -1074,6 +1062,20 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
                     .updateData(place: 'gym');
               },
               isSelected: model.place == 'gym',
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            PlaceButton(
+              content: '집+헬스장 🙌️\n(스케줄에 따라 운동장소가 바뀔 수 있어요)',
+              onTap: () {
+                if (!mounted) return;
+
+                ref
+                    .read(userRegisterProvider(widget.phone).notifier)
+                    .updateData(place: 'both');
+              },
+              isSelected: model.place == 'both',
             )
           ],
         )
@@ -1083,6 +1085,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
 
   Column _step13PreferDayWidget(UserRegisterStateModel model) {
     return Column(
+      key: const ValueKey('step13'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -1129,6 +1132,46 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
       ],
     );
   }
+
+  Widget _getStepWidget(UserRegisterStateModel model) {
+    switch (model.step) {
+      case 1:
+        return _step1NicknameWidget();
+
+      case 2:
+        return _step2EmailWidget();
+
+      case 3:
+        return _step3PasswordWidget();
+
+      case 4:
+        return _step4GenderWidget(model);
+
+      case 5:
+        return _step5BodySpecWidget(model);
+
+      case 6:
+        return _step6_11VentilWidget('이제 지속가능한\n운동습관을 경험하세요',
+            '가볍게 시작해서 꾸준히 할 수 있도록\n오직 당신만을 위한 맞춤형 운동을\n계획하고 관리합니다.');
+      case 7:
+        return _step7ExperienceWidget(model);
+      case 8:
+        return _step8PurposeWidget(model);
+      case 9:
+        return _step9AchieveWidget(model);
+      case 10:
+        return _step10ObstacleWidget(model);
+      case 11:
+        return _step6_11VentilWidget('언제, 어디서든\n당신의 코치와 함께하세요',
+            '매일 조금씩 변화하는 나를 만날수 있도록\n올바른 운동목표와 방향성을 설계하고\n동기부여를 제공합니다.');
+      case 12:
+        return _step12PlaceWidget(model);
+      case 13:
+        return _step13PreferDayWidget(model);
+      default:
+        return _step10ObstacleWidget(model);
+    }
+  }
 }
 
 Widget _buildContainer(Widget picker) {
@@ -1167,5 +1210,59 @@ class _NoAnimationFabAnimator extends FloatingActionButtonAnimator {
   @override
   Animation<double> getScaleAnimation({required Animation<double> parent}) {
     return const AlwaysStoppedAnimation<double>(1.0);
+  }
+}
+
+class _SlideTransition extends StatefulWidget {
+  final Widget child;
+
+  const _SlideTransition({
+    required this.child,
+  });
+
+  @override
+  State<_SlideTransition> createState() => _SlideTransitionState();
+}
+
+class _SlideTransitionState extends State<_SlideTransition>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _offsetAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _offsetAnimation = Tween<double>(
+      begin: 1,
+      end: 0,
+    ).animate(_controller)
+      ..addListener(() {
+        setState(() {});
+      });
+
+    _controller.forward().then((value) {
+      _controller.dispose();
+      _offsetAnimation.removeListener(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.translate(
+      offset: Offset(100.w * _offsetAnimation.value, 0),
+      child: widget.child,
+    );
   }
 }

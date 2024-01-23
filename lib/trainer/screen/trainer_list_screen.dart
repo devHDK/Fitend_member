@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class TrainerListScreen extends ConsumerStatefulWidget {
   const TrainerListScreen({
@@ -30,6 +31,10 @@ class TrainerListScreen extends ConsumerStatefulWidget {
 }
 
 class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
+
   @override
   void initState() {
     super.initState();
@@ -118,7 +123,9 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
           SizedBox(
             width: 100.w,
             height: 332,
-            child: ListView.separated(
+            child: ScrollablePositionedList.separated(
+              itemScrollController: itemScrollController,
+              itemPositionsListener: itemPositionsListener,
               itemBuilder: (context, index) {
                 final trainer = trainerListModel.data[index];
                 final selected = registerModel.trainerId == trainer.id;
@@ -138,6 +145,11 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
                           .updateData(
                             trainerId: trainer.id,
                           );
+
+                      itemScrollController.scrollTo(
+                        index: index,
+                        duration: const Duration(milliseconds: 300),
+                      );
                     },
                     child: Stack(
                       children: [

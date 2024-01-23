@@ -123,13 +123,17 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
                                                 .then((value) {
                                               _.pop();
 
-                                              final slack = SlackNotifier(
-                                                  URLConstants
-                                                      .slackMembershipWebhook);
-                                              slack.send(
-                                                '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[결제 취소😓][${userModel.user.activeTrainers.first.nickname} 코치님]-[${userModel.user.nickname}]님이 멤버십 결제 취소!',
-                                                channel: '#cs8_결제-알림',
-                                              );
+                                              try {
+                                                final slack = SlackNotifier(
+                                                    URLConstants
+                                                        .slackMembershipWebhook);
+                                                slack.send(
+                                                  '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[결제 취소😓][${userModel.user.activeTrainers.first.nickname} 코치님]-[${userModel.user.nickname}]님이 멤버십 결제 취소!',
+                                                  channel: '#cs8_결제-알림',
+                                                );
+                                              } catch (e) {
+                                                debugPrint('$e');
+                                              }
 
                                               ref
                                                   .read(getMeProvider.notifier)

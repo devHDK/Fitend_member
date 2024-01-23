@@ -66,7 +66,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (initial) {
         // _getScheduleInitial();
-        _checkHasData(scheduleListGlobal, context);
+        // _checkHasData(scheduleListGlobal, context);
         initial = false;
       }
 
@@ -491,29 +491,29 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     );
   }
 
-  void _checkHasData(List<ScheduleData> schedules, BuildContext context) {
-    if (schedules.length < 33 && schedules.length > 1 && buildInitial) {
-      bool hasData = false;
+  // void _checkHasData(List<ScheduleData> schedules, BuildContext context) {
+  //   if (schedules.length < 33 && schedules.length > 1 && buildInitial) {
+  //     bool hasData = false;
 
-      for (ScheduleData element in schedules) {
-        // debugPrint('element $element');
-        if (element.schedule!.isNotEmpty) {
-          hasData = true;
-          break;
-        }
-      }
+  //     for (ScheduleData element in schedules) {
+  //       // debugPrint('element $element');
+  //       if (element.schedule!.isNotEmpty) {
+  //         hasData = true;
+  //         break;
+  //       }
+  //     }
 
-      if (!hasData) {
-        DialogWidgets.oneButtonDialog(
-          message: '회원님을 위한 플랜을 준비중이에요!\n플랜이 완성되면 알려드릴게요 😊',
-          confirmText: '확인',
-          confirmOnTap: () => context.pop(),
-        ).show(context);
-      }
+  //     if (!hasData) {
+  //       DialogWidgets.oneButtonDialog(
+  //         message: '회원님을 위한 플랜을 준비중이에요!\n플랜이 완성되면 알려드릴게요 😊',
+  //         confirmText: '확인',
+  //         confirmOnTap: () => context.pop(),
+  //       ).show(context);
+  //     }
 
-      buildInitial = false;
-    }
-  }
+  //     buildInitial = false;
+  //   }
+  // }
 
   Future<void> _resetScheduleList() async {
     await ref

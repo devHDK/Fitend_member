@@ -217,12 +217,16 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                               .paginate(startDate: fifteenDaysAgo);
                         });
 
-                        final slack =
-                            SlackNotifier(URLConstants.slackMeetingWebhook);
-                        await slack.send(
-                          '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[미팅일 확정✅][${userModel.user.activeTrainers.first.nickname} 코치님]-[${userModel.user.nickname}] 새로운 온보딩 미팅이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectStartTime)} ${weekday[selectStartTime.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectStartTime)} ',
-                          channel: '#cs7_온보딩-미팅-알림',
-                        );
+                        try {
+                          final slack =
+                              SlackNotifier(URLConstants.slackMeetingWebhook);
+                          slack.send(
+                            '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[미팅일 확정✅][${userModel.user.activeTrainers.first.nickname} 코치님]-[${userModel.user.nickname}] 새로운 온보딩 미팅이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectStartTime)} ${weekday[selectStartTime.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectStartTime)} ',
+                            channel: '#cs7_온보딩-미팅-알림',
+                          );
+                        } catch (e) {
+                          debugPrint('$e');
+                        }
 
                         if (!context.mounted) return;
 
@@ -672,12 +676,16 @@ class _MeetingDatePickDialogState
                                     isMeetingThread: true,
                                   )
                                   .then((value) {
-                                final slack = SlackNotifier(
-                                    URLConstants.slackMeetingWebhook);
-                                slack.send(
-                                  '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[미팅일 희망📆] [${userModel.user.activeTrainers.first.nickname} 코치님] [${userModel.user.nickname}] 새로운 온보딩 미팅이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectDate)} ${weekday[selectDate.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectDate)} ',
-                                  channel: '#cs7_온보딩-미팅-알림',
-                                );
+                                try {
+                                  final slack = SlackNotifier(
+                                      URLConstants.slackMeetingWebhook);
+                                  slack.send(
+                                    '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[미팅일 희망📆] [${userModel.user.activeTrainers.first.nickname} 코치님] [${userModel.user.nickname}] 새로운 온보딩 미팅이 있습니다!   ${DateFormat('yyyy-MM-dd').format(selectDate)} ${weekday[selectDate.weekday - 1]}요일 ${DateFormat('hh:mm a').format(selectDate)} ',
+                                    channel: '#cs7_온보딩-미팅-알림',
+                                  );
+                                } catch (e) {
+                                  debugPrint('$e');
+                                }
 
                                 DialogWidgets.showToast(
                                   content: '미팅 희망일 확인후 연락 드릴게요 😀',

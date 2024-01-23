@@ -94,120 +94,141 @@ class _TrainerDetailScreenState extends ConsumerState<TrainerDetailScreen> {
           )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: ListView(
-          children: [
-            SizedBox(
-              width: 100.w,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  _introProfile(trainerModel),
-                  const SizedBox(
-                    height: 20,
-                  ),
+      body: ListView(
+        children: [
+          SizedBox(
+            width: 100.w,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 25,
+                      ),
+                      _introProfile(trainerModel),
+                      const SizedBox(
+                        height: 20,
+                      ),
 
-                  //소개
-                  Text('소개', style: h4Headline.copyWith(color: Colors.white)),
-                  const SizedBox(
-                    height: 10,
+                      //소개
+                      Text('소개',
+                          style: h4Headline.copyWith(color: Colors.white)),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        trainerModel.intro,
+                        style: s1SubTitle.copyWith(color: Colors.white),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //자격사항
+                      Text('자격 사항',
+                          style: h4Headline.copyWith(color: Colors.white)),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ...trainerModel.qualification.data.map(
+                        (e) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 5),
+                            child: Text(
+                              '✅ $e',
+                              style: s1SubTitle.copyWith(color: Colors.white),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    ],
                   ),
-                  Text(
-                    trainerModel.intro,
-                    style: s1SubTitle.copyWith(color: Colors.white),
+                ),
+                const Divider(
+                  color: Pallete.darkGray,
+                  thickness: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //전문 분야
+                      Text('전문 분야',
+                          style: h4Headline.copyWith(color: Colors.white)),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ...trainerModel.speciality.data.map(
+                        (e) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 5),
+                            child: Text(
+                              '📌 $e',
+                              style: s1SubTitle.copyWith(color: Colors.white),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //코칭 스타일
+                      Text('코칭 스타일',
+                          style: h4Headline.copyWith(color: Colors.white)),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ...trainerModel.speciality.data.map(
+                        (e) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 5),
+                            child: Text(
+                              '✨ $e',
+                              style: s1SubTitle.copyWith(color: Colors.white),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //코칭 스타일
+                      Text('좋아하는 것',
+                          style: h4Headline.copyWith(color: Colors.white)),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ...trainerModel.favorite.data.map(
+                        (e) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 5),
+                            child: Text(
+                              '🌈 $e',
+                              style: s1SubTitle.copyWith(color: Colors.white),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(
+                        height: 100,
+                      )
+                    ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  //자격사항
-                  Text('자격 사항',
-                      style: h4Headline.copyWith(color: Colors.white)),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ...trainerModel.qualification.data.map(
-                    (e) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
-                        child: Text(
-                          '✅ $e',
-                          style: s1SubTitle.copyWith(color: Colors.white),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  //전문 분야
-                  Text('전문 분야',
-                      style: h4Headline.copyWith(color: Colors.white)),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ...trainerModel.speciality.data.map(
-                    (e) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
-                        child: Text(
-                          '📌 $e',
-                          style: s1SubTitle.copyWith(color: Colors.white),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  //코칭 스타일
-                  Text('코칭 스타일',
-                      style: h4Headline.copyWith(color: Colors.white)),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ...trainerModel.speciality.data.map(
-                    (e) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
-                        child: Text(
-                          '✨ $e',
-                          style: s1SubTitle.copyWith(color: Colors.white),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  //코칭 스타일
-                  Text('좋아하는 것',
-                      style: h4Headline.copyWith(color: Colors.white)),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ...trainerModel.favorite.data.map(
-                    (e) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
-                        child: Text(
-                          '🌈 $e',
-                          style: s1SubTitle.copyWith(color: Colors.white),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 100,
-                  )
-                ],
-              ),
+                )
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       floatingActionButton: TextButton(
         onPressed: () {

@@ -186,7 +186,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
                     );
                   },
                   child: _renderLabel(
-                    name: '멤버쉽 결제 내역',
+                    name: '멤버십 결제 내역',
                     child: SvgPicture.asset(SVGConstants.next),
                   ),
                 ),

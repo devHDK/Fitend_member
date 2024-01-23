@@ -195,7 +195,7 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
                     height: 14,
                   ),
                   _benefitCell(
-                      '맞춤형 운동계획', '회원님의 사전설문 데이터를 바탕으로\n실현가능한 운동루틴을 만들어드려요.'),
+                      '맞춤형 운동계획', '회원님의 사전설문 데이터를 바탕으로\n실행가능한 운동루틴을 만들어드려요.'),
                   _benefitCell('1:1 관리 및 피드백',
                       '자세 및 운동과 관련된 질문이 생기면\n코치님께 언제든지 물어볼 수 있어요.'),
                   _benefitCell('지속가능한 운동습관',

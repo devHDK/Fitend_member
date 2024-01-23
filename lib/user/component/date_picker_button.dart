@@ -33,13 +33,14 @@ class DatePickerbutton extends StatelessWidget {
               color: Colors.transparent,
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Center(
                 child: Text(
                   content,
                   style: s2SubTitle.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w400,
+                    fontSize: 16,
                     height: 1,
                   ),
                 ),

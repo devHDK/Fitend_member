@@ -100,7 +100,7 @@ class _RegisterCompleteScreenState
                       style: h4Headline.copyWith(color: Colors.white),
                     ),
                     Text(
-                      '${registerModel.nickname!.substring(1)}님의 사전설문 데이터를 바탕으로\n실현가능한 운동루틴을 만들어드려요.',
+                      '${registerModel.nickname!.substring(1)}님의 사전설문 데이터를 바탕으로\n실행가능한 운동루틴을 만들어드려요.',
                       style: s1SubTitle.copyWith(color: Colors.white),
                     ),
                   ],

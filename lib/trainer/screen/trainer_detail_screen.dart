@@ -152,7 +152,7 @@ class _TrainerDetailScreenState extends ConsumerState<TrainerDetailScreen> {
                 ),
                 const Divider(
                   color: Pallete.darkGray,
-                  thickness: 20,
+                  thickness: 13,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 28),

@@ -644,7 +644,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '신체 정보를 알려주세요',
+          '신체 정보를 알려주세요.',
           style: h3Headline.copyWith(
             color: Colors.white,
           ),
@@ -769,7 +769,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
               flex: 3,
               child: DatePickerbutton(
                 content: model.birth != null
-                    ? DateFormat('yyyy.MM.dd').format(model.birth!)
+                    ? DateFormat('yyyy. M. d').format(model.birth!)
                     : '',
                 onTap: () async {
                   await showCupertinoModalPopup(

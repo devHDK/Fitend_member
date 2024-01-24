@@ -59,7 +59,7 @@ class _CustomOneButtonDialogState extends State<CustomOneButtonDialog> {
                     ),
                   Text(
                     widget.content,
-                    style: s1SubTitle,
+                    style: s2SubTitle,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(

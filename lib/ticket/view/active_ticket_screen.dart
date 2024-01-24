@@ -90,7 +90,7 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
                     thickness: 1,
                     color: Pallete.gray,
                   ),
-                  const SizedBox(height: 32),
+                  if (activeTickets.isNotEmpty) const SizedBox(height: 32),
                   if (activeTickets.isNotEmpty)
                     Text(
                       '이용예정 상품',
@@ -161,9 +161,10 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
                                   child: Text(
                                     '결제취소',
                                     style: s2SubTitle.copyWith(
-                                        color: Pallete.gray,
-                                        height: 1,
-                                        decoration: TextDecoration.underline),
+                                      color: Pallete.gray,
+                                      height: 1,
+                                      decoration: TextDecoration.underline,
+                                    ),
                                   ),
                                 )
                               : null,
@@ -173,13 +174,18 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
                           title: '없음',
                           content: '만료 전 멤버십을 미리 구매해주세요!',
                         ),
-                      const SizedBox(
-                        height: 32,
-                      ),
-                      const Divider(
-                        thickness: 1,
-                        color: Pallete.gray,
-                      ),
+                      if (activeTickets.isNotEmpty)
+                        const Column(
+                          children: [
+                            SizedBox(
+                              height: 32,
+                            ),
+                            Divider(
+                              thickness: 1,
+                              color: Pallete.gray,
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                   const SizedBox(

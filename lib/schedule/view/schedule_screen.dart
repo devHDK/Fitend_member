@@ -417,6 +417,12 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
             if (schedules.isNeedMeeing != null && schedules.isNeedMeeing!)
               _needMeetingBanner(context, userState),
             if (!isActiveUser) _needPurchaseTicketBanner(context, userState),
+            if (isActiveUser &&
+                userState.user.activeTickets![0].expiredAt
+                        .difference(DateTime.now())
+                        .inDays <=
+                    7)
+              _expireTicketBanner(context, userState)
           ],
         ),
       ),
@@ -474,6 +480,38 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
               children: [
                 Text(
                   '⚠️  운동 플랜은 멤버십 구매 후 이용할 수 있어요',
+                  style: h6Headline.copyWith(
+                    color: Pallete.lightGray,
+                    height: 1,
+                  ),
+                ),
+                const Icon(
+                  Icons.navigate_next,
+                  color: Colors.white,
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  PreferredSize _expireTicketBanner(BuildContext context, UserModel userState) {
+    return PreferredSize(
+      preferredSize: Size(100.w, 30),
+      child: InkWell(
+        onTap: () => context.goNamed(ActiveTicketScreen.routeName),
+        child: Container(
+          color: Pallete.point,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 5),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '⚠️  회원님의 멤버십이 ${DateFormat('M월 d일').format(userState.user.activeTickets![0].expiredAt)}에 만료돼요',
                   style: h6Headline.copyWith(
                     color: Pallete.lightGray,
                     height: 1,

@@ -142,7 +142,7 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                 height: 24,
               ),
               Text(
-                '가능하신 일정을 선택해주세요',
+                '가능하신 일정을 선택해주세요.',
                 style: h3Headline.copyWith(
                   color: Colors.white,
                 ),

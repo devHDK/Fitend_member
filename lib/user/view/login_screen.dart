@@ -174,6 +174,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   AutofillHints.username,
                   AutofillHints.email
                 ],
+                formatter: [
+                  ExceptSpaceTextInputFormatter(),
+                ],
                 onChanged: (value) {
                   email = value;
                 },
@@ -194,6 +197,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 onChanged: (value) {
                   password = value;
                 },
+                maxLength: 20,
               ),
               const SizedBox(
                 height: 12,

@@ -417,7 +417,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
             if (schedules.isNeedMeeing != null && schedules.isNeedMeeing!)
               _needMeetingBanner(context, userState),
             if (!isActiveUser) _needPurchaseTicketBanner(context, userState),
-            if (isActiveUser &&
+            if (userState.user.activeTickets!.length == 1 &&
                 userState.user.activeTickets![0].expiredAt
                         .difference(DateTime.now())
                         .inDays <=

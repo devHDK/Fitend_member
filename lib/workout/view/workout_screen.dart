@@ -270,14 +270,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
         if (model.exercises[model.exerciseIndex].circuitSeq ==
             model.groupCounts[
                 model.exercises[model.exerciseIndex].circuitGroupNum]) {
-          //슈퍼세트 마지막 운동
+          //슈퍼세트 마지막 운동 일때
           final index = ref
               .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
               .getUnCompleteSuperSet(
                   model.exercises[model.exerciseIndex].circuitGroupNum!);
 
           if (index != null) {
-            // debugPrint('미완료 super세트');
+            //미완료 슈퍼세트 운동이 있을경우
             isLastExercise = false;
           } else {
             isLastExercise = true;

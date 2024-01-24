@@ -425,6 +425,21 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
       }
 
       if (tempStep == 3) {
+        if (!context.mounted) return;
+
+        if (model.password!.length > 20) {
+          showDialog(
+            context: context,
+            builder: (context) => DialogWidgets.oneButtonDialog(
+              message: '비밀번호가 20자가 넘습니다 ',
+              confirmText: '확인',
+              confirmOnTap: () => context.pop(),
+            ),
+          );
+
+          return;
+        }
+
         if (model.password != _passwordConfirmController.text) {
           if (!context.mounted) return;
 
@@ -535,6 +550,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
           controller: _nicknameController,
           fullLabelText: '성함을 입력해주세요',
           textInputType: TextInputType.name,
+          maxLength: 20,
           formatter: [
             ExceptSpaceTextInputFormatter(),
             FilteringTextInputFormatter.allow(nicknameRegExp),
@@ -603,6 +619,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
           labelText: '',
           obscureText: true,
           textInputType: TextInputType.visiblePassword,
+          maxLength: 20,
         ),
         const SizedBox(
           height: 12,
@@ -616,6 +633,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
           labelText: '',
           obscureText: true,
           textInputType: TextInputType.visiblePassword,
+          maxLength: 20,
         ),
       ],
     );

@@ -185,6 +185,12 @@ void processPushMessage(RemoteMessage message) async {
       default:
         break;
     }
+  } else if (type.contains('meeting')) {
+    //알림, 스케줄 업데이트
+    await SharedPrefUtils.updateIsNeedUpdate(
+        StringConstants.needNotificationUpdate, pref, true);
+    await SharedPrefUtils.updateIsNeedUpdate(
+        StringConstants.needScheduleUpdate, pref, true);
   } else if (type.contains('noFeedback')) {
     await SharedPrefUtils.updateIsNeedUpdate(
         StringConstants.needNotificationUpdate, pref, true);

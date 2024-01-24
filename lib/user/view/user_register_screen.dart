@@ -550,7 +550,7 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
           controller: _nicknameController,
           fullLabelText: '성함을 입력해주세요',
           textInputType: TextInputType.name,
-          // maxLength: 20,
+          maxLength: 20,
           formatter: [
             FilteringTextInputFormatter.allow(nicknameRegExp),
             // ExceptSpaceTextInputFormatter(),

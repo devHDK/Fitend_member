@@ -276,7 +276,7 @@ class WorkoutProcessStateNotifier
 
         if (index != null) {
           debugPrint('미완료 super세트');
-          pstate.exerciseIndex = index; //
+          pstate.exerciseIndex = index;
         } else {
           updateExerciseIndexRegular();
         }

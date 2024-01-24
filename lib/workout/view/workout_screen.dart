@@ -266,7 +266,29 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     if (model.exerciseIndex == model.maxExerciseIndex &&
         model.maxSetInfoList[model.exerciseIndex] <=
             model.setInfoCompleteList[model.exerciseIndex] + 1) {
-      isLastExercise = true;
+      if (model.exercises[model.exerciseIndex].setType == 'superSet') {
+        if (model.exercises[model.exerciseIndex].circuitSeq ==
+            model.groupCounts[
+                model.exercises[model.exerciseIndex].circuitGroupNum]) {
+          //슈퍼세트 마지막 운동
+          final index = ref
+              .read(workoutProcessProvider(widget.workoutScheduleId).notifier)
+              .getUnCompleteSuperSet(
+                  model.exercises[model.exerciseIndex].circuitGroupNum!);
+
+          if (index != null) {
+            // debugPrint('미완료 super세트');
+            isLastExercise = false;
+          } else {
+            isLastExercise = true;
+          }
+        } else {
+          //superset 마지막 운동이 아닐경우
+          isLastExercise = false;
+        }
+      } else {
+        isLastExercise = true;
+      }
     } else {
       isLastExercise = true;
       for (int index = model.exerciseIndex + 1;

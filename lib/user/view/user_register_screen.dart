@@ -17,6 +17,7 @@ import 'package:fitend_member/user/model/user_register_state_model.dart';
 import 'package:fitend_member/user/provider/user_register_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -25,6 +26,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 RegExp emailRegExp =
     RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
+RegExp nicknameRegExp = RegExp(r'^[A-Za-z0-9ㄱ-ㅎ|ㅏ-ㅣ|가-힣]+$');
 
 class UserRegisterScreen extends ConsumerStatefulWidget {
   static String get routeName => 'userRegister';
@@ -402,6 +404,21 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
       int tempStep = model.step!;
       int tempProgressStep = model.progressStep!;
 
+      if (tempStep == 1) {
+        if (model.nickname!.length > 20) {
+          showDialog(
+            context: context,
+            builder: (context) => DialogWidgets.oneButtonDialog(
+              message: '성함은 20자를 넘을 수 없습니다.',
+              confirmText: '확인',
+              confirmOnTap: () => context.pop(),
+            ),
+          );
+
+          return;
+        }
+      }
+
       if (tempStep == 2) {
         final ret = await _checkEmail(tempStep, model);
         if (!ret) return;
@@ -517,6 +534,11 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
           },
           controller: _nicknameController,
           fullLabelText: '성함을 입력해주세요',
+          textInputType: TextInputType.name,
+          formatter: [
+            ExceptSpaceTextInputFormatter(),
+            FilteringTextInputFormatter.allow(nicknameRegExp),
+          ],
           labelText: '성함',
         ),
       ],

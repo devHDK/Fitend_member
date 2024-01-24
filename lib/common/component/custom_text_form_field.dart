@@ -162,3 +162,15 @@ class PhoneNumberFormatter extends TextInputFormatter {
     );
   }
 }
+
+class ExceptSpaceTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final withoutSpecialChars = newValue.text.replaceAll(RegExp(r'[\s]'), '');
+    return TextEditingValue(
+      text: withoutSpecialChars,
+      selection: TextSelection.collapsed(offset: withoutSpecialChars.length),
+    );
+  }
+}

@@ -107,7 +107,7 @@ class _BottomViewState extends State<_BottomView> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SizedBox(
-          height: 30,
+          height: 10,
         ),
         Expanded(
           child: PageView.builder(
@@ -117,15 +117,15 @@ class _BottomViewState extends State<_BottomView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: 300,
-                    height: 320,
+                    width: 100.w,
+                    height: 40.h,
                     child: Image.asset(
                       IMGConstants.onboardComponent[index],
                       fit: BoxFit.fitHeight,
                     ),
                   ),
                   const SizedBox(
-                    height: 64,
+                    height: 30,
                   ),
                   Text(
                     title[index],
@@ -150,7 +150,7 @@ class _BottomViewState extends State<_BottomView> {
           ),
         ),
         SizedBox(
-          height: 30,
+          height: 20,
           child: PageViewDotIndicator(
             currentItem: widget.pageIndex,
             count: 4,
@@ -161,7 +161,7 @@ class _BottomViewState extends State<_BottomView> {
           ),
         ),
         const SizedBox(
-          height: 35,
+          height: 20,
         ),
         Column(
           children: [

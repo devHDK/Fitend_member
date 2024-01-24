@@ -550,10 +550,10 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
           controller: _nicknameController,
           fullLabelText: '성함을 입력해주세요',
           textInputType: TextInputType.name,
-          maxLength: 20,
+          // maxLength: 20,
           formatter: [
-            ExceptSpaceTextInputFormatter(),
             FilteringTextInputFormatter.allow(nicknameRegExp),
+            // ExceptSpaceTextInputFormatter(),
           ],
           labelText: '성함',
         ),
@@ -845,8 +845,8 @@ class _UserRegisterScreen extends ConsumerState<UserRegisterScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 350,
+            SizedBox(
+              height: 40.h,
             ),
             Text(
               header,

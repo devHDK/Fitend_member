@@ -45,10 +45,10 @@ class _RegisterWelcomeScreenState extends State<RegisterWelcomeScreen> {
 
     List<String> chattingStrings = [
       '안녕하세요 $userName님! ',
-      '앞으로 회원님의 건강한 운동여정을 함께하게될\n${widget.trainerName} 코치입니다 💪',
-      '시작하기 앞서 저와 15분 정도 간단히 미팅을\n진행하실텐데',
-      '$userName님에게 딱 맞는 운동 프로그램을 설계하기\n위해 꼭 필요한 과정이에요!',
-      '준비되셨으면 아래 버튼을 눌러 가능하신 일정을\n선택해주세요 :)'
+      '회원님의 건강한 운동여정을 함께할\n${widget.trainerName} 코치입니다 💪',
+      '시작에 앞서 저와 15분 정도 간단히\n미팅을 진행하실텐데',
+      '$userName님을 위한 맞춤형 운동설계에 있어\n꼭 필요한 과정이에요!',
+      '준비되셨으면 아래 버튼을 눌러\n가능하신 일정을 선택해주세요 :)'
     ];
 
     Future ft = Future(() {});
@@ -139,7 +139,7 @@ class _RegisterWelcomeScreenState extends State<RegisterWelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => Future.value(true),
+      onWillPop: () async => false,
       child: Scaffold(
           backgroundColor: Pallete.background,
           appBar: AppBar(

@@ -158,4 +158,27 @@ class MeetingDateStateNotifier extends StateNotifier<MeetingDateModelBase?> {
       rethrow;
     }
   }
+
+  void timeSlotDisable(
+      {required DateTime startTime, required DateTime endTime}) {
+    final pstate = state as MeetingDateModel;
+
+    final scheduleDate =
+        DateTime(startTime.year, startTime.month, startTime.day);
+
+    final data = pstate.data
+        .where((date) => date.startDate.isAtSameMomentAs(scheduleDate));
+
+    if (data.isNotEmpty) {
+      for (var schedule in data.first.schedules) {
+        if (schedule.startTime.isAtSameMomentAs(startTime) &&
+            schedule.endTime.isAtSameMomentAs(endTime)) {
+          schedule.isAvail = false;
+          break;
+        }
+      }
+    }
+
+    state = pstate.copyWith();
+  }
 }

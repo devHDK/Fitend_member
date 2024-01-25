@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:fitend_member/common/component/custom_one_button_dialog.dart';
 import 'package:fitend_member/common/component/dialog_widgets.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
@@ -232,6 +233,27 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
 
                         context.goNamed(HomeScreen.routeName);
                       } catch (e) {
+                        String message = '';
+
+                        if (e is DioException && e.response != null) {
+                          if (e.response!.statusCode == 409) {
+                            message = '선택한 일정에 스케줄이 생겼어요 😅';
+
+                            ref
+                                .read(meetingDateProvider(widget.trainerId)
+                                    .notifier)
+                                .timeSlotDisable(
+                                  startTime: selectStartTime,
+                                  endTime: selectEndTime,
+                                );
+                          }
+                          if (e.response!.statusCode == 403) {
+                            message = '티켓이 만료되었습니다!';
+                          }
+                        } else {
+                          message = '통신중 문제가 발생하였습니다.';
+                        }
+
                         pref.setBool(StringConstants.isNeedMeeting, true);
 
                         ref
@@ -239,9 +261,18 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                             .updateIsNeedMeeting(true);
 
                         DialogWidgets.showToast(
-                          content: '서버와 통신중 문제가 발생하였습니다.',
+                          content: message,
                           gravity: ToastGravity.CENTER,
                         );
+
+                        if (!context.mounted) return;
+
+                        setState(() {
+                          selectStartTime = DateTime(2024);
+                          selectEndTime = DateTime(2024);
+                        });
+
+                        context.pop();
                       }
                     },
                   ));

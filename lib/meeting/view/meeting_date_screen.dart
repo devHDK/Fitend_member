@@ -233,7 +233,7 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
 
                         context.goNamed(HomeScreen.routeName);
                       } catch (e) {
-                        String message = '';
+                        String message = '서버와 통신중 문제가 발생하였습니다.';
 
                         if (e is DioException && e.response != null) {
                           if (e.response!.statusCode == 409) {
@@ -249,11 +249,7 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
                           }
                           if (e.response!.statusCode == 403) {
                             message = '티켓이 만료되었습니다!';
-                          } else {
-                            message = '서버와 통신중 문제가 발생하였습니다.';
                           }
-                        } else {
-                          message = '통신중 문제가 발생하였습니다.';
                         }
 
                         pref.setBool(StringConstants.isNeedMeeting, true);

@@ -224,9 +224,11 @@ class _ThreadDetailState extends ConsumerState<ThreadDetail> {
                             context: context,
                           ),
                         )
-                            .then((value) {
+                            .then((value) async {
                           if (value is bool && value) {
-                            ref.read(threadCreateProvider.notifier).init();
+                            await ref
+                                .read(threadCreateProvider.notifier)
+                                .init();
                           }
                         });
                       },

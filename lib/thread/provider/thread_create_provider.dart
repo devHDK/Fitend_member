@@ -82,7 +82,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     init();
   }
 
-  void init() async {
+  Future<void> init() async {
     final sharedPref = await pref;
     final isFirst = sharedPref.getBool(StringConstants.isFirstRunThread);
 
@@ -121,15 +121,16 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
       }
 
       final pstate = state.copyWith();
+
+      print(pstate.toJson());
+
       pstate.isUploading = true;
 
-      state = pstate;
+      state = pstate.copyWith();
 
       ThreadCreateModel model = ThreadCreateModel(
         trainerId: trainer.id,
-        title: state.title != null && state.title!.isNotEmpty
-            ? state.title!
-            : null,
+        title: state.title,
         content: state.content,
         gallery: [],
         isMeetingThread: isMeetingThread,
@@ -384,8 +385,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     final pstate = state.copyWith();
 
     pstate.title = title;
-
-    state = pstate;
+    state = pstate.copyWith();
   }
 
   void updateContent(String content) {

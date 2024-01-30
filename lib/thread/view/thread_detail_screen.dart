@@ -693,9 +693,9 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                                     .notifier)
                                             .init();
 
-                                        commentController.text = '';
                                         if (mounted) {
                                           setState(() {
+                                            commentController.text = '';
                                             edittingCommentId = -1;
                                           });
                                         }

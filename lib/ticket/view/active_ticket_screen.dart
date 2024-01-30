@@ -144,7 +144,7 @@ class _ActiveTicketScreenState extends ConsumerState<ActiveTicketScreen> {
 
                                               DialogWidgets.oneButtonDialog(
                                                 message:
-                                                    '결제하신 멤버십을 취소했어요.\n환불은 영업일 기준 3~5일 소요되요 👌️',
+                                                    '결제하신 멤버십을 취소했어요.\n환불은 영업일 기준 3~5일 소요돼요 👌️',
                                                 confirmText: '확인',
                                                 confirmOnTap: () =>
                                                     context.pop(),

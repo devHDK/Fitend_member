@@ -6,6 +6,8 @@ import 'package:fitend_member/ticket/model/product_model.dart';
 import 'package:fitend_member/ticket/model/ticket_model.dart';
 import 'package:fitend_member/ticket/provider/product_provider.dart';
 import 'package:fitend_member/ticket/view/ticket_purchase_screen.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fitend_member/common/const/pallete.dart';
@@ -89,6 +91,8 @@ class _TicketContainerState extends ConsumerState<TicketContainer> {
     }
 
     final model = state as ProductsModel;
+    final userModel = ref.watch(getMeProvider) as UserModel;
+    final activeTickets = userModel.user.activeTickets;
 
     return Container(
       decoration: BoxDecoration(
@@ -144,7 +148,9 @@ class _TicketContainerState extends ConsumerState<TicketContainer> {
                       value['buyTicket'] != null &&
                       value['buyTicket'] == true) {
                     DialogWidgets.oneButtonDialog(
-                      message: '멤버십 구매를 완료했어요!\n결제취소는 시작일 하루 전까지 가능해요 🙆️️',
+                      message: activeTickets != null && activeTickets.isNotEmpty
+                          ? '멤버십 구매를 완료했어요!\n결제취소는 시작일 하루 전까지 가능해요 🙆️️'
+                          : '멤버십 구매를 완료했어요!',
                       confirmText: '확인',
                       confirmOnTap: () {
                         int count = 0;

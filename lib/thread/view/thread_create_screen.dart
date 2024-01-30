@@ -72,7 +72,7 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
     titleFocusNode.addListener(_titleFocusnodeListner);
     contentFocusNode.addListener(_contentFocusnodeListner);
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (widget.threadEditModel != null) {
         titleController =
             TextEditingController(text: widget.threadEditModel!.title);
@@ -95,13 +95,13 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
           }
         }); //edit 내용으로 업데이트
       } else if (widget.title != null) {
-        ref.read(threadCreateProvider.notifier).init();
+        await ref.read(threadCreateProvider.notifier).init();
 
-        titleController = TextEditingController(
-          text: widget.title,
-        );
-        ref.read(threadCreateProvider.notifier).updateTitle(widget.title);
+        titleController = TextEditingController(text: widget.title);
         contentsController = TextEditingController();
+
+        ref.read(threadCreateProvider.notifier).updateTitle(widget.title);
+
         if (mounted) {
           setState(() {});
         }
@@ -120,8 +120,11 @@ class _ThreadCreateScreenState extends ConsumerState<ThreadCreateScreen> {
   void dispose() {
     titleFocusNode.removeListener(_titleFocusnodeListner);
     contentFocusNode.removeListener(_contentFocusnodeListner);
+
     titleFocusNode.dispose();
     contentFocusNode.dispose();
+
+    titleController!.dispose();
     contentsController!.dispose();
 
     super.dispose();

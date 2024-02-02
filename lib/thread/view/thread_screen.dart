@@ -321,7 +321,9 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                   Navigator.of(context).push(
                     CupertinoPageRoute(
                       builder: (context) => ThreadCreateScreen(
-                          trainer: user.user.activeTrainers.first,
+                          trainer: user.user.activeTrainers.isNotEmpty
+                              ? user.user.activeTrainers.first
+                              : user.user.lastTrainers.first,
                           user: ThreadUser(
                             id: user.user.id,
                             gender: user.user.gender,

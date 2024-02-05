@@ -58,6 +58,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     Future.delayed(const Duration(milliseconds: 300), () {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
+          fetch();
+
           if (initial && mounted) {
             if ((workoutModel.isProcessing != null &&
                     workoutModel.isProcessing!) &&
@@ -71,15 +73,13 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
             }
             initial = false;
           }
-
-          fetch();
         },
       );
     });
   }
 
   void fetch() async {
-    if (mounted && ref.read(workoutProvider(widget.id)) is WorkoutModelError) {
+    if (ref.read(workoutProvider(widget.id)) is WorkoutModelError) {
       await ref
           .read(workoutProvider(widget.id).notifier)
           .getWorkout(id: widget.id);

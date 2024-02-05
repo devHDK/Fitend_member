@@ -33,6 +33,8 @@ class _WorkoutHistoryScreenState extends ConsumerState<WorkoutHistoryScreen> {
     super.initState();
 
     controller.addListener(listener);
+
+    fetch();
   }
 
   @override
@@ -55,6 +57,16 @@ class _WorkoutHistoryScreenState extends ConsumerState<WorkoutHistoryScreen> {
               start: workoutHistory.data.length, fetchMore: true);
         });
       }
+    }
+  }
+
+  void fetch() async {
+    if (mounted &&
+        ref.read(workoutHistoryProvider(widget.workoutPlanId))
+            is WorkoutHistoryModelError) {
+      await ref
+          .read(workoutHistoryProvider(widget.workoutPlanId).notifier)
+          .paginate();
     }
   }
 

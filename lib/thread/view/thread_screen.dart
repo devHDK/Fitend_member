@@ -11,6 +11,7 @@ import 'package:fitend_member/notifications/provider/notification_home_screen_pr
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/component/thread_cell.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
 
@@ -37,10 +38,10 @@ class ThreadScreen extends ConsumerStatefulWidget {
   const ThreadScreen({super.key});
 
   @override
-  ConsumerState<ThreadScreen> createState() => _ThreadScreenState();
+  ConsumerState<ThreadScreen> createState() => ThreadScreenState();
 }
 
-class _ThreadScreenState extends ConsumerState<ThreadScreen>
+class ThreadScreenState extends ConsumerState<ThreadScreen>
     with WidgetsBindingObserver, RouteAware {
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener =
@@ -187,7 +188,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
   Widget build(BuildContext context) {
     final userState = ref.watch(getMeProvider);
     final state = ref.watch(threadProvider);
-    final notificationState = ref.watch(notificationHomeProvider);
+    // final notificationState = ref.watch(notificationHomeProvider);
     final threadCreateState = ref.watch(threadCreateProvider);
 
     if (state is ThreadListModelLoading || userState is UserModelLoading) {
@@ -218,124 +219,12 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
 
     final user = userState as UserModel;
     pstate = state as ThreadListModel;
-    final notificationHomeModel = notificationState as NotificationMainModel;
+    // final notificationHomeModel = notificationState as NotificationMainModel;
     startIndex = state.data.length;
 
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-        backgroundColor: Pallete.background,
-        appBar: LogoAppbar(
-          title: 'T H R E A D S',
-          tapLogo: () async {
-            await ref
-                .read(threadProvider.notifier)
-                .paginate(
-                  startIndex: 0,
-                  isRefetch: true,
-                )
-                .then((value) {
-              itemScrollController.jumpTo(index: 0);
-              isLoading = false;
-            });
-          },
-          actions: [
-            InkWell(
-              hoverColor: Colors.transparent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => const NotificationScreen(),
-                    ));
-              },
-              child: !notificationHomeModel.isConfirmed
-                  ? SvgPicture.asset(SVGConstants.alarmOn)
-                  : SvgPicture.asset(SVGConstants.alarmOff),
-            ),
-            const SizedBox(
-              width: 12,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 28.0),
-              child: InkWell(
-                hoverColor: Colors.transparent,
-                onTap: () {
-                  Navigator.of(context).push(
-                    CupertinoPageRoute(
-                      builder: (context) => const MyPageScreen(),
-                    ),
-                  );
-                },
-                child: SvgPicture.asset(
-                  SVGConstants.mypage,
-                ),
-              ),
-            ),
-          ],
-          bottom: threadCreateState.isUploading &&
-                  threadCreateState.totalCount > 0
-              ? PreferredSize(
-                  preferredSize: Size(100.w, 30),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 28, vertical: 5),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'UPLOADING',
-                          style: h6Headline.copyWith(
-                            color: Pallete.lightGray,
-                            height: 1,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        LoadingAnimationWidget.dotsTriangle(
-                          color: Pallete.lightGray,
-                          size: 15,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: LinearProgressIndicator(
-                            color: Pallete.point,
-                            value: (threadCreateState.doneCount) /
-                                threadCreateState.totalCount,
-                            backgroundColor: Pallete.gray,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              : null,
-        ),
-        floatingActionButton: threadCreateState.isUploading
-            ? null
-            : FloatingActionButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    CupertinoPageRoute(
-                      builder: (context) => ThreadCreateScreen(
-                          trainer: user.user.activeTrainers.isNotEmpty
-                              ? user.user.activeTrainers.first
-                              : user.user.lastTrainers.first,
-                          user: ThreadUser(
-                            id: user.user.id,
-                            gender: user.user.gender,
-                            nickname: user.user.nickname,
-                          )),
-                    ),
-                  );
-                },
-                backgroundColor: Colors.transparent,
-                child: SvgPicture.asset(SVGConstants.threadCreateButton),
-              ),
-        body: RefreshIndicator(
+    return Stack(
+      children: [
+        RefreshIndicator(
           backgroundColor: Pallete.background,
           color: Pallete.point,
           semanticsLabel: '새로고침',
@@ -469,7 +358,88 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
                   },
                 ),
         ),
+        if (threadCreateState.isUploading && threadCreateState.totalCount > 0)
+          _uploadingStatusBar(threadCreateState),
+        if (!threadCreateState.isUploading)
+          Positioned(
+            right: 18,
+            bottom: 10,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => ThreadCreateScreen(
+                        trainer: user.user.activeTrainers.isNotEmpty
+                            ? user.user.activeTrainers.first
+                            : user.user.lastTrainers.first,
+                        user: ThreadUser(
+                          id: user.user.id,
+                          gender: user.user.gender,
+                          nickname: user.user.nickname,
+                        )),
+                  ),
+                );
+              },
+              backgroundColor: Colors.transparent,
+              child: SvgPicture.asset(SVGConstants.threadCreateButton),
+            ),
+          ),
+      ],
+    );
+  }
+
+  PreferredSize _uploadingStatusBar(ThreadCreateTempModel threadCreateState) {
+    return PreferredSize(
+      preferredSize: Size(100.w, 30),
+      child: Container(
+        color: Pallete.background,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 5),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'UPLOADING',
+                style: h6Headline.copyWith(
+                  color: Pallete.lightGray,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              LoadingAnimationWidget.dotsTriangle(
+                color: Pallete.lightGray,
+                size: 15,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: LinearProgressIndicator(
+                  color: Pallete.point,
+                  value: (threadCreateState.doneCount) /
+                      threadCreateState.totalCount,
+                  backgroundColor: Pallete.gray,
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  void tapLogo() async {
+    await ref
+        .read(threadProvider.notifier)
+        .paginate(
+          startIndex: 0,
+          isRefetch: true,
+        )
+        .then((value) {
+      itemScrollController.jumpTo(index: 0);
+      isLoading = false;
+    });
   }
 }

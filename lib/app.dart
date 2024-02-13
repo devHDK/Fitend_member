@@ -5,7 +5,6 @@ import 'package:fitend_member/home_screen.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
-import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,40 +32,33 @@ class _AppState extends ConsumerState<App> {
     initSharedPref(); //sharedPreferences 세팅
     setupFirebaseMessagingHandlersWhenOpen();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      Future.delayed(
-        Duration.zero,
-        () async {
-          await setupFirebaseMessagingHandlers(widget.initialMessage);
-        },
-      );
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      setupFirebaseMessagingHandlers(widget.initialMessage);
     });
   }
 
-  Future<void> setupFirebaseMessagingHandlers(RemoteMessage? message) async {
+  void setupFirebaseMessagingHandlers(RemoteMessage? message) {
     if (message == null) {
       return;
     }
 
-    await ref.read(getMeProvider.notifier).getMe().then((value) {
-      if (message.data['type'] == 'commentCreate' ||
-          message.data['type'] == 'threadCreate') {
-        ref.read(routerProvider).goNamed(
-          ThreadDetailScreen.routeName,
-          pathParameters: {
-            'threadId': message.data['threadId'],
-          },
-        );
-      } else if (message.data['type'].toString().contains('reservation')) {
-        ref.read(routerProvider).goNamed(NotificationScreen.routeName);
-      } else if (message.data['type'].toString().contains('noFeedback')) {
-        ref.read(routerProvider).goNamed(NotificationScreen.routeName);
-      } else if (message.data['type'].toString().contains('ticketExpire')) {
-        ref.read(routerProvider).goNamed(ActiveTicketScreen.routeName);
-      } else if (message.data['type'].toString().contains('meeting')) {
-        ref.read(routerProvider).goNamed(HomeScreen.routeName);
-      }
-    });
+    if (message.data['type'] == 'commentCreate' ||
+        message.data['type'] == 'threadCreate') {
+      ref.read(routerProvider).goNamed(
+        ThreadDetailScreen.routeName,
+        pathParameters: {
+          'threadId': message.data['threadId'],
+        },
+      );
+    } else if (message.data['type'].toString().contains('reservation')) {
+      ref.read(routerProvider).goNamed(NotificationScreen.routeName);
+    } else if (message.data['type'].toString().contains('noFeedback')) {
+      ref.read(routerProvider).goNamed(NotificationScreen.routeName);
+    } else if (message.data['type'].toString().contains('ticketExpire')) {
+      ref.read(routerProvider).goNamed(ActiveTicketScreen.routeName);
+    } else if (message.data['type'].toString().contains('meeting')) {
+      ref.read(routerProvider).goNamed(HomeScreen.routeName);
+    }
   }
 
   void setupFirebaseMessagingHandlersWhenOpen() {

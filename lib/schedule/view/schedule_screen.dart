@@ -40,10 +40,10 @@ class ScheduleScreen extends ConsumerStatefulWidget {
   const ScheduleScreen({super.key});
 
   @override
-  ConsumerState<ScheduleScreen> createState() => _ScheduleScreenState();
+  ConsumerState<ScheduleScreen> createState() => ScheduleScreenState();
 }
 
-class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
+class ScheduleScreenState extends ConsumerState<ScheduleScreen>
     with WidgetsBindingObserver, RouteAware {
   final ItemScrollController itemScrollController = ItemScrollController();
   final ItemPositionsListener itemPositionsListener =
@@ -240,7 +240,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     }
     final userModel = ref.watch(getMeProvider) as UserModel;
     final schedules = state as ScheduleModel;
-    final notificationHomeModel = notificationState as NotificationMainModel;
+    // final notificationHomeModel = notificationState as NotificationMainModel;
 
     minDate = schedules.data.first.startDate.subtract(const Duration(days: 31));
     maxDate = schedules.data.last.startDate.add(const Duration(days: 1));
@@ -250,184 +250,128 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
     final isActiveUser = userModel.user.activeTickets != null &&
         userModel.user.activeTickets!.isNotEmpty;
 
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-        backgroundColor: Pallete.background,
-        appBar: LogoAppbar(
-          title: 'P L A N',
-          tapLogo: () async {
-            await ref
-                .read(scheduleProvider.notifier)
-                .paginate(
-                  startDate: DataUtils.getDate(fifteenDaysAgo),
-                )
-                .then((value) {
-              if (mounted) {
-                itemScrollController.jumpTo(index: 15);
-              }
-            });
-          },
-          actions: [
-            InkWell(
-              hoverColor: Colors.transparent,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => const NotificationScreen(),
-                    ));
-              },
-              child: !notificationHomeModel.isConfirmed
-                  ? SvgPicture.asset(SVGConstants.alarmOn)
-                  : SvgPicture.asset(SVGConstants.alarmOff),
-            ),
-            const SizedBox(
-              width: 12,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 28.0),
-              child: InkWell(
-                hoverColor: Colors.transparent,
-                onTap: () {
-                  Navigator.of(context).push(
-                    CupertinoPageRoute(
-                      builder: (context) => const MyPageScreen(),
-                    ),
-                  );
-                },
-                child: SvgPicture.asset(SVGConstants.mypage),
-              ),
-            ),
-          ],
-        ),
-        body: Stack(
-          children: [
-            ScrollablePositionedList.builder(
-              itemScrollController: itemScrollController,
-              itemPositionsListener: itemPositionsListener,
-              initialScrollIndex:
-                  schedules.scrollIndex != null ? schedules.scrollIndex! : 15,
-              itemCount: schedules.data.length + 2,
-              itemBuilder: (context, index) {
-                if (index == schedules.data.length + 1 || index == 0) {
-                  return const SizedBox(
-                    height: 100,
-                    child: Center(
-                      child: CircularProgressIndicator(color: Pallete.point),
-                    ),
-                  );
-                }
+    return Stack(
+      children: [
+        ScrollablePositionedList.builder(
+          itemScrollController: itemScrollController,
+          itemPositionsListener: itemPositionsListener,
+          initialScrollIndex:
+              schedules.scrollIndex != null ? schedules.scrollIndex! : 15,
+          itemCount: schedules.data.length + 2,
+          itemBuilder: (context, index) {
+            if (index == schedules.data.length + 1 || index == 0) {
+              return const SizedBox(
+                height: 100,
+                child: Center(
+                  child: CircularProgressIndicator(color: Pallete.point),
+                ),
+              );
+            }
 
-                final model = schedules.data[index - 1].schedule;
+            final model = schedules.data[index - 1].schedule;
 
-                if (model!.isEmpty) {
-                  return Column(
-                    children: [
-                      if (schedules.data[index - 1].startDate.day == 1)
-                        Container(
-                          height: 34,
-                          color: Pallete.darkGray,
-                          child: Center(
-                            child: Text(
-                              DateFormat('yyyy년 M월')
-                                  .format(schedules.data[index - 1].startDate),
-                              style: h3Headline.copyWith(
-                                fontSize: 14,
-                                color: Colors.white,
-                              ),
-                            ),
+            if (model!.isEmpty) {
+              return Column(
+                children: [
+                  if (schedules.data[index - 1].startDate.day == 1)
+                    Container(
+                      height: 34,
+                      color: Pallete.darkGray,
+                      child: Center(
+                        child: Text(
+                          DateFormat('yyyy년 M월')
+                              .format(schedules.data[index - 1].startDate),
+                          style: h3Headline.copyWith(
+                            fontSize: 14,
+                            color: Colors.white,
                           ),
                         ),
-                      WorkoutScheduleCard(
-                        date: schedules.data[index - 1].startDate,
-                        selected: false,
-                        isComplete: null,
                       ),
-                    ],
-                  );
-                }
+                    ),
+                  WorkoutScheduleCard(
+                    date: schedules.data[index - 1].startDate,
+                    selected: false,
+                    isComplete: null,
+                  ),
+                ],
+              );
+            }
 
-                if (model.isNotEmpty) {
-                  return Column(
-                    children: [
-                      if (schedules.data[index - 1].startDate.day == 1)
-                        Container(
-                          height: 34,
-                          color: Pallete.darkGray,
-                          child: Center(
-                            child: Text(
-                              DateFormat('yyyy년 M월')
-                                  .format(schedules.data[index - 1].startDate),
-                              style: h3Headline.copyWith(
-                                fontSize: 14,
-                                color: Colors.white,
-                              ),
-                            ),
+            if (model.isNotEmpty) {
+              return Column(
+                children: [
+                  if (schedules.data[index - 1].startDate.day == 1)
+                    Container(
+                      height: 34,
+                      color: Pallete.darkGray,
+                      child: Center(
+                        child: Text(
+                          DateFormat('yyyy년 M월')
+                              .format(schedules.data[index - 1].startDate),
+                          style: h3Headline.copyWith(
+                            fontSize: 14,
+                            color: Colors.white,
                           ),
                         ),
-                      ...model.mapIndexed(
-                        (seq, e) {
-                          return InkWell(
-                            onTap: () {
-                              if (model[seq].selected!) {
-                                return;
-                              }
-                              if (mounted) {
-                                setState(
-                                  () {
-                                    for (var e in schedules.data) {
-                                      for (var element in e.schedule!) {
-                                        element.selected = false;
-                                      }
-                                    }
-                                    model[seq].selected = true;
-                                  },
-                                );
-                              }
-                            },
-                            child: e is Workout
-                                ? WorkoutScheduleCard.fromWorkoutModel(
-                                    model: e,
+                      ),
+                    ),
+                  ...model.mapIndexed(
+                    (seq, e) {
+                      return InkWell(
+                        onTap: () {
+                          if (model[seq].selected!) {
+                            return;
+                          }
+                          if (mounted) {
+                            setState(
+                              () {
+                                for (var e in schedules.data) {
+                                  for (var element in e.schedule!) {
+                                    element.selected = false;
+                                  }
+                                }
+                                model[seq].selected = true;
+                              },
+                            );
+                          }
+                        },
+                        child: e is Workout
+                            ? WorkoutScheduleCard.fromWorkoutModel(
+                                model: e,
+                                date: schedules.data[index - 1].startDate,
+                                isDateVisible: seq == 0 ? true : false,
+                                onNotifyParent: _onChildEvent,
+                              )
+                            : e is Reservation
+                                ? ReservationScheduleCard.fromReservationModel(
                                     date: schedules.data[index - 1].startDate,
                                     isDateVisible: seq == 0 ? true : false,
-                                    onNotifyParent: _onChildEvent,
+                                    model: e,
                                   )
-                                : e is Reservation
-                                    ? ReservationScheduleCard
-                                        .fromReservationModel(
-                                        date:
-                                            schedules.data[index - 1].startDate,
-                                        isDateVisible: seq == 0 ? true : false,
-                                        model: e,
-                                      )
-                                    : MeetingScheduleCard.fromMeetingSchedule(
-                                        date:
-                                            schedules.data[index - 1].startDate,
-                                        model: e as MeetingSchedule,
-                                        isDateVisible: seq == 0 ? true : false,
-                                      ),
-                          );
-                        },
-                      )
-                    ],
-                  );
-                }
-                return const SizedBox();
-              },
-            ),
-            if (schedules.isNeedMeeing != null && schedules.isNeedMeeing!)
-              _needMeetingBanner(context, userModel),
-            if (!isActiveUser) _needPurchaseTicketBanner(context, userModel),
-            if (userModel.user.activeTickets!.length == 1 &&
-                userModel.user.activeTickets![0].expiredAt
-                        .difference(DateTime.now())
-                        .inDays <=
-                    7)
-              _expireTicketBanner(context, userModel)
-          ],
+                                : MeetingScheduleCard.fromMeetingSchedule(
+                                    date: schedules.data[index - 1].startDate,
+                                    model: e as MeetingSchedule,
+                                    isDateVisible: seq == 0 ? true : false,
+                                  ),
+                      );
+                    },
+                  )
+                ],
+              );
+            }
+            return const SizedBox();
+          },
         ),
-      ),
+        if (schedules.isNeedMeeing != null && schedules.isNeedMeeing!)
+          _needMeetingBanner(context, userModel),
+        if (!isActiveUser) _needPurchaseTicketBanner(context, userModel),
+        if (userModel.user.activeTickets!.length == 1 &&
+            userModel.user.activeTickets![0].expiredAt
+                    .difference(DateTime.now())
+                    .inDays <=
+                7)
+          _expireTicketBanner(context, userModel)
+      ],
     );
   }
 
@@ -556,6 +500,19 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   // }
 
   Future<void> _resetScheduleList() async {
+    await ref
+        .read(scheduleProvider.notifier)
+        .paginate(
+          startDate: DataUtils.getDate(fifteenDaysAgo),
+        )
+        .then((value) {
+      if (mounted) {
+        itemScrollController.jumpTo(index: 15);
+      }
+    });
+  }
+
+  void tapLogo() async {
     await ref
         .read(scheduleProvider.notifier)
         .paginate(

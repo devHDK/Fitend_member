@@ -5,6 +5,7 @@ import 'package:fitend_member/home_screen.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +13,12 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'flavors.dart';
 
 class App extends ConsumerStatefulWidget {
-  const App({super.key});
+  const App({
+    super.key,
+    this.initialMessage,
+  });
+
+  final RemoteMessage? initialMessage;
 
   @override
   ConsumerState<App> createState() => _AppState();
@@ -25,30 +31,45 @@ class _AppState extends ConsumerState<App> {
   void initState() {
     super.initState();
     initSharedPref(); //sharedPreferences 세팅
-    setupFirebaseMessagingHandlers();
-    // FirebaseMessaging.instance.getInitialMessage().then((message) {
-    //   if (message != null) {
-    //     debugPrint('FCM Click!!! terminated');
-    //     GoRouter.of(context).goNamed(NotificationScreen.routeName);
-    //   }
-    // });
+    setupFirebaseMessagingHandlersWhenOpen();
 
-    // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    //   debugPrint('FCM Click!!!');
-    //   GoRouter.of(context).pushNamed(NotificationScreen.routeName);
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      Future.delayed(
+        Duration.zero,
+        () async {
+          await setupFirebaseMessagingHandlers(widget.initialMessage);
+        },
+      );
+    });
   }
 
-  void setupFirebaseMessagingHandlers() {
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
-      if (message != null) {
-        debugPrint("getInitialMessage: ${message.data}");
-        // ref.read(routerProvider).goNamed(NotificationScreen.routeName);
+  Future<void> setupFirebaseMessagingHandlers(RemoteMessage? message) async {
+    if (message == null) {
+      return;
+    }
+
+    await ref.read(getMeProvider.notifier).getMe().then((value) {
+      if (message.data['type'] == 'commentCreate' ||
+          message.data['type'] == 'threadCreate') {
+        ref.read(routerProvider).goNamed(
+          ThreadDetailScreen.routeName,
+          pathParameters: {
+            'threadId': message.data['threadId'],
+          },
+        );
+      } else if (message.data['type'].toString().contains('reservation')) {
+        ref.read(routerProvider).goNamed(NotificationScreen.routeName);
+      } else if (message.data['type'].toString().contains('noFeedback')) {
+        ref.read(routerProvider).goNamed(NotificationScreen.routeName);
+      } else if (message.data['type'].toString().contains('ticketExpire')) {
+        ref.read(routerProvider).goNamed(ActiveTicketScreen.routeName);
+      } else if (message.data['type'].toString().contains('meeting')) {
+        ref.read(routerProvider).goNamed(HomeScreen.routeName);
       }
     });
+  }
 
+  void setupFirebaseMessagingHandlersWhenOpen() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       debugPrint("message: ${message.data}");
       if (message.data['type'] == 'commentCreate' ||

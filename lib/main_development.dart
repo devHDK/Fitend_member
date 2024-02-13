@@ -279,9 +279,12 @@ Future<void> main() async {
   Hive.registerAdapter<ScheduleRecordsModel>(ScheduleRecordsModelAdapter());
   Hive.registerAdapter<UserRegisterStateModel>(UserRegisterStateModelAdapter());
 
+  RemoteMessage? initialMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
+
   runApp(
-    const ProviderScope(
-      child: App(),
+    ProviderScope(
+      child: App(initialMessage: initialMessage),
     ),
   );
 }

@@ -209,9 +209,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
   Widget build(BuildContext context) {
     final state = ref.watch(scheduleProvider);
     final notificationState = ref.watch(notificationHomeProvider);
+    final userState = ref.watch(getMeProvider);
 
     if (state is ScheduleModelLoading ||
-        notificationState is NotificationMainModelLoading) {
+        notificationState is NotificationMainModelLoading ||
+        userState is UserModelLoading) {
       return const Scaffold(
         backgroundColor: Pallete.background,
         body: Center(
@@ -236,7 +238,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
         ),
       );
     }
-    final userState = ref.watch(getMeProvider) as UserModel;
+    final userModel = ref.watch(getMeProvider) as UserModel;
     final schedules = state as ScheduleModel;
     final notificationHomeModel = notificationState as NotificationMainModel;
 
@@ -245,8 +247,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
 
     scheduleListGlobal = schedules.data;
 
-    final isActiveUser = userState.user.activeTickets != null &&
-        userState.user.activeTickets!.isNotEmpty;
+    final isActiveUser = userModel.user.activeTickets != null &&
+        userModel.user.activeTickets!.isNotEmpty;
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -415,14 +417,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen>
               },
             ),
             if (schedules.isNeedMeeing != null && schedules.isNeedMeeing!)
-              _needMeetingBanner(context, userState),
-            if (!isActiveUser) _needPurchaseTicketBanner(context, userState),
-            if (userState.user.activeTickets!.length == 1 &&
-                userState.user.activeTickets![0].expiredAt
+              _needMeetingBanner(context, userModel),
+            if (!isActiveUser) _needPurchaseTicketBanner(context, userModel),
+            if (userModel.user.activeTickets!.length == 1 &&
+                userModel.user.activeTickets![0].expiredAt
                         .difference(DateTime.now())
                         .inDays <=
                     7)
-              _expireTicketBanner(context, userState)
+              _expireTicketBanner(context, userModel)
           ],
         ),
       ),

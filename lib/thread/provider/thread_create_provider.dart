@@ -122,8 +122,6 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
 
       final pstate = state.copyWith();
 
-      print(pstate.toJson());
-
       pstate.isUploading = true;
 
       state = pstate.copyWith();

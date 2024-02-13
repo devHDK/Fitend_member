@@ -23,6 +23,8 @@ import 'package:fitend_member/thread/provider/thread_detail_provider.dart';
 import 'package:fitend_member/thread/utils/media_utils.dart';
 import 'package:fitend_member/thread/utils/thread_push_update_utils.dart';
 import 'package:fitend_member/thread/view/comment_asset_edit_screen.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -140,8 +142,9 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
   Widget build(BuildContext context) {
     final state = ref.watch(threadDetailProvider(widget.threadId));
     final commentState = ref.watch(commentCreateProvider(widget.threadId));
+    final userState = ref.watch(getMeProvider);
 
-    if (state is ThreadModelLoading) {
+    if (state is ThreadModelLoading || userState is UserModelLoading) {
       return const Scaffold(
         backgroundColor: Pallete.background,
         body: Center(

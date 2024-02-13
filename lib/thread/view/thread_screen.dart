@@ -190,7 +190,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen>
     final notificationState = ref.watch(notificationHomeProvider);
     final threadCreateState = ref.watch(threadCreateProvider);
 
-    if (state is ThreadListModelLoading) {
+    if (state is ThreadListModelLoading || userState is UserModelLoading) {
       return const Scaffold(
         backgroundColor: Pallete.background,
         body: Center(

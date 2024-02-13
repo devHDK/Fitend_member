@@ -32,6 +32,7 @@ TicketModel _$TicketModelFromJson(Map<String, dynamic> json) => TicketModel(
       receiptId: json['receiptId'] as String?,
       users: (json['users'] as List<dynamic>).map((e) => e as String).toList(),
       isHolding: json['isHolding'] as bool,
+      month: json['month'] as int?,
     );
 
 Map<String, dynamic> _$TicketModelToJson(TicketModel instance) =>
@@ -47,6 +48,7 @@ Map<String, dynamic> _$TicketModelToJson(TicketModel instance) =>
       'receiptId': instance.receiptId,
       'users': instance.users,
       'isHolding': instance.isHolding,
+      'month': instance.month,
     };
 
 TicketDetailListModel _$TicketDetailListModelFromJson(
@@ -75,6 +77,7 @@ TicketDetailModel _$TicketDetailModelFromJson(Map<String, dynamic> json) =>
       createdAt: DateTime.parse(json['createdAt'] as String),
       users: (json['users'] as List<dynamic>).map((e) => e as String).toList(),
       isHolding: json['isHolding'] as bool,
+      month: json['month'] as int?,
       receiptId: json['receiptId'] as String?,
       serviceSession: json['serviceSession'] as int,
       sessionPrice: json['sessionPrice'] as int,
@@ -94,6 +97,7 @@ Map<String, dynamic> _$TicketDetailModelToJson(TicketDetailModel instance) =>
       'receiptId': instance.receiptId,
       'users': instance.users,
       'isHolding': instance.isHolding,
+      'month': instance.month,
       'serviceSession': instance.serviceSession,
       'sessionPrice': instance.sessionPrice,
       'coachingPrice': instance.coachingPrice,

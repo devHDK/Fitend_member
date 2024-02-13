@@ -62,6 +62,8 @@ class TicketModel {
   final List<String> users;
   @JsonKey(name: "isHolding")
   final bool isHolding;
+  @JsonKey(name: "month")
+  int? month;
 
   TicketModel({
     required this.id,
@@ -75,6 +77,7 @@ class TicketModel {
     this.receiptId,
     required this.users,
     required this.isHolding,
+    this.month,
   });
 
   TicketModel copyWith({
@@ -89,6 +92,7 @@ class TicketModel {
     String? receiptId,
     List<String>? users,
     bool? isHolding,
+    int? month,
   }) =>
       TicketModel(
         id: id ?? this.id,
@@ -102,6 +106,7 @@ class TicketModel {
         users: users ?? this.users,
         receiptId: receiptId ?? this.receiptId,
         isHolding: isHolding ?? this.isHolding,
+        month: month ?? this.month,
       );
 
   factory TicketModel.fromJson(Map<String, dynamic> json) =>
@@ -164,6 +169,7 @@ class TicketDetailModel extends TicketModel {
     required super.createdAt,
     required super.users,
     required super.isHolding,
+    super.month,
     super.receiptId,
     required this.serviceSession,
     required this.sessionPrice,
@@ -186,6 +192,7 @@ class TicketDetailModel extends TicketModel {
     List<String>? users,
     String? receiptId,
     bool? isHolding,
+    int? month,
   }) =>
       TicketDetailModel(
         id: id ?? this.id,
@@ -202,6 +209,7 @@ class TicketDetailModel extends TicketModel {
         users: users ?? this.users,
         receiptId: receiptId ?? this.receiptId,
         isHolding: isHolding ?? this.isHolding,
+        month: month ?? this.month,
       );
 
   factory TicketDetailModel.fromJson(Map<String, dynamic> json) =>

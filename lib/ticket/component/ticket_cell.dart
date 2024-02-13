@@ -19,13 +19,9 @@ class TicketCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int fcMonths = 0;
-    final diff = ticket.expiredAt.difference(ticket.startedAt).inDays;
-    if (diff > 92) {
-      fcMonths = 6;
-    } else if (diff > 31) {
-      fcMonths = 3;
-    } else if (diff > 15) {
-      fcMonths = 1;
+
+    if (ticket.month != null) {
+      fcMonths = ticket.month!;
     } else {
       fcMonths = 0;
     }

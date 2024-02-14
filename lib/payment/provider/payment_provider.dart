@@ -33,27 +33,15 @@ class PaymnetStateNotifier extends StateNotifier<ActiveTicketResponseBase?> {
 
       return resp;
     } catch (e) {
-      if (e is DioException) {
-        state = ActiveTicketResponseError(
-          error: e.toString(),
-          statusCode: e.response!.statusCode!,
-        );
-      }
+      rethrow;
     }
-    return null;
   }
 
   Future<void> deletePayments({required int ticketId}) async {
     try {
       await repository.deletePayment(ticketId: ticketId);
     } catch (e) {
-      if (e is DioException) {
-        state = ActiveTicketResponseError(
-          error: e.toString(),
-          statusCode: e.response!.statusCode!,
-        );
-      }
+      rethrow;
     }
-    return;
   }
 }

@@ -566,6 +566,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                               '${URLConstants.s3Url}${widget.exercises[model.exerciseIndex].videos.first.thumbnail}',
                         )
                       ],
+                      isSwipeUp: isSwipeUp,
                     ),
                   ),
                 ),

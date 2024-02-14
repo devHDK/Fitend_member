@@ -11,11 +11,13 @@ import 'package:video_player/video_player.dart';
 class GuideVideoPlayer extends StatefulWidget {
   final List<ExerciseVideo> videos;
   final bool isGuide;
+  final bool? isSwipeUp;
 
   const GuideVideoPlayer({
     super.key,
     required this.videos,
     this.isGuide = true,
+    this.isSwipeUp,
   });
 
   @override
@@ -66,6 +68,14 @@ class _GuideVideoPlayerState extends State<GuideVideoPlayer> {
           firstVideoController!.play();
         });
       });
+    }
+
+    if (oldWidget.isSwipeUp != null && widget.isSwipeUp != null) {
+      if (widget.isSwipeUp!) {
+        firstVideoController?.pause();
+      } else {
+        firstVideoController?.play();
+      }
     }
   }
 

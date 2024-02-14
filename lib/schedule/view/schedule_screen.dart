@@ -10,8 +10,6 @@ import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/meeting/model/meeting_schedule_model.dart';
 import 'package:fitend_member/meeting/view/meeting_date_screen.dart';
-import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
-import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
 import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
@@ -196,12 +194,9 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen>
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(scheduleProvider);
-    final notificationState = ref.watch(notificationHomeProvider);
     final userState = ref.watch(getMeProvider);
 
-    if (state is ScheduleModelLoading ||
-        notificationState is NotificationMainModelLoading ||
-        userState is UserModelLoading) {
+    if (state is ScheduleModelLoading || userState is UserModelLoading) {
       return const Scaffold(
         backgroundColor: Pallete.background,
         body: Center(
@@ -226,9 +221,9 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen>
         ),
       );
     }
+
     final userModel = ref.watch(getMeProvider) as UserModel;
     final schedules = state as ScheduleModel;
-    // final notificationHomeModel = notificationState as NotificationMainModel;
 
     minDate = schedules.data.first.startDate.subtract(const Duration(days: 31));
     maxDate = schedules.data.last.startDate.add(const Duration(days: 1));

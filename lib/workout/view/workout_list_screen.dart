@@ -11,7 +11,6 @@ import 'package:fitend_member/common/provider/hive_workout_record_provider.dart'
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
-import 'package:fitend_member/schedule/provider/schedule_provider.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
@@ -216,8 +215,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
         leading: Padding(
           padding: const EdgeInsets.only(left: 18),
           child: IconButton(
-              onPressed: () => context.pop(true),
-              icon: const Icon(Icons.arrow_back)),
+            onPressed: () => context.pop(),
+            icon: const Icon(Icons.arrow_back),
+          ),
         ),
         centerTitle: true,
         title: Text(
@@ -243,24 +243,15 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                       return;
                     }
                     if (changedDate['changedDate'] != null) {
-                      setState(
-                        () {
-                          ref
-                              .read(workoutProvider(widget.id).notifier)
-                              .updateWorkoutStateDate(
-                                dateTime: DateFormat('yyyy-MM-dd').format(
-                                  DateTime.parse(
-                                    changedDate['changedDate'].toString(),
-                                  ),
-                                ),
-                              );
-
-                          //스케줄 업데이트
-                          ref
-                              .read(scheduleProvider.notifier)
-                              .updateScheduleFromBuffer();
-                        },
-                      );
+                      ref
+                          .read(workoutProvider(widget.id).notifier)
+                          .updateWorkoutStateDate(
+                            dateTime: DateFormat('yyyy-MM-dd').format(
+                              DateTime.parse(
+                                changedDate['changedDate'].toString(),
+                              ),
+                            ),
+                          );
                     }
                   },
                 );

@@ -1,20 +1,16 @@
 import 'package:fitend_member/common/component/dialog_widgets.dart';
-import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
-import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
 import 'package:fitend_member/notifications/provider/notification_home_screen_provider.dart';
-import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/thread/component/thread_cell.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_create_model.dart';
 import 'package:fitend_member/thread/model/threads/thread_list_model.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
-
 import 'package:fitend_member/thread/provider/thread_provider.dart';
 import 'package:fitend_member/thread/utils/thread_push_update_utils.dart';
 import 'package:fitend_member/thread/view/thread_create_screen.dart';
@@ -22,7 +18,6 @@ import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
-import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

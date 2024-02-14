@@ -217,6 +217,9 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
                               notification.data![index].info!.threadId != null
                           ? () {
                               _pushThreadScreen(context, index);
+                              ref
+                                  .read(notificationProvider.notifier)
+                                  .putNotificationChcek(index);
                             }
                           : notification.data![index].type == 'noFeedback' &&
                                   notification.data![index].info != null &&
@@ -225,8 +228,15 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
                                       null
                               ? () async {
                                   await _pushFeedbackScreen(index, context);
+                                  ref
+                                      .read(notificationProvider.notifier)
+                                      .putNotificationChcek(index);
                                 }
-                              : null,
+                              : () {
+                                  ref
+                                      .read(notificationProvider.notifier)
+                                      .putNotificationChcek(index);
+                                },
                       child: NotificationCell(
                         notificationData: notification.data![index],
                       ),

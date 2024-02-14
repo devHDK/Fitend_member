@@ -33,7 +33,12 @@ class _AppState extends ConsumerState<App> {
     setupFirebaseMessagingHandlersWhenOpen();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      setupFirebaseMessagingHandlers(widget.initialMessage);
+      Future.delayed(
+        const Duration(seconds: 1),
+        () {
+          setupFirebaseMessagingHandlers(widget.initialMessage);
+        },
+      );
     });
   }
 

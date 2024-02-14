@@ -59,7 +59,7 @@ class NotificationData {
   final String type;
   final String contents;
   Info? info;
-  final bool isConfirm;
+  bool isConfirm;
   final String createdAt;
 
   NotificationData({

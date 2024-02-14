@@ -273,9 +273,8 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                                                 }),
                                       );
                                     } else {
-                                      var dateChanged =
-                                          await Navigator.of(context)
-                                              .push(CupertinoPageRoute(
+                                      await Navigator.of(context)
+                                          .push(CupertinoPageRoute(
                                         builder: (context) => WorkoutListScreen(
                                           id: widget.workoutScheduleId!,
                                         ),

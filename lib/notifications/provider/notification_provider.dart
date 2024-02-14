@@ -86,4 +86,16 @@ class NotificationStateNotifier extends StateNotifier<NotificationModelBase> {
       debugPrint('putNotification error : $e');
     }
   }
+
+  void putNotificationChcek(int index) async {
+    try {
+      final pstate = state as NotificationModel;
+
+      pstate.data![index].isConfirm = true;
+
+      state = pstate.copyWith();
+    } catch (e) {
+      debugPrint('putNotification error : $e');
+    }
+  }
 }

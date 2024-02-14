@@ -193,12 +193,6 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen>
     super.dispose();
   }
 
-  void _onChildEvent() {
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(scheduleProvider);
@@ -334,7 +328,6 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen>
                                 model: e,
                                 date: schedules.data[index - 1].startDate,
                                 isDateVisible: seq == 0 ? true : false,
-                                onNotifyParent: _onChildEvent,
                               )
                             : e is Reservation
                                 ? ReservationScheduleCard.fromReservationModel(

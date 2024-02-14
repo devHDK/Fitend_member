@@ -29,7 +29,6 @@ class WorkoutScheduleCard extends ConsumerStatefulWidget {
   final bool selected;
   final bool? isDateVisible;
   final int? workoutScheduleId;
-  final Function? onNotifyParent;
   final List<Exercise>? exercises;
 
   const WorkoutScheduleCard({
@@ -44,7 +43,6 @@ class WorkoutScheduleCard extends ConsumerStatefulWidget {
     required this.selected,
     this.isDateVisible = true,
     this.workoutScheduleId,
-    this.onNotifyParent,
     this.exercises,
   });
 
@@ -52,7 +50,6 @@ class WorkoutScheduleCard extends ConsumerStatefulWidget {
     DateTime? date,
     required Workout model,
     bool? isDateVisible,
-    VoidCallback? onNotifyParent,
     List<Exercise>? exercises,
   }) {
     return WorkoutScheduleCard(
@@ -65,7 +62,6 @@ class WorkoutScheduleCard extends ConsumerStatefulWidget {
       selected: model.selected!,
       isDateVisible: isDateVisible,
       workoutScheduleId: model.workoutScheduleId,
-      onNotifyParent: onNotifyParent ?? onNotifyParent,
       exercises: exercises ?? exercises,
     );
   }
@@ -284,11 +280,6 @@ class _ScheduleCardState extends ConsumerState<WorkoutScheduleCard> {
                                           id: widget.workoutScheduleId!,
                                         ),
                                       ));
-
-                                      if (dateChanged == true &&
-                                          widget.onNotifyParent != null) {
-                                        widget.onNotifyParent!();
-                                      }
                                     }
                                   },
                         child: Text(

@@ -11,6 +11,7 @@ import 'package:fitend_member/common/provider/hive_workout_record_provider.dart'
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
+import 'package:fitend_member/schedule/provider/schedule_provider.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
@@ -204,6 +205,9 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
       }
     }
 
+    final today =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
     return Scaffold(
       backgroundColor: Pallete.background,
       appBar: AppBar(
@@ -220,87 +224,61 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
           '${DateFormat('M월 d일').format(DateTime.parse(model.startDate))} ${weekday[DateTime.parse(model.startDate).weekday - 1]}요일',
           style: h4Headline,
         ),
-        // actions: [
-        //   if (!model.isWorkoutComplete &&
-        //       DateTime.parse(model.startDate).compareTo(today) >= 0 &&
-        //       !hasLocal)
-        //     GestureDetector(
-        //       onTap: () async {
-        //         await showDialog(
-        //             context: context,
-        //             builder: (context) {
-        //               return CalendarDialog(
-        //                 scheduleDate: DateTime.parse(model.startDate),
-        //                 workoutScheduleId: widget.id,
-        //               );
-        //             }).then(
-        //           (changedDate) {
-        //             if (changedDate == null) {
-        //               return;
-        //             }
-        //             if (changedDate['changedDate'] != null) {
-        //               setState(
-        //                 () {
-        //                   ref
-        //                       .read(workoutProvider(widget.id).notifier)
-        //                       .updateWorkoutStateDate(
-        //                         dateTime: DateFormat('yyyy-MM-dd').format(
-        //                           DateTime.parse(
-        //                             changedDate['changedDate'].toString(),
-        //                           ),
-        //                         ),
-        //                       );
+        actions: [
+          if (!model.isWorkoutComplete &&
+              DateTime.parse(model.startDate).compareTo(today) >= 0 &&
+              !hasLocal)
+            GestureDetector(
+              onTap: () async {
+                await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return CalendarDialog(
+                        scheduleDate: DateTime.parse(model.startDate),
+                        workoutScheduleId: widget.id,
+                      );
+                    }).then(
+                  (changedDate) {
+                    if (changedDate == null) {
+                      return;
+                    }
+                    if (changedDate['changedDate'] != null) {
+                      setState(
+                        () {
+                          ref
+                              .read(workoutProvider(widget.id).notifier)
+                              .updateWorkoutStateDate(
+                                dateTime: DateFormat('yyyy-MM-dd').format(
+                                  DateTime.parse(
+                                    changedDate['changedDate'].toString(),
+                                  ),
+                                ),
+                              );
 
-        //                   //스케줄 업데이트
-        //                   ref
-        //                       .read(workoutScheduleProvider(
-        //                         DateTime.parse(
-        //                           changedDate['changedDate'].toString(),
-        //                         ),
-        //                       ).notifier)
-        //                       .updateScheduleFromBuffer();
-        //                 },
-        //               );
-
-        //               StringConstants.workoutFeedbackBox.whenData(
-        //                 (value) async {
-        //                   final record = value.get(widget.id);
-        //                   if (record != null &&
-        //                       record is WorkoutFeedbackRecordModel) {
-        //                     hasLocal = false;
-        //                     await value.put(
-        //                       widget.id,
-        //                       record.copyWith(
-        //                         startDate: DateTime.parse(
-        //                           DateFormat('yyyy-MM-dd').format(
-        //                             DateTime.parse(
-        //                               changedDate['changedDate'].toString(),
-        //                             ),
-        //                           ),
-        //                         ),
-        //                       ),
-        //                     );
-        //                   }
-        //                 },
-        //               );
-        //             }
-        //           },
-        //         );
-        //       },
-        //       child: Row(
-        //         children: [
-        //           SizedBox(
-        //             width: 28,
-        //             height: 28,
-        //             child: Image.asset('asset/img/icon_daymove.png'),
-        //           ),
-        //           const SizedBox(
-        //             width: 28,
-        //           )
-        //         ],
-        //       ),
-        //     )
-        // ],
+                          //스케줄 업데이트
+                          ref
+                              .read(scheduleProvider.notifier)
+                              .updateScheduleFromBuffer();
+                        },
+                      );
+                    }
+                  },
+                );
+              },
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: SvgPicture.asset(SVGConstants.daymove),
+                  ),
+                  const SizedBox(
+                    width: 28,
+                  )
+                ],
+              ),
+            )
+        ],
       ),
       body: RefreshIndicator(
         backgroundColor: Pallete.background,

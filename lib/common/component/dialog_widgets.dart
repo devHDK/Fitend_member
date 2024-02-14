@@ -3,11 +3,9 @@ import 'package:fitend_member/common/component/calendar.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
-import 'package:fitend_member/common/data/global_varialbles.dart';
-import 'package:fitend_member/schedule/model/put_workout_schedule_date_model.dart';
+import 'package:fitend_member/common/global/global_varialbles.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
-import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
-import 'package:fitend_member/schedule/repository/workout_schedule_repository.dart';
+import 'package:fitend_member/schedule/provider/schedule_provider.dart';
 import 'package:fitend_member/ticket/component/ticket_container.dart';
 import 'package:fitend_member/ticket/model/ticket_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,7 +14,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart' as intl;
 import 'package:ndialog/ndialog.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -535,52 +532,12 @@ class _CalendarDialogState extends ConsumerState<CalendarDialog> {
 
   void changeScheduleDate() async {
     try {
-      await ref.read(workoutScheduleRepositoryProvider).putworkoutScheduleDate(
-            id: widget.workoutScheduleId,
-            body: PutWorkoutScheduleModel(
-              startDate: intl.DateFormat('yyyy-MM-dd').format(selectedDay!),
-              seq:
-                  dateData!["${selectedDay!.month}-${selectedDay!.day}"] == null
-                      ? 1
-                      : dateData!["${selectedDay!.month}-${selectedDay!.day}"]!
-                              .length +
-                          1,
-            ),
+      await ref.read(scheduleProvider.notifier).updateScheduleDate(
+            workoutScheduleId: widget.workoutScheduleId,
+            selectedDate: selectedDay!,
+            scheduleDate: widget.scheduleDate,
+            dateData: dateData!,
           );
-
-      //이전 스케줄 인덱스
-      final beforeChangeScheduleIndex =
-          scheduleListGlobal.indexWhere((element) {
-        return element.startDate == widget.scheduleDate;
-      });
-
-      //이전 워크아웃 인덱스
-      final beforWorkoutIndex = scheduleListGlobal[beforeChangeScheduleIndex]
-          .schedule!
-          .indexWhere((element) {
-        if (element is Workout) {
-          return element.workoutScheduleId == widget.workoutScheduleId;
-        }
-
-        return false;
-      });
-
-      //변경할 날짜의 스케줄 인덱스
-      final afterCahngeSchdedulIndex = scheduleListGlobal.indexWhere((element) {
-        final localTime =
-            intl.DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(selectedDay!);
-        return element.startDate == DateTime.parse(localTime);
-      });
-
-      //변경
-      scheduleListGlobal[afterCahngeSchdedulIndex].schedule!.add(
-          scheduleListGlobal[beforeChangeScheduleIndex]
-              .schedule![beforWorkoutIndex]);
-
-      //기존건 삭제
-      scheduleListGlobal[beforeChangeScheduleIndex]
-          .schedule!
-          .removeAt(beforWorkoutIndex);
     } catch (e) {
       debugPrint('$e');
 

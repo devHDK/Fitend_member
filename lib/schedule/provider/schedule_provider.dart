@@ -1,9 +1,10 @@
 import 'package:fitend_member/common/const/data_constants.dart';
-import 'package:fitend_member/common/data/global_varialbles.dart';
+import 'package:fitend_member/common/global/global_varialbles.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/meeting/model/meeting_schedule_model.dart';
 import 'package:fitend_member/meeting/repository/meeting_repository.dart';
+import 'package:fitend_member/schedule/model/put_workout_schedule_date_model.dart';
 import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
@@ -13,6 +14,7 @@ import 'package:fitend_member/schedule/repository/workout_schedule_repository.da
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart' as intl;
 
 final scheduleProvider =
     StateNotifierProvider<ScheduleStateNotifier, ScheduleModelBase>((ref) {
@@ -271,5 +273,63 @@ class ScheduleStateNotifier extends StateNotifier<ScheduleModelBase> {
               isRecord: true,
             );
     state = ScheduleModel(data: scheduleListGlobal);
+  }
+
+  Future<void> updateScheduleDate({
+    required int workoutScheduleId,
+    required DateTime selectedDate,
+    required DateTime scheduleDate,
+    required Map<String, List<dynamic>> dateData,
+  }) async {
+    try {
+      await workoutRepository.putworkoutScheduleDate(
+        id: workoutScheduleId,
+        body: PutWorkoutScheduleModel(
+          startDate: intl.DateFormat('yyyy-MM-dd').format(selectedDate),
+          seq: dateData["${selectedDate.month}-${selectedDate.day}"] == null
+              ? 1
+              : dateData["${selectedDate.month}-${selectedDate.day}"]!.length +
+                  1,
+        ),
+      );
+
+      //이전 스케줄 인덱스
+      final beforeChangeScheduleIndex =
+          scheduleListGlobal.indexWhere((element) {
+        return element.startDate == scheduleDate;
+      });
+
+      //이전 워크아웃 인덱스
+      final beforWorkoutIndex = scheduleListGlobal[beforeChangeScheduleIndex]
+          .schedule!
+          .indexWhere((element) {
+        if (element is Workout) {
+          return element.workoutScheduleId == workoutScheduleId;
+        }
+
+        return false;
+      });
+
+      //변경할 날짜의 스케줄 인덱스
+      final afterCahngeSchdedulIndex = scheduleListGlobal.indexWhere((element) {
+        final localTime =
+            intl.DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(selectedDate);
+        return element.startDate == DateTime.parse(localTime);
+      });
+
+      //변경
+      scheduleListGlobal[afterCahngeSchdedulIndex].schedule!.add(
+          scheduleListGlobal[beforeChangeScheduleIndex]
+              .schedule![beforWorkoutIndex]);
+
+      //기존건 삭제
+      scheduleListGlobal[beforeChangeScheduleIndex]
+          .schedule!
+          .removeAt(beforWorkoutIndex);
+
+      state = ScheduleModel(data: scheduleListGlobal);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

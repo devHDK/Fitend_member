@@ -442,4 +442,8 @@ class ThreadScreenState extends ConsumerState<ThreadScreen>
       isLoading = false;
     });
   }
+
+  void tapTop() async {
+    itemScrollController.jumpTo(index: 0);
+  }
 }

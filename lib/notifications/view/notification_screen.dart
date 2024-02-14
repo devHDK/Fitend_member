@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:scrolls_to_top/scrolls_to_top.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationScreen extends ConsumerStatefulWidget {
@@ -150,84 +151,90 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen>
 
     notification = state as NotificationModel;
 
-    return Scaffold(
-      backgroundColor: Pallete.background,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
+    return ScrollsToTop(
+      onScrollsToTop: (event) async {
+        controller.jumpTo(0);
+      },
+      child: Scaffold(
         backgroundColor: Pallete.background,
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Padding(
-            padding: EdgeInsets.only(left: 10),
-            child: Icon(Icons.arrow_back),
+        appBar: AppBar(
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: Pallete.background,
+          leading: IconButton(
+            onPressed: () => context.pop(),
+            icon: const Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Icon(Icons.arrow_back),
+            ),
+          ),
+          title: Text(
+            '알림',
+            style: h4Headline.copyWith(
+              color: Colors.white,
+            ),
           ),
         ),
-        title: Text(
-          '알림',
-          style: h4Headline.copyWith(
-            color: Colors.white,
-          ),
-        ),
-      ),
-      body: state.total == 0
-          ? Center(
-              child: Text(
-                '새로운 알림이 없어요 😅',
-                style: s1SubTitle.copyWith(
-                  color: Pallete.lightGray,
+        body: state.total == 0
+            ? Center(
+                child: Text(
+                  '새로운 알림이 없어요 😅',
+                  style: s1SubTitle.copyWith(
+                    color: Pallete.lightGray,
+                  ),
                 ),
-              ),
-            )
-          : RefreshIndicator(
-              backgroundColor: Pallete.background,
-              color: Pallete.point,
-              semanticsLabel: '새로고침',
-              onRefresh: () async {
-                await ref.read(notificationProvider.notifier).paginate();
-              },
-              child: ListView.builder(
-                controller: controller,
-                itemCount: state.data!.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == notification.data!.length &&
-                      state.data!.length < state.total) {
-                    return const SizedBox(
-                      height: 100,
-                      child: Center(
-                        child: CircularProgressIndicator(color: Pallete.point),
+              )
+            : RefreshIndicator(
+                backgroundColor: Pallete.background,
+                color: Pallete.point,
+                semanticsLabel: '새로고침',
+                onRefresh: () async {
+                  await ref.read(notificationProvider.notifier).paginate();
+                },
+                child: ListView.builder(
+                  controller: controller,
+                  itemCount: state.data!.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == notification.data!.length &&
+                        state.data!.length < state.total) {
+                      return const SizedBox(
+                        height: 100,
+                        child: Center(
+                          child:
+                              CircularProgressIndicator(color: Pallete.point),
+                        ),
+                      );
+                    }
+
+                    if (index == notification.data!.length &&
+                        state.data!.length == state.total) {
+                      return const SizedBox();
+                    }
+
+                    return GestureDetector(
+                      onTap: notification.data![index].type == 'thread' &&
+                              notification.data![index].info != null &&
+                              notification.data![index].info!.threadId != null
+                          ? () {
+                              _pushThreadScreen(context, index);
+                            }
+                          : notification.data![index].type == 'noFeedback' &&
+                                  notification.data![index].info != null &&
+                                  notification.data![index].info!
+                                          .workoutScheduleId !=
+                                      null
+                              ? () async {
+                                  await _pushFeedbackScreen(index, context);
+                                }
+                              : null,
+                      child: NotificationCell(
+                        notificationData: notification.data![index],
                       ),
                     );
-                  }
-
-                  if (index == notification.data!.length &&
-                      state.data!.length == state.total) {
-                    return const SizedBox();
-                  }
-
-                  return GestureDetector(
-                    onTap: notification.data![index].type == 'thread' &&
-                            notification.data![index].info != null &&
-                            notification.data![index].info!.threadId != null
-                        ? () {
-                            _pushThreadScreen(context, index);
-                          }
-                        : notification.data![index].type == 'noFeedback' &&
-                                notification.data![index].info != null &&
-                                notification
-                                        .data![index].info!.workoutScheduleId !=
-                                    null
-                            ? () async {
-                                await _pushFeedbackScreen(index, context);
-                              }
-                            : null,
-                    child: NotificationCell(
-                      notificationData: notification.data![index],
-                    ),
-                  );
-                },
+                  },
+                ),
               ),
-            ),
+      ),
     );
   }
 

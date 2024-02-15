@@ -9,6 +9,7 @@ import 'package:fitend_member/notifications/provider/notification_home_screen_pr
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/thread/view/thread_screen.dart';
+import 'package:fitend_member/trainer/view/trainer_list_screen.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -84,6 +85,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               }
             },
             actions: [
+              InkWell(
+                hoverColor: Colors.transparent,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) =>
+                          const TrainerListScreen(phone: '01089811082'),
+                    ),
+                  );
+                },
+                child: !notificationHomeModel.isConfirmed
+                    ? SvgPicture.asset(SVGConstants.alarmOn)
+                    : SvgPicture.asset(SVGConstants.alarmOff),
+              ),
               InkWell(
                 hoverColor: Colors.transparent,
                 onTap: () {

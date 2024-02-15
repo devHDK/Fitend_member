@@ -8,7 +8,7 @@ import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_post_user_register_record_provider.dart';
-import 'package:fitend_member/trainer/screen/trainer_list_screen.dart';
+import 'package:fitend_member/trainer/view/trainer_list_screen.dart';
 import 'package:fitend_member/user/component/custom_date_picker.dart';
 import 'package:fitend_member/user/component/date_picker_button.dart';
 import 'package:fitend_member/user/component/place_button.dart';

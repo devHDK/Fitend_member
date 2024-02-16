@@ -6,10 +6,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/global/global_varialbles.dart';
 import 'package:fitend_member/common/secure_storage/secure_storage.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/update_checker.dart';
 import 'package:fitend_member/ticket/model/ticket_model.dart';
+import 'package:fitend_member/user/model/bool_model.dart';
 import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
+import 'package:fitend_member/user/model/post_next_week_survey_model.dart';
 import 'package:fitend_member/user/model/put_fcm_token.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/repository/auth_repository.dart';
@@ -102,7 +105,25 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
               platform: Platform.isIOS ? 'ios' : 'android',
             ));
 
-            state = response;
+            final now = DateTime.now();
+            final today = DateTime(now.year, now.month, now.day);
+            final nextWeekMonday = today.add(Duration(days: 8 - today.weekday));
+
+            late bool isNextWorkout;
+
+            if (DataUtils.isBetweenFriday2PMAndSundayMidnight()) {
+              final ret = await repository.getNextWeekSurvey(
+                  model: NextWeekSurveyModel(mondayDate: nextWeekMonday));
+
+              isNextWorkout = ret.data;
+            } else {
+              isNextWorkout = true;
+            }
+
+            state = response.copyWith(
+                user: response.user.copyWith(
+              isWorkoutSurvey: isNextWorkout,
+            ));
           }
         }
       });
@@ -146,7 +167,25 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
 
       final userResp = await repository.getMe();
 
-      state = userResp;
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final nextWeekMonday = today.add(Duration(days: 8 - today.weekday));
+
+      late bool isNextWorkout;
+
+      if (DataUtils.isBetweenFriday2PMAndSundayMidnight()) {
+        final ret = await repository.getNextWeekSurvey(
+            model: NextWeekSurveyModel(mondayDate: nextWeekMonday));
+
+        isNextWorkout = ret.data;
+      } else {
+        isNextWorkout = true;
+      }
+
+      state = userResp.copyWith(
+          user: userResp.user.copyWith(
+        isWorkoutSurvey: isNextWorkout,
+      ));
 
       return userResp;
     } on DioException catch (e) {
@@ -263,6 +302,18 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     }
   }
 
+  Future<void> postNextWorkout({
+    required DateTime mondayDate,
+    List<DateTime>? selectedDates,
+  }) async {
+    try {
+      await repository.postNextWeekSurvey(
+          model: NextWeekSurveyModel(mondayDate: mondayDate));
+    } on DioException {
+      rethrow;
+    }
+  }
+
   void changeIsNotification({
     required bool isNotification,
   }) {
@@ -279,6 +330,16 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
     final pstate = state as UserModel;
 
     pstate.user.activeTickets = activeTickets;
+
+    state = pstate.copyWith();
+  }
+
+  void updateIsWorkoutSurvey({
+    required bool isWorkoutSurvey,
+  }) {
+    final pstate = state as UserModel;
+
+    pstate.user.isWorkoutSurvey = isWorkoutSurvey;
 
     state = pstate.copyWith();
   }

@@ -1,5 +1,4 @@
 import 'package:fitend_member/trainer/model/trainer_list_model.dart';
-import 'package:fitend_member/user/model/user_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'trainer_list_extend.g.dart';

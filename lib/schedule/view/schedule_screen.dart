@@ -14,6 +14,7 @@ import 'package:fitend_member/schedule/model/reservation_schedule_model.dart';
 import 'package:fitend_member/schedule/model/schedule_model.dart';
 import 'package:fitend_member/schedule/model/workout_schedule_model.dart';
 import 'package:fitend_member/schedule/provider/schedule_provider.dart';
+import 'package:fitend_member/schedule/view/nextweek_schedule_screen.dart';
 import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -344,15 +345,26 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen>
             return const SizedBox();
           },
         ),
-        if (schedules.isNeedMeeing != null && schedules.isNeedMeeing!)
-          _needMeetingBanner(context, userModel),
         if (!isActiveUser) _needPurchaseTicketBanner(context, userModel),
+
+        //티켓 만료전 구매 유도
         if (userModel.user.activeTickets!.length == 1 &&
             userModel.user.activeTickets![0].expiredAt
                     .difference(DateTime.now())
                     .inDays <=
                 7)
-          _expireTicketBanner(context, userModel)
+          _expireTicketBanner(context, userModel),
+
+        //다음주 운동 일정 선택
+        if (isActiveUser &&
+            userModel.user.isWorkoutSurvey != null &&
+            !userModel.user.isWorkoutSurvey! &&
+            DataUtils.isBetweenFriday2PMAndSundayMidnight())
+          _nextWeekWorkoutBaaner(context, userModel),
+
+        // 미팅 일정 선택 유도
+        if (schedules.isNeedMeeing != null && schedules.isNeedMeeing!)
+          _needMeetingBanner(context, userModel),
       ],
     );
   }
@@ -440,6 +452,39 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen>
               children: [
                 Text(
                   '⚠️  회원님의 멤버십이 ${DateFormat('M월 d일').format(userState.user.activeTickets![0].expiredAt)}에 만료돼요',
+                  style: h6Headline.copyWith(
+                    color: Pallete.lightGray,
+                    height: 1,
+                  ),
+                ),
+                const Icon(
+                  Icons.navigate_next,
+                  color: Colors.white,
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  PreferredSize _nextWeekWorkoutBaaner(
+      BuildContext context, UserModel userState) {
+    return PreferredSize(
+      preferredSize: Size(100.w, 30),
+      child: InkWell(
+        onTap: () => context.goNamed(NextWeekScheduleScreen.routeName),
+        child: Container(
+          color: Pallete.point,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 5),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '⚠️  다음주 운동 스케줄을 코치님께 알려주세요',
                   style: h6Headline.copyWith(
                     color: Pallete.lightGray,
                     height: 1,

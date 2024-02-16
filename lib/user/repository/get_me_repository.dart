@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
+import 'package:fitend_member/user/model/bool_model.dart';
 import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/model/post_email_exist_model.dart';
+import 'package:fitend_member/user/model/post_next_week_survey_model.dart';
 import 'package:fitend_member/user/model/post_user_register_model.dart';
 import 'package:fitend_member/user/model/put_fcm_token.dart';
 import 'package:fitend_member/user/model/user_model.dart';
@@ -27,6 +29,14 @@ abstract class GetMeRepository {
   })
   Future<UserModel> getMe();
 
+  @GET('/users/nextWorkout')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<BoolModel> getNextWeekSurvey({
+    @Queries() required NextWeekSurveyModel model,
+  });
+
   @POST('/users/password/confirm')
   @Headers({
     'accessToken': 'true',
@@ -38,6 +48,14 @@ abstract class GetMeRepository {
   @POST('/users/exist')
   Future<void> postEmailExist({
     @Body() required PostEmailExistModel model,
+  });
+
+  @POST('/users/nextWorkout')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<void> postNextWeekSurvey({
+    @Body() required NextWeekSurveyModel model,
   });
 
   @POST('/users/register')

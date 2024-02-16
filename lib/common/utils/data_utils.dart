@@ -214,4 +214,16 @@ class DataUtils {
 
     return tempDate;
   }
+
+  static bool isBetweenFriday2PMAndSundayMidnight() {
+    DateTime now = DateTime.now();
+    DateTime friday =
+        now.subtract(Duration(days: now.weekday - DateTime.friday)); // 이번 주 금요일
+    DateTime friday2PM =
+        DateTime(friday.year, friday.month, friday.day, 14, 0); // 금요일 오후 2시
+    DateTime sundayMidnight =
+        DateTime(friday.year, friday.month, friday.day + 2, 0, 0); // 일요일 자정
+
+    return now.isAfter(friday2PM) && now.isBefore(sundayMidnight);
+  }
 }

@@ -69,6 +69,7 @@ class User {
   final List<TrainerInfo> lastTrainers;
   @JsonKey(name: "lastTickets")
   List<TicketModel>? lastTickets;
+  bool? isWorkoutSurvey;
 
   User({
     required this.id,
@@ -85,6 +86,7 @@ class User {
     this.lastTickets,
     this.weight,
     this.height,
+    this.isWorkoutSurvey,
   });
 
   User copyWith({
@@ -102,6 +104,7 @@ class User {
     List<TicketModel>? activeTickets,
     List<TrainerInfo>? lastTrainers,
     List<TicketModel>? lastTickets,
+    bool? isWorkoutSurvey,
   }) =>
       User(
         id: id ?? this.id,
@@ -118,6 +121,7 @@ class User {
         activeTickets: activeTickets ?? this.activeTickets,
         lastTrainers: lastTrainers ?? this.lastTrainers,
         lastTickets: lastTickets ?? this.lastTickets,
+        isWorkoutSurvey: isWorkoutSurvey ?? this.isWorkoutSurvey,
       );
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

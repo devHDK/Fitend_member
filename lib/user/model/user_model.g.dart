@@ -37,6 +37,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
           .toList(),
       weight: (json['weight'] as num?)?.toDouble(),
       height: (json['height'] as num?)?.toDouble(),
+      isWorkoutSurvey: json['isWorkoutSurvey'] as bool?,
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -54,6 +55,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'activeTickets': instance.activeTickets,
       'lastTrainers': instance.lastTrainers,
       'lastTickets': instance.lastTickets,
+      'isWorkoutSurvey': instance.isWorkoutSurvey,
     };
 
 TrainerInfo _$TrainerInfoFromJson(Map<String, dynamic> json) => TrainerInfo(

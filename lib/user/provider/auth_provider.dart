@@ -5,6 +5,7 @@ import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/meeting/view/meeting_date_screen.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
+import 'package:fitend_member/schedule/view/nextweek_schedule_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
@@ -90,21 +91,30 @@ class AuthProvider extends ChangeNotifier {
               ],
             ),
             GoRoute(
-                path: 'mypage',
-                name: MyPageScreen.routeName,
-                builder: (context, state) => const MyPageScreen(),
-                routes: [
-                  GoRoute(
-                    path: 'ticket',
-                    name: ActiveTicketScreen.routeName,
-                    builder: (context, state) => const ActiveTicketScreen(),
-                  ),
-                ]),
+              path: 'mypage',
+              name: MyPageScreen.routeName,
+              builder: (context, state) => const MyPageScreen(),
+              routes: [
+                GoRoute(
+                  path: 'ticket',
+                  name: ActiveTicketScreen.routeName,
+                  builder: (context, state) => const ActiveTicketScreen(),
+                ),
+              ],
+            ),
             GoRoute(
               path: 'meetingDate/:trainerId',
               name: MeetingDateScreen.routeName,
               builder: (context, state) => MeetingDateScreen(
                 trainerId: int.parse(state.pathParameters['trainerId']!),
+              ),
+            ),
+            GoRoute(
+              path: 'nextWeekSchedule',
+              name: NextWeekScheduleScreen.routeName,
+              pageBuilder: (context, state) => _botToTopTransiton(
+                state,
+                const NextWeekScheduleScreen(),
               ),
             ),
             GoRoute(

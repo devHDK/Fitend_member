@@ -14,7 +14,12 @@ class NotificationCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var tempContents = notificationData.contents.split('\n');
-    final temp = tempContents.last.replaceAll("|", '∙');
+    String temp;
+    if (tempContents.length >= 2) {
+      temp = tempContents[1].replaceAll("|", '∙');
+    } else {
+      temp = tempContents.last.replaceAll("|", '∙');
+    }
 
     return Container(
       color: notificationData.isConfirm ? Pallete.background : Pallete.darkGray,

@@ -17,14 +17,14 @@ class TrainerListModelLoading extends TrainerListModelBase {}
 @JsonSerializable()
 class TrainerListModel extends TrainerListModelBase {
   @JsonKey(name: "data")
-  final List<TrainerInfo> data;
+  final List<TrainerInfomation> data;
 
   TrainerListModel({
     required this.data,
   });
 
   TrainerListModel copyWith({
-    List<TrainerInfo>? data,
+    List<TrainerInfomation>? data,
   }) =>
       TrainerListModel(
         data: data ?? this.data,
@@ -37,7 +37,7 @@ class TrainerListModel extends TrainerListModelBase {
 }
 
 @JsonSerializable()
-class TrainerInfo {
+class TrainerInfomation {
   @JsonKey(name: "id")
   final int id;
   @JsonKey(name: "nickname")
@@ -49,7 +49,7 @@ class TrainerInfo {
   @JsonKey(name: "shortIntro")
   final String shortIntro;
 
-  TrainerInfo({
+  TrainerInfomation({
     required this.id,
     required this.nickname,
     required this.profileImage,
@@ -57,14 +57,14 @@ class TrainerInfo {
     required this.shortIntro,
   });
 
-  TrainerInfo copyWith({
+  TrainerInfomation copyWith({
     int? id,
     String? nickname,
     String? profileImage,
     String? largeProfileImage,
     String? shortIntro,
   }) =>
-      TrainerInfo(
+      TrainerInfomation(
         id: id ?? this.id,
         nickname: nickname ?? this.nickname,
         profileImage: profileImage ?? this.profileImage,
@@ -72,8 +72,8 @@ class TrainerInfo {
         shortIntro: shortIntro ?? this.shortIntro,
       );
 
-  factory TrainerInfo.fromJson(Map<String, dynamic> json) =>
-      _$TrainerInfoFromJson(json);
+  factory TrainerInfomation.fromJson(Map<String, dynamic> json) =>
+      _$TrainerInfomationFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TrainerInfoToJson(this);
+  Map<String, dynamic> toJson() => _$TrainerInfomationToJson(this);
 }

@@ -309,7 +309,9 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(CupertinoPageRoute(
-                      builder: (context) => const TrainerListExtendScreen(),
+                      builder: (context) => TrainerListExtendScreen(
+                        phone: widget.phone,
+                      ),
                     ));
                   },
                   child: Row(

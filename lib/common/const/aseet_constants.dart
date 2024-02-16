@@ -46,6 +46,7 @@ class SVGConstants {
   static const String reset = '${_svgPath}icon_reset.svg';
   static const String scheduleActive = '${_svgPath}icon_schedule_active.svg';
   static const String schedule = '${_svgPath}icon_schedule.svg';
+  static const String search = '${_svgPath}icon_search.svg';
   static const String stop = '${_svgPath}icon_stop.svg';
   static const String target = '${_svgPath}icon_target.svg';
   static const String threadCreateButton =

@@ -46,6 +46,35 @@ class _TrainerRepository implements TrainerRepository {
   }
 
   @override
+  Future<TrainerListExtend> getTrainersExtend(
+      GetExtendTrainersModel model) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(model.toJson());
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<TrainerListExtend>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/trainers/extend',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = TrainerListExtend.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<TrainerDetailModel> getTrainerDetail({required int id}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

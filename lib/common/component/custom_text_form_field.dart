@@ -17,7 +17,10 @@ class CustomTextFormField extends StatefulWidget {
   final List<TextInputFormatter>? formatter;
   final int? maxLength;
   final int? maxLine;
+  final double? contentPadding;
   final TextAlign? textAlign;
+  final Color? mainColor;
+  final Color? textColor;
 
   const CustomTextFormField({
     super.key,
@@ -34,7 +37,10 @@ class CustomTextFormField extends StatefulWidget {
     this.formatter,
     this.maxLength,
     this.maxLine = 1,
+    this.contentPadding = 20.0,
     this.textAlign = TextAlign.start,
+    this.mainColor = Pallete.point,
+    this.textColor = Pallete.point,
   });
 
   @override
@@ -90,7 +96,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       style: const TextStyle(
         color: Colors.white,
       ),
-      cursorColor: Pallete.point,
+      cursorColor: widget.textColor,
       //비밀번호 입력할때
       obscureText: widget.obscureText,
       autofocus: widget.autoFocus,
@@ -105,8 +111,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       textAlign: widget.textAlign!,
 
       decoration: InputDecoration(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+        contentPadding: EdgeInsets.symmetric(
+            horizontal: widget.contentPadding!, vertical: 11),
         hintText: widget.hintText,
         // errorText: errorText,
         hintStyle: s2SubTitle.copyWith(
@@ -118,14 +124,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         enabledBorder: baseBorder,
         focusedBorder: baseBorder.copyWith(
           borderSide: baseBorder.borderSide.copyWith(
-            color: Pallete.point,
+            color: widget.mainColor,
           ),
         ),
         labelText: focusNode.hasFocus || widget.controller.text.isEmpty
             ? widget.fullLabelText
             : widget.labelText,
         labelStyle: s2SubTitle.copyWith(
-          color: focusNode.hasFocus ? Pallete.point : Pallete.gray,
+          color: focusNode.hasFocus ? widget.textColor : Pallete.gray,
         ),
         counterText: '',
       ),

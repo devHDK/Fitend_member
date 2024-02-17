@@ -9,9 +9,15 @@ import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/text_style.dart';
 import 'package:fitend_member/common/provider/hive_workout_record_provider.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
+import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/shared_pref_utils.dart';
 import 'package:fitend_member/exercise/view/exercise_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_result_screen.dart';
+import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
+import 'package:fitend_member/thread/model/common/thread_user_model.dart';
+import 'package:fitend_member/thread/provider/thread_create_provider.dart';
+import 'package:fitend_member/user/model/user_model.dart';
+import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:fitend_member/workout/component/workout_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
@@ -23,6 +29,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -173,6 +180,8 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
     final model = WorkoutModel.clone(model: state as WorkoutModel);
     workoutModel = WorkoutModel.clone(model: model);
 
+    final userModel = ref.watch(getMeProvider) as UserModel;
+
     List<int> circuitGroupNumList = [];
 
     for (var exercise in model.exercises) {
@@ -238,20 +247,55 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                         workoutScheduleId: widget.id,
                       );
                     }).then(
-                  (changedDate) {
+                  (changedDate) async {
                     if (changedDate == null) {
                       return;
                     }
                     if (changedDate['changedDate'] != null) {
+                      final originDate = model.startDate;
+                      final changeDate = changedDate['changedDate'] as DateTime;
+
+                      String content =
+                          '${model.workoutTitle}\n${DateFormat('M월 d일').format(DateTime.parse(originDate))} (${weekday[DateTime.parse(originDate).weekday - 1]}) → ${DateFormat('M월 d일').format(changeDate)} (${weekday[changeDate.weekday - 1]})';
+
+                      //thread 생성
+                      ref.read(threadCreateProvider.notifier).init();
+
+                      ref
+                          .read(threadCreateProvider.notifier)
+                          .updateTitle('운동일정을 변경했어요');
+                      ref
+                          .read(threadCreateProvider.notifier)
+                          .updateContent(content);
+
                       ref
                           .read(workoutProvider(widget.id).notifier)
                           .updateWorkoutStateDate(
-                            dateTime: DateFormat('yyyy-MM-dd').format(
-                              DateTime.parse(
-                                changedDate['changedDate'].toString(),
-                              ),
+                            dateTime:
+                                DateFormat('yyyy-MM-dd').format(changeDate),
+                          );
+
+                      await ref
+                          .read(threadCreateProvider.notifier)
+                          .createThread(
+                            user: ThreadUser(
+                              id: userModel.user.id,
+                              nickname: userModel.user.nickname,
+                              gender: userModel.user.gender,
+                            ),
+                            trainer: ThreadTrainer(
+                              id: userModel.user.activeTrainers.first.id,
+                              nickname:
+                                  userModel.user.activeTrainers.first.nickname,
+                              profileImage: userModel
+                                  .user.activeTrainers.first.profileImage,
                             ),
                           );
+
+                      DialogWidgets.showToast(
+                        content: '운동일정을 변경했어요 ✅',
+                        gravity: ToastGravity.CENTER,
+                      );
                     }
                   },
                 );

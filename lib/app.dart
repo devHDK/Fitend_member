@@ -3,11 +3,13 @@ import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
 import 'package:fitend_member/home_screen.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
+import 'package:fitend_member/schedule/view/nextweek_schedule_screen.dart';
 import 'package:fitend_member/thread/view/thread_detail_screen.dart';
 import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'flavors.dart';
 
@@ -47,6 +49,8 @@ class _AppState extends ConsumerState<App> {
       return;
     }
 
+    debugPrint("message: ${message.data}");
+
     if (message.data['type'] == 'commentCreate' ||
         message.data['type'] == 'threadCreate') {
       ref.read(routerProvider).goNamed(
@@ -63,12 +67,25 @@ class _AppState extends ConsumerState<App> {
       ref.read(routerProvider).goNamed(ActiveTicketScreen.routeName);
     } else if (message.data['type'].toString().contains('meeting')) {
       ref.read(routerProvider).goNamed(HomeScreen.routeName);
+    } else if (message.data['type'].toString() == 'nextWeekSurvey') {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final nextWeekMonday = today.add(Duration(days: 8 - today.weekday));
+
+      if (message.data['nextMonday'].toString() ==
+          DateFormat('yyyy-MM-dd').format(nextWeekMonday)) {
+        ref.read(routerProvider).goNamed(NextWeekScheduleScreen.routeName);
+      } else {
+        ref.read(routerProvider).goNamed(HomeScreen.routeName);
+      }
     }
   }
 
   void setupFirebaseMessagingHandlersWhenOpen() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      debugPrint("message: ${message.data}");
+      debugPrint(
+          "setupFirebaseMessagingHandlersWhenOpen: message ${message.data}");
+
       if (message.data['type'] == 'commentCreate' ||
           message.data['type'] == 'threadCreate') {
         ref.read(routerProvider).goNamed(
@@ -85,6 +102,17 @@ class _AppState extends ConsumerState<App> {
         ref.read(routerProvider).goNamed(ActiveTicketScreen.routeName);
       } else if (message.data['type'].toString().contains('meeting')) {
         ref.read(routerProvider).goNamed(HomeScreen.routeName);
+      } else if (message.data['type'].toString() == 'nextWeekSurvey') {
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
+        final nextWeekMonday = today.add(Duration(days: 8 - today.weekday));
+
+        if (message.data['nextMonday'].toString() ==
+            DateFormat('yyyy-MM-dd').format(nextWeekMonday)) {
+          ref.read(routerProvider).goNamed(NextWeekScheduleScreen.routeName);
+        } else {
+          ref.read(routerProvider).goNamed(HomeScreen.routeName);
+        }
       }
     });
   }

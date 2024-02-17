@@ -34,6 +34,32 @@ class _NextWeekScheduleState extends ConsumerState<NextWeekScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(getMeProvider);
+
+    if (state is UserModelLoading) {
+      return const Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Pallete.point,
+          ),
+        ),
+      );
+    }
+
+    if (state is UserModelError) {
+      return Scaffold(
+        backgroundColor: Pallete.background,
+        body: Center(
+          child: DialogWidgets.oneButtonDialog(
+            message: '서버와 통신중 문제가 발생하였습니다.',
+            confirmText: '확인',
+            confirmOnTap: () => context.pop(),
+          ),
+        ),
+      );
+    }
+
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
@@ -46,7 +72,7 @@ class _NextWeekScheduleState extends ConsumerState<NextWeekScheduleScreen> {
       dates.add(tempDate);
     }
 
-    final userModel = ref.watch(getMeProvider) as UserModel;
+    final userModel = state as UserModel;
 
     buttonEnable = selectedDates.isNotEmpty || alreadyShared || noSchedule;
 

@@ -9,7 +9,7 @@ import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/common/utils/data_utils.dart';
 import 'package:fitend_member/common/utils/update_checker.dart';
 import 'package:fitend_member/ticket/model/ticket_model.dart';
-import 'package:fitend_member/user/model/bool_model.dart';
+import 'package:fitend_member/user/model/get_next_week_survey_model.dart';
 import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/model/post_next_week_survey_model.dart';
@@ -113,7 +113,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
 
             if (DataUtils.isBetweenFriday2PMAndSundayMidnight()) {
               final ret = await repository.getNextWeekSurvey(
-                  model: NextWeekSurveyModel(mondayDate: nextWeekMonday));
+                  model: GetNextWeekSurveyModel(mondayDate: nextWeekMonday));
 
               isNextWorkout = ret.data;
             } else {
@@ -175,7 +175,7 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
 
       if (DataUtils.isBetweenFriday2PMAndSundayMidnight()) {
         final ret = await repository.getNextWeekSurvey(
-            model: NextWeekSurveyModel(mondayDate: nextWeekMonday));
+            model: GetNextWeekSurveyModel(mondayDate: nextWeekMonday));
 
         isNextWorkout = ret.data;
       } else {
@@ -305,10 +305,15 @@ class GetMeStateNotifier extends StateNotifier<UserModelBase?> {
   Future<void> postNextWorkout({
     required DateTime mondayDate,
     List<DateTime>? selectedDates,
+    required bool noSchedule,
   }) async {
     try {
       await repository.postNextWeekSurvey(
-          model: NextWeekSurveyModel(mondayDate: mondayDate));
+          model: PostNextWeekSurveyModel(
+        mondayDate: mondayDate,
+        selectedDates: selectedDates,
+        noSchedule: noSchedule,
+      ));
     } on DioException {
       rethrow;
     }

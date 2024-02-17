@@ -48,7 +48,7 @@ class _GetMeRepository implements GetMeRepository {
 
   @override
   Future<BoolModel> getNextWeekSurvey(
-      {required NextWeekSurveyModel model}) async {
+      {required GetNextWeekSurveyModel model}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     queryParameters.addAll(model.toJson());
@@ -128,7 +128,8 @@ class _GetMeRepository implements GetMeRepository {
   }
 
   @override
-  Future<void> postNextWeekSurvey({required NextWeekSurveyModel model}) async {
+  Future<void> postNextWeekSurvey(
+      {required PostNextWeekSurveyModel model}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'accessToken': 'true'};

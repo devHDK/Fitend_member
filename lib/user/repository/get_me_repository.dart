@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:fitend_member/common/dio/dio.dart';
 import 'package:fitend_member/user/model/bool_model.dart';
+import 'package:fitend_member/user/model/get_next_week_survey_model.dart';
 import 'package:fitend_member/user/model/post_change_password.dart';
 import 'package:fitend_member/user/model/post_confirm_password.dart';
 import 'package:fitend_member/user/model/post_email_exist_model.dart';
@@ -34,7 +35,7 @@ abstract class GetMeRepository {
     'accessToken': 'true',
   })
   Future<BoolModel> getNextWeekSurvey({
-    @Queries() required NextWeekSurveyModel model,
+    @Queries() required GetNextWeekSurveyModel model,
   });
 
   @POST('/users/password/confirm')
@@ -55,7 +56,7 @@ abstract class GetMeRepository {
     'accessToken': 'true',
   })
   Future<void> postNextWeekSurvey({
-    @Body() required NextWeekSurveyModel model,
+    @Body() required PostNextWeekSurveyModel model,
   });
 
   @POST('/users/register')

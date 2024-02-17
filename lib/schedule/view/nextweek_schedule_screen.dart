@@ -161,6 +161,8 @@ class _NextWeekScheduleState extends ConsumerState<NextWeekScheduleScreen> {
                 try {
                   await ref.read(getMeProvider.notifier).postNextWorkout(
                         mondayDate: dates[0],
+                        selectedDates: selectedDates,
+                        noSchedule: noSchedule,
                       );
 
                   if (!alreadyShared) {

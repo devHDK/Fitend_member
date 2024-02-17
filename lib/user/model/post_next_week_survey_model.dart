@@ -3,23 +3,33 @@ import 'package:json_annotation/json_annotation.dart';
 part 'post_next_week_survey_model.g.dart';
 
 @JsonSerializable()
-class NextWeekSurveyModel {
+class PostNextWeekSurveyModel {
   @JsonKey(name: "mondayDate")
   final DateTime mondayDate;
+  @JsonKey(name: "selectedDates")
+  List<DateTime>? selectedDates;
+  @JsonKey(name: "noSchedule")
+  final bool noSchedule;
 
-  NextWeekSurveyModel({
+  PostNextWeekSurveyModel({
     required this.mondayDate,
+    this.selectedDates,
+    required this.noSchedule,
   });
 
-  NextWeekSurveyModel copyWith({
+  PostNextWeekSurveyModel copyWith({
     DateTime? mondayDate,
+    List<DateTime>? selectedDates,
+    bool? noSchedule,
   }) =>
-      NextWeekSurveyModel(
+      PostNextWeekSurveyModel(
         mondayDate: mondayDate ?? this.mondayDate,
+        selectedDates: selectedDates ?? this.selectedDates,
+        noSchedule: noSchedule ?? this.noSchedule,
       );
 
-  factory NextWeekSurveyModel.fromJson(Map<String, dynamic> json) =>
-      _$NextWeekSurveyModelFromJson(json);
+  factory PostNextWeekSurveyModel.fromJson(Map<String, dynamic> json) =>
+      _$PostNextWeekSurveyModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$NextWeekSurveyModelToJson(this);
+  Map<String, dynamic> toJson() => _$PostNextWeekSurveyModelToJson(this);
 }

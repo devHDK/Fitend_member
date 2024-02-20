@@ -272,8 +272,16 @@ class _TrainerDetailScreenState extends ConsumerState<TrainerDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CustomNetworkImage(
-              imageUrl: '${URLConstants.s3Url}${trainerModel.profileImage}'),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(40),
+            child: SizedBox(
+              width: 80,
+              height: 80,
+              child: CustomNetworkImage(
+                  imageUrl:
+                      '${URLConstants.s3Url}${trainerModel.profileImage}'),
+            ),
+          ),
           const SizedBox(
             height: 14,
           ),

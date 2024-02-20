@@ -39,6 +39,18 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      fetch();
+    });
+  }
+
+  void fetch() async {
+    if (!mounted) return;
+
+    if (ref.read(trainerListProvider) is TrainerListModelError) {
+      await ref.read(trainerListProvider.notifier).getTrainers();
+    }
   }
 
   @override

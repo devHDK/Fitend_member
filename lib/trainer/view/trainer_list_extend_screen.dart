@@ -190,7 +190,7 @@ class _TrainerListExtendScreenState
                       child: Row(
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(24),
                             child: CustomNetworkImage(
                               imageUrl:
                                   '${URLConstants.s3Url}${model.profileImage}',

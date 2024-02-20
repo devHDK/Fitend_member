@@ -59,13 +59,14 @@ class _RegisterWelcomeScreenState extends State<RegisterWelcomeScreen> {
             setState(() {});
           } else {
             _items.insert(
+              index,
+              _chattingBubble(
                 index,
-                _chattingBubble(
-                  index,
-                  chattingStrings[index],
-                  widget.trainerName,
-                  '${URLConstants.s3Url}${widget.trainerProfileImage}',
-                ));
+                chattingStrings[index],
+                widget.trainerName,
+                '${URLConstants.s3Url}${widget.trainerProfileImage}',
+              ),
+            );
             _listKey.currentState?.insertItem(index);
           }
         });
@@ -84,9 +85,12 @@ class _RegisterWelcomeScreenState extends State<RegisterWelcomeScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomNetworkImage(
-                  width: 36,
-                  imageUrl: imageUrl,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: CustomNetworkImage(
+                    width: 36,
+                    imageUrl: imageUrl,
+                  ),
                 ),
                 const SizedBox(
                   width: 12,

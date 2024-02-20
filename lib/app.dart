@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/provider/shared_preference_provider.dart';
+import 'package:fitend_member/common/secure_storage/secure_storage.dart';
 import 'package:fitend_member/home_screen.dart';
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/schedule/view/nextweek_schedule_screen.dart';
@@ -83,9 +84,6 @@ class _AppState extends ConsumerState<App> {
 
   void setupFirebaseMessagingHandlersWhenOpen() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      debugPrint(
-          "setupFirebaseMessagingHandlersWhenOpen: message ${message.data}");
-
       if (message.data['type'] == 'commentCreate' ||
           message.data['type'] == 'threadCreate') {
         ref.read(routerProvider).goNamed(
@@ -121,16 +119,25 @@ class _AppState extends ConsumerState<App> {
     //sharedPreferences 세팅
     final pref = await ref.read(sharedPrefsProvider);
 
-    if (pref.getBool(StringConstants.isFirstRunWorkout) == null) {
+    if (pref.getBool(StringConstants.isFirstRunWorkout) ?? true) {
       pref.setBool(StringConstants.isFirstRunWorkout, true);
     }
 
-    if (pref.getBool(StringConstants.isFirstRunThread) == null) {
+    if (pref.getBool(StringConstants.isFirstRunThread) ?? true) {
       pref.setBool(StringConstants.isFirstRunThread, true);
     }
 
-    if (pref.getBool(StringConstants.isNeedMeeting) == null) {
+    if (pref.getBool(StringConstants.isNeedMeeting) ?? true) {
       pref.setBool(StringConstants.isNeedMeeting, false);
+    }
+
+    //처음 시작이면
+    if (pref.getBool('first_run') ?? true) {
+      final storage = ref.read(secureStorageProvider);
+
+      await storage.deleteAll();
+
+      pref.setBool('first_run', false);
     }
 
     Future.wait([

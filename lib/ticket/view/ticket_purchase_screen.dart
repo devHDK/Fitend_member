@@ -326,16 +326,18 @@ class _TicketPurchaseScreenState extends ConsumerState<TicketPurchaseScreen> {
               ),
             )
             .then((value) {
-          ref.read(getMeProvider.notifier).getMe();
+          if (mounted) {
+            ref.read(getMeProvider.notifier).getMe();
 
-          try {
-            final slack = SlackNotifier(URLConstants.slackMembershipWebhook);
-            slack.send(
-              '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[멤버십 구매 🎫][${userModel.user.activeTrainers.first.nickname} 코치님]-[${userModel.user.nickname}]님이 [${widget.purchaseProduct.month}개월] 멤버십 구매!',
-              channel: '#cs8_결제-알림',
-            );
-          } catch (e) {
-            debugPrint('$e');
+            try {
+              final slack = SlackNotifier(URLConstants.slackMembershipWebhook);
+              slack.send(
+                '${F.appFlavor != Flavor.production ? '[TEST]' : ''}[멤버십 구매 🎫][${userModel.user.activeTrainers.first.nickname} 코치님]-[${userModel.user.nickname}]님이 [${widget.purchaseProduct.month}개월] 멤버십 구매!',
+                channel: '#cs8_결제-알림',
+              );
+            } catch (e) {
+              debugPrint('$e');
+            }
           }
         });
       }

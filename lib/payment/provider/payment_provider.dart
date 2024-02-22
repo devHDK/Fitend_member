@@ -28,7 +28,7 @@ class PaymentStateNotifier extends StateNotifier<ActiveTicketResponseBase?> {
 
       final resp = await repository.postConfirmPayment(reqModel);
 
-      state = resp;
+      // state = resp;
 
       return resp;
     } catch (e) {

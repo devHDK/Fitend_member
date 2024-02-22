@@ -212,7 +212,7 @@ class _TrainerListExtendScreenState
                                 ),
                               ),
                               Text(
-                                model.nickname,
+                                model.shortIntro,
                                 style: s2SubTitle.copyWith(
                                   color: Colors.white,
                                 ),

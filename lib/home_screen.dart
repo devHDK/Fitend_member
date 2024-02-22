@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:fitend_member/common/component/logo_appbar.dart';
 import 'package:fitend_member/common/const/aseet_constants.dart';
-import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/const/pallete.dart';
 import 'package:fitend_member/common/provider/avail_camera_provider.dart';
 import 'package:fitend_member/notifications/model/notificatiion_main_state_model.dart';
@@ -10,9 +9,7 @@ import 'package:fitend_member/notifications/provider/notification_home_screen_pr
 import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/thread/view/thread_screen.dart';
-import 'package:fitend_member/trainer/view/trainer_list_screen.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
-import 'package:fitend_member/user/view/register_welcome_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

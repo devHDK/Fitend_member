@@ -19,6 +19,7 @@ import 'package:fitend_member/ticket/view/active_ticket_screen.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
 import 'package:fitend_member/user/provider/go_router.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -373,10 +374,11 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen>
     return PreferredSize(
       preferredSize: Size(100.w, 30),
       child: InkWell(
-        onTap: () => context.goNamed(MeetingDateScreen.routeName,
-            pathParameters: {
-              'trainerId': userState.user.activeTrainers.first.id.toString()
-            }),
+        onTap: () {
+          context.goNamed(MeetingDateScreen.routeName, pathParameters: {
+            'trainerId': userState.user.activeTrainers.first.id.toString()
+          });
+        },
         child: Container(
           color: Pallete.point,
           child: Padding(
@@ -474,7 +476,13 @@ class ScheduleScreenState extends ConsumerState<ScheduleScreen>
     return PreferredSize(
       preferredSize: Size(100.w, 30),
       child: InkWell(
-        onTap: () => context.goNamed(NextWeekScheduleScreen.routeName),
+        onTap: () {
+          Navigator.of(context).push(CupertinoPageRoute(
+            builder: (context) => const NextWeekScheduleScreen(),
+            fullscreenDialog: true,
+          ));
+          // context.goNamed(NextWeekScheduleScreen.routeName);
+        },
         child: Container(
           color: Pallete.point,
           child: Padding(

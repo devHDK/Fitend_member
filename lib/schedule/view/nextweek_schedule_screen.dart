@@ -211,7 +211,7 @@ class _NextWeekScheduleState extends ConsumerState<NextWeekScheduleScreen> {
                       }
                       ref
                           .read(threadCreateProvider.notifier)
-                          .updateContent(dateStringList.join(' ∙ '));
+                          .updateContent(dateStringList.join(', '));
                     }
 
                     await ref.read(threadCreateProvider.notifier).createThread(

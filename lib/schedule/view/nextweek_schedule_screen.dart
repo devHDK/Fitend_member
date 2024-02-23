@@ -230,8 +230,6 @@ class _NextWeekScheduleState extends ConsumerState<NextWeekScheduleScreen> {
                         );
                   }
 
-                  if (!context.mounted) return;
-
                   ref
                       .read(getMeProvider.notifier)
                       .updateIsWorkoutSurvey(isWorkoutSurvey: true);
@@ -241,8 +239,12 @@ class _NextWeekScheduleState extends ConsumerState<NextWeekScheduleScreen> {
                     gravity: ToastGravity.CENTER,
                   );
 
+                  if (!context.mounted) return;
+
                   context.pop();
                 } catch (e) {
+                  debugPrint('$e');
+
                   DialogWidgets.showToast(
                     content: '다시 시도해주세요',
                     gravity: ToastGravity.CENTER,

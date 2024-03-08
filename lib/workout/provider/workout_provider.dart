@@ -233,11 +233,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
           );
         }).toList(),
       );
-
-      if (state is WorkoutModel) {
-        final pstate = state as WorkoutModel;
-        print(pstate.exercises.first.devisionId);
-      }
     } on DioException {
       state = WorkoutModelError(message: '데이터를 불러올수없습니다');
     }

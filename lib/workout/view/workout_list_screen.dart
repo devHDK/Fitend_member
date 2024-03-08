@@ -289,6 +289,7 @@ class _WorkoutListScreenState extends ConsumerState<WorkoutListScreen>
                               profileImage: userModel
                                   .user.activeTrainers.first.profileImage,
                             ),
+                            isChangeDateThread: true,
                           );
 
                       DialogWidgets.showToast(

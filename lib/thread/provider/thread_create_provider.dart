@@ -114,6 +114,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
     required ThreadUser user,
     required ThreadTrainer trainer,
     bool? isMeetingThread,
+    bool? isChangeDateThread,
   }) async {
     try {
       if (state.isUploading || state.isLoading) {
@@ -132,6 +133,7 @@ class ThreadCreateStateNotifier extends StateNotifier<ThreadCreateTempModel> {
         content: state.content,
         gallery: [],
         isMeetingThread: isMeetingThread,
+        isChangeDateThread: isChangeDateThread,
       );
 
       if (state.isFirstRun) {

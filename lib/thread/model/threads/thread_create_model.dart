@@ -13,6 +13,8 @@ class ThreadCreateModel {
   final String content;
   @JsonKey(name: "isMeetingThread")
   bool? isMeetingThread;
+  @JsonKey(name: "isChangeDateThread")
+  bool? isChangeDateThread;
   @JsonKey(name: "gallery")
   List<GalleryModel>? gallery;
 
@@ -20,6 +22,7 @@ class ThreadCreateModel {
     required this.trainerId,
     this.title,
     this.isMeetingThread,
+    this.isChangeDateThread,
     required this.content,
     this.gallery,
   });
@@ -28,6 +31,7 @@ class ThreadCreateModel {
     int? trainerId,
     String? title,
     bool? isMeetingThread,
+    bool? isChangeDateThread,
     String? content,
     List<GalleryModel>? gallery,
   }) =>
@@ -36,6 +40,7 @@ class ThreadCreateModel {
         title: title ?? this.title,
         content: content ?? this.content,
         isMeetingThread: isMeetingThread ?? this.isMeetingThread,
+        isChangeDateThread: isChangeDateThread ?? this.isChangeDateThread,
         gallery: gallery ?? this.gallery,
       );
 
@@ -67,6 +72,7 @@ class ThreadCreateTempModel {
   final List<bool>? isEditedAssets;
   @JsonKey(name: "gallery")
   List<GalleryModel>? gallery;
+  @JsonKey(name: "isFirstRun")
   @JsonKey(name: "isFirstRun")
   bool isFirstRun;
 

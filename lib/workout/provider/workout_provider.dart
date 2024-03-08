@@ -206,8 +206,6 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
         });
       }
 
-      debugPrint(response.toString());
-
       state = response.copyWith(
         exercises: response.exercises.map((exercise) {
           return Exercise(
@@ -231,9 +229,15 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
               );
             }).toList(),
             isVideoRecord: exercise.isVideoRecord,
+            devisionId: exercise.devisionId,
           );
         }).toList(),
       );
+
+      if (state is WorkoutModel) {
+        final pstate = state as WorkoutModel;
+        print(pstate.exercises.first.devisionId);
+      }
     } on DioException {
       state = WorkoutModelError(message: '데이터를 불러올수없습니다');
     }
@@ -278,6 +282,7 @@ class WorkoutStateNotifier extends StateNotifier<WorkoutModelBase> {
               );
             }).toList(),
             isVideoRecord: pstate.exercises[i].isVideoRecord,
+            devisionId: pstate.exercises[i].devisionId,
           );
           //저장된게 없으면 저장
           value.put(pstate.exercises[i].workoutPlanId, tempExercise);

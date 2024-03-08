@@ -16,6 +16,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+List<String> guideContents = [
+  '덤벨 운동 : 한 개당 무게 (양 쪽일 경우 각각)',
+  '바벨 운동 : 봉 무게(20kg)를 포함',
+  '스미스 머신 : 봉 무게(20kg) 미포함',
+  '어시스트 머신 : 도움받는 무게를 입력',
+];
+
 class ExerciseScreen extends StatefulWidget {
   final int? id;
   final Exercise exercise;
@@ -252,7 +259,97 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               ),
             ),
           ),
+
+          //공통 가이드
+          if (widget.exercise.devisionId != null &&
+              widget.exercise.devisionId == 1)
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    const Divider(
+                      height: 1,
+                      color: Pallete.lightGray,
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    Text(
+                      '공통 가이드',
+                      style: h5Headline.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    _BackgroundContainer(
+                      title: '💡 무게는 이렇게 계산해요',
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...guideContents.map((e) => Text(
+                                '  ∙  $e',
+                                style: s1SubTitle.copyWith(
+                                  color: Colors.white,
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    )
+                  ],
+                ),
+              ),
+            )
         ],
+      ),
+    );
+  }
+}
+
+class _BackgroundContainer extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _BackgroundContainer({
+    required this.title,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 100.w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Pallete.darkGray,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 13,
+          vertical: 10,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: s2SubTitle.copyWith(color: Pallete.lightGray),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            child,
+          ],
+        ),
       ),
     );
   }

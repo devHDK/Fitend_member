@@ -30,13 +30,14 @@ class ExerciseAdapter extends TypeAdapter<Exercise> {
       circuitSeq: fields[11] as int?,
       setType: fields[12] as String?,
       isVideoRecord: fields[13] as bool?,
+      devisionId: fields[14] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Exercise obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(1)
       ..write(obj.workoutPlanId)
       ..writeByte(2)
@@ -62,7 +63,9 @@ class ExerciseAdapter extends TypeAdapter<Exercise> {
       ..writeByte(12)
       ..write(obj.setType)
       ..writeByte(13)
-      ..write(obj.isVideoRecord);
+      ..write(obj.isVideoRecord)
+      ..writeByte(14)
+      ..write(obj.devisionId);
   }
 
   @override
@@ -100,6 +103,7 @@ Exercise _$ExerciseFromJson(Map<String, dynamic> json) => Exercise(
       circuitSeq: json['circuitSeq'] as int?,
       setType: json['setType'] as String?,
       isVideoRecord: json['isVideoRecord'] as bool?,
+      devisionId: json['devisionId'] as int?,
     );
 
 Map<String, dynamic> _$ExerciseToJson(Exercise instance) => <String, dynamic>{
@@ -116,4 +120,5 @@ Map<String, dynamic> _$ExerciseToJson(Exercise instance) => <String, dynamic>{
       'circuitSeq': instance.circuitSeq,
       'setType': instance.setType,
       'isVideoRecord': instance.isVideoRecord,
+      'devisionId': instance.devisionId,
     };

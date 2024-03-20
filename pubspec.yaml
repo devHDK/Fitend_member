@@ -102,7 +102,7 @@ dependencies:
   ndialog: ^4.3.0
   badges: ^3.1.2
   dots_indicator: ^3.0.0
-  google_fonts: ^6.0.0
+  google_fonts: ^6.2.0
   cached_network_image: ^3.2.3
   table_calendar: ^3.0.9
   cupertino_icons: ^1.0.6
@@ -122,6 +122,9 @@ dependencies:
   fluttertoast: ^8.2.1
   shimmer: ^3.0.0
   collection: ^1.17.2
+
+  #watch
+  watch_connectivity: ^0.1.6
 
   #bootPay
   bootpay: ^4.8.2

@@ -8,7 +8,7 @@ import Foundation
 import device_info_plus
 import devicelocale
 import emoji_picker_flutter
-import ffmpeg_kit_flutter_min
+import ffmpeg_kit_flutter
 import firebase_analytics
 import firebase_auth
 import firebase_core

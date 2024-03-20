@@ -9,12 +9,12 @@ PODS:
     - Flutter
   - emoji_picker_flutter (0.0.1):
     - Flutter
-  - ffmpeg-kit-ios-min (5.1)
-  - ffmpeg_kit_flutter_min (5.1.0):
-    - ffmpeg_kit_flutter_min/min (= 5.1.0)
+  - ffmpeg-kit-ios-https (6.0)
+  - ffmpeg_kit_flutter (6.0.3):
+    - ffmpeg_kit_flutter/https (= 6.0.3)
     - Flutter
-  - ffmpeg_kit_flutter_min/min (5.1.0):
-    - ffmpeg-kit-ios-min (= 5.1)
+  - ffmpeg_kit_flutter/https (6.0.3):
+    - ffmpeg-kit-ios-https (= 6.0)
     - Flutter
   - Firebase/Analytics (10.18.0):
     - Firebase/Core
@@ -251,7 +251,7 @@ DEPENDENCIES:
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - devicelocale (from `.symlinks/plugins/devicelocale/ios`)
   - emoji_picker_flutter (from `.symlinks/plugins/emoji_picker_flutter/ios`)
-  - ffmpeg_kit_flutter_min (from `.symlinks/plugins/ffmpeg_kit_flutter_min/ios`)
+  - ffmpeg_kit_flutter (from `.symlinks/plugins/ffmpeg_kit_flutter/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -283,7 +283,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - ffmpeg-kit-ios-min
+    - ffmpeg-kit-ios-https
     - Firebase
     - FirebaseAnalytics
     - FirebaseAppCheckInterop
@@ -318,8 +318,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/devicelocale/ios"
   emoji_picker_flutter:
     :path: ".symlinks/plugins/emoji_picker_flutter/ios"
-  ffmpeg_kit_flutter_min:
-    :path: ".symlinks/plugins/ffmpeg_kit_flutter_min/ios"
+  ffmpeg_kit_flutter:
+    :path: ".symlinks/plugins/ffmpeg_kit_flutter/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_auth:
@@ -383,8 +383,8 @@ SPEC CHECKSUMS:
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   devicelocale: 35ba84dc7f45f527c3001535d8c8d104edd5d926
   emoji_picker_flutter: fe2e6151c5b548e975d546e6eeb567daf0962a58
-  ffmpeg-kit-ios-min: 3748f7726cd539e308090371a9d572d1a9dfaf7e
-  ffmpeg_kit_flutter_min: 03876cb5ff5f7cf493cbcef07fa738ae423e009c
+  ffmpeg-kit-ios-https: f9c838aa5400a6c5ba12324c6b798f52197ba354
+  ffmpeg_kit_flutter: b4ca70cac3fc1d8ac14cdc660754b60870358732
   Firebase: 414ad272f8d02dfbf12662a9d43f4bba9bec2a06
   firebase_analytics: b3d6dd14c61549a29abb10e9843446a4d8bb53eb
   firebase_auth: 8e9ec02991ca4659111cc671c84d0c010b6bfb26
@@ -436,6 +436,6 @@ SPEC CHECKSUMS:
   wakelock_plus: 8b09852c8876491e4b6d179e17dfe2a0b5f60d47
   watch_connectivity: 715eb484685e05846eab74795348a44bb2809b82
 
-PODFILE CHECKSUM: 73b32c513fa6e85a8f0c6d2257154b6eee50b53a
+PODFILE CHECKSUM: 56c5dad215090fc862e72ed05d43615c0fd7f496
 
 COCOAPODS: 1.15.2

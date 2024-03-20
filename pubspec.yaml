@@ -75,7 +75,7 @@ dependencies:
   store_redirect: ^2.0.1
 
   #asset edit
-  ffmpeg_kit_flutter_min: ^5.1.0
+  ffmpeg_kit_flutter: ^6.0.3
   image_cropper: ^5.0.0
   video_editor: ^3.0.0
   video_thumbnail: ^0.5.3
@@ -102,7 +102,7 @@ dependencies:
   ndialog: ^4.3.0
   badges: ^3.1.2
   dots_indicator: ^3.0.0
-  google_fonts: ^6.2.0
+  google_fonts: ^6.1.0
   cached_network_image: ^3.2.3
   table_calendar: ^3.0.9
   cupertino_icons: ^1.0.6

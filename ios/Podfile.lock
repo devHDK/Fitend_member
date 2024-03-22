@@ -181,7 +181,7 @@ PODS:
   - GoogleUtilities/UserDefaults (7.13.0):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
-  - GTMSessionFetcher/Core (3.3.1)
+  - GTMSessionFetcher/Core (3.3.2)
   - image_cropper (0.0.4):
     - Flutter
     - TOCropViewController (~> 2.6.1)
@@ -411,7 +411,7 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: 70ce9aa438cff1cfb31ea3e660bcc67734cb716e
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
-  GTMSessionFetcher: 8a1b34ad97ebe6f909fb8b9b77fba99943007556
+  GTMSessionFetcher: 0e876eea9782ec6462e91ab872711c357322c94f
   image_cropper: a3291c624a953049bc6a02e1f8c8ceb162a24b25
   image_gallery_saver: cb43cc43141711190510e92c460eb1655cd343cb
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
@@ -436,6 +436,6 @@ SPEC CHECKSUMS:
   wakelock_plus: 8b09852c8876491e4b6d179e17dfe2a0b5f60d47
   watch_connectivity: 715eb484685e05846eab74795348a44bb2809b82
 
-PODFILE CHECKSUM: 56c5dad215090fc862e72ed05d43615c0fd7f496
+PODFILE CHECKSUM: 5370b74bc0d709765e1276989d7ccfc1b1bcb893
 
 COCOAPODS: 1.15.2

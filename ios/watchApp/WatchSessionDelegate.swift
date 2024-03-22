@@ -43,7 +43,7 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     
     
     public func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-            refresh()
+//            refresh()
     }
         
     public func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
@@ -53,7 +53,13 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     public func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
           DispatchQueue.main.async { self.log.append("Received context: \(applicationContext)") }
     }
+    
+    #if os(iOS)
+    public func sessionDidBecomeInactive(_ session: WCSession) { }
+    public func sessionDidDeactivate(_ session: WCSession) {
+        session.activate()
+    }
+    #endif
 
-   
     
 }

@@ -12,8 +12,6 @@
 		06BDC538050F52124753A920 /* localDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D873AF9854D23A8DDE43E24B /* localDebug.xcconfig */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		164E6CD39A91457698410404 /* productionRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 8A5EC92884C5CE2AEF20E5E1 /* productionRelease.xcconfig */; };
-		240BE3652BAB35820013F145 /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 240BE3642BAB35820013F145 /* WatchKit.framework */; };
-		240BE3672BAB35A30013F145 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 240BE3662BAB35A30013F145 /* WatchConnectivity.framework */; };
 		2485B0632B9ED78000EC95E4 /* fitendApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2485B0622B9ED78000EC95E4 /* fitendApp.swift */; };
 		2485B0652B9ED78000EC95E4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2485B0642B9ED78000EC95E4 /* ContentView.swift */; };
 		2485B0672B9ED78200EC95E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2485B0662B9ED78200EC95E4 /* Assets.xcassets */; };
@@ -29,22 +27,13 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		986A7A8730491CBF02C226A3 /* productionProfile.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 0D01B4F70E0A1E63CEFF67E3 /* productionProfile.xcconfig */; };
+		994CDF65719F571CD4E631AA /* libPods-watchApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 299EB5BEA960F8D7DB1E311B /* libPods-watchApp.a */; };
 		B0C549697C422FC96CDA6547 /* developmentRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1A989C68232A1D77297770C2 /* developmentRelease.xcconfig */; };
 		BC08E8A68BB075215C9852BB /* developmentDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5E0D79EF0F5C2AF21B8DF100 /* developmentDebug.xcconfig */; };
 		E59A541F3AE5507F47857330 /* developmentLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 339A1D804B3BC1B09A502B7C /* developmentLaunchScreen.storyboard */; };
 		E92A2B19C0235C20F9FAFE45 /* localProfile.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1C6F797B348A4D8BE9C8523E /* localProfile.xcconfig */; };
 		EC988E7D5E6F5D921148E642 /* productionDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 8D852F53FC30A69878712D3B /* productionDebug.xcconfig */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		2485B06B2B9ED78200EC95E4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2485B05F2B9ED77F00EC95E4;
-			remoteInfo = "fitend Watch App";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		2485B06E2B9ED78300EC95E4 /* Embed Watch Content */ = {
@@ -92,6 +81,7 @@
 		2485B07C2B9ED80A00EC95E4 /* WatchSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionDelegate.swift; sourceTree = "<group>"; };
 		24DA2DC12A5EB2C300217CFE /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		2581D8A82CE7FF28C4A34003 /* Pods-watchApp.release-local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-watchApp.release-local.xcconfig"; path = "Target Support Files/Pods-watchApp/Pods-watchApp.release-local.xcconfig"; sourceTree = "<group>"; };
+		299EB5BEA960F8D7DB1E311B /* libPods-watchApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-watchApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3120F8279E15FEF8CA7B521B /* Pods-watchApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-watchApp.release.xcconfig"; path = "Target Support Files/Pods-watchApp/Pods-watchApp.release.xcconfig"; sourceTree = "<group>"; };
 		339A1D804B3BC1B09A502B7C /* developmentLaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = developmentLaunchScreen.storyboard; path = Runner/developmentLaunchScreen.storyboard; sourceTree = "<group>"; };
 		358081D91F5B67447006F42D /* Pods-Runner.debug-local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-local.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-local.xcconfig"; sourceTree = "<group>"; };
@@ -139,8 +129,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				240BE3652BAB35820013F145 /* WatchKit.framework in Frameworks */,
-				240BE3672BAB35A30013F145 /* WatchConnectivity.framework in Frameworks */,
+				994CDF65719F571CD4E631AA /* libPods-watchApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,6 +171,7 @@
 				240BE3642BAB35820013F145 /* WatchKit.framework */,
 				37FD17D04B32BB0FB9F39400 /* Pods_Runner.framework */,
 				DD960FF1999F7F1CBB9B5DBD /* Pods_watchApp.framework */,
+				299EB5BEA960F8D7DB1E311B /* libPods-watchApp.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -285,8 +275,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2485B07B2B9ED78300EC95E4 /* Build configuration list for PBXNativeTarget "watchApp" */;
 			buildPhases = (
-				B73A3C85E32DE85CE265C0BB /* [CP] Check Pods Manifest.lock */,
-				244DA71A2BAB1E7D00044E78 /* ShellScript */,
+				1118FE0D2194E29BFF6CD8AA /* [CP] Check Pods Manifest.lock */,
+				24DE89162BAC0A5500698801 /* ShellScript */,
 				2485B05C2B9ED77F00EC95E4 /* Sources */,
 				2485B05D2B9ED77F00EC95E4 /* Frameworks */,
 				2485B05E2B9ED77F00EC95E4 /* Resources */,
@@ -319,7 +309,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				2485B06C2B9ED78200EC95E4 /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Runner;
@@ -400,7 +389,29 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		244DA71A2BAB1E7D00044E78 /* ShellScript */ = {
+		1118FE0D2194E29BFF6CD8AA /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-watchApp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		24DE89162BAC0A5500698801 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 12;
 			files = (
@@ -415,7 +426,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
+			shellScript = "#/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
 		};
 		24FA495F2A4477B800512ABE /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -449,7 +460,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin\n";
 		};
 		3DAD8518572115B1B2FAF295 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -504,28 +515,6 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
 		};
-		B73A3C85E32DE85CE265C0BB /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-watchApp-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		D816791648FB30849B9F3BCD /* [firebase_crashlytics] Crashlytics Upload Symbols */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -569,14 +558,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		2485B06C2B9ED78200EC95E4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2485B05F2B9ED77F00EC95E4 /* watchApp */;
-			targetProxy = 2485B06B2B9ED78200EC95E4 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		97C146FA1CF9000F007C117D /* Main.storyboard */ = {
@@ -686,14 +667,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -721,7 +702,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -749,14 +730,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -784,7 +765,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = REALEASE;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -813,14 +794,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -848,7 +829,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = PROFILE;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -877,14 +858,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -916,7 +897,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -945,14 +926,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -984,7 +965,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = PROFILE;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1014,14 +995,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -1053,7 +1034,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = REALEASE;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1083,14 +1064,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -1122,7 +1103,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -1151,14 +1132,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -1190,7 +1171,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = PROFILE;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1220,14 +1201,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -1259,7 +1240,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = REALEASE;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1289,14 +1270,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -1328,7 +1309,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -1357,14 +1338,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -1396,7 +1377,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = PROFILE;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1426,14 +1407,14 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_ASSET_PATHS = "\"watchApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "fitend-Watch-App-Info.plist";
+				INFOPLIST_FILE = "watchApp-info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = FITEND;
 				INFOPLIST_KEY_NSCameraUsageDescription = "게시물에 사용할 사진,동영상을 촬영하기 위해 카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "GPS 권한을 허용해주세요.";
@@ -1465,7 +1446,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = REALEASE;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1541,7 +1522,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -2182,7 +2163,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -2213,7 +2194,7 @@
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 63;
 				DEVELOPMENT_TEAM = 87KG3K3857;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;

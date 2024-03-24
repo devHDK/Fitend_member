@@ -28,6 +28,14 @@ abstract class ThreadRepository {
     @Body() required ThreadCreateModel model,
   });
 
+  @POST('/threads/welcome/{id}')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<CreateRespModel> postWelcomeThread({
+    @Path('id') required int id,
+  });
+
   @GET('/threads')
   @Headers({
     'accessToken': 'true',

@@ -14,6 +14,7 @@ import 'package:fitend_member/schedule/provider/schedule_provider.dart';
 import 'package:fitend_member/thread/model/common/thread_trainer_model.dart';
 import 'package:fitend_member/thread/model/common/thread_user_model.dart';
 import 'package:fitend_member/thread/provider/thread_create_provider.dart';
+import 'package:fitend_member/thread/repository/thread_repository.dart';
 import 'package:fitend_member/trainer/model/get_trainer_schedule_model.dart';
 import 'package:fitend_member/user/model/user_model.dart';
 import 'package:fitend_member/user/provider/get_me_provider.dart';
@@ -52,6 +53,7 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
   DateTime selectStartTime = DateTime(2024);
   DateTime selectEndTime = DateTime(2024);
   bool buttonEnable = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -158,17 +160,42 @@ class _MeetingDateScreenState extends ConsumerState<MeetingDateScreen> {
               ),
               Center(
                 child: InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => const _MeetingDatePickDialog(
-                        message: '희망 일정을 선택해주시면\n빠르게 확인 후 연락드릴게요 🙏',
-                        confirmText: '확인',
-                      ),
-                    );
-                  },
+                  onTap: isLoading
+                      ? null
+                      : () async {
+                          // showDialog(
+                          //   context: context,
+                          //   builder: (context) => const _MeetingDatePickDialog(
+                          //     message: '희망 일정을 선택해주시면\n빠르게 확인 후 연락드릴게요 🙏',
+                          //     confirmText: '확인',
+                          //   ),
+                          // );
+
+                          final pref = await SharedPreferences.getInstance();
+                          pref.setBool(StringConstants.isNeedMeeting, false);
+
+                          ref
+                              .read(scheduleProvider.notifier)
+                              .updateIsNeedMeeting(false);
+
+                          try {
+                            setState(() {
+                              isLoading = true;
+                            });
+
+                            await ref
+                                .read(threadRepositoryProvider)
+                                .postWelcomeThread(id: widget.trainerId);
+
+                            if (!context.mounted) return;
+
+                            context.pop();
+                          } catch (e) {
+                            isLoading = false;
+                          }
+                        },
                   child: Text(
-                    '이중에 가능한 일정이 없어요 🥲',
+                    '나중에 코치님과 따로잡을게요 🙋‍♀️',
                     style: s2SubTitle.copyWith(
                       color: Colors.white,
                       decoration: TextDecoration.underline,

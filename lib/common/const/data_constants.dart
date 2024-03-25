@@ -98,7 +98,7 @@ class URLConstants {
   static final s3Url = F.appFlavor != Flavor.production
       ? 'https://d20e02zksul93k.cloudfront.net/'
       : 'https://djt0uuz3ub045.cloudfront.net/';
-  static const muscleImageUrl = 'public/targetMuscles/';
+  static const muscleImageUrl = 'public/muscles/';
 
   static const maleProfileUrl =
       'https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_7.jpg';

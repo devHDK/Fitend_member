@@ -35,7 +35,7 @@ end
   end
 
   target 'watchApp' do
-    
+    platform :watchos, '8.0'
   end
 
   post_install do |installer|

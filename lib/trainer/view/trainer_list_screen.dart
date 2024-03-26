@@ -330,7 +330,7 @@ class _TrainerListScreenState extends ConsumerState<TrainerListScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '목록에 원하는 코치님이 없어요',
+                        '원하는 코치님이 따로 있어요',
                         style: s2SubTitle.copyWith(
                           color: Colors.white,
                           decoration: TextDecoration.underline,

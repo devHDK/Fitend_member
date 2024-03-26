@@ -614,9 +614,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                               widget.threadId, model.user)
                                           .then((value) {
                                         if (mounted) {
-                                          setState(() {
-                                            commentController.text = '';
-                                          });
+                                          commentController.clear();
+                                          setState(() {});
                                         }
                                       });
                                     } catch (e) {
@@ -697,8 +696,8 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                             .init();
 
                                         if (mounted) {
+                                          commentController.clear();
                                           setState(() {
-                                            commentController.text = '';
                                             edittingCommentId = -1;
                                           });
                                         }
@@ -738,9 +737,9 @@ class _ThreadDetailScreenState extends ConsumerState<ThreadDetailScreen>
                                                     .notifier)
                                                 .init();
                                             if (mounted) {
+                                              commentController.clear();
                                               setState(() {
                                                 edittingCommentId = -1;
-                                                commentController.text = '';
                                               });
                                             }
                                           });

@@ -48,6 +48,34 @@ class _ThreadRepository implements ThreadRepository {
   }
 
   @override
+  Future<CreateRespModel> postWelcomeThread({required int id}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'accessToken': 'true'};
+    _headers.removeWhere((k, v) => v == null);
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<CreateRespModel>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/threads/welcome/${id}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = CreateRespModel.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<ThreadListModel> getThreads(
       {required ThreadGetListParamsModel params}) async {
     const _extra = <String, dynamic>{};

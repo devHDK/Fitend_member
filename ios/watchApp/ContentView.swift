@@ -13,17 +13,20 @@ struct ContentView: View {
     @State private var message = "";
     
     var body: some View {
-        VStack {
+        ScrollView {
             //textField
             TextField("Enter Your Message", text: $message).padding()
-            //button
-            Button("send message", action: {
-                session.sendMessage([message: String()])
-            })
-            //refresh
-            Button("refresh", action: {
-                session.refresh()
-            })
+            HStack{
+                //button
+                Button("send", action: {
+                    session.sendMessage([message: String()])
+                })
+                //refresh
+                Button("refresh", action: {
+                    session.refresh()
+                    }
+                )
+            }
             //log
             Text("Log")
             ForEach(session.log, id:\.self){

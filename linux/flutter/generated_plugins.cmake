@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   devicelocale
   emoji_picker_flutter
   flutter_secure_storage_linux
+  is_wear
   url_launcher_linux
 )
 

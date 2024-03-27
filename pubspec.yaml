@@ -125,6 +125,8 @@ dependencies:
 
   #watch
   watch_connectivity: ^0.1.6
+  health: ^9.0.1
+  is_wear: ^0.0.1+2
 
   #bootPay
   bootpay: ^4.8.2

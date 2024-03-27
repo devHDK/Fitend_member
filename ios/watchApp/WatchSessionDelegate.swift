@@ -57,7 +57,7 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     #if os(iOS)
     public func sessionDidBecomeInactive(_ session: WCSession) { }
     public func sessionDidDeactivate(_ session: WCSession) {
-        session.activate()
+    session.activate()
     }
     #endif
 

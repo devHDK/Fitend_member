@@ -10,6 +10,7 @@ import 'package:fitend_member/notifications/view/notification_screen.dart';
 import 'package:fitend_member/schedule/view/schedule_screen.dart';
 import 'package:fitend_member/thread/view/thread_screen.dart';
 import 'package:fitend_member/user/view/mypage_screen.dart';
+import 'package:fitend_member/watch_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -108,6 +109,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Navigator.of(context).push(
                       CupertinoPageRoute(
                         builder: (context) => const MyPageScreen(),
+                      ),
+                    );
+                  },
+                  child: SvgPicture.asset(SVGConstants.mypage),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 28.0),
+                child: InkWell(
+                  hoverColor: Colors.transparent,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => const WatchScreen(),
                       ),
                     );
                   },

@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'exercise_video_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 7)
 class ExerciseVideo {
   @HiveField(1)

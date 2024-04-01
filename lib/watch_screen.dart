@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
-import 'package:is_wear/is_wear.dart';
 import 'package:watch_connectivity/watch_connectivity.dart';
 
 class WatchScreen extends StatefulWidget {
@@ -31,8 +30,10 @@ class _WatchScreenState extends State<WatchScreen> {
     super.initState();
     healthInit();
 
-    _watch.messageStream
-        .listen((e) => setState(() => _log.add('Received message: $e')));
+    _watch.messageStream.listen((e) => setState(() {
+          _log.add('Received message: $e');
+          print('수신수신');
+        }));
 
     _watch.contextStream
         .listen((e) => setState(() => _log.add('Received context: $e')));
@@ -49,6 +50,8 @@ class _WatchScreenState extends State<WatchScreen> {
     _receivedContexts = await _watch.receivedApplicationContexts;
     setState(() {});
   }
+
+  void checkMessage() {}
 
   @override
   Widget build(BuildContext context) {

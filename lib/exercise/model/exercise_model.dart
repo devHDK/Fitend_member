@@ -6,36 +6,50 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'exercise_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 5)
 class Exercise {
   @HiveField(1)
+  @JsonKey(name: 'workoutPlanId')
   final int workoutPlanId;
   @HiveField(2)
+  @JsonKey(name: 'name')
   final String name;
   @HiveField(3)
+  @JsonKey(name: 'description')
   final String description;
   @HiveField(4)
+  @JsonKey(name: 'trackingFieldId')
   final int trackingFieldId;
   @HiveField(5)
+  @JsonKey(name: 'trainerNickname')
   final String trainerNickname;
   @HiveField(6)
+  @JsonKey(name: 'trainerProfileImage')
   final String trainerProfileImage;
   @HiveField(7)
+  @JsonKey(name: 'targetMuscles')
   final List<TargetMuscle> targetMuscles;
   @HiveField(8)
+  @JsonKey(name: 'videos')
   final List<ExerciseVideo> videos;
   @HiveField(9)
+  @JsonKey(name: 'setInfo')
   final List<SetInfo> setInfo;
   @HiveField(10)
+  @JsonKey(name: 'circuitGroupNum')
   final int? circuitGroupNum;
   @HiveField(11)
+  @JsonKey(name: 'circuitSeq')
   final int? circuitSeq;
   @HiveField(12)
+  @JsonKey(name: 'setType')
   final String? setType;
   @HiveField(13)
+  @JsonKey(name: 'isVideoRecord')
   bool? isVideoRecord;
   @HiveField(14)
+  @JsonKey(name: 'devisionId')
   int? devisionId;
 
   Exercise({

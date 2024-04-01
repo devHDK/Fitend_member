@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart';
@@ -24,12 +26,14 @@ import 'package:fitend_member/workout/model/schedule_record_model.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
 import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
+import 'package:fitend_member/workout/model/workout_watch_process_model.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/repository/workout_records_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watch_connectivity/watch_connectivity.dart';
 
 final workoutProcessProvider = StateNotifierProvider.family<
     WorkoutProcessStateNotifier, WorkoutProcessModelBase?, int>((ref, id) {
@@ -40,6 +44,7 @@ final workoutProcessProvider = StateNotifierProvider.family<
   final pref = ref.watch(sharedPrefsProvider);
   final AsyncValue<Box> workoutRecordSimpleBox =
       ref.watch(hiveWorkoutRecordSimpleProvider);
+  final watch = WatchConnectivity();
   final AsyncValue<Box> workoutRecordForResultBox =
       ref.watch(hiveWorkoutRecordForResultProvider);
   final AsyncValue<Box> timerWorkoutBox = ref.watch(hiveTimerRecordProvider);
@@ -58,6 +63,7 @@ final workoutProcessProvider = StateNotifierProvider.family<
     threadProvider: tProvider,
     getMeProvider: meProvider,
     pref: pref,
+    watch: watch,
     workoutRecordSimpleBox: workoutRecordSimpleBox,
     workoutRecordForResultBox: workoutRecordForResultBox,
     timerWorkoutBox: timerWorkoutBox,
@@ -77,6 +83,7 @@ class WorkoutProcessStateNotifier
   final ThreadStateNotifier threadProvider;
   final GetMeStateNotifier getMeProvider;
   final Future<SharedPreferences> pref;
+  final WatchConnectivity watch;
   final AsyncValue<Box> workoutRecordSimpleBox;
   final AsyncValue<Box> workoutRecordForResultBox;
   final AsyncValue<Box> timerWorkoutBox;
@@ -93,6 +100,7 @@ class WorkoutProcessStateNotifier
     required this.threadProvider,
     required this.getMeProvider,
     required this.pref,
+    required this.watch,
     required this.workoutRecordSimpleBox,
     required this.workoutRecordForResultBox,
     required this.timerWorkoutBox,
@@ -227,7 +235,7 @@ class WorkoutProcessStateNotifier
 
     workoutProvider.state = workoutProviderState.copyWith(isProcessing: true);
 
-    state = WorkoutProcessModel(
+    final pstate = WorkoutProcessModel(
       exerciseIndex: tempState.exerciseIndex,
       maxExerciseIndex: tempState.maxExerciseIndex,
       setInfoCompleteList: tempState.setInfoCompleteList,
@@ -242,6 +250,27 @@ class WorkoutProcessStateNotifier
       isThreadGuide: isFirstRun == null || isFirstRun ? true : false,
       isWorkoutChangeGuide: isFirstRun == null || isFirstRun ? true : false,
     );
+
+    state = pstate;
+
+    if (Platform.isIOS && await watch.isPaired) {
+      await watch.startWatchApp();
+
+      if (await watch.isReachable) {
+        // final tempMap = WorkoutWatchProcessModel.fromWorkoutProcessModel(
+        //         command: "start", model: pstate)
+        //     .toJson();
+
+        Map<String, dynamic> tempMap = {
+          "data": WorkoutWatchProcessModel.fromWorkoutProcessModel(
+                  command: "start", model: pstate)
+              .toJson()
+        };
+
+        debugPrint('$tempMap');
+        watch.sendMessage(tempMap);
+      }
+    }
   }
 
   // 다음 운동
@@ -306,6 +335,15 @@ class WorkoutProcessStateNotifier
     }
 
     state = pstate;
+
+    if (await watch.isReachable) {
+      final tempMap = WorkoutWatchProcessModel.fromWorkoutProcessModel(
+              command: "start", model: pstate)
+          .toJson();
+      debugPrint('$tempMap');
+      watch.sendMessage(tempMap);
+    }
+
     return null;
   }
 

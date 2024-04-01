@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'target_muscle_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 @HiveType(typeId: 6)
 class TargetMuscle {
   @HiveField(1)

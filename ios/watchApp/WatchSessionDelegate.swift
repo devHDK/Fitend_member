@@ -47,7 +47,11 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     }
         
     public func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
-            DispatchQueue.main.async { self.log.append("Received message: \(message)") }
+        
+        print(message)
+        DispatchQueue.main.async {
+            // self.log.append("Received message: \(message)")
+        }
     }
         
     public func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {

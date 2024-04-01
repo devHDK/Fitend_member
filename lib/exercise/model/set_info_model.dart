@@ -3,7 +3,10 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'set_info_model.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(
+  explicitToJson: true,
+  includeIfNull: false,
+)
 @HiveType(typeId: 2)
 class SetInfo {
   @HiveField(1)

@@ -31,8 +31,8 @@ WorkoutWatchModel _$WorkoutWatchModelFromJson(Map<String, dynamic> json) =>
       maxSetInfoList: (json['maxSetInfoList'] as List<dynamic>)
           .map((e) => e as int)
           .toList(),
-      modifiedExercises: (json['modifiedExercises'] as List<dynamic>)
-          .map((e) => Exercise.fromJson(e as Map<String, dynamic>))
+      exercises: (json['exercises'] as List<dynamic>)
+          .map((e) => ExerciseSimple.fromJson(e as Map<String, dynamic>))
           .toList(),
       workoutFinished: json['workoutFinished'] as bool,
       groupCounts: (json['groupCounts'] as Map<String, dynamic>).map(
@@ -48,8 +48,7 @@ Map<String, dynamic> _$WorkoutWatchModelToJson(WorkoutWatchModel instance) =>
       'maxExerciseIndex': instance.maxExerciseIndex,
       'setInfoCompleteList': instance.setInfoCompleteList,
       'maxSetInfoList': instance.maxSetInfoList,
-      'modifiedExercises':
-          instance.modifiedExercises.map((e) => e.toJson()).toList(),
+      'exercises': instance.exercises.map((e) => e.toJson()).toList(),
       'workoutFinished': instance.workoutFinished,
       'groupCounts':
           instance.groupCounts.map((k, e) => MapEntry(k.toString(), e)),

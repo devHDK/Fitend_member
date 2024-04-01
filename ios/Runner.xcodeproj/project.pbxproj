@@ -19,6 +19,7 @@
 		249FBE112BB39BEE00B5B95E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 249FBE102BB39BEE00B5B95E /* HealthKit.framework */; };
 		249FBE132BB39BF600B5B95E /* HealthKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 249FBE122BB39BF600B5B95E /* HealthKitUI.framework */; };
 		24B4E4C72BB290B600018C92 /* watchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 2485B0602B9ED77F00EC95E4 /* watchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		24C9E44B2BBADCF40075EFEE /* WorkoutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C9E44A2BBADCF40075EFEE /* WorkoutData.swift */; };
 		253A9699712F8698DB04E6DD /* productionLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0FEE9A68883EC3E2475644AE /* productionLaunchScreen.storyboard */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		6931338EF2A71300DE148D64 /* localRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = B012E77F69790AC32072393D /* localRelease.xcconfig */; };
@@ -91,6 +92,7 @@
 		249FBE102BB39BEE00B5B95E /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS10.2.sdk/System/Library/Frameworks/HealthKit.framework; sourceTree = DEVELOPER_DIR; };
 		249FBE122BB39BF600B5B95E /* HealthKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKitUI.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS10.2.sdk/System/Library/Frameworks/HealthKitUI.framework; sourceTree = DEVELOPER_DIR; };
 		249FBE142BB3A2CF00B5B95E /* watchApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = watchApp.entitlements; sourceTree = "<group>"; };
+		24C9E44A2BBADCF40075EFEE /* WorkoutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutData.swift; sourceTree = "<group>"; };
 		24DA2DC12A5EB2C300217CFE /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		268EC6D61BCD9CD5F6956ABA /* Pods-Runner.debug-local.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-local.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-local.xcconfig"; sourceTree = "<group>"; };
 		339A1D804B3BC1B09A502B7C /* developmentLaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = developmentLaunchScreen.storyboard; path = Runner/developmentLaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 		2485B0612B9ED78000EC95E4 /* watchApp */ = {
 			isa = PBXGroup;
 			children = (
+				24C9E4492BBADCD70075EFEE /* model */,
 				249FBE142BB3A2CF00B5B95E /* watchApp.entitlements */,
 				2485B0622B9ED78000EC95E4 /* fitendApp.swift */,
 				2485B0642B9ED78000EC95E4 /* ContentView.swift */,
@@ -164,6 +167,14 @@
 				2485B0692B9ED78200EC95E4 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		24C9E4492BBADCD70075EFEE /* model */ = {
+			isa = PBXGroup;
+			children = (
+				24C9E44A2BBADCF40075EFEE /* WorkoutData.swift */,
+			);
+			path = model;
 			sourceTree = "<group>";
 		};
 		4C2456464133B51CC6E448DC /* Frameworks */ = {
@@ -333,6 +344,9 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
+			packageReferences = (
+				24C9E44F2BBADEF60075EFEE /* XCRemoteSwiftPackageReference "OptionallyDecodable" */,
+			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -512,6 +526,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2485B0652B9ED78000EC95E4 /* ContentView.swift in Sources */,
+				24C9E44B2BBADCF40075EFEE /* WorkoutData.swift in Sources */,
 				2485B07D2B9ED80A00EC95E4 /* WatchSessionDelegate.swift in Sources */,
 				2485B0632B9ED78000EC95E4 /* fitendApp.swift in Sources */,
 			);
@@ -2549,6 +2564,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		24C9E44F2BBADEF60075EFEE /* XCRemoteSwiftPackageReference "OptionallyDecodable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/idrougge/OptionallyDecodable";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
 }

@@ -1,5 +1,5 @@
-import 'package:fitend_member/exercise/model/exercise_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
+import 'package:fitend_member/workout/model/workout_record_simple_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'workout_watch_process_model.g.dart';
@@ -27,7 +27,20 @@ class WorkoutWatchProcessModel {
           maxExerciseIndex: model.maxExerciseIndex,
           setInfoCompleteList: model.setInfoCompleteList,
           maxSetInfoList: model.maxSetInfoList,
-          modifiedExercises: model.modifiedExercises,
+          exercises: model.modifiedExercises
+              .map(
+                (e) => ExerciseSimple(
+                  workoutPlanId: e.workoutPlanId,
+                  setInfo: e.setInfo,
+                  name: e.name,
+                  trackingFieldId: e.trackingFieldId,
+                  circuitGroupNum: e.circuitGroupNum,
+                  circuitSeq: e.circuitSeq,
+                  isVideoRecord: e.isVideoRecord,
+                  setType: e.setType,
+                ),
+              )
+              .toList(),
           workoutFinished: model.workoutFinished,
           groupCounts: model.groupCounts,
           totalTime: model.totalTime,
@@ -51,8 +64,8 @@ class WorkoutWatchModel {
   List<int> setInfoCompleteList;
   @JsonKey(name: 'maxSetInfoList')
   List<int> maxSetInfoList;
-  @JsonKey(name: 'modifiedExercises')
-  List<Exercise> modifiedExercises;
+  @JsonKey(name: 'exercises')
+  List<ExerciseSimple> exercises;
   @JsonKey(name: 'workoutFinished')
   bool workoutFinished;
   @JsonKey(name: 'groupCounts')
@@ -67,7 +80,7 @@ class WorkoutWatchModel {
     required this.maxExerciseIndex,
     required this.setInfoCompleteList,
     required this.maxSetInfoList,
-    required this.modifiedExercises,
+    required this.exercises,
     required this.workoutFinished,
     required this.groupCounts,
     required this.totalTime,
@@ -80,7 +93,7 @@ class WorkoutWatchModel {
     int? maxExerciseIndex,
     List<int>? setInfoCompleteList,
     List<int>? maxSetInfoList,
-    List<Exercise>? modifiedExercises,
+    List<ExerciseSimple>? exercises,
     bool? workoutFinished,
     Map<int, int>? groupCounts,
     int? totalTime,
@@ -91,7 +104,7 @@ class WorkoutWatchModel {
         maxExerciseIndex: maxExerciseIndex ?? this.maxExerciseIndex,
         setInfoCompleteList: setInfoCompleteList ?? this.setInfoCompleteList,
         maxSetInfoList: maxSetInfoList ?? this.maxSetInfoList,
-        modifiedExercises: modifiedExercises ?? this.modifiedExercises,
+        exercises: exercises ?? this.exercises,
         workoutFinished: workoutFinished ?? this.workoutFinished,
         groupCounts: groupCounts ?? this.groupCounts,
         totalTime: totalTime ?? this.totalTime,

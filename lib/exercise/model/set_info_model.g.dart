@@ -60,9 +60,19 @@ SetInfo _$SetInfoFromJson(Map<String, dynamic> json) => SetInfo(
       seconds: json['seconds'] as int?,
     );
 
-Map<String, dynamic> _$SetInfoToJson(SetInfo instance) => <String, dynamic>{
-      'index': instance.index,
-      'reps': instance.reps,
-      'weight': instance.weight,
-      'seconds': instance.seconds,
-    };
+Map<String, dynamic> _$SetInfoToJson(SetInfo instance) {
+  final val = <String, dynamic>{
+    'index': instance.index,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('reps', instance.reps);
+  writeNotNull('weight', instance.weight);
+  writeNotNull('seconds', instance.seconds);
+  return val;
+}

@@ -261,14 +261,14 @@ class WorkoutProcessStateNotifier
         //         command: "start", model: pstate)
         //     .toJson();
 
-        Map<String, dynamic> tempMap = {
-          "data": WorkoutWatchProcessModel.fromWorkoutProcessModel(
-                  command: "start", model: pstate)
-              .toJson()
-        };
+        Map<String, dynamic> tempMap =
+            WorkoutWatchProcessModel.fromWorkoutProcessModel(
+                    command: "start", model: pstate)
+                .toJson();
 
         debugPrint('$tempMap');
-        watch.sendMessage(tempMap);
+        debugPrint('${tempMap.toString().length}');
+        await watch.sendMessage(tempMap);
       }
     }
   }
@@ -336,12 +336,23 @@ class WorkoutProcessStateNotifier
 
     state = pstate;
 
-    if (await watch.isReachable) {
-      final tempMap = WorkoutWatchProcessModel.fromWorkoutProcessModel(
-              command: "start", model: pstate)
-          .toJson();
-      debugPrint('$tempMap');
-      watch.sendMessage(tempMap);
+    if (Platform.isIOS && await watch.isPaired) {
+      await watch.startWatchApp();
+
+      if (await watch.isReachable) {
+        // final tempMap = WorkoutWatchProcessModel.fromWorkoutProcessModel(
+        //         command: "start", model: pstate)
+        //     .toJson();
+
+        Map<String, dynamic> tempMap =
+            WorkoutWatchProcessModel.fromWorkoutProcessModel(
+                    command: "start", model: pstate)
+                .toJson();
+
+        debugPrint('$tempMap');
+
+        await watch.sendMessage(tempMap);
+      }
     }
 
     return null;

@@ -61,3 +61,38 @@ Map<String, dynamic> _$WorkoutRecordSimpleToJson(
       'workoutPlanId': instance.workoutPlanId,
       'setInfo': instance.setInfo,
     };
+
+ExerciseSimple _$ExerciseSimpleFromJson(Map<String, dynamic> json) =>
+    ExerciseSimple(
+      workoutPlanId: json['workoutPlanId'] as int,
+      setInfo: (json['setInfo'] as List<dynamic>)
+          .map((e) => SetInfo.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      name: json['name'] as String,
+      trackingFieldId: json['trackingFieldId'] as int,
+      circuitGroupNum: json['circuitGroupNum'] as int?,
+      circuitSeq: json['circuitSeq'] as int?,
+      setType: json['setType'] as String?,
+      isVideoRecord: json['isVideoRecord'] as bool?,
+    );
+
+Map<String, dynamic> _$ExerciseSimpleToJson(ExerciseSimple instance) {
+  final val = <String, dynamic>{
+    'workoutPlanId': instance.workoutPlanId,
+    'setInfo': instance.setInfo.map((e) => e.toJson()).toList(),
+    'name': instance.name,
+    'trackingFieldId': instance.trackingFieldId,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('circuitGroupNum', instance.circuitGroupNum);
+  writeNotNull('circuitSeq', instance.circuitSeq);
+  writeNotNull('setType', instance.setType);
+  writeNotNull('isVideoRecord', instance.isVideoRecord);
+  return val;
+}

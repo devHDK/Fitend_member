@@ -10,9 +10,18 @@ import SwiftUI
 @main
 struct fitend_Watch_AppApp: App {
     
+    @StateObject var workoutManager = WorkoutManager()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationView{
+                ContentView()
+            }
+            .sheet(isPresented: $workoutManager.showingSummaryView) {
+                SummaryView()
+            }
+            .environmentObject(workoutManager)
         }
+        
     }
 }

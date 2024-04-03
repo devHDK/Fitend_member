@@ -12,20 +12,26 @@ struct ContentView: View {
     
     @State var tabSelection = 1
     @StateObject var data = ActivityData()
-    @ObservedObject var session = WatchSessionDelegate();
+    @StateObject var session = WatchSessionDelegate();
     @EnvironmentObject var workoutManager: WorkoutManager
     private var healthStore = HKHealthStore()
     let heartRateQuantity = HKUnit(from: "count/min")
-    @State private var value = 0
+    @State private var heartRate = 0
     @State var showingBreatheSheet = false
     
+    @State private var animationScale: CGFloat = 1.0
+    private let animationDuration: Double = 0.6 // 기본 애니메이션 주기 (초 단위)
+    @State private var animationTimer: Timer? = nil
     
     var body: some View {
         TabView(selection: $tabSelection) {
-            activity
+            heartRateView
                 .tag(1)
-            heartRate
+            workoutView
                 .tag(2)
+            activityView
+                .tag(3)
+            
         }
         .tabViewStyle(PageTabViewStyle())
         .onAppear(){
@@ -33,7 +39,7 @@ struct ContentView: View {
         }
     }
 
-    var activity: some View {
+    var activityView: some View {
             
             VStack {
                 ActivityRings(data: data, healthStore: workoutManager.healthStore)
@@ -56,23 +62,26 @@ struct ContentView: View {
             
     }
 
-    var heartRate: some View {
+    var heartRateView: some View {
         VStack {
-            HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
-                Button(action: {startHeartRateQuery(quantityTypeIdentifier: .heartRate)}) {
-                    
-                    Image(systemName: "heart.fill")
-                        .foregroundColor(.red)
-                        .font(Font.custom("Heart", size: CGFloat(60)))
-                        
-                }
-                .buttonStyle(BorderlessButtonStyle())
-                .padding()
-                
+            Spacer()
+            HStack {
+                Spacer()
+                Image(systemName: "heart.fill")
+                    .foregroundColor(.red)
+                    .font(Font.custom("Heart", size: CGFloat(60)))
+                    .frame(width: 60, height: 60)
                 Spacer()
             }
-            HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/) {
-                Text("\(value) BPM")
+            .scaleEffect(animationScale)
+            .animation(Animation.easeIn(duration: 60/Double(heartRate)).repeatForever(autoreverses: true))
+            .task {
+                startHeartRateQuery(quantityTypeIdentifier: .heartRate)
+                startAnimationLoop()
+            }
+            HStack {
+                Spacer()
+                Text("\(heartRate) BPM")
                     .bold()
                     .font(.system(.title, design: .rounded))
                     .padding()
@@ -83,18 +92,24 @@ struct ContentView: View {
             Spacer()
         }
         .navigationTitle("Heart Rate")
+        .onDisappear {
+                    stopAnimationLoop()
+                }
             
     }
     
-//    func calulateAnimation(heartRate: Int) -> CGFloat {
-//      // Calculate heart rate animation factor
-//      let value1 = Double(heartRate) / 100
-//      var value = 2.0 * Double(time) * Double.pi * value1
-//      let heartRateAnimationFactor = 0.2 * sin(value)
-//      // Combine constant and animation factor
-//      let scale = 1.0 + heartRateAnimationFactor
-//      return scale
-//    }
+    var workoutView: some View {
+        VStack {
+            if session.data != nil {
+                Text("\(session.data!.command)")
+            }
+            else {
+                Text("앱에서 시작해 주세요")
+            }
+        }
+        .navigationTitle("오늘의 운동")
+            
+    }
     
     func startHeartRateQuery(quantityTypeIdentifier: HKQuantityTypeIdentifier) {
             
@@ -124,8 +139,24 @@ struct ContentView: View {
                     lastHeartRate = sample.quantity.doubleValue(for: heartRateQuantity)
                 }
                 
-                self.value = Int(lastHeartRate)
+                self.heartRate = Int(lastHeartRate)
             }
+        }
+    
+    private func startAnimationLoop() {
+            animationTimer = Timer.scheduledTimer(withTimeInterval: 60/Double(heartRate), repeats: true) { _ in
+                withAnimation {
+                    animationScale = animationScale == 1.0 ? 1.2 : 1.0
+                }
+            }
+            
+            // 타이머를 RunLoop에 추가
+            RunLoop.current.add(animationTimer!, forMode: .common)
+        }
+    
+    private func stopAnimationLoop() {
+            animationTimer?.invalidate()
+            animationTimer = nil
         }
 
 }

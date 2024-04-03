@@ -16,7 +16,7 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     @Published var reachable = false
     @Published var context = [String: Any]()
     @Published var receivedContext = [String: Any]()
-    @Published var log = [String]()
+    @Published var data : WorkoutData?
     
     
     override init() {
@@ -33,12 +33,11 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     
     public func sendMessage(_ message: [String:Any]){
         session.sendMessage(message, replyHandler: nil)
-        log.append("Send message: \(message)")
+        
     }
     
     public func updateApplicationContext(_ context: [String: Any]){
         try? session.updateApplicationContext(context)
-        log.append("Sent context: \(context)")
     }
     
     
@@ -53,12 +52,14 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
             // jsonData를 사용하여 WorkoutData 디코딩
             let workoutData = try JSONDecoder().decode(WorkoutData.self, from: jsonData)
             
-            print(workoutData.watchModel)
-            print(workoutData.command)
+            print(workoutData)
             
             DispatchQueue.main.async {
                 // 메인 스레드에서 UI 업데이트 등의 작업 수행
-                self.log.append("Received command: \(workoutData.command)")
+                self.data = workoutData
+                
+                print(self.data)
+                
             }
         } catch {
             print("JSON 디코딩 실패: \(error)")
@@ -70,7 +71,7 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     }
     
     public func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
-        DispatchQueue.main.async { self.log.append("Received context: \(applicationContext)") }
+        DispatchQueue.main.async {}
     }
     
 #if os(iOS)

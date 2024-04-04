@@ -8,11 +8,12 @@
 import SwiftUI
 import HealthKit
 
+
 struct ContentView: View {
     
     @State var tabSelection = 1
-    @StateObject var data = ActivityData()
     @StateObject var session = WatchSessionDelegate();
+    @StateObject var data = ActivityData()
     @EnvironmentObject var workoutManager: WorkoutManager
     private var healthStore = HKHealthStore()
     let heartRateQuantity = HKUnit(from: "count/min")
@@ -25,9 +26,9 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $tabSelection) {
-            heartRateView
+            workoutPreview
                 .tag(1)
-            workoutView
+            heartRateView
                 .tag(2)
             activityView
                 .tag(3)
@@ -36,6 +37,9 @@ struct ContentView: View {
         .tabViewStyle(PageTabViewStyle())
         .onAppear(){
             workoutManager.requestAuthorisation()
+        }
+        .sheet(isPresented: $session.shouldNavigate) {
+            workoutView()
         }
     }
 
@@ -98,7 +102,7 @@ struct ContentView: View {
             
     }
     
-    var workoutView: some View {
+    var workoutPreview: some View {
         VStack {
             if session.data != nil {
                 Text("\(session.data!.command)")

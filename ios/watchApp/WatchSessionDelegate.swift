@@ -14,6 +14,7 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     private let session = WCSession.default
     
     @Published var reachable = false
+    @Published var shouldNavigate = false
     @Published var context = [String: Any]()
     @Published var receivedContext = [String: Any]()
     @Published var data : WorkoutData?
@@ -50,15 +51,13 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: message, options: [])
             // jsonData를 사용하여 WorkoutData 디코딩
-            let workoutData = try JSONDecoder().decode(WorkoutData.self, from: jsonData)
-            
+            var workoutData = try JSONDecoder().decode(WorkoutData.self, from: jsonData)
+            shouldNavigate = true
             print(workoutData)
             
             DispatchQueue.main.async {
                 // 메인 스레드에서 UI 업데이트 등의 작업 수행
                 self.data = workoutData
-                
-                print(self.data)
                 
             }
         } catch {

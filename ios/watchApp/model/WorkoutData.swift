@@ -7,21 +7,21 @@ import Foundation
 
 // MARK: - WorkoutData
 struct WorkoutData: Codable {
-    let command: String
-    let watchModel: WatchModel
+    var command: String
+    var watchModel: WatchModel
 }
 
 // MARK: - WatchModel
 struct WatchModel: Codable {
-    let exerciseIndex, maxExerciseIndex: Int
-    let setInfoCompleteList, maxSetInfoList: [Int]
-    let exercises: [Exercise]
+    var exerciseIndex, maxExerciseIndex: Int
+    var setInfoCompleteList, maxSetInfoList: [Int]
+    var exercises: [Exercise]
 }
 
 // MARK: - Exercise
 struct Exercise: Codable {
     let workoutPlanID: Int
-    let setInfo: [SetInfo]
+    var setInfo: [SetInfo]
     let name: String
     let trackingFieldID: Int
     let isVideoRecord: Bool
@@ -36,6 +36,7 @@ struct Exercise: Codable {
 
 // MARK: - SetInfo
 struct SetInfo: Codable {
-    let index, reps, weight: Int
-    let seconds: Int?
+    let index: Int
+    var reps, weight: Int
+    var seconds: Int?
 }

@@ -7,12 +7,30 @@
 
 import SwiftUI
 
-struct workoutView: View {
-    var body: some View {
-        Text("Workout View!")
-    }
-}
+struct WorkoutView: View {
 
-#Preview {
-    workoutView()
+    @StateObject var viewModel = WatchSessionDelegate.shared
+
+  @State var exercises: [Exercise] = []
+  @State var exerciseIndex = 0
+
+  
+    
+  var body: some View {
+      
+      VStack {
+            
+          Text(exercises.isEmpty ? "없네..." : exercises[exerciseIndex].name )
+          Text("\(exerciseIndex)")
+      }.onAppear(){
+          
+          print(viewModel.data?.command)
+          
+          self.exercises = viewModel.exercises
+          self.exerciseIndex = viewModel.exerciseIndex
+      }
+      
+    
+  }
+
 }

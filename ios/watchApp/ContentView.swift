@@ -12,7 +12,7 @@ import HealthKit
 struct ContentView: View {
     
     @State var tabSelection = 1
-    @StateObject var session = WatchSessionDelegate();
+    @StateObject var session = WatchSessionDelegate.shared;
     @StateObject var data = ActivityData()
     @EnvironmentObject var workoutManager: WorkoutManager
     private var healthStore = HKHealthStore()
@@ -39,7 +39,8 @@ struct ContentView: View {
             workoutManager.requestAuthorisation()
         }
         .sheet(isPresented: $session.shouldNavigate) {
-            workoutView()
+            WorkoutView()
+                
         }
     }
 

@@ -21,6 +21,7 @@
 		24B4E4C72BB290B600018C92 /* watchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 2485B0602B9ED77F00EC95E4 /* watchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		24C9E44B2BBADCF40075EFEE /* WorkoutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C9E44A2BBADCF40075EFEE /* WorkoutData.swift */; };
 		24FDF7B82BBE62AC00D8BFFA /* WorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FDF7B72BBE62AC00D8BFFA /* WorkoutView.swift */; };
+		24FDF7BA2BBFA75E00D8BFFA /* WorkoutProcessViewmodel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FDF7B92BBFA75E00D8BFFA /* WorkoutProcessViewmodel.swift */; };
 		24FF82342BBBE501001D855E /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FF82332BBBE501001D855E /* ComplicationController.swift */; };
 		24FF82362BBBE536001D855E /* WorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FF82352BBBE536001D855E /* WorkoutManager.swift */; };
 		24FF82382BBBE8FE001D855E /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FF82372BBBE8FE001D855E /* SummaryView.swift */; };
@@ -99,6 +100,7 @@
 		24C9E44A2BBADCF40075EFEE /* WorkoutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutData.swift; sourceTree = "<group>"; };
 		24DA2DC12A5EB2C300217CFE /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		24FDF7B72BBE62AC00D8BFFA /* WorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutView.swift; sourceTree = "<group>"; };
+		24FDF7B92BBFA75E00D8BFFA /* WorkoutProcessViewmodel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutProcessViewmodel.swift; sourceTree = "<group>"; };
 		24FF82332BBBE501001D855E /* ComplicationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
 		24FF82352BBBE536001D855E /* WorkoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutManager.swift; sourceTree = "<group>"; };
 		24FF82372BBBE8FE001D855E /* SummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryView.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 				24FF82352BBBE536001D855E /* WorkoutManager.swift */,
 				24FF82372BBBE8FE001D855E /* SummaryView.swift */,
 				24FDF7B72BBE62AC00D8BFFA /* WorkoutView.swift */,
+				24FDF7B92BBFA75E00D8BFFA /* WorkoutProcessViewmodel.swift */,
 			);
 			path = watchApp;
 			sourceTree = "<group>";
@@ -541,6 +544,7 @@
 				24FF82382BBBE8FE001D855E /* SummaryView.swift in Sources */,
 				24FDF7B82BBE62AC00D8BFFA /* WorkoutView.swift in Sources */,
 				24C9E44B2BBADCF40075EFEE /* WorkoutData.swift in Sources */,
+				24FDF7BA2BBFA75E00D8BFFA /* WorkoutProcessViewmodel.swift in Sources */,
 				24FF82342BBBE501001D855E /* ComplicationController.swift in Sources */,
 				2485B07D2B9ED80A00EC95E4 /* WatchSessionDelegate.swift in Sources */,
 				2485B0632B9ED78000EC95E4 /* fitendApp.swift in Sources */,

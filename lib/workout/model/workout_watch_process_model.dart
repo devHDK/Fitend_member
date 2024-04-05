@@ -9,11 +9,11 @@ class WorkoutWatchProcessModel {
   @JsonKey(name: 'command')
   String command;
   @JsonKey(name: 'watchModel')
-  WorkoutWatchModel watchModel;
+  WorkoutWatchModel? watchModel;
 
   WorkoutWatchProcessModel({
     required this.command,
-    required this.watchModel,
+    this.watchModel,
   });
 
   static WorkoutWatchProcessModel fromWorkoutProcessModel({
@@ -27,6 +27,7 @@ class WorkoutWatchProcessModel {
           maxExerciseIndex: model.maxExerciseIndex,
           setInfoCompleteList: model.setInfoCompleteList,
           maxSetInfoList: model.maxSetInfoList,
+          totalTime: model.totalTime,
           exercises: model.modifiedExercises
               .map(
                 (e) => ExerciseSimple(
@@ -43,7 +44,6 @@ class WorkoutWatchProcessModel {
               .toList(),
           workoutFinished: model.workoutFinished,
           groupCounts: model.groupCounts,
-          totalTime: model.totalTime,
           isQuitting: model.isQuitting,
         ),
       );
@@ -67,13 +67,13 @@ class WorkoutWatchModel {
   @JsonKey(name: 'exercises')
   List<ExerciseSimple> exercises;
   @JsonKey(name: 'workoutFinished')
-  bool workoutFinished;
+  bool? workoutFinished;
   @JsonKey(name: 'groupCounts')
-  Map<int, int> groupCounts;
+  Map<int, int>? groupCounts;
   @JsonKey(name: 'totalTime')
   int totalTime;
   @JsonKey(name: 'isQuitting')
-  bool isQuitting;
+  bool? isQuitting;
 
   WorkoutWatchModel({
     required this.exerciseIndex,

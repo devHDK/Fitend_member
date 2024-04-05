@@ -12,8 +12,9 @@ import WatchConnectivity
 
 class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     
-    static let shared = WatchSessionDelegate()
+       static let shared = WatchSessionDelegate()
        
+    
        private let session = WCSession.default
        
        @Published var reachable = false
@@ -28,7 +29,9 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
        @Published var maxExerciseIndex: Int = 0
        @Published var setInfoCompleteList: [Int] = []
        @Published var maxSetInfoList: [Int] = []
-       
+       @Published var totalTime: Int = 0
+       @Published var groupCounts: Dictionary<Int, Int>?
+    
        private override init() {
            super.init()
            
@@ -75,10 +78,19 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
                 self.maxExerciseIndex = workoutData.watchModel.maxExerciseIndex
                 self.setInfoCompleteList = workoutData.watchModel.setInfoCompleteList
                 self.maxSetInfoList = workoutData.watchModel.maxSetInfoList
+                self.totalTime = workoutData.watchModel.totalTime
+                self.groupCounts = workoutData.watchModel.groupCounts
+                
+                
+                print("exerciseIndex \(self.exerciseIndex)")
+                print("groupCount \(String(describing: self.groupCounts))")
                 
             }
+            
         } catch {
+            
             print("JSON 디코딩 실패: \(error)")
+            
         }
         
         DispatchQueue.main.async {
@@ -88,6 +100,28 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
     
     public func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
         DispatchQueue.main.async {}
+    }
+    
+    public func nextWorkout(){
+        if self.setInfoCompleteList[self.exerciseIndex] < self.maxSetInfoList[self.exerciseIndex]{
+            
+            self.setInfoCompleteList[self.exerciseIndex] += 1
+            self.data?.watchModel.setInfoCompleteList[self.exerciseIndex] += 1
+            
+            do {
+                
+                let json = try JSONEncoder().encode(self.data)
+                let dict: Dictionary<String,Any> = try JSONSerialization.jsonObject(with: json) as! Dictionary<String, Any>
+                
+                sendMessage(dict)
+                
+            }catch{
+                
+            }
+            
+        }
+        
+        
     }
     
 #if os(iOS)

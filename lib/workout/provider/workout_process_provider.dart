@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:fitend_member/common/const/data_constants.dart';
 import 'package:fitend_member/common/provider/hive_exercies_index_provider.dart';
@@ -962,5 +963,21 @@ class WorkoutProcessStateNotifier
     }
 
     state = pstate;
+  }
+
+  void updateFromWatch({required WorkoutWatchModel model}) {
+    final pstate = state as WorkoutProcessModel;
+
+    state = pstate.copyWith(
+      exerciseIndex: model.exerciseIndex,
+      setInfoCompleteList: model.setInfoCompleteList,
+      modifiedExercises: model.exercises
+          .mapIndexed(
+            (index, e) => pstate.modifiedExercises[index].copyWith(
+              setInfo: e.setInfo,
+            ),
+          )
+          .toList(),
+    );
   }
 }

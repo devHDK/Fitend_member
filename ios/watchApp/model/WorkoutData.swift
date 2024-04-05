@@ -13,9 +13,13 @@ struct WorkoutData: Codable {
 
 // MARK: - WatchModel
 struct WatchModel: Codable {
-    var exerciseIndex, maxExerciseIndex: Int
-    var setInfoCompleteList, maxSetInfoList: [Int]
+    var exerciseIndex: Int
+    var maxExerciseIndex: Int
+    var setInfoCompleteList: [Int]
+    var maxSetInfoList: [Int]
     var exercises: [Exercise]
+    var totalTime: Int
+    var groupCounts: Dictionary<Int, Int>
 }
 
 // MARK: - Exercise

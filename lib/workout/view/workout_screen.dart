@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -28,12 +29,14 @@ import 'package:fitend_member/workout/component/timer_progress_card.dart';
 import 'package:fitend_member/workout/component/weight_reps_progress_card.dart';
 import 'package:fitend_member/workout/model/workout_model.dart';
 import 'package:fitend_member/workout/model/workout_process_model.dart';
+import 'package:fitend_member/workout/model/workout_watch_process_model.dart';
 import 'package:fitend_member/workout/view/workout_history_screen.dart';
 import 'package:fitend_member/workout/provider/workout_process_provider.dart';
 import 'package:fitend_member/workout/provider/workout_provider.dart';
 import 'package:fitend_member/workout/view/workout_change_screen.dart';
 import 'package:fitend_member/workout/view/workout_feedback_screen.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -43,6 +46,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:watch_connectivity/watch_connectivity.dart';
 
 class WorkoutScreen extends ConsumerStatefulWidget {
   final List<Exercise> exercises;
@@ -64,6 +68,8 @@ class WorkoutScreen extends ConsumerStatefulWidget {
 
 class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+  final _watch = WatchConnectivity();
+
   bool isSwipeUp = false;
   bool isTooltipVisible = false;
   int tooltipCount = 0;
@@ -101,6 +107,29 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     WidgetsBinding.instance.addObserver(this);
 
     initData();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _watch.messageStream.listen(
+        (message) => setState(
+          () {
+            final jsonString = jsonEncode(message);
+            Map<String, dynamic> convertedMap = jsonDecode(jsonString);
+            final model = WorkoutWatchProcessModel.fromJson(convertedMap);
+
+            print("model : ${model.toJson()}");
+
+            if (model.watchModel != null) {
+              ref
+                  .read(
+                      workoutProcessProvider(widget.workoutScheduleId).notifier)
+                  .updateFromWatch(model: model.watchModel!);
+
+              setState(() {});
+            }
+          },
+        ),
+      );
+    });
   }
 
   initData() {
@@ -448,6 +477,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                                       tooltipCount = 0;
                                       onTooltipPressed();
                                       tooltipSeq = 0;
+
                                       if (mounted) {
                                         setState(() {});
                                       }

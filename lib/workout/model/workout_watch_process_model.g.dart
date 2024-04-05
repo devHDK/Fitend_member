@@ -10,15 +10,17 @@ WorkoutWatchProcessModel _$WorkoutWatchProcessModelFromJson(
         Map<String, dynamic> json) =>
     WorkoutWatchProcessModel(
       command: json['command'] as String,
-      watchModel: WorkoutWatchModel.fromJson(
-          json['watchModel'] as Map<String, dynamic>),
+      watchModel: json['watchModel'] == null
+          ? null
+          : WorkoutWatchModel.fromJson(
+              json['watchModel'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$WorkoutWatchProcessModelToJson(
         WorkoutWatchProcessModel instance) =>
     <String, dynamic>{
       'command': instance.command,
-      'watchModel': instance.watchModel.toJson(),
+      'watchModel': instance.watchModel?.toJson(),
     };
 
 WorkoutWatchModel _$WorkoutWatchModelFromJson(Map<String, dynamic> json) =>
@@ -34,12 +36,12 @@ WorkoutWatchModel _$WorkoutWatchModelFromJson(Map<String, dynamic> json) =>
       exercises: (json['exercises'] as List<dynamic>)
           .map((e) => ExerciseSimple.fromJson(e as Map<String, dynamic>))
           .toList(),
-      workoutFinished: json['workoutFinished'] as bool,
-      groupCounts: (json['groupCounts'] as Map<String, dynamic>).map(
+      workoutFinished: json['workoutFinished'] as bool?,
+      groupCounts: (json['groupCounts'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(int.parse(k), e as int),
       ),
       totalTime: json['totalTime'] as int,
-      isQuitting: json['isQuitting'] as bool,
+      isQuitting: json['isQuitting'] as bool?,
     );
 
 Map<String, dynamic> _$WorkoutWatchModelToJson(WorkoutWatchModel instance) =>
@@ -51,7 +53,7 @@ Map<String, dynamic> _$WorkoutWatchModelToJson(WorkoutWatchModel instance) =>
       'exercises': instance.exercises.map((e) => e.toJson()).toList(),
       'workoutFinished': instance.workoutFinished,
       'groupCounts':
-          instance.groupCounts.map((k, e) => MapEntry(k.toString(), e)),
+          instance.groupCounts?.map((k, e) => MapEntry(k.toString(), e)),
       'totalTime': instance.totalTime,
       'isQuitting': instance.isQuitting,
     };

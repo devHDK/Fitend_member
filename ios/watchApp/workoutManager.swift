@@ -53,8 +53,7 @@ class WorkoutManager: NSObject, ObservableObject {
     }
     
     @Published var running = false
-    @Published var waterLock = false
-
+    
     func togglePause() {
         if running == true {
             self.pause()

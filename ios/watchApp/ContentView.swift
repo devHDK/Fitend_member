@@ -40,8 +40,9 @@ struct ContentView: View {
         }
         .sheet(isPresented: $session.shouldNavigate) {
             WorkoutView()
-                
+            
         }
+        
     }
 
     var activityView: some View {
@@ -212,4 +213,14 @@ struct ActivityRings: WKInterfaceObjectRepresentable {
     func updateWKInterfaceObject(_ wkInterfaceObject: WKInterfaceObjectType, context: Context) {
         
     }
+}
+
+extension View {
+
+  func disableCloseButtonOnSheet() -> some View {
+    self
+      .navigationBarTitleDisplayMode(.inline)
+      .navigationBarBackButtonHidden(true)
+  }
+
 }

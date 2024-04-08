@@ -254,23 +254,27 @@ class WorkoutProcessStateNotifier
 
     state = pstate;
 
-    if (Platform.isIOS && await watch.isPaired) {
-      await watch.startWatchApp();
+    final isPaired = await watch.isPaired;
 
-      if (await watch.isReachable) {
-        // final tempMap = WorkoutWatchProcessModel.fromWorkoutProcessModel(
-        //         command: "start", model: pstate)
-        //     .toJson();
-
-        Map<String, dynamic> tempMap =
-            WorkoutWatchProcessModel.fromWorkoutProcessModel(
-                    command: "start", model: pstate)
-                .toJson();
-
-        debugPrint('$tempMap');
-        debugPrint('${tempMap.toString().length}');
-        await watch.sendMessage(tempMap);
+    debugPrint('isPaired : $isPaired');
+    debugPrint('Platform.isIOS : ${Platform.isIOS}');
+    if (Platform.isIOS && isPaired) {
+      try {
+        final isReachable = await watch.isReachable;
+        debugPrint('isReachable : $isReachable');
+        if (!isReachable) await watch.startWatchApp();
+      } catch (e) {
+        debugPrint('$e');
       }
+
+      Map<String, dynamic> tempMap =
+          WorkoutWatchProcessModel.fromWorkoutProcessModel(
+                  command: "start", model: pstate)
+              .toJson();
+
+      debugPrint('$tempMap');
+
+      await watch.sendMessage(tempMap);
     }
   }
 
@@ -336,24 +340,27 @@ class WorkoutProcessStateNotifier
     }
 
     state = pstate;
+    final isPaired = await watch.isPaired;
 
-    if (Platform.isIOS && await watch.isPaired) {
-      await watch.startWatchApp();
-
-      if (await watch.isReachable) {
-        // final tempMap = WorkoutWatchProcessModel.fromWorkoutProcessModel(
-        //         command: "start", model: pstate)
-        //     .toJson();
-
-        Map<String, dynamic> tempMap =
-            WorkoutWatchProcessModel.fromWorkoutProcessModel(
-                    command: "start", model: pstate)
-                .toJson();
-
-        debugPrint('$tempMap');
-
-        await watch.sendMessage(tempMap);
+    debugPrint('isPaired : $isPaired');
+    debugPrint('Platform.isIOS : ${Platform.isIOS}');
+    if (Platform.isIOS && isPaired) {
+      try {
+        final isReachable = await watch.isReachable;
+        debugPrint('isReachable : $isReachable');
+        if (!isReachable) await watch.startWatchApp();
+      } catch (e) {
+        debugPrint('$e');
       }
+
+      Map<String, dynamic> tempMap =
+          WorkoutWatchProcessModel.fromWorkoutProcessModel(
+                  command: "start", model: pstate)
+              .toJson();
+
+      debugPrint('$tempMap');
+
+      await watch.sendMessage(tempMap);
     }
 
     return null;

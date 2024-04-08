@@ -67,6 +67,7 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
             // jsonData를 사용하여 WorkoutData 디코딩
             let workoutData = try JSONDecoder().decode(WorkoutData.self, from: jsonData)
             
+            print(workoutData)
             
             DispatchQueue.main.async {
                 
@@ -81,20 +82,12 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
                 self.totalTime = workoutData.watchModel.totalTime
                 self.groupCounts = workoutData.watchModel.groupCounts
                 
-                
-                print("exerciseIndex \(self.exerciseIndex)")
-                print("groupCount \(String(describing: self.groupCounts))")
-                
             }
             
         } catch {
             
             print("JSON 디코딩 실패: \(error)")
             
-        }
-        
-        DispatchQueue.main.async {
-            // self.log.append("Received message: \(message)")
         }
     }
     
@@ -107,17 +100,36 @@ class WatchSessionDelegate: NSObject, ObservableObject, WCSessionDelegate {
             
             self.setInfoCompleteList[self.exerciseIndex] += 1
             self.data?.watchModel.setInfoCompleteList[self.exerciseIndex] += 1
+        }
+        
+        //해당 Exercise의 max 세트수 보다 작고 exerciseIndex가 maxExcerciseIndex보다 작을때
+        if self.setInfoCompleteList[self.exerciseIndex] == self.maxSetInfoList[self.exerciseIndex] && self.exerciseIndex < self.maxExerciseIndex {
             
-            do {
+            self.exerciseIndex += 1
+            self.data?.watchModel.exerciseIndex += 1
+            
+            print(self.exerciseIndex)
+            
+            while self.setInfoCompleteList[self.exerciseIndex] == self.maxSetInfoList[self.exerciseIndex] && self.exerciseIndex < self.maxExerciseIndex {
                 
-                let json = try JSONEncoder().encode(self.data)
-                let dict: Dictionary<String,Any> = try JSONSerialization.jsonObject(with: json) as! Dictionary<String, Any>
+                self.exerciseIndex += 1
+                self.data?.watchModel.exerciseIndex += 1
                 
-                sendMessage(dict)
-                
-            }catch{
-                
+                if self.exerciseIndex == self.maxExerciseIndex {
+                    break
+                }
             }
+        }
+        
+        
+        do {
+            
+            let json = try JSONEncoder().encode(self.data)
+            let dict: Dictionary<String,Any> = try JSONSerialization.jsonObject(with: json) as! Dictionary<String, Any>
+            
+            sendMessage(dict)
+            
+        }catch{
             
         }
         

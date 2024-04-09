@@ -14,7 +14,7 @@ struct ContentView: View {
     @State var tabSelection = 1
     @StateObject var session = WatchSessionDelegate.shared;
     @StateObject var data = ActivityData()
-    @EnvironmentObject var workoutManager: WorkoutManager
+    @StateObject var workoutManager = WorkoutManager.shared
     private var healthStore = HKHealthStore()
     let heartRateQuantity = HKUnit(from: "count/min")
     @State private var heartRate = 0
@@ -30,8 +30,8 @@ struct ContentView: View {
                 .tag(1)
             heartRateView
                 .tag(2)
-            activityView
-                .tag(3)
+//            activityView
+//                .tag(3)
             
         }
         .tabViewStyle(PageTabViewStyle())
@@ -40,7 +40,6 @@ struct ContentView: View {
         }
         .sheet(isPresented: $session.shouldNavigate) {
             WorkoutView()
-            
         }
         
     }

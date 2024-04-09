@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct fitend_Watch_AppApp: App {
     
-    @StateObject var workoutManager = WorkoutManager()
+    @StateObject var workoutManager = WorkoutManager.shared
     
     var body: some Scene {
         WindowGroup {
@@ -20,7 +20,6 @@ struct fitend_Watch_AppApp: App {
             .sheet(isPresented: $workoutManager.showingSummaryView) {
                 SummaryView()
             }
-            .environmentObject(workoutManager)
         }
         
     }

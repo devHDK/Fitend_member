@@ -10,7 +10,7 @@ import HealthKit
 import WatchKit
 
 struct SummaryView: View {
-    @EnvironmentObject var workoutManager: WorkoutManager
+    @StateObject var workoutManager = WorkoutManager.shared
     @Environment(\.dismiss) var dismiss
     @State private var durationFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
@@ -21,7 +21,7 @@ struct SummaryView: View {
     @StateObject var data = ActivityData()
     var body: some View {
         if workoutManager.workout == nil {
-            ProgressView("Saving Workout")
+            ProgressView("저장중...")
                 .navigationBarHidden(true)
         } else {
             ScrollView {

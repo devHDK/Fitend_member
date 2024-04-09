@@ -7,15 +7,15 @@
 
 import HealthKit
 
-class WorkoutManager: NSObject, ObservableObject {
-    let healthStore = HKHealthStore()
+class WorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate, HKLiveWorkoutBuilderDelegate {
     
-    var selectedWorkout: HKWorkoutActivityType? {
-        didSet {
-            guard let selectedWorkout = selectedWorkout else { return }
-            startWorkout(workoutType: selectedWorkout)
-        }
+    static let shared = WorkoutManager()
+    
+    override init() {
+        
     }
+    
+    let healthStore = HKHealthStore()
     
     @Published var showingSummaryView: Bool = false {
         didSet {
@@ -40,19 +40,19 @@ class WorkoutManager: NSObject, ObservableObject {
             return
         }
 
-        session?.delegate = self
-        builder?.delegate = self
+        session?.delegate = WorkoutManager.shared
+        builder?.delegate = WorkoutManager.shared
 
         builder?.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore,
                                                      workoutConfiguration: configuration)
-
+        
         let startDate = Date()
         session?.startActivity(with: startDate)
         builder?.beginCollection(withStart: startDate) { (success, error) in
         }
     }
     
-    @Published var running = false
+    @Published var running = true
     
     func togglePause() {
         if running == true {
@@ -103,7 +103,7 @@ class WorkoutManager: NSObject, ObservableObject {
     }
 
     func resetWorkout() {
-        selectedWorkout = nil
+//        selectedWorkout = nil
         builder = nil
         workout = nil
         session = nil
@@ -139,37 +139,39 @@ class WorkoutManager: NSObject, ObservableObject {
         }
     }
     
-}
-
-extension WorkoutManager: HKWorkoutSessionDelegate {
     func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState,
                         from fromState: HKWorkoutSessionState, date: Date) {
+        
+        print("fromState \(fromState)")
+        print("toState \(toState)")
+        
         DispatchQueue.main.async {
-            self.running = toState == .running
+            WorkoutManager.shared.running = toState == .running
         }
 
         if toState == .ended {
             builder?.endCollection(withEnd: date) { (success, error) in
-                self.builder?.finishWorkout { (workout, error) in
+                WorkoutManager.shared.builder?.finishWorkout { (workout, error) in
                     DispatchQueue.main.async {
-                        self.workout = workout
+                        WorkoutManager.shared.workout = workout
                     }
                 }
             }
         }
     }
-
+    
     func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
-
+        print(error)
     }
-}
-
-extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
+    
     func workoutBuilderDidCollectEvent(_ workoutBuilder: HKLiveWorkoutBuilder) {
 
     }
 
     func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder, didCollectDataOf collectedTypes: Set<HKSampleType>) {
+        
+        print("workoutBuilder")
+        
         for type in collectedTypes {
             guard let quantityType = type as? HKQuantityType else {
                 return
@@ -180,4 +182,51 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
             updateForStatistics(statistics)
         }
     }
+    
 }
+
+//extension WorkoutManager: HKWorkoutSessionDelegate {
+//    
+//    func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState,
+//                        from fromState: HKWorkoutSessionState, date: Date) {
+//        
+//        print("fromState \(fromState)")
+//        print("toState \(toState)")
+//        
+//        DispatchQueue.main.async {
+//            WorkoutManager.shared.running = toState == .running
+//        }
+//
+//        if toState == .ended {
+//            builder?.endCollection(withEnd: date) { (success, error) in
+//                WorkoutManager.shared.builder?.finishWorkout { (workout, error) in
+//                    DispatchQueue.main.async {
+//                        WorkoutManager.shared.workout = workout
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    
+//    func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
+//        print(error)
+//    }
+//}
+
+//extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
+//    func workoutBuilderDidCollectEvent(_ workoutBuilder: HKLiveWorkoutBuilder) {
+//
+//    }
+//
+//    func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder, didCollectDataOf collectedTypes: Set<HKSampleType>) {
+//        for type in collectedTypes {
+//            guard let quantityType = type as? HKQuantityType else {
+//                return
+//            }
+//
+//            let statistics = workoutBuilder.statistics(for: quantityType)
+//
+//            updateForStatistics(statistics)
+//        }
+//    }
+//}

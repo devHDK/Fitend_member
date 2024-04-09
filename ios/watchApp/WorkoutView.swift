@@ -13,7 +13,7 @@ struct WorkoutView: View {
 
     @State var tabSelection = 2
     @StateObject var watchVM = WatchSessionDelegate.shared
-    @StateObject var workoutManager = WorkoutManager()
+    @StateObject var workoutManager = WorkoutManager.shared
     
     var body: some View {
         TabView(selection: $tabSelection) {
@@ -72,7 +72,11 @@ struct WorkoutView: View {
                 watchVM.nextWorkout()
             } label: {
                 Text("다음운동")
-            }
+                    .bold()
+                    .font(.system(.body, design: .rounded))
+                    
+            }.frame(width: 40, height: 10)
+            Spacer()
 
         }
     }

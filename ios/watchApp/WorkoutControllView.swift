@@ -9,7 +9,7 @@ import SwiftUI
 import WatchKit
 
 struct WorkoutControlsView: View {
-    @EnvironmentObject var workoutManager: WorkoutManager
+    @StateObject var workoutManager = WorkoutManager.shared
     var body: some View {
         VStack {
         HStack {
